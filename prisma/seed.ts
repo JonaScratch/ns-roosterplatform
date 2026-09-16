@@ -4,7 +4,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/lib/generated/prisma/client";
 import { Role } from "../src/lib/generated/prisma/enums";
 import type { DutyKind, RosterPositionType, RosterProfile } from "../src/lib/generated/prisma/enums";
-import { classifyDuty } from "../src/domain/duty-classification";
+import { classifyDuty, resolveDayparts } from "../src/domain/duty-classification";
 import { isoWeekOfDate, ruleForWeek } from "../src/domain/roster-rotation";
 import { addDays, toCalendarDate, toDatabaseDate } from "../src/domain/time";
 import {
@@ -202,6 +202,17 @@ function dutyKey(code: string, weekday: number): string {
 async function createDutyPackage(bron: DordrechtSource): Promise<ReadonlyMap<string, string>> {
   const tegenspraken = classificationConflicts(bron);
 
+  // Dezelfde dagdeelafleiding als de importstraat: rangeer en reserve krijgen
+  // het dagdeel van hun aanvangstijd. Zie `resolveDayparts`.
+  const indeling = new Map(
+    resolveDayparts(
+      bron.duties.map((duty) => {
+        const nummer = classifyDuty(duty.code);
+        return { ...duty, period: nummer.period, workType: nummer.workType, kinds: nummer.kinds };
+      }),
+    ).duties.map((duty) => [`${duty.code}|${duty.weekday}`, duty]),
+  );
+
   const pkg = await prisma.dutyPackage.create({
     data: {
       name: `DDR-${bron.timetableId}`,
@@ -232,7 +243,7 @@ async function createDutyPackage(bron: DordrechtSource): Promise<ReadonlyMap<str
       ],
       duties: {
         create: bron.duties.map((duty) => {
-          const classificatie = classifyDuty(duty.code);
+          const classificatie = indeling.get(`${duty.code}|${duty.weekday}`)!;
           return {
             code: duty.code,
             numericCode: duty.numericCode,

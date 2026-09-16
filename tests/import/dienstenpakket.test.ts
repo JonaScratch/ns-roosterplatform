@@ -46,9 +46,22 @@ describe("een gewone levering", () => {
   it("telt wat er in zit", () => {
     expect(uitkomst.totals.duties).toBe(3);
     expect(uitkomst.totals.rows).toBe(3);
-    expect(uitkomst.totals.vroeg).toBe(1);
+    // Twee vroeg: 043 op nummer, en reservedienst 604 van 06:00 op zijn
+    // aanvangstijd. Die telde hier eerder niet mee, omdat de 600-serie op nummer
+    // geen dagdeel heeft — en daardoor sloot ook geen enkel roosterprofiel hem uit.
+    expect(uitkomst.totals.vroeg).toBe(2);
     expect(uitkomst.totals.laat).toBe(1);
+    expect(uitkomst.totals.reserve).toBe(1);
     expect(uitkomst.totals.depots).toEqual(["DDR"]);
+  });
+
+  it("geeft een reservedienst het dagdeel van zijn aanvangstijd en houdt hem reserve", () => {
+    const reserve = uitkomst.duties.find((dienst) => dienst.code === "604");
+    expect(reserve?.period).toBe("VROEG");
+    expect(reserve?.kinds).toEqual(["VROEG", "RESERVE"]);
+    expect(uitkomst.problems.some((probleem) => probleem.code === "DAYPART_FROM_START_TIME")).toBe(
+      true,
+    );
   });
 
   it("geeft de vroegste start en de laatste eindtijd", () => {

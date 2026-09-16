@@ -1,3 +1,4 @@
+import { resolveDayparts } from "@/domain/duty-classification";
 import { type ParseIssue, type ParsedDuty, parseDutyPackage } from "@/server/validation/duty-package";
 import { readDutyPackagePdf } from "./duty-package-pdf";
 import { readDutySheet, toParsedDuties } from "./duty-package-sheet";
@@ -154,8 +155,10 @@ export function runImport(input: {
   const regels = inhoud.split(/\r?\n/).filter((regel) => regel.trim().length > 0);
 
   // ── Fase 2: lezen ──────────────────────────────────────────────────────────
-  const parsed = parseDutyPackage(inhoud);
-  const problems: ImportProblem[] = [...blocking(parsed.issues)];
+  const gelezen = parseDutyPackage(inhoud);
+  const dagdelen = dagdeelControle(gelezen.duties);
+  const parsed = { ...gelezen, duties: dagdelen.duties };
+  const problems: ImportProblem[] = [...blocking(parsed.issues), ...dagdelen.problems];
 
   // Formulecellen worden apart gemeld: het parseren struikelt er niet over,
   // maar ze horen niet in een dienstenpakket en mogen niet ongezien doorlopen
@@ -384,6 +387,51 @@ function afgewezen(
 }
 
 /**
+ * Geef reserve- en rangeerdiensten het dagdeel van hun aanvangstijd.
+ *
+ * Zonder dagdeel sluit geen roosterprofiel ze uit, en belandt een rangeerdienst
+ * van 05:01 in Laat/Nacht. Elke aanleverroute loopt hierdoorheen, zodat het
+ * dagdeel niet afhangt van het bestandsformaat. Zie `resolveDayparts`.
+ */
+function dagdeelControle(input: readonly ParsedDuty[]): {
+  readonly duties: readonly ParsedDuty[];
+  readonly problems: readonly ImportProblem[];
+} {
+  const uitkomst = resolveDayparts(input);
+  const problems: ImportProblem[] = [];
+  if (uitkomst.derived.length > 0) {
+    const perCode = new Map<string, Set<string>>();
+    for (const afgeleid of uitkomst.derived) {
+      const set = perCode.get(afgeleid.code) ?? new Set<string>();
+      set.add(afgeleid.period.toLowerCase());
+      perCode.set(afgeleid.code, set);
+    }
+    problems.push({
+      severity: "NOTICE",
+      line: 0,
+      code: "DAYPART_FROM_START_TIME",
+      message:
+        "Dagdeel afgeleid uit de aanvangstijd, omdat het nummer er geen geeft: " +
+        [...perCode.entries()]
+          .map(([code, dagdeel]) => `${code} (${[...dagdeel].join("/")})`)
+          .join(", ") +
+        ".",
+    });
+  }
+  for (const onbepaald of uitkomst.unresolved) {
+    problems.push({
+      severity: "REVIEW",
+      line: 0,
+      code: "DAYPART_AMBIGUOUS",
+      message:
+        `Dienst ${onbepaald.code} (weekdag ${onbepaald.weekday}) krijgt geen dagdeel: ` +
+        `${onbepaald.reason}. Zonder dagdeel sluit geen roosterprofiel deze dienst uit.`,
+    });
+  }
+  return { duties: uitkomst.duties, problems };
+}
+
+/**
  * De controles die voor elke aanleverroute gelden.
  *
  * Standplaats, middernacht en dubbele diensten worden hier één keer nagelopen.
@@ -399,7 +447,11 @@ function gemeenschappelijkeControle(input: {
   const problems = [...input.problems];
   const verwacht = input.locationCode.toUpperCase();
 
-  for (const duty of input.duties) {
+  const dagdelen = dagdeelControle(input.duties);
+  const duties = dagdelen.duties;
+  problems.push(...dagdelen.problems);
+
+  for (const duty of duties) {
     if (duty.depot !== verwacht) {
       problems.push({
         severity: "BLOCKING",
@@ -422,7 +474,7 @@ function gemeenschappelijkeControle(input: {
     }
   }
 
-  for (const code of duplicates(input.duties)) {
+  for (const code of duplicates(duties)) {
     problems.push({
       severity: "BLOCKING",
       line: 0,
@@ -431,12 +483,12 @@ function gemeenschappelijkeControle(input: {
     });
   }
 
-  const totals = totalsOf(input.duties, input.rows);
+  const totals = totalsOf(duties, input.rows);
   const blokkerend = problems.some((probleem) => probleem.severity === "BLOCKING");
   const teBeoordelen = problems.some((probleem) => probleem.severity === "REVIEW");
 
-  if (blokkerend || input.duties.length === 0) {
-    if (input.duties.length === 0 && !blokkerend) {
+  if (blokkerend || duties.length === 0) {
+    if (duties.length === 0 && !blokkerend) {
       problems.push({
         severity: "BLOCKING",
         line: 0,
@@ -446,7 +498,7 @@ function gemeenschappelijkeControle(input: {
     }
     return {
       stage: "REJECTED",
-      duties: input.duties,
+      duties,
       totals,
       problems,
       safeFilename: input.safeFilename,
@@ -456,7 +508,7 @@ function gemeenschappelijkeControle(input: {
 
   return {
     stage: teBeoordelen ? "REVIEW_REQUIRED" : "VALIDATED",
-    duties: input.duties,
+    duties,
     totals,
     problems,
     safeFilename: input.safeFilename,

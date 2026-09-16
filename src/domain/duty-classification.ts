@@ -241,3 +241,179 @@ export function dutyExceptionTable(): ReadonlyMap<
 > {
   return DUTY_EXCEPTIONS;
 }
+
+// ── Dagdeel uit de aanvangstijd, voor diensten zonder dagdeel op nummer ─────
+
+/**
+ * Een dienst zoals hij in een pakket staat, met wat er nodig is om zijn dagdeel
+ * af te leiden.
+ */
+export interface DaypartSubject {
+  readonly code: string;
+  readonly weekday: number;
+  readonly startMinute: number;
+  readonly period: DutyPeriod;
+  readonly workType: DutyWorkType;
+  readonly kinds: readonly string[];
+}
+
+/** Hoe het dagdeel van één dienstinstantie is vastgesteld. */
+export interface DerivedDaypart {
+  readonly code: string;
+  readonly weekday: number;
+  readonly period: DutyPeriod;
+  /** Afstand in minuten tot het venster van het gekozen dagdeel; 0 = erbinnen. */
+  readonly distanceMinutes: number;
+}
+
+export interface DaypartResolution<T> {
+  readonly duties: readonly T[];
+  /** Diensten die hun dagdeel uit de aanvangstijd kregen. */
+  readonly derived: readonly DerivedDaypart[];
+  /** Diensten waarvoor dat niet eenduidig kon; die houden `GEEN`. */
+  readonly unresolved: readonly { readonly code: string; readonly weekday: number; readonly reason: string }[];
+}
+
+const DAGDELEN = [DutyPeriod.VROEG, DutyPeriod.LAAT, DutyPeriod.NACHT] as const;
+const MINUTEN_PER_DAG = 24 * 60;
+
+/**
+ * Geef diensten zonder dagdeel op nummer het dagdeel dat hun aanvangstijd heeft.
+ *
+ * ## Het probleem
+ *
+ * De 600- en 700-series krijgen op nummer geen dagdeel: reserve en rangeer zijn
+ * een werksoort, geen tijdstip. Maar dienst 701 begint om 05:01 en dienst 732
+ * om 18:00. Zonder dagdeel sloot geen enkel profiel ze uit, want
+ * `profileAllowsDuty` kijkt alleen naar vroeg/laat/nacht. Het gevolg stond op
+ * een gegenereerd Laat/Nacht-blad: dienst 701, 05:01–13:00, in een rooster
+ * waarin geen vroege dienst hoort.
+ *
+ * ## Waarom geen vaste klokgrens
+ *
+ * Er is geen aangeleverde regel die zegt waar "vroeg" ophoudt, en een grens die
+ * hier zou staan, zou verzonnen zijn. Het pakket zelf zegt het wel: de
+ * vroegdiensten (1–99) beginnen tussen hun vroegste en laatste aanvangstijd, de
+ * late diensten (100–199) tussen de hunne, de nachtdiensten idem. Een dienst
+ * zonder dagdeel krijgt het dagdeel van het venster waar zijn aanvangstijd in
+ * valt of het dichtst bij ligt — per pakket bepaald, dus een ander pakket met
+ * andere tijden levert andere vensters op.
+ *
+ * Dit is getoetst tegen de officiële Dordrechtse roosters: 701 en 702 staan
+ * daar uitsluitend in Vroeg, Vroeg/Laat, Mix en BLM; 730–732 uitsluitend in
+ * profielen met late diensten. De afleiding hieronder levert precies die
+ * indeling op, en `verify:profielen` bewaakt dat elk officieel rooster onder
+ * deze indeling profielgeldig blijft.
+ *
+ * ## Wat er niet gebeurt
+ *
+ * De CAO-definitie van nachtdienst (meer dan een uur tussen 00:00 en 06:00)
+ * wordt hier niet gebruikt. Dat is een juridische toets op werkelijke tijden;
+ * het dagdeel is de lokale indeling waarop roosterprofielen rusten. Dienst 101
+ * loopt tot 01:24 en is toch een late dienst. Die twee door elkaar halen zou de
+ * late roosters vol "nachtdiensten" zetten.
+ *
+ * ## Overlappende vensters
+ *
+ * De vensters kunnen elkaar overlappen: in Dordrecht begint een enkele
+ * vroegdienst later dan de vroegste late dienst. Valt een aanvangstijd in meer
+ * dan één venster, dan beslist de afstand tot de mediane aanvangstijd van elk
+ * dagdeel — het midden van waar dat dagdeel werkelijk begint, niet een uitschieter
+ * aan de rand. Dienst 731 op vrijdag (11:00) valt zo onder laat, en staat in de
+ * officiële roosters ook uitsluitend in profielen met late diensten.
+ *
+ * Blijft het daarna nog gelijk, dan wordt niet gekozen: de dienst houdt `GEEN`
+ * en wordt gemeld.
+ */
+export function resolveDayparts<T extends DaypartSubject>(duties: readonly T[]): DaypartResolution<T> {
+  const startsPerDagdeel = new Map<DutyPeriod, number[]>();
+  for (const dienst of duties) {
+    if (!(DAGDELEN as readonly DutyPeriod[]).includes(dienst.period)) {
+      continue;
+    }
+    const lijst = startsPerDagdeel.get(dienst.period) ?? [];
+    lijst.push(normaliseerMinuut(dienst.startMinute));
+    startsPerDagdeel.set(dienst.period, lijst);
+  }
+  const vensters = new Map<DutyPeriod, { lo: number; hi: number; median: number }>();
+  for (const [period, starts] of startsPerDagdeel) {
+    const gesorteerd = [...starts].sort((a, b) => a - b);
+    const midden = Math.floor(gesorteerd.length / 2);
+    const median =
+      gesorteerd.length % 2 === 1
+        ? gesorteerd[midden]
+        : (gesorteerd[midden - 1] + gesorteerd[midden]) / 2;
+    vensters.set(period, { lo: gesorteerd[0], hi: gesorteerd[gesorteerd.length - 1], median });
+  }
+
+  const derived: DerivedDaypart[] = [];
+  const unresolved: { code: string; weekday: number; reason: string }[] = [];
+
+  const uitkomst = duties.map((dienst) => {
+    if (dienst.period !== DutyPeriod.GEEN) {
+      return dienst;
+    }
+    if (vensters.size === 0) {
+      unresolved.push({
+        code: dienst.code,
+        weekday: dienst.weekday,
+        reason: "het pakket bevat geen diensten met een dagdeel op nummer om mee te vergelijken",
+      });
+      return dienst;
+    }
+
+    const start = normaliseerMinuut(dienst.startMinute);
+    const afstanden = [...vensters.entries()]
+      .map(([period, venster]) => ({
+        period,
+        afstand: afstandTotVenster(start, venster),
+        totMediaan: klokafstand(start, venster.median),
+      }))
+      .sort((a, b) => a.afstand - b.afstand || a.totMediaan - b.totMediaan);
+
+    if (
+      afstanden.length > 1 &&
+      afstanden[0].afstand === afstanden[1].afstand &&
+      afstanden[0].totMediaan === afstanden[1].totMediaan
+    ) {
+      unresolved.push({
+        code: dienst.code,
+        weekday: dienst.weekday,
+        reason:
+          `de aanvangstijd ligt even ver van ${afstanden[0].period.toLowerCase()} als van ` +
+          `${afstanden[1].period.toLowerCase()}`,
+      });
+      return dienst;
+    }
+
+    const gekozen = afstanden[0];
+    derived.push({
+      code: dienst.code,
+      weekday: dienst.weekday,
+      period: gekozen.period,
+      distanceMinutes: gekozen.afstand,
+    });
+    const classificatie = withKinds(gekozen.period, dienst.workType);
+    return { ...dienst, period: classificatie.period, kinds: classificatie.kinds };
+  });
+
+  return { duties: uitkomst, derived, unresolved };
+}
+
+function normaliseerMinuut(minuut: number): number {
+  return ((minuut % MINUTEN_PER_DAG) + MINUTEN_PER_DAG) % MINUTEN_PER_DAG;
+}
+
+/** Afstand van een tijdstip tot een venster op de klok, rond middernacht heen. */
+function afstandTotVenster(minuut: number, venster: { lo: number; hi: number }): number {
+  if (minuut >= venster.lo && minuut <= venster.hi) {
+    return 0;
+  }
+  return Math.min(klokafstand(minuut, venster.lo), klokafstand(minuut, venster.hi));
+}
+
+/** Afstand tussen twee kloktijden in minuten, de kortste kant om de klok. */
+function klokafstand(a: number, b: number): number {
+  const verschil = Math.abs(a - b);
+  return Math.min(verschil, MINUTEN_PER_DAG - verschil);
+}
