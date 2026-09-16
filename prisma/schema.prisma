@@ -1,0 +1,1575 @@
+// NS Roosterplatform — databaseschema (PostgreSQL)
+//
+// Uitgangspunten die dit schema afdwingt:
+//
+//  1. `employee_id` is de enige sleutel. Namen komen uitsluitend voor in
+//     `EmployeeIdentity` en worden nergens als sleutel of foreign key gebruikt.
+//     De rooster-engine leest alleen `Employee` en kan dus geen persoonsnamen
+//     zien, ook niet per ongeluk.
+//  2. Dataminimalisatie: operationeel wordt van een medewerker niet meer
+//     vastgelegd dan roosterprofiel, standplaats, bevoegdheden en voorkeuren.
+//  3. Elke gevoelige actie is herleidbaar via `AuditLogEntry`.
+//  4. Elke roosterbeslissing verwijst naar de `RuleEvaluation` die haar
+//     onderbouwt, zodat toewijzingen achteraf uitlegbaar zijn.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Rollen, authenticatie en sessies ─────────────────────────────────────────
+
+/// De vier applicatierollen. Een account kan er meerdere hebben; de rechten
+/// zijn de vereniging daarvan. Iedere nieuwe gebruiker begint met alleen
+/// EMPLOYEE.
+enum Role {
+  EMPLOYEE
+  ROSTER_COMMITTEE
+  DUTY_ASSIGNMENT
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  LOCKED
+  SUSPENDED
+  DISABLED
+}
+
+/// Welke authenticatiebron dit account bedient. LOCAL is uitsluitend voor
+/// ontwikkeling en test; OIDC is de plek voor NS SSO/MFA.
+enum AuthProviderKind {
+  LOCAL
+  OIDC
+}
+
+/// Hoe sterk de gebruiker zich heeft geauthenticeerd. Planner-acties eisen MFA
+/// zodra de OIDC-provider actief is; lokaal blijft dit PASSWORD.
+enum AuthLevel {
+  PASSWORD
+  MFA
+}
+
+/// Inlogaccount. Bewust gescheiden van `Employee`: een medewerker bestaat
+/// roostertechnisch ook zonder account, en een account kan worden ingetrokken
+/// zonder het roosterhistorische record aan te tasten.
+model UserAccount {
+  id         String           @id @default(uuid())
+  employeeId String           @unique
+  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  /// Meervoudig: een roosterlijnbeheerder kan ook medewerker zijn. De rechten
+  /// zijn de vereniging van de rollen; zie src/server/security/permissions.ts.
+  roles      Role[]           @default([EMPLOYEE])
+  status     AccountStatus    @default(ACTIVE)
+  provider   AuthProviderKind @default(LOCAL)
+
+  /// Alleen gevuld bij de lokale provider. Wachtwoordhash, nooit een wachtwoord.
+  passwordHash    String?
+  /// Subject-claim van de externe IdP. Gevuld bij OIDC.
+  externalSubject String? @unique
+  mfaEnrolled     Boolean @default(false)
+
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime?
+  lastLoginAt      DateTime?
+  passwordSetAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notifications  Notification[]
+  sessions       Session[]
+  auditEntries   AuditLogEntry[]
+  securityEvents SecurityEvent[]
+
+  // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
+  // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
+  // een populatie van enkele duizenden accounts.
+  @@index([status])
+}
+
+/// Serverzijdige sessie. Het token zelf staat nooit in de database, alleen de
+/// SHA-256 ervan, zodat een databaselek geen bruikbare sessies oplevert.
+model Session {
+  id        String      @id @default(uuid())
+  userId    String
+  user      UserAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String      @unique
+  authLevel AuthLevel   @default(PASSWORD)
+
+  createdAt      DateTime  @default(now())
+  lastSeenAt     DateTime  @default(now())
+  expiresAt      DateTime
+  absoluteExpiry DateTime
+  revokedAt      DateTime?
+  revokedReason  String?
+
+  /// Gepseudonimiseerd: HMAC van IP en user-agent, niet de waarden zelf.
+  clientFingerprint String?
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+}
+
+// ── Medewerker: operationeel record zonder persoonsnamen ─────────────────────
+
+enum RosterProfile {
+  VROEG
+  VROEG_LAAT
+  LAAT
+  LAAT_NACHT
+  MIX
+  /// 50+ Mix en BLM: de bijzondere regels hiervoor zijn niet aangeleverd.
+  MIX_50PLUS
+  BLM
+  /// Het reserverooster. Bevat in de basisgeneratie geen dienstnummers.
+  RESERVE
+}
+
+/// Reservevoorkeur is een wens, geen harde grens. De optimizer weegt haar mee;
+/// zij mag nooit als constraint worden afgedwongen.
+enum ReservePreferenceKind {
+  VROEG
+  LAAT
+  VROEG_LAAT
+  VROEG_LAAT_NACHT
+  GEEN_VOORKEUR
+}
+
+/// De functiegroep bepaalt welke CAO-uitzonderingen van toepassing zijn. Een
+/// uitzondering voor NedTrain geldt niet voor een machinist bij NSR, ook niet
+/// als hij in hetzelfde document staat.
+enum EmployeeGroup {
+  MACHINIST
+  HOOFDCONDUCTEUR
+  RANGEERDER
+  NEDTRAIN
+  TICKETS_SERVICE
+  OVERIG
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  LEFT
+}
+
+/// Operationeel medewerkerrecord. Bevat bewust geen persoonsgegevens: alles wat
+/// de rooster-engine nodig heeft staat hier, alles wat een mens nodig heeft om
+/// iemand aan te spreken staat in `EmployeeIdentity`.
+model Employee {
+  id String @id @default(uuid())
+
+  /// Het functionele `employee_id`: het personeelsnummer. Uniek, stabiel, en de
+  /// enige identificatie die in exports, logs en analyses voorkomt.
+  employeeNumber String @unique
+
+  rosterProfile RosterProfile
+  depot         String
+  status        EmployeeStatus @default(ACTIVE)
+
+  /// Functiegroep en bedrijfsonderdeel: bepalen de reikwijdte van elke regel.
+  employeeGroup EmployeeGroup @default(MACHINIST)
+  company       String        @default("NSR")
+
+  /// Contractomvang in uren per week. Null betekent onbekend, en dan worden
+  /// contractafhankelijke controles niet stil overgeslagen maar geblokkeerd.
+  contractHours Decimal? @db.Decimal(4, 2)
+
+  /// De werknemer heeft uitdrukkelijk afstand gedaan van de bescherming tegen
+  /// te veel vroege starts. Wordt nooit afgeleid uit gedrag; alleen expliciet.
+  earlyStartProtectionWaived Boolean @default(false)
+
+  /// Abstracte beschermingsconstraints uit een geautoriseerde HR-bron. Bevat
+  /// nooit de reden of de diagnose — alleen wat de planning moet weten.
+  /// Vorm: src/server/validation/protections.ts
+  protections Json @default("[]")
+
+  /// Bevoegdheidscodes, bijvoorbeeld ["RANGEER", "WISSELBEDIENING"].
+  qualifications String[] @default([])
+
+  reservePreference ReservePreferenceKind @default(GEEN_VOORKEUR)
+
+  /// Gestructureerde, niet-persoonsgebonden roostervoorkeuren.
+  /// Vorm wordt gevalideerd door src/server/validation/preferences.ts.
+  preferences Json @default("{}")
+
+  hiredOn   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  identity          EmployeeIdentity?
+  account           UserAccount?
+  rosterAssignments RosterAssignment[]
+  scheduledDuties   ScheduledDuty[]
+  waitlistEntries   WaitlistEntry[]
+  feedback          QuarterlyFeedback[]
+  rotationEntries   RotationEntry[]
+  dutyInterests     AvailableDutyInterest[]
+  swapsInitiated    SwapProposal[]          @relation("SwapInitiator")
+  swapsReceived     SwapProposal[]          @relation("SwapCounterparty")
+  swapListings      SwapListing[]           @relation("SwapListingEmployee")
+  caoDayRequests    CaoDayRequest[]
+  releasedDuties    AvailableDuty[]         @relation("AvailableDutyOrigin")
+  awardedDuties     AvailableDuty[]         @relation("AvailableDutyAwardee")
+
+  @@index([depot, rosterProfile, status])
+  memberships    RosterMembership[]
+}
+
+/// Persoonsgegevens, strikt gescheiden. Wordt alleen gelezen door code die
+/// expliciet de permissie `identity:read` heeft; elke uitlezing is auditbaar.
+/// Bevat het minimum: een weergavenaam en een zakelijk e-mailadres.
+model EmployeeIdentity {
+  employeeId  String   @id
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  displayName String
+  email       String   @unique
+  updatedAt   DateTime @updatedAt
+}
+
+// ── Diensten en dienstenpakketten ────────────────────────────────────────────
+
+/// De afgeleide etiketten van een dienst. Blijft bestaan omdat de regels ermee
+/// werken; het is de afvlakking van "period" en "workType" en wordt uit die
+/// twee berekend, nooit los ingevuld.
+enum DutyKind {
+  VROEG
+  LAAT
+  NACHT
+  RESERVE
+  RANGEER
+}
+
+/// Het dagdeel van een dienst. GEEN wanneer het nummerbereik geen dagdeel
+/// aanwijst, zoals bij de zuivere reserve- en rangeerseries.
+enum DutyPeriod {
+  VROEG
+  LAAT
+  NACHT
+  GEEN
+}
+
+/// Het soort werk. Los van het dagdeel, want 760 en 761 zijn allebei: een
+/// nachtdienst én rangeerwerk.
+enum DutyWorkType {
+  RIJDEND
+  RANGEER
+  RESERVE
+}
+
+/// De importpijplijn van een dienstenpakket.
+///
+/// Een upload wordt niet meteen actief. Elke stap is een eigen status, zodat
+/// zichtbaar is waar een pakket blijft steken en niemand per ongeluk een
+/// ongecontroleerde lijst diensten in productie zet.
+enum DutyPackageStatus {
+  UPLOADED
+  PARSED
+  NORMALIZED
+  VALIDATED
+  REVIEW_REQUIRED
+  CONFIRMED
+  ACTIVE
+  SUPERSEDED
+  ARCHIVED
+  REJECTED
+  DRAFT
+}
+
+/// Een geimporteerd dienstenpakket. Import is versiegewijs en onveranderlijk:
+/// een pakket wordt nooit ter plekke bijgewerkt maar vervangen door een nieuwe
+/// versie, zodat een gepubliceerd rooster altijd naar exacte diensten verwijst.
+/// Een geïmporteerd dienstenpakket: de dienstenbak van één dienstregeling.
+model DutyPackage {
+  id         String            @id @default(uuid())
+  name       String
+  version    Int
+  status     DutyPackageStatus @default(UPLOADED)
+  depot      String
+  validFrom  DateTime
+  validUntil DateTime?
+
+  /// De standplaats waar dit pakket bij hoort. Nullable voor pakketten van
+  /// vóór de landelijke standplaatsstructuur; nieuwe imports zetten hem altijd.
+  locationId String?
+  location   StationLocation? @relation(fields: [locationId], references: [id])
+
+  /// De dienstregeling, bijvoorbeeld "DR2027".
+  timetableId String @default("HUIDIG")
+  /// De sprekende versieaanduiding, bijvoorbeeld "DDR-DR2027-V2".
+  label       String? @unique
+
+  /// De tellingen uit de importcontrole, zoals aan de planner getoond.
+  totals   Json @default("{}")
+  /// Wat er bij het inlezen mis was. Leeg is ook een uitkomst.
+  problems Json @default("[]")
+  /// Het verschil met de vorige versie van hetzelfde pakket.
+  diffFromPrevious Json?
+
+  /// SHA-256 van het aangeleverde bronbestand: bewijs dat het geimporteerde
+  /// pakket ongewijzigd is.
+  sourceChecksum   String
+  sourceFilename   String
+  importedByUserId String?
+  importedAt       DateTime @default(now())
+
+  duties Duty[]
+
+  @@unique([name, version])
+  @@index([status, depot])
+  @@index([locationId, timetableId, version])
+}
+
+/// Een dienst uit een pakket.
+///
+/// De dienstsoort (`kinds`) wordt afgeleid uit het dienstnummer en bij import
+/// vastgelegd; zie src/domain/duty-classification.ts. Bewust een lijst: 760 en
+/// 761 zijn zowel NACHT als RANGEER.
+model Duty {
+  id        String      @id @default(uuid())
+  packageId String
+  package   DutyPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  /// Dienstnummer zoals het in het pakket staat, bijvoorbeeld "043" of "760".
+  code        String
+  /// Numerieke waarde van het dienstnummer, gebruikt voor de classificatie.
+  numericCode Int
+
+  /// Het dagdeel en het soort werk, apart opgeslagen. Dat 760 nacht én rangeer
+  /// is, is met één veld niet uit te drukken zonder informatie te verliezen.
+  period   DutyPeriod
+  workType DutyWorkType
+
+  /// Afgeleid uit period en workType, zie src/domain/duty-classification.ts.
+  /// Staat in de database omdat de regels en de queries erop filteren.
+  kinds DutyKind[]
+
+  /// Minuten na middernacht van de dienstdag. `endMinute` mag groter zijn dan
+  /// 1440 wanneer de dienst over middernacht loopt: dat is de nachtdienst.
+  startMinute Int
+  endMinute   Int
+
+  depot String
+
+  /// Geplande pauze of werkonderbreking in minuten. Null betekent onbekend:
+  /// voor rijdend personeel is de duur standplaatsafhankelijk en die waarde is
+  /// niet aangeleverd. De engine rekent dan met een boven- en ondergrens.
+  breakMinutes Int?
+
+  /// Gepland overwerk in minuten. Arbeidstijd exclusief en inclusief overwerk
+  /// kennen verschillende grenzen; ze worden daarom apart bijgehouden.
+  overtimeMinutes Int @default(0)
+
+  /// Bevoegdheden die een medewerker moet hebben om deze dienst te rijden.
+  requiredQualifications String[] @default([])
+
+  /// Dienstzwaarte, 1 (licht) tot en met 5 (zwaar). Soft input voor de verdeling.
+  weight Int @default(3)
+
+  description String?
+
+  /// De regel in het aangeleverde bestand waar deze dienst vandaan komt.
+  /// Samen met de checksum van het pakket is daarmee te herleiden waar dienst
+  /// 101 vandaan kwam en wat er letterlijk stond.
+  sourceRow    Int?
+  /// De oorspronkelijke celwaarden, vóór normalisatie.
+  sourceValues Json?
+
+  /// De weekdag waarop deze dienst rijdt, 1 = maandag tot en met 7 = zondag.
+  ///
+  /// Een dienstnummer is géén dienst. In de aangeleverde Dordrechtse bron heeft
+  /// 39 van de 46 dienstnummers per weekdag andere tijden: dienst 101 begint op
+  /// maandag om 18:08 en op donderdag om 16:27. Wie het nummer als sleutel
+  /// gebruikt, houdt van de 223 diensten er 46 over en verliest de rest zonder
+  /// foutmelding. De identiteit is daarom standplaats + dienstregeling +
+  /// weekdag + nummer, en dat staat hieronder ook zo in de sleutel.
+  weekday Int
+
+  scheduledDuties        ScheduledDuty[]
+  availableDuties        AvailableDuty[]
+  operationalAssignments OperationalAssignment[]
+
+  @@unique([packageId, code, weekday])
+  @@index([depot, numericCode])
+  @@index([depot, weekday])
+}
+
+// ── Basisroosters, roosterlijnen en toewijzingen ─────────────────────────────
+
+/// Wat een dag in een roosterlijn is.
+///
+/// Let op: `RES` is een positie in het rooster (reservedienst hebben) en is iets
+/// anders dan een dienst uit de 600-serie. Een RES-positie wordt later ingevuld
+/// met een concrete dienst; een 600-dienst is zelf een dienst.
+enum RosterPositionType {
+  DUTY
+  RES
+  /// WR en CO komen als roosterpositie voor in de bestaande NS-roosters. Hun
+  /// precieze betekenis en de regels die eraan hangen zijn nog niet
+  /// aangeleverd; zij worden hier als code gedragen en niet als aanname
+  /// ingevuld. Zie README, "Nog aan te leveren".
+  WR
+  CO
+  RUST
+  VERLOF
+  OPLEIDING
+}
+
+enum BaseRosterStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+/// Een vast roosterprofiel met een cyclus van N weken en M lijnen.
+model BaseRoster {
+  id         String           @id @default(uuid())
+  code       String           @unique
+  name       String
+  profile    RosterProfile
+  depot      String
+  cycleWeeks Int
+  status     BaseRosterStatus @default(DRAFT)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  lines           RosterLine[]
+  versions        RosterVersion[]
+  waitlistEntries WaitlistEntry[]
+
+  @@index([profile, status])
+  memberships     RosterMembership[]
+}
+
+/// Een lijn (roosterpositie) binnen een basisrooster. Een medewerker bezet een
+/// lijn; de lijn bepaalt welke diensten hij cyclisch rijdt.
+model RosterLine {
+  id           String     @id @default(uuid())
+  baseRosterId String
+  baseRoster   BaseRoster @relation(fields: [baseRosterId], references: [id], onDelete: Cascade)
+  lineNumber   Int
+
+  days        RosterLineDay[]
+  assignments RosterAssignment[]
+
+  @@unique([baseRosterId, lineNumber])
+}
+
+/// Een dag in de cyclus van een roosterlijn.
+model RosterLineDay {
+  id           String             @id @default(uuid())
+  rosterLineId String
+  rosterLine   RosterLine         @relation(fields: [rosterLineId], references: [id], onDelete: Cascade)
+  weekIndex    Int
+  /// 1 = maandag tot en met 7 = zondag (ISO-8601).
+  weekday      Int
+  positionType RosterPositionType
+  /// Dienstnummer wanneer positionType = DUTY. Bewust de code en geen foreign
+  /// key: de lijn overleeft een nieuwe pakketversie.
+  dutyCode     String?
+
+  @@unique([rosterLineId, weekIndex, weekday])
+}
+
+/// Welke medewerker welke lijn bezet, in de tijd.
+model RosterAssignment {
+  id           String     @id @default(uuid())
+  employeeId   String
+  employee     Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  rosterLineId String
+  rosterLine   RosterLine @relation(fields: [rosterLineId], references: [id], onDelete: Cascade)
+  validFrom    DateTime
+  validUntil   DateTime?
+  createdAt    DateTime   @default(now())
+
+  @@index([employeeId, validFrom])
+  @@index([rosterLineId, validFrom])
+}
+
+// ── Het concrete rooster per datum ───────────────────────────────────────────
+
+enum ScheduleSource {
+  BASE
+  RESERVE_FILL
+  AVAILABLE_DUTY
+  SWAP
+  PLANNER_MANUAL
+}
+
+/// Wat een medewerker op een concrete datum doet. Precies een rij per
+/// medewerker per dag: de databaseconstraint die dubbele toewijzing uitsluit.
+model ScheduledDuty {
+  /// De operationele invulling bovenop dit slot, indien aanwezig.
+  operationalAssignment OperationalAssignment?
+
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  /// Kalenderdatum van de dienstdag.
+  date         DateTime           @db.Date
+  positionType RosterPositionType
+  dutyId       String?
+  duty         Duty?              @relation(fields: [dutyId], references: [id], onDelete: Restrict)
+  source       ScheduleSource     @default(BASE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  swapsAsInitiatorDuty   SwapProposal[] @relation("SwapInitiatorDuty")
+  swapsAsCounterpartDuty SwapProposal[] @relation("SwapCounterpartyDuty")
+  swapListings           SwapListing[]  @relation("SwapListingDuty")
+
+  @@unique([employeeId, date])
+  @@index([date, positionType])
+}
+
+// ── Gegenereerde roosterversies, controles en vergelijking ───────────────────
+
+enum RosterVersionStatus {
+  DRAFT
+  GENERATED
+  UNDER_REVIEW
+  PUBLISHED
+  ARCHIVED
+  FAILED
+}
+
+/// Een gegenereerd (of handmatig opgesteld) alternatief voor een basisrooster.
+/// Twee versies naast elkaar leggen is de vergelijking bestaand versus nieuw.
+model RosterVersion {
+  id           String              @id @default(uuid())
+  baseRosterId String
+  baseRoster   BaseRoster          @relation(fields: [baseRosterId], references: [id], onDelete: Cascade)
+  label        String
+  status       RosterVersionStatus @default(DRAFT)
+
+  generatedAt       DateTime @default(now())
+  generatedByUserId String?
+
+  /// Parameters waarmee gegenereerd is: zonder deze is een run niet reproduceerbaar.
+  parameters Json @default("{}")
+  /// Uitkomstmaten (verdeling vroeg/laat/nacht, weekendbelasting, ...).
+  metrics    Json @default("{}")
+
+  /// Welke engine deze versie heeft opgeleverd.
+  engineName    String?
+  engineVersion String?
+
+  days     RosterVersionDay[]
+  warnings RosterWarning[]
+
+  @@unique([baseRosterId, label])
+  @@index([status])
+}
+
+model RosterVersionDay {
+  id           String             @id @default(uuid())
+  versionId    String
+  version      RosterVersion      @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  lineNumber   Int
+  weekIndex    Int
+  weekday      Int
+  positionType RosterPositionType
+  dutyCode     String?
+
+  @@unique([versionId, lineNumber, weekIndex, weekday])
+}
+
+enum WarningSeverity {
+  INFO
+  WARNING
+  VIOLATION
+}
+
+/// Een controle-uitkomst op een roosterversie. Komt altijd van een regel uit de
+/// rules engine (`ruleId`), nooit uit losse code in een component.
+model RosterWarning {
+  id         String          @id @default(uuid())
+  versionId  String
+  version    RosterVersion   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  ruleId     String
+  severity   WarningSeverity
+  lineNumber Int?
+  weekIndex  Int?
+  weekday    Int?
+  message    String
+  details    Json            @default("{}")
+  createdAt  DateTime        @default(now())
+
+  @@index([versionId, severity])
+}
+
+// ── Beschikbare diensten, reserve-invulling en roulatie ──────────────────────
+
+/// De toestanden van een vrijgekomen dienst.
+///
+/// De overgangen staan in src/domain/available-duty-state.ts; die tabel is de
+/// enige plek waar staat wat vanuit welke toestand mag. Wat de opdracht
+/// INTEREST_PERIOD noemt, heet hier OPEN: het is dezelfde toestand, en er twee
+/// namen voor hebben zou een verschil suggereren dat er niet is.
+enum AvailableDutyStatus {
+  /// Vrijgekomen, wordt eerst via het reserve-rooster geprobeerd.
+  RESERVE_PENDING
+  /// Reserve bood geen oplossing: de inschrijving loopt tot closesAt.
+  OPEN
+  /// Het venster is dicht; niemand kan zich nog inschrijven en de
+  /// dienstindeling moet nog toewijzen. Zonder deze toestand blijft een dienst
+  /// na sluitingstijd eeuwig OPEN heten.
+  ALLOCATION_PENDING
+  ALLOCATED
+  /// Het venster is voorbij en er is niemand toegewezen.
+  CLOSED
+  /// Ingetrokken voordat er is toegewezen.
+  CANCELLED
+}
+
+/// Een dienst die is vrijgekomen en mogelijk door een andere medewerker kan
+/// worden opgepakt.
+model AvailableDuty {
+  id     String   @id @default(uuid())
+  dutyId String
+  duty   Duty     @relation(fields: [dutyId], references: [id], onDelete: Restrict)
+  date   DateTime @db.Date
+
+  status AvailableDutyStatus @default(RESERVE_PENDING)
+
+  /// Van wie de dienst oorspronkelijk was. Optioneel: een dienst kan ook
+  /// onbezet uit het pakket komen.
+  originEmployeeId String?
+  originEmployee   Employee? @relation("AvailableDutyOrigin", fields: [originEmployeeId], references: [id], onDelete: SetNull)
+
+  /// Waarom deze dienst vrijkwam, in operationele termen. Nooit een
+  /// gezondheidsreden of een privéreden: de dienstindeling hoeft te weten dat
+  /// er iemand uitvalt, niet waarom.
+  openReason String?
+
+  releasedAt DateTime @default(now())
+
+  /// Uiterste moment waarop nog gekozen kan worden. Regel: kiezen kan tot
+  /// maximaal twee weken vooruit, dus de openstelling sluit daarvoor.
+  closesAt DateTime
+  openedAt DateTime?
+
+  awardedEmployeeId String?
+  awardedEmployee   Employee? @relation("AvailableDutyAwardee", fields: [awardedEmployeeId], references: [id], onDelete: SetNull)
+  awardedAt         DateTime?
+
+  /// Momentopname van de roulatievolgorde op het moment van toewijzen. De
+  /// controleerbaarheid van de procedure hangt hieraan.
+  awardRanking Json?
+
+  interests       AvailableDutyInterest[]
+  reserveAttempts ReserveFillAttempt[]
+
+  @@unique([dutyId, date])
+  @@index([status, date])
+}
+
+/// Belangstelling van een medewerker voor een beschikbare dienst. De
+/// geschiktheidscontrole is al gedraaid voordat deze rij mag ontstaan.
+model AvailableDutyInterest {
+  id              String        @id @default(uuid())
+  availableDutyId String
+  availableDuty   AvailableDuty @relation(fields: [availableDutyId], references: [id], onDelete: Cascade)
+  employeeId      String
+  employee        Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  withdrawnAt     DateTime?
+
+  ruleEvaluationId String?
+  ruleEvaluation   RuleEvaluation? @relation(fields: [ruleEvaluationId], references: [id], onDelete: SetNull)
+
+  @@unique([availableDutyId, employeeId])
+}
+
+enum ReserveFillOutcome {
+  FILLED
+  NO_CANDIDATE
+  BLOCKED_BY_RULES
+  SKIPPED
+}
+
+/// Poging om een vrijgekomen dienst eerst via het reserve-rooster op te vangen.
+/// Vastgelegd omdat de volgorde "eerst reserve, dan pas open" aantoonbaar moet zijn.
+model ReserveFillAttempt {
+  id              String        @id @default(uuid())
+  availableDutyId String
+  availableDuty   AvailableDuty @relation(fields: [availableDutyId], references: [id], onDelete: Cascade)
+
+  attemptedAt          DateTime           @default(now())
+  outcome              ReserveFillOutcome
+  candidatesConsidered Int                @default(0)
+  filledEmployeeId     String?
+  details              Json               @default("{}")
+
+  ruleEvaluationId String?
+  ruleEvaluation   RuleEvaluation? @relation(fields: [ruleEvaluationId], references: [id], onDelete: SetNull)
+}
+
+/// Per weekdag een aparte roulatielijst. De effectieve positie is
+/// ((baseIndex + offset) mod aantal) + 1: deterministisch, navolgbaar en
+/// controleerbaar, en hij schuift elke week een plaats op.
+model RotationList {
+  id String @id @default(uuid())
+
+  /// 1 = maandag tot en met 7 = zondag.
+  weekday Int
+  depot   String
+
+  /// Wekelijkse verschuiving. Wordt opgehoogd door de roulatietaak.
+  offset Int @default(0)
+
+  /// ISO-week waarvoor de huidige offset geldt, zodat een week nooit twee keer
+  /// geroteerd wordt.
+  offsetWeek String?
+  updatedAt  DateTime @updatedAt
+
+  entries   RotationEntry[]
+  rotations RotationLog[]
+
+  @@unique([weekday, depot])
+}
+
+model RotationEntry {
+  id         String       @id @default(uuid())
+  listId     String
+  list       RotationList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  employeeId String
+  employee   Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  /// Vaste basisvolgorde. De rotatie verandert deze waarde nooit.
+  baseIndex Int
+
+  @@unique([listId, employeeId])
+  @@unique([listId, baseIndex])
+}
+
+/// Elke rotatiestap, zodat achteraf te reconstrueren is welke volgorde in welke
+/// week gold.
+model RotationLog {
+  id         String       @id @default(uuid())
+  listId     String
+  list       RotationList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  fromOffset Int
+  toOffset   Int
+  isoWeek    String
+  rotatedAt  DateTime     @default(now())
+}
+
+// ── Dienstenruil ─────────────────────────────────────────────────────────────
+
+enum SwapStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+  EXPIRED
+  /// De ruil was geldig bij versturen, maar niet meer bij accepteren.
+  INVALIDATED
+}
+
+/// Een concreet ruilvoorstel: mijn dienst op dag X tegen jouw dienst op dag Y.
+/// Mag alleen ontstaan nadat de rules engine de ruil voor beide medewerkers
+/// geldig heeft verklaard; bij accepteren wordt opnieuw geevalueerd.
+model SwapProposal {
+  id String @id @default(uuid())
+
+  initiatorEmployeeId String
+  initiatorEmployee   Employee      @relation("SwapInitiator", fields: [initiatorEmployeeId], references: [id], onDelete: Cascade)
+  initiatorDutyId     String
+  initiatorDuty       ScheduledDuty @relation("SwapInitiatorDuty", fields: [initiatorDutyId], references: [id], onDelete: Cascade)
+
+  counterpartyEmployeeId String
+  counterpartyEmployee   Employee      @relation("SwapCounterparty", fields: [counterpartyEmployeeId], references: [id], onDelete: Cascade)
+  counterpartyDutyId     String
+  counterpartyDuty       ScheduledDuty @relation("SwapCounterpartyDuty", fields: [counterpartyDutyId], references: [id], onDelete: Cascade)
+
+  status  SwapStatus @default(PENDING)
+  message String?
+
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  respondedAt DateTime?
+
+  /// De evaluatie bij versturen en die bij accepteren: beide bewaard.
+  proposalEvaluationId String?
+  proposalEvaluation   RuleEvaluation? @relation("SwapProposalEvaluation", fields: [proposalEvaluationId], references: [id], onDelete: SetNull)
+  acceptEvaluationId   String?
+  acceptEvaluation     RuleEvaluation? @relation("SwapAcceptEvaluation", fields: [acceptEvaluationId], references: [id], onDelete: SetNull)
+
+  /// Gezet wanneer dit voorstel ontstond doordat iemand op een ruilmarkt-
+  /// aanbieding klikte, in plaats van rechtstreeks een collega te kiezen. Voor
+  /// een rechtstreekse ruil blijft dit leeg — het onderliggende voorstel en de
+  /// afhandeling zijn in beide gevallen identiek.
+  listingId String?
+  listing   SwapListing? @relation("SwapListingProposals", fields: [listingId], references: [id], onDelete: SetNull)
+  /// De keerzijde van `SwapListing.matchedProposalId`: welke aanbieding dit
+  /// voorstel — als het geaccepteerd is — heeft afgesloten.
+  matchedForListing SwapListing? @relation("SwapListingMatch")
+
+  @@index([counterpartyEmployeeId, status])
+  @@index([initiatorEmployeeId, status])
+  @@index([listingId])
+}
+
+enum SwapListingStatus {
+  /// Zichtbaar in de ruilmarkt; iedereen die technisch geschikt is kan een
+  /// voorstel indienen. Meerdere voorstellen tegelijk mogen bestaan.
+  OPEN
+  /// Eén voorstel voor deze aanbieding is geaccepteerd; de ruil is uitgevoerd.
+  MATCHED
+  /// Ingetrokken door de aanbieder vóórdat er iets was geaccepteerd.
+  WITHDRAWN
+  /// De uiterste datum is voorbij zonder dat er iets is geaccepteerd.
+  EXPIRED
+}
+
+/// Een voorkeur van de aanbieder, geen harde eis: de rules engine beslist wat
+/// mag, dit stuurt alleen de sortering van wat getoond wordt.
+enum SwapListingPreference {
+  NONE
+  EARLIER
+  LATER
+}
+
+/// Een dienst die een medewerker beschikbaar heeft gesteld voor ruil, zonder
+/// dat er al een collega voor gekozen is.
+///
+/// ## Waarom dit geen kopie is van `SwapProposal`
+///
+/// Een `SwapProposal` heeft altijd twee met naam genoemde partijen; die vorm
+/// past niet op "ik sta open voor ruil, wie dan ook". Deze rij is dus niets
+/// meer dan een zichtbare advertentie — er verandert geen roosterdag zolang
+/// hij op OPEN staat. Zodra iemand een eigen dienst kiest om aan te bieden,
+/// ontstaat een gewoon `SwapProposal` (met deze rij als `listingId`) dat door
+/// exact dezelfde toetsing en dezelfde acceptatiestroom gaat als een
+/// rechtstreekse ruil. Er is dus geen tweede uitvoeringspad: de ruilmarkt
+/// levert alleen de tegenpartij, niet de beoordeling.
+model SwapListing {
+  id String @id @default(uuid())
+
+  employeeId String
+  employee   Employee @relation("SwapListingEmployee", fields: [employeeId], references: [id], onDelete: Cascade)
+
+  scheduledDutyId String
+  scheduledDuty   ScheduledDuty @relation("SwapListingDuty", fields: [scheduledDutyId], references: [id], onDelete: Cascade)
+
+  /// Kopie van de dienstdatum, zodat de ruilmarkt kan filteren en sorteren
+  /// zonder de gekoppelde dienst telkens te hoeven meelezen.
+  date       DateTime              @db.Date
+  preference SwapListingPreference @default(NONE)
+  status     SwapListingStatus     @default(OPEN)
+
+  createdAt   DateTime  @default(now())
+  /// Een aanbieding die niemand oppikt, staat niet voor altijd open: de
+  /// dienst zelf ligt in de nabije toekomst en verliest daarna zijn zin.
+  expiresAt   DateTime
+  withdrawnAt DateTime?
+
+  /// Het voorstel dat deze aanbieding heeft afgesloten. Uniek: een aanbieding
+  /// kan maar één keer daadwerkelijk geruild worden.
+  matchedProposalId String?       @unique
+  matchedProposal   SwapProposal? @relation("SwapListingMatch", fields: [matchedProposalId], references: [id], onDelete: SetNull)
+
+  /// Optimistische vergrendeling: zie `intrekken` en de acceptatiestroom voor
+  /// waarom twee gelijktijdige acceptaties niet allebei mogen slagen.
+  version Int @default(1)
+
+  proposals SwapProposal[] @relation("SwapListingProposals")
+
+  @@index([status, date])
+  @@index([employeeId, status])
+}
+
+// ── Wachtlijsten ─────────────────────────────────────────────────────────────
+
+enum WaitlistStatus {
+  ACTIVE
+  FULFILLED
+  WITHDRAWN
+}
+
+/// Inschrijving voor een ander basisrooster. De positie volgt uitsluitend uit
+/// `enrolledAt`. Er is geen andere ordening, en dat is expres.
+model WaitlistEntry {
+  id           String         @id @default(uuid())
+  employeeId   String
+  employee     Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  baseRosterId String
+  baseRoster   BaseRoster     @relation(fields: [baseRosterId], references: [id], onDelete: Cascade)
+  status       WaitlistStatus @default(ACTIVE)
+  enrolledAt   DateTime       @default(now())
+  resolvedAt   DateTime?
+
+  @@unique([employeeId, baseRosterId])
+  @@index([baseRosterId, status, enrolledAt])
+}
+
+// ── Kwartaalfeedback ─────────────────────────────────────────────────────────
+
+/// Gestructureerde antwoorden. Bewust geen vrij tekstveld: vrije tekst bevat
+/// vrijwel altijd herleidbare details en is niet te aggregeren.
+enum FeedbackCategory {
+  TEVREDEN
+  TE_VEEL_VROEG
+  TE_VEEL_LAAT
+  TE_VEEL_NACHT
+  TE_VEEL_RANGEER
+  ONVOLDOENDE_AFWISSELING
+  BETERE_WEEKENDVERDELING
+}
+
+/// Feedback van een medewerker over uitsluitend zijn eigen rooster, maximaal
+/// een keer per kwartaal. De unieke sleutel dwingt dat af in de database.
+model QuarterlyFeedback {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  /// Kwartaalsleutel, bijvoorbeeld "2026-Q3".
+  quarterKey String
+
+  /// Over welk basisrooster de feedback gaat: nodig om te kunnen aggregeren
+  /// per roosterprofiel.
+  baseRosterCode String
+  rosterProfile  RosterProfile
+
+  categories FeedbackCategory[]
+
+  /// 1 (zeer ontevreden) tot en met 5 (zeer tevreden).
+  satisfaction Int
+
+  submittedAt DateTime @default(now())
+
+  @@unique([employeeId, quarterKey])
+  @@index([quarterKey, rosterProfile])
+}
+
+// ── Rules engine: vastgelegde evaluaties ─────────────────────────────────────
+
+enum RuleDecision {
+  ALLOW
+  WARN
+  BLOCK
+}
+
+/// Elke beslissing van de rules engine wordt vastgelegd, met een digest van de
+/// invoer. Zo is achteraf uit te leggen waarom iets wel of niet mocht, ook als
+/// de engine later door de centrale dienst wordt vervangen.
+model RuleEvaluation {
+  id            String @id @default(uuid())
+  engineName    String
+  engineVersion String
+
+  /// Welk soort vraag: SWAP_PROPOSAL, DUTY_ELIGIBILITY, RESERVE_FILL, ...
+  requestType String
+  decision    RuleDecision
+
+  /// Bevindingen per regel-id.
+  findings Json @default("[]")
+
+  /// Uitlegbare samenvatting in gewone taal: waarom mocht dit wel of niet.
+  /// Wordt getoond aan medewerkers en planners en blijft bewaard, zodat een
+  /// besluit ook maanden later nog te verantwoorden is.
+  summary String?
+
+  /// SHA-256 van de genormaliseerde invoer: maakt de evaluatie reproduceerbaar.
+  inputDigest String
+  createdAt   DateTime @default(now())
+
+  swapProposals       SwapProposal[]          @relation("SwapProposalEvaluation")
+  swapAccepts         SwapProposal[]          @relation("SwapAcceptEvaluation")
+  dutyInterests       AvailableDutyInterest[]
+  reserveFillAttempts ReserveFillAttempt[]
+
+  @@index([requestType, createdAt])
+}
+
+// ── Auditlog en beveiligingsgebeurtenissen ───────────────────────────────────
+
+enum AuditResult {
+  SUCCESS
+  DENIED
+  FAILED
+}
+
+/// Onveranderlijk auditspoor van elke gevoelige actie.
+///
+/// `actorEmployeeNumber` is een momentopname: het account kan later verdwijnen,
+/// het auditspoor moet blijven kloppen. Namen komen hier nooit in.
+model AuditLogEntry {
+  id String @id @default(uuid())
+
+  actorUserId String?
+  actorUser   UserAccount? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  /// Momentopname van het personeelsnummer van de handelende gebruiker.
+  actorEmployeeNumber String?
+  actorRoles          Role[]
+
+  action     String
+  objectType String
+  objectId   String?
+
+  occurredAt DateTime    @default(now())
+  result     AuditResult @default(SUCCESS)
+
+  /// Oude en nieuwe waarde, alleen wanneer relevant. Beide gaan voor opslag
+  /// door de redactielaag (src/server/audit/redact.ts).
+  oldValue Json?
+  newValue Json?
+
+  /// Verbindt meerdere logregels van dezelfde verrichting.
+  correlationId String?
+
+  /// Gepseudonimiseerde herkomst (HMAC van IP en user-agent).
+  clientFingerprint String?
+  reason            String?
+
+  @@index([occurredAt])
+  @@index([objectType, objectId])
+  @@index([actorUserId, occurredAt])
+  @@index([correlationId])
+}
+
+enum SecurityEventKind {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGIN_BLOCKED
+  ACCOUNT_LOCKED
+  LOGOUT
+  SESSION_EXPIRED
+  AUTHORIZATION_DENIED
+  RATE_LIMITED
+  CSRF_REJECTED
+  /// Rollen toegekend of ingetrokken. Staat naast het functionele auditlog,
+  /// zodat het toezicht rechtenwijzigingen ziet zonder dat log te doorzoeken.
+  ROLE_CHANGED
+  /// Account geblokkeerd, vrijgegeven of ingetrokken door een beheerder.
+  ACCOUNT_STATUS_CHANGED
+}
+
+/// Beveiligingsgebeurtenissen staan los van het functionele auditlog: ze hebben
+/// een andere bewaartermijn en een ander publiek (security, niet de planner).
+model SecurityEvent {
+  id     String            @id @default(uuid())
+  kind   SecurityEventKind
+  userId String?
+  user   UserAccount?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  /// Wat er geprobeerd is, zonder de invoer zelf. Nooit wachtwoorden.
+  subject String?
+  detail  Json    @default("{}")
+
+  clientFingerprint String?
+  occurredAt        DateTime @default(now())
+
+  @@index([kind, occurredAt])
+  @@index([userId, occurredAt])
+}
+
+enum CandidateValidationState {
+  NOT_VALIDATED
+  TECHNICALLY_VALIDATED
+  /// Geen bevestigde overtreding; wel regels waarvan bron of parameter ontbreekt.
+  TECHNICALLY_VALID_UNVERIFIED_RULES
+  /// Geen bevestigde overtreding; wel regels die meer historie vragen dan er is.
+  TECHNICALLY_VALID_INCOMPLETE_CONTEXT
+  /// Een bewezen overtreding van een geldige, toepasbare harde regel.
+  CONFIRMED_HARD_VIOLATION
+  /// De kandidaat zelf is onbeoordeelbaar: dubbele of ongetoetste toewijzingen.
+  INVALID_STRUCTURE
+  /// Historisch. Wordt niet meer geschreven; bestaande rijen behouden hem.
+  REJECTED
+  STALE_SCHEDULE
+  STALE_RULESET
+  STALE_INPUT
+  TAMPERED
+}
+
+/// Een gegenereerd roostervoorstel.
+///
+/// De optimizer schrijft uitsluitend naar deze tabel en nergens anders heen.
+/// Dat is geen afspraak maar een eigenschap van de code: de optimizer is een
+/// zuivere functie zonder databaseverbinding, en alleen de servicelaag legt zijn
+/// uitkomst hier vast. Zelfs een fout in de optimizer kan daardoor geen
+/// bestaande roosterdag raken.
+model CandidateRoster {
+  id                    String                   @id
+  /// De standplaats waarvoor deze kandidaat is gemaakt. Null bij kandidaten van
+  /// vóór de landelijke standplaatsstructuur.
+  locationCode  String?
+  scenarioLabel         String
+  optimizerName         String
+  optimizerVersion      String
+  mode                  String
+  legalStatus           String
+  sourceScheduleVersion String
+  rulesetVersion        String
+  inputDataVersion      String
+  /// Vingerafdruk over inhoud en herkomst. Wijkt hij af, dan is de kandidaat na
+  /// generatie gewijzigd en wordt hij niet meer beoordeeld.
+  hash                  String
+  generatedAt           DateTime
+  generatedByUserId     String?
+  assignments           Json
+  scoreBreakdown        Json
+
+  /// Alles wat nodig is om deze run opnieuw te draaien: solverstatus,
+  /// zaadwaarde, gewichten, rekentijd, modelgrootte en de dienstboekhouding.
+  solverRun Json?
+
+  validationState   CandidateValidationState @default(NOT_VALIDATED)
+  validationSummary Json?
+  validatedAt       DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([validationState])
+  @@index([generatedAt])
+}
+
+// ── Landelijke standplaatsstructuur ──────────────────────────────────────────
+
+/// Een regio waarin standplaatsen zijn ondergebracht.
+///
+/// Alleen ingevuld waar een aangeleverde bron dat vaststelt. Voor de meeste
+/// standplaatsen is de regio-indeling niet aangeleverd; die staan in een
+/// uitdrukkelijk "niet vastgesteld"-regio in plaats van in een geraden regio.
+model Region {
+  id        String            @id @default(uuid())
+  code      String            @unique
+  name      String
+  /// Waarom deze indeling zo is, of dat zij nog niet vaststaat.
+  note      String?
+  locations StationLocation[]
+}
+
+/// Hoe ver een standplaats functioneel is ingericht.
+enum LocationOptimizerMode {
+  DISABLED
+  SIMULATION
+  PRODUCTION
+}
+
+/// Een standplaats.
+///
+/// Alle Nederlandse standplaatsen staan hier geregistreerd. Registratie is iets
+/// anders dan inrichting: een standplaats zonder dienstenpakket, roosters en
+/// lokale regels is bekend maar niet planbaar, en dat moet zichtbaar zijn in
+/// plaats van te eindigen in een lege pagina of — erger — in de gegevens van
+/// een andere standplaats.
+model StationLocation {
+  id       String @id @default(uuid())
+  code     String @unique
+  name     String
+  regionId String
+  region   Region @relation(fields: [regionId], references: [id])
+
+  /// Bestaat deze standplaats als organisatie-eenheid?
+  active Boolean @default(true)
+  /// Mag hier daadwerkelijk gepland worden? Alleen na een readiness check.
+  planningEnabled Boolean @default(false)
+
+  rulesConfigured             Boolean               @default(false)
+  rostersConfigured           Boolean               @default(false)
+  dutiesConfigured            Boolean               @default(false)
+  rosterProfilesConfigured    Boolean               @default(false)
+  qualificationsConfigured    Boolean               @default(false)
+  exportTemplateConfigured    Boolean               @default(false)
+  optimizerMode               LocationOptimizerMode @default(DISABLED)
+
+  /// Het mailadres van de dienstindeling van déze standplaats.
+  ///
+  /// Uitdrukkelijk per standplaats vastgelegd en nooit afgeleid uit de code.
+  /// Ontbreekt hij, dan is er geen terugval op een ander adres: een medewerker
+  /// die per ongeluk bij de dienstindeling van een andere standplaats
+  /// aanklopt, is erger dan een medewerker die te horen krijgt dat het adres
+  /// nog niet is ingericht.
+  didContactEmail String?
+
+  units         PlanningUnit[]
+  dutyPackages  DutyPackage[]
+  caoDayRequests CaoDayRequest[]
+  rosterPeriods RosterPeriod[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([planningEnabled])
+}
+
+/// Een plannings- of locatie-eenheid onder een standplaats.
+///
+/// De bron noemt naast standplaatsen ook codes als "ASD 1" en "UT 2". Wat die
+/// organisatorisch precies zijn — een tweede planbureau, een deel van het
+/// personeelsbestand, een fysieke locatie — blijkt niet uit de bron. Ze staan
+/// daarom als eenheid ónder de hoofdstandplaats, met de vraag erbij, en niet
+/// als zelfstandige standplaats.
+model PlanningUnit {
+  id         String          @id @default(uuid())
+  locationId String
+  location   StationLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  code       String          @unique
+  name       String
+  /// Wat er over deze eenheid niet is vastgesteld.
+  note       String?
+
+  @@index([locationId])
+}
+
+// ── Dienstregelingen, roosterperioden en de structurele baseline ─────────────
+
+/// Wat voor roosterronde dit is.
+///
+/// Het verschil is niet cosmetisch. Bij een nieuwe dienstregeling mag de
+/// structuur opnieuw worden bepaald; bij een wijzigingsblad staat zij vast en
+/// mogen alleen de diensten anders worden ingevuld. Dat onderscheid hoort in
+/// het domeinmodel en niet in een knop, want een knop is te omzeilen.
+enum RosterChangeType {
+  NEW_TIMETABLE
+  AMENDMENT
+}
+
+/// Of de structurele ankers nog verplaatst mogen worden.
+enum RosterStructureState {
+  STRUCTURE_EDITABLE
+  STRUCTURE_LOCKED
+}
+
+/// De formele weg van concept naar publicatie.
+enum RosterPeriodStatus {
+  CONCEPT
+  SIMULATION
+  RULE_VALIDATION_PENDING
+  REVIEWED
+  OR_APPROVAL_REQUIRED
+  APPROVED
+  PUBLISHED
+}
+
+/// Een roosterperiode: één dienstregelingronde of één wijzigingsblad.
+model RosterPeriod {
+  id          String          @id @default(uuid())
+  locationId  String
+  location    StationLocation @relation(fields: [locationId], references: [id])
+  timetableId String
+  year        Int
+  changeType  RosterChangeType
+  version     Int
+  label       String
+
+  /// Bij een wijzigingsblad: de periode waarvan de structuur wordt overgenomen.
+  baseVersionId String?
+  baseVersion   RosterPeriod?  @relation("Wijzigingsbladen", fields: [baseVersionId], references: [id])
+  amendments    RosterPeriod[] @relation("Wijzigingsbladen")
+
+  /// Het dienstenpakket waaruit deze periode put.
+  dutyPackageId String?
+
+  validFrom  DateTime
+  validUntil DateTime?
+
+  status         RosterPeriodStatus   @default(CONCEPT)
+  structureState RosterStructureState @default(STRUCTURE_EDITABLE)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  createdByUserId   String?
+  /// Wanneer de structurele baseline is vastgelegd.
+  baselineSealedAt  DateTime?
+
+  baselineSlots RosterStructureBaselineSlot[]
+
+  @@unique([locationId, timetableId, version])
+  @@index([locationId, status])
+}
+
+/// Eén dag uit de bevroren structurele baseline.
+///
+/// Een wijzigingsblad wordt altijd hiertegen getoetst en nooit tegen de laatste
+/// door een planner aangepaste toestand. Zonder die vastlegging schuift een
+/// baseline langzaam mee met de wijzigingen die zij hoort tegen te houden.
+model RosterStructureBaselineSlot {
+  id       String       @id @default(uuid())
+  periodId String
+  period   RosterPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  baseRosterCode String
+  profile        RosterProfile
+  lineNumber     Int
+  weekIndex      Int
+  weekday        Int
+
+  slotType String
+  /// Is dit een structureel anker (R, WR, CO, RES, WTV)?
+  structuralAnchor Boolean
+  /// Het dienstnummer op het moment van vastleggen, wanneer van toepassing.
+  dutyCode         String?
+
+  @@unique([periodId, baseRosterCode, lineNumber, weekIndex, weekday])
+  @@index([periodId, structuralAnchor])
+}
+
+/// Een operationele invulling bovenop een basisroosterslot.
+///
+/// Het basisslot blijft wat het is — een RES-dag blijft een RES-dag. De
+/// dienstindeling legt er een laag overheen. Zou de invulling het basisslot
+/// overschrijven, dan verandert het reserverooster stilletjes mee met de
+/// dagelijkse planning, en is na een jaar niet meer te zien hoe het bedoeld was.
+model OperationalAssignment {
+  id              String        @id @default(uuid())
+  scheduledDutyId String        @unique
+  scheduledDuty   ScheduledDuty @relation(fields: [scheduledDutyId], references: [id], onDelete: Cascade)
+
+  dutyId String
+  duty   Duty   @relation(fields: [dutyId], references: [id])
+
+  /// Het slottype dat eronder ligt en dat weer zichtbaar wordt bij verwijderen.
+  underlyingSlotType String
+
+  assignedAt       DateTime @default(now())
+  assignedByUserId String?
+  reason           String?
+
+  @@index([dutyId])
+}
+
+
+// ── Meldingen ────────────────────────────────────────────────────────────────
+
+enum NotificationType {
+  SWAP_REQUEST_RECEIVED
+  SWAP_ACCEPTED
+  SWAP_REJECTED
+  SWAP_CANCELLED
+  SWAP_INVALIDATED
+  AVAILABLE_DUTY_OPENED
+  AVAILABLE_DUTY_INTEREST_REGISTERED
+  AVAILABLE_DUTY_ALLOCATED
+  AVAILABLE_DUTY_NOT_ALLOCATED
+  RES_ASSIGNMENT_CONFIRMED
+  RES_ASSIGNMENT_CHANGED
+  RES_ASSIGNMENT_WITHDRAWN
+  ROSTER_CHANGED
+  ROSTER_PLACEMENT_PERMANENT
+  ROSTER_PLACEMENT_TEMPORARY
+  ROSTER_PLACEMENT_ENDED
+  CAO_DAY_REQUESTED
+  CAO_DAY_REGISTERED
+  CAO_DAY_CANCELLED
+  SYSTEM_NOTICE
+}
+
+enum NotificationCategory {
+  RUILING
+  BESCHIKBARE_DIENST
+  ROOSTER
+  DIENSTINDELING
+  CAO_DAG
+  SYSTEEM
+}
+
+/// De toestand van een CAO-dagaanvraag.
+///
+/// Er staat bewust geen GOEDGEKEURD/AFGEWEZEN in. Een geldige aanvraag — op tijd
+/// ingediend, op een dag waarop de medewerker zou rijden — is een recht en geen
+/// verzoek. De dienstindeling zet hem in het NS-verlofboek; dat is een handeling
+/// en geen oordeel. Zou hier "goedkeuren" staan, dan zou het scherm suggereren
+/// dat de dienstindeling ook mag weigeren.
+enum CaoDayStatus {
+  /// Ingediend en vastgelegd. De medewerker heeft zijn dag.
+  REQUESTED
+  /// De dienstindeling heeft hem in het NS-verlofboek gezet.
+  REGISTERED_IN_LEAVE_BOOK
+  /// Ingetrokken.
+  CANCELLED
+}
+
+/// Een aangevraagde CAO-dag.
+///
+/// ## Waarom hier een momentopname van het rooster in staat
+///
+/// `rosterSnapshot` bewaart welke dienst er op die dag stond op het moment van
+/// aanvragen. Het rooster kan daarna veranderen — door een ruil, een tijdelijke
+/// plaatsing of een nieuw wijzigingsblad. Zonder die momentopname is achteraf
+/// niet meer te zien waar de medewerker vrij voor vroeg, en dat is precies wat
+/// de dienstindeling in het verlofboek moet overnemen.
+model CaoDayRequest {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  locationId String
+  location   StationLocation @relation(fields: [locationId], references: [id])
+
+  /// De datum waarop de medewerker vrij wil zijn.
+  requestedDate DateTime @db.Date
+
+  /// Wat er op die dag in het rooster stond toen de aanvraag werd gedaan.
+  rosterSnapshot Json
+
+  status CaoDayStatus @default(REQUESTED)
+
+  requestedAt  DateTime  @default(now())
+  registeredAt DateTime?
+  /// Het personeelsnummer van wie het in het verlofboek heeft gezet.
+  registeredBy String?
+  cancelledAt  DateTime?
+
+  /// Optimistische vergrendeling: twee schermen die dezelfde aanvraag bijwerken,
+  /// mogen niet allebei slagen.
+  version Int @default(1)
+
+  /// Eén aanvraag per medewerker per dag. De database bewaakt dat, niet de
+  /// applicatie: twee kliks vlak na elkaar komen niet allebei door.
+  @@unique([employeeId, requestedDate])
+  @@index([locationId, status, requestedDate])
+}
+
+/// Eén melding voor één ontvanger.
+///
+/// De inhoud is bewust smal: een titel, een zin en een verwijzing. Wat er
+/// precies aan de hand is, staat achter de link — daar gelden de rechten van
+/// het onderliggende object. Zo lekt een melding niets wat het scherm erachter
+/// zou weigeren.
+model Notification {
+  id              String               @id @default(uuid())
+  recipientUserId String
+  recipient       UserAccount          @relation(fields: [recipientUserId], references: [id], onDelete: Cascade)
+  type            NotificationType
+  category        NotificationCategory
+  title           String
+  message         String
+
+  /// Waar deze melding over gaat, voor de doorklik.
+  entityType String?
+  entityId   String?
+  /// Het pad waarheen de melding leidt. Nooit een generieke overzichtspagina.
+  actionPath String?
+
+  /// De sleutel van het onderliggende feit. Twee meldingen met dezelfde sleutel
+  /// zijn dezelfde melding; dat maakt herhaalde verwerking onschadelijk.
+  eventKey String
+
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  @@unique([recipientUserId, eventKey])
+  @@index([recipientUserId, readAt])
+  @@index([recipientUserId, createdAt])
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
+
+/// Een domeingebeurtenis die nog tot meldingen moet leiden.
+///
+/// Het schrijven van de gebeurtenis gebeurt in dezelfde transactie als de
+/// wijziging zelf. Daardoor kan het niet gebeuren dat een ruil doorgaat en de
+/// melding stilletjes verdwijnt, of andersom. De verwerking mag daarna falen en
+/// opnieuw worden geprobeerd; de meldingen zijn idempotent.
+model OutboxEvent {
+  id         String       @id @default(uuid())
+  eventType  String
+  eventKey   String       @unique
+  payload    Json
+  status     OutboxStatus @default(PENDING)
+  attempts   Int          @default(0)
+  lastError  String?
+  createdAt  DateTime     @default(now())
+  processedAt DateTime?
+
+  @@index([status, createdAt])
+}
+
+
+// ── Roosterplaatsing ─────────────────────────────────────────────────────────
+
+/// Wat voor plaatsing dit is.
+///
+/// De drie soorten worden bewust nooit door elkaar gemodelleerd. Een permanente
+/// plaatsing is iemands structurele basis. Een tijdelijke plaatsing legt zich er
+/// voor een afgebakende periode overheen zonder die basis aan te tasten. Een
+/// operationele dienstinvulling gaat over één dag en woont in
+/// `OperationalAssignment`.
+enum RosterPlacementType {
+  PERMANENT
+  TEMPORARY
+}
+
+enum MembershipStatus {
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+/// De koppeling tussen een medewerker en een basisrooster.
+///
+/// ## Waarom hier een anker staat en geen huidige regel
+///
+/// Een veld `huidigeRegel` dat elke week wordt opgehoogd, is precies één
+/// vergeten of dubbel gedraaide taak verwijderd van een rooster waarvan niemand
+/// meer weet of het klopt. Daarom staat hier vast: in wélke week stond deze
+/// medewerker op wélke regel. Elke andere week volgt uit een berekening, en is
+/// daarmee voor verleden én toekomst reproduceerbaar.
+///
+/// ## Waarom de roosterversie erbij staat
+///
+/// Een rooster kan later een ander aantal regels krijgen. Een plaatsing die naar
+/// "regel 6" verwijst zonder te zeggen van welke versie, betekent dan iets
+/// anders dan toen hij werd gemaakt.
+model RosterMembership {
+  id         String @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  locationCode String
+  baseRosterId String
+  baseRoster   BaseRoster @relation(fields: [baseRosterId], references: [id], onDelete: Restrict)
+  /// Het aantal regels van het rooster op het moment van plaatsen.
+  lineCount    Int
+
+  /// De regel waarop deze medewerker stond in de ankerweek. 1-gebaseerd.
+  anchorRuleIndex Int
+  /// De ankerweek als ISO-weeksleutel, bijvoorbeeld "2026-W40".
+  anchorWeek      String
+
+  /// Wanneer deze plaatsing geldt. `validUntil` leeg betekent: doorlopend.
+  validFrom  DateTime @db.Date
+  validUntil DateTime? @db.Date
+
+  placementType RosterPlacementType
+  status        MembershipStatus    @default(ACTIVE)
+
+  /// Bij een tijdelijke plaatsing: de permanente plaatsing die eronder
+  /// doorloopt. Na afloop keert de medewerker daarheen terug, op de regel waar
+  /// hij dan hoort te staan — niet op de regel waar hij vertrok.
+  basePlacementId String?
+  basePlacement   RosterMembership?  @relation("TijdelijkeOverBasis", fields: [basePlacementId], references: [id], onDelete: SetNull)
+  temporaryOnes   RosterMembership[] @relation("TijdelijkeOverBasis")
+
+  /// Operationeel geformuleerd. Nooit een medische of privéreden.
+  reason String?
+  /// Als deze plaatsing uit een wachtlijst komt, welke inschrijving dan.
+  waitlistEntryId String?
+
+  createdAt       DateTime @default(now())
+  createdByUserId String?
+  endedAt         DateTime?
+  endedByUserId   String?
+
+  @@index([employeeId, placementType, status])
+  @@index([baseRosterId, status])
+  @@index([locationCode, status])
+}

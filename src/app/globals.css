@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/*
+ * Huisstijl van het NS Roosterplatform.
+ *
+ * Eén set tokens voor alle vier de omgevingen. De rollen verschillen in wat ze
+ * mogen en zien, niet in hoe het eruitziet: een medewerker die planner wordt,
+ * hoort geen andere applicatie te herkennen.
+ *
+ * Kleur draagt betekenis en is geen versiering. Blauw is de huisstijl en de
+ * primaire actie; groen is "in orde"; oranje is "let op"; rood is "dit gaat
+ * mis". De accentkleuren van de drie werkgebieden (blauw voor Rooster
+ * Commissie, oranje voor Dienstindeling, groen voor systeemstatus) komen
+ * uitsluitend terug in de ronde kaarticonen, zodat een blik op het
+ * beheerdersdashboard genoeg is om te zien waar iets over gaat.
+ *
+ * De interface staat vast in de lichte modus. Een donkere variant is prima,
+ * maar dan als bewuste keuze met eigen contrastcontrole; automatisch meebewegen
+ * met de systeeminstelling levert bij tabellen met statuskleuren
+ * onvoorspelbaar contrast op.
+ */
+
+@theme {
+  /* Huisstijl */
+  --color-ns-blue: #003082;
+  --color-ns-blue-dark: #001f57;
+  --color-ns-blue-soft: #e8eef8;
+  --color-ns-yellow: #ffc917;
+
+  /* Zijbalk */
+  --color-rail: #0a1e3d;
+  --color-rail-deep: #061530;
+  --color-rail-line: #1c3459;
+  --color-rail-text: #b8c9e2;
+  --color-rail-muted: #6d87ae;
+  --color-rail-active: #1f5fd0;
+
+  /* Vlakken en lijnen */
+  --color-canvas: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-line: #e3e8f0;
+  --color-line-strong: #c8d1de;
+
+  /* Tekst */
+  --color-ink: #16233a;
+  --color-ink-strong: #0f2b5b;
+  --color-ink-muted: #5d6b81;
+  --color-ink-faint: #8794a8;
+
+  /* Betekenis */
+  --color-state-ok: #0f7a43;
+  --color-state-ok-soft: #e6f4ec;
+  --color-state-warn: #a35c00;
+  --color-state-warn-soft: #fdf1de;
+  --color-state-error: #b3261e;
+  --color-state-error-soft: #fbeae9;
+  --color-state-info: #1f5fd0;
+  --color-state-info-soft: #e8f0fc;
+
+  /* Accenten van de werkgebieden */
+  --color-accent-rc: #1f5fd0;
+  --color-accent-rc-soft: #e8f0fc;
+  --color-accent-did: #e06c1f;
+  --color-accent-did-soft: #fdefe3;
+  --color-accent-admin: #0f7a43;
+  --color-accent-admin-soft: #e6f4ec;
+
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Zichtbare focus is een toegankelijkheidseis, geen optie. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent-rc);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Getallen in tabellen en kerncijfers uitlijnen op cijferbreedte. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Smalle schuifbalken binnen kaarten. Een operationeel scherm heeft veel
+ * lijstjes met een eigen schuifgebied; de standaardbalk van het systeem eet
+ * daar te veel van de leesbreedte op.
+ */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+.scroll-slim::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 999px;
+}

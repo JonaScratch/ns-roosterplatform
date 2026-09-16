@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>NS Roosterplatform — Dordrecht</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ns-blue:#003da5;
+    --ns-blue-dark:#00265c;
+    --ns-blue-soft:#eaf1fb;
+    --ns-blue-soft-2:#dbe7f8;
+    --ink:#13203a;
+    --ink-muted:#57647d;
+    --ink-faint:#8695ac;
+    --line:#dbe3f0;
+    --paper:#ffffff;
+    --ok:#0c7a53;
+    --ok-soft:#e4f5ee;
+    --pending:#a3620b;
+    --pending-soft:#fbeed9;
+    --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans:"Source Sans 3", -apple-system, Segoe UI, Arial, sans-serif;
+    --mono:"IBM Plex Mono", "Cascadia Code", Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#c9d2e0;}
+  body{font-family:var(--sans);color:var(--ink);}
+  h1,h2,h3{font-family:var(--serif);color:var(--ink);margin:0;text-wrap:balance;}
+  p{margin:0 0 8px 0;}
+  .mono{font-family:var(--mono);}
+
+  @page{ size:210mm 297mm; margin:0; }
+
+  .page{
+    position:relative;
+    width:210mm;
+    height:297mm;
+    margin:6mm auto;
+    background:var(--paper);
+    overflow:hidden;
+    break-after:page;
+    page-break-after:always;
+    box-shadow:0 1px 6px rgba(19,32,58,.18);
+  }
+  @media print{
+    body{background:#fff;}
+    .page{ margin:0; box-shadow:none; }
+  }
+  .content{
+    position:absolute; inset:0;
+    padding:16mm 18mm 14mm 18mm;
+    display:flex; flex-direction:column;
+  }
+  .masthead{
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid var(--line); padding-bottom:6mm; margin-bottom:8mm;
+  }
+  .masthead .eyebrow{
+    font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ns-blue);
+  }
+  .masthead .title{ font-size:20px; font-weight:700; margin-top:2px; }
+  .masthead svg{ height:15px; width:auto; }
+  .footer{
+    position:absolute; left:18mm; right:18mm; bottom:9mm;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:8.5px; color:var(--ink-faint); border-top:1px solid var(--line); padding-top:3mm;
+  }
+  .footer .pagenum{ font-family:var(--mono); }
+
+  /* ── Cover ─────────────────────────────────────────────────────────── */
+  .cover .content{ padding:0; justify-content:space-between; }
+  .cover-top{ padding:20mm 20mm 0 20mm; display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover-top svg{ height:20px; width:auto; }
+  .cover-tag{ font-size:9.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); text-align:right; }
+  .cover-mid{ padding:0 20mm; }
+  .cover-mid .kicker{ font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ns-blue); margin-bottom:6mm; }
+  .cover-mid h1{ font-size:52px; line-height:1.03; font-weight:700; margin-bottom:10mm; }
+  .cover-mid .claim{ font-family:var(--serif); font-size:22px; line-height:1.35; color:var(--ns-blue-dark); font-weight:600; max-width:130mm; }
+  .cover-band{
+    height:34mm; background:linear-gradient(120deg, var(--ns-blue) 0%, #0057c7 60%, #2f7fe0 100%);
+    display:flex; align-items:center; justify-content:space-between; padding:0 20mm;
+  }
+  .cover-band .place{ color:#fff; font-family:var(--serif); font-size:17px; font-weight:600; }
+  .cover-band .version{ color:#cfe0fa; font-size:11px; text-align:right; line-height:1.5; }
+  .cover-water{ position:absolute; right:-40mm; top:40mm; opacity:.05; }
+  .cover-water svg{ width:220mm; height:auto; }
+
+  /* ── TOC ───────────────────────────────────────────────────────────── */
+  .toc-list{ margin-top:4mm; }
+  .toc-row{
+    display:flex; align-items:baseline; gap:3mm; padding:4mm 0;
+    border-bottom:1px solid var(--line);
+  }
+  .toc-row .num{ font-family:var(--mono); font-size:11px; color:var(--ns-blue); width:8mm; flex:none; }
+  .toc-row .name{ font-family:var(--serif); font-size:14px; font-weight:600; flex:1; }
+  .toc-row .dots{ flex:1; border-bottom:1px dotted var(--ink-faint); margin:0 3mm; transform:translateY(-3px); }
+  .toc-row .pg{ font-family:var(--mono); font-size:11px; color:var(--ink-muted); }
+
+  /* ── shared content bits ─────────────────────────────────────────────*/
+  .lede{ font-family:var(--serif); font-size:14.5px; line-height:1.65; color:var(--ink); margin-bottom:6mm; }
+  .body-text{ font-size:11px; line-height:1.68; color:var(--ink); }
+  .body-text + .body-text{ margin-top:3mm; }
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:8mm; }
+  .cards{ display:grid; gap:4mm; }
+  .cards.g2{ grid-template-columns:1fr 1fr; }
+  .cards.g4{ grid-template-columns:repeat(4,1fr); }
+  .card{
+    border:1px solid var(--line); border-radius:3px; padding:5mm; background:#fbfcff;
+  }
+  .card h3{ font-size:11.5px; font-weight:700; margin-bottom:2mm; }
+  .card p{ font-size:9.7px; line-height:1.55; color:var(--ink-muted); margin:0; }
+  .stat{
+    border-left:2.5px solid var(--ns-blue); padding-left:4mm;
+  }
+  .stat .n{ font-family:var(--mono); font-size:24px; font-weight:500; color:var(--ns-blue); line-height:1; }
+  .stat .l{ font-size:9px; color:var(--ink-muted); margin-top:1.5mm; }
+
+  .pill{ display:inline-flex; align-items:center; gap:1.5mm; font-size:8.6px; font-weight:600; padding:1mm 2.6mm; border-radius:20px; }
+  .pill.ready{ background:var(--ok-soft); color:var(--ok); }
+  .pill.pending{ background:var(--pending-soft); color:var(--pending); }
+
+  .steps{ counter-reset:stp; }
+  .step{ display:flex; gap:4mm; padding:3.2mm 0; border-bottom:1px solid var(--line); }
+  .step:last-child{ border-bottom:none; }
+  .step .idx{
+    counter-increment:stp; content:counter(stp);
+    flex:none; width:6.5mm; height:6.5mm; border-radius:50%; background:var(--ns-blue); color:#fff;
+    font-family:var(--mono); font-size:9.5px; display:flex; align-items:center; justify-content:center;
+  }
+  .step .idx::before{ content:counter(stp); }
+  .step .txt h4{ font-size:10.6px; font-weight:700; margin-bottom:.8mm; }
+  .step .txt p{ font-size:9.6px; color:var(--ink-muted); margin:0; line-height:1.5; }
+
+  .role-card{ border:1px solid var(--line); border-radius:3px; overflow:hidden; }
+  .role-head{ background:var(--ns-blue-soft); padding:4mm 5mm; }
+  .role-head h3{ font-size:13px; font-weight:700; color:var(--ns-blue-dark); }
+  .role-head .sub{ font-size:9px; color:var(--ink-muted); margin-top:1mm; }
+  .role-body{ padding:4mm 5mm; }
+  .role-body .lbl{ font-size:8.3px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); margin:3mm 0 1.3mm; }
+  .role-body .lbl:first-child{ margin-top:0; }
+  .role-body ul{ margin:0; padding-left:4mm; font-size:9.4px; line-height:1.55; color:var(--ink); }
+  .role-body ul.dim li{ color:var(--ink-muted); }
+
+  table.brochure{ width:100%; border-collapse:collapse; font-size:9.6px; }
+  table.brochure th{ text-align:left; font-size:8.3px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); border-bottom:1px solid var(--line); padding:2mm 2mm 2mm 0; }
+  table.brochure td{ padding:2.4mm 2mm 2.4mm 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.brochure tr:last-child td{ border-bottom:none; }
+
+  .diagram-flow{ display:flex; align-items:stretch; gap:0; }
+  .diagram-flow .node{
+    flex:1; border:1px solid var(--ns-blue); border-radius:3px; background:var(--ns-blue-soft);
+    padding:4mm 3mm; text-align:center; font-size:9.6px; font-weight:600; color:var(--ns-blue-dark);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .diagram-flow .arrow{ flex:none; width:8mm; display:flex; align-items:center; justify-content:center; color:var(--ink-faint); font-size:13px; }
+
+  .callout{ background:var(--ns-blue-soft); border-left:3px solid var(--ns-blue); border-radius:2px; padding:5mm 6mm; }
+  .callout p{ font-family:var(--serif); font-size:12px; line-height:1.6; color:var(--ns-blue-dark); margin:0; }
+
+  .note{ font-size:8.6px; color:var(--ink-faint); line-height:1.5; }
+
+  .sect-h{ margin-bottom:5mm; }
+  .sect-h .kicker{ font-size:9px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--ns-blue); margin-bottom:1.5mm; }
+  .sect-h h2{ font-size:23px; font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- shared inline logo mark, reused verbatim across pages -->
+<template id="logo-mark">
+  <svg viewBox="0 0 538.33 210.26" xmlns="http://www.w3.org/2000/svg" fill="#003da5">
+    <g transform="matrix(1.25,0,0,-1.25,-103.998,631.3225)"><g transform="scale(0.1,0.1)"><path d="m 2666.73,4717.86 c 38.13,0 66.57,-19.06 95.17,-47.37 l 484.79,-484.64 c 95.16,-95.02 199.58,-142.68 342.25,-142.68 l 903.15,0 -332.73,-332.72 -846.25,0 c -47.51,0 -75.81,9.53 -104.4,38.12 l -484.94,484.64 c -95.02,95.31 -199.43,142.68 -342.11,142.68 l -903.15,0 332.73,341.97 855.49,0 z m 332.87,190.04 c -95.02,95.32 -209.26,142.68 -332.87,142.68 l -988.64,0 -846.106,-836.14 846.106,-845.96 475.4,0 -674.98,674.69 903.15,0 c 37.98,0 75.96,-9.53 104.56,-38.12 L 2971,3510.87 c 95.02,-95.02 209.11,-142.39 332.73,-142.39 l 998.17,0 836.72,845.96 -836.72,836.14 -484.79,0 674.98,-674.69 -903.15,0 c -38.12,0 -66.43,19.06 -95.03,37.84"/></g></g>
+  </svg>
+</template>
+
+<!-- ================= COVER ================= -->
+<section class="page cover">
+  <div class="content">
+    <div class="cover-top">
+      <svg viewBox="0 0 538.33 210.26" xmlns="http://www.w3.org/2000/svg" fill="#003da5" style="height:22px;width:auto;"><g transform="matrix(1.25,0,0,-1.25,-103.998,631.3225)"><g transform="scale(0.1,0.1)"><path d="m 2666.73,4717.86 c 38.13,0 66.57,-19.06 95.17,-47.37 l 484.79,-484.64 c 95.16,-95.02 199.58,-142.68 342.25,-142.68 l 903.15,0 -332.73,-332.72 -846.25,0 c -47.51,0 -75.81,9.53 -104.4,38.12 l -484.94,484.64 c -95.02,95.31 -199.43,142.68 -342.11,142.68 l -903.15,0 332.73,341.97 855.49,0 z m 332.87,190.04 c -95.02,95.32 -209.26,142.68 -332.87,142.68 l -988.64,0 -846.106,-836.14 846.106,-845.96 475.4,0 -674.98,674.69 903.15,0 c 37.98,0 75.96,-9.53 104.56,-38.12 L 2971,3510.87 c 95.02,-95.02 209.11,-142.39 332.73,-142.39 l 998.17,0 836.72,845.96 -836.72,836.14 -484.79,0 674.98,-674.69 -903.15,0 c -38.12,0 -66.43,19.06 -95.03,37.84"/></g></g></svg>
+      <div class="cover-tag">Interne demonstratie<br>Niet voor externe verspreiding</div>
+    </div>
+    <div class="cover-water"><svg viewBox="0 0 538.33 210.26" xmlns="http://www.w3.org/2000/svg" fill="#003da5"><g transform="matrix(1.25,0,0,-1.25,-103.998,631.3225)"><g transform="scale(0.1,0.1)"><path d="m 2666.73,4717.86 c 38.13,0 66.57,-19.06 95.17,-47.37 l 484.79,-484.64 c 95.16,-95.02 199.58,-142.68 342.25,-142.68 l 903.15,0 -332.73,-332.72 -846.25,0 c -47.51,0 -75.81,9.53 -104.4,38.12 l -484.94,484.64 c -95.02,95.31 -199.43,142.68 -342.11,142.68 l -903.15,0 332.73,341.97 855.49,0 z m 332.87,190.04 c -95.02,95.32 -209.26,142.68 -332.87,142.68 l -988.64,0 -846.106,-836.14 846.106,-845.96 475.4,0 -674.98,674.69 903.15,0 c 37.98,0 75.96,-9.53 104.56,-38.12 L 2971,3510.87 c 95.02,-95.02 209.11,-142.39 332.73,-142.39 l 998.17,0 836.72,845.96 -836.72,836.14 -484.79,0 674.98,-674.69 -903.15,0 c -38.12,0 -66.43,19.06 -95.03,37.84"/></g></g></svg></div>
+    <div class="cover-mid">
+      <div class="kicker">Roosterplatform · Standplaats Dordrecht</div>
+      <h1>Slimmer roosteren.<br>Meer overzicht.<br>Meer controle.</h1>
+      <p class="claim">Eén omgeving voor basisroosters, dagelijkse bezetting, ruilen en CAO-dagen — met elke beslissing herleidbaar naar de regel waar hij vandaan komt.</p>
+    </div>
+    <div class="cover-band">
+      <div class="place">NS Roosterplatform</div>
+      <div class="version">Demonstratieversie · 6 september 2026<br>Portable build · Dordrecht (DDR)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOC ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead">
+      <div><div class="eyebrow">NS Roosterplatform</div><div class="title">Inhoudsopgave</div></div>
+      <svg viewBox="0 0 538.33 210.26" xmlns="http://www.w3.org/2000/svg" fill="#003da5"><g transform="matrix(1.25,0,0,-1.25,-103.998,631.3225)"><g transform="scale(0.1,0.1)"><path d="m 2666.73,4717.86 c 38.13,0 66.57,-19.06 95.17,-47.37 l 484.79,-484.64 c 95.16,-95.02 199.58,-142.68 342.25,-142.68 l 903.15,0 -332.73,-332.72 -846.25,0 c -47.51,0 -75.81,9.53 -104.4,38.12 l -484.94,484.64 c -95.02,95.31 -199.43,142.68 -342.11,142.68 l -903.15,0 332.73,341.97 855.49,0 z m 332.87,190.04 c -95.02,95.32 -209.26,142.68 -332.87,142.68 l -988.64,0 -846.106,-836.14 846.106,-845.96 475.4,0 -674.98,674.69 903.15,0 c 37.98,0 75.96,-9.53 104.56,-38.12 L 2971,3510.87 c 95.02,-95.02 209.11,-142.39 332.73,-142.39 l 998.17,0 836.72,845.96 -836.72,836.14 -484.79,0 674.98,-674.69 -903.15,0 c -38.12,0 -66.43,19.06 -95.03,37.84"/></g></g></svg>
+    </div>
+    <div class="toc-list">
+      <div class="toc-row"><span class="num">01</span><span class="name">Inleiding</span><span class="dots"></span><span class="pg">3</span></div>
+      <div class="toc-row"><span class="num">02</span><span class="name">Het platform</span><span class="dots"></span><span class="pg">4</span></div>
+      <div class="toc-row"><span class="num">03</span><span class="name">Wat kan het?</span><span class="dots"></span><span class="pg">5</span></div>
+      <div class="toc-row"><span class="num">04</span><span class="name">Medewerker</span><span class="dots"></span><span class="pg">6</span></div>
+      <div class="toc-row"><span class="num">05</span><span class="name">Rooster Commissie</span><span class="dots"></span><span class="pg">7</span></div>
+      <div class="toc-row"><span class="num">06</span><span class="name">Dienstindeling</span><span class="dots"></span><span class="pg">8</span></div>
+      <div class="toc-row"><span class="num">07</span><span class="name">Beheer</span><span class="dots"></span><span class="pg">9</span></div>
+      <div class="toc-row"><span class="num">08</span><span class="name">Roostergeneratie</span><span class="dots"></span><span class="pg">10</span></div>
+      <div class="toc-row"><span class="num">09</span><span class="name">Dienstenpakketten</span><span class="dots"></span><span class="pg">11</span></div>
+      <div class="toc-row"><span class="num">10</span><span class="name">Ruilmarkt</span><span class="dots"></span><span class="pg">12</span></div>
+      <div class="toc-row"><span class="num">11</span><span class="name">CAO-dagen</span><span class="dots"></span><span class="pg">13</span></div>
+      <div class="toc-row"><span class="num">12</span><span class="name">Rapportages &amp; exports</span><span class="dots"></span><span class="pg">14</span></div>
+      <div class="toc-row"><span class="num">13</span><span class="name">Betrouwbaarheid</span><span class="dots"></span><span class="pg">15</span></div>
+      <div class="toc-row"><span class="num">14</span><span class="name">Portable demonstratie</span><span class="dots"></span><span class="pg">16</span></div>
+      <div class="toc-row"><span class="num">15</span><span class="name">Van demonstratie naar formele inzet</span><span class="dots"></span><span class="pg">17</span></div>
+      <div class="toc-row"><span class="num">16</span><span class="name">Conclusie</span><span class="dots"></span><span class="pg">18</span></div>
+    </div>
+  </div>
+  <div class="footer"><span>NS Roosterplatform — Dordrecht</span><span class="pagenum">2</span></div>
+</section>
+
+<!-- ================= 01 INLEIDING ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">01 · Inleiding</div><div class="title">Waarom dit platform bestaat</div></div><svg viewBox="0 0 538.33 210.26" xmlns="http://www.w3.org/2000/svg" fill="#003da5" style="height:13px"><g transform="matrix(1.25,0,0,-1.25,-103.998,631.3225)"><g transform="scale(0.1,0.1)"><path d="m 2666.73,4717.86 c 38.13,0 66.57,-19.06 95.17,-47.37 l 484.79,-484.64 c 95.16,-95.02 199.58,-142.68 342.25,-142.68 l 903.15,0 -332.73,-332.72 -846.25,0 c -47.51,0 -75.81,9.53 -104.4,38.12 l -484.94,484.64 c -95.02,95.31 -199.43,142.68 -342.11,142.68 l -903.15,0 332.73,341.97 855.49,0 z m 332.87,190.04 c -95.02,95.32 -209.26,142.68 -332.87,142.68 l -988.64,0 -846.106,-836.14 846.106,-845.96 475.4,0 -674.98,674.69 903.15,0 c 37.98,0 75.96,-9.53 104.56,-38.12 L 2971,3510.87 c 95.02,-95.02 209.11,-142.39 332.73,-142.39 l 998.17,0 836.72,845.96 -836.72,836.14 -484.79,0 674.98,-674.69 -903.15,0 c -38.12,0 -66.43,19.06 -95.03,37.84"/></g></g></svg></div>
+
+    <p class="lede">Een goed rooster maken is puzzelwerk: rusttijden, CAO-regels, bezetting en een eerlijke verdeling moeten allemaal tegelijk kloppen — voor 67 machinisten en 223 diensten op standplaats Dordrecht. Met de hand is dat schuiven, natellen en bij de volgende wijziging weer opnieuw beginnen.</p>
+
+    <p class="body-text">Het NS Roosterplatform rekent die puzzel door met één druk op de knop. Roosterbeheer, dagelijkse bezetting, ruilen en CAO-dagen komen samen op één plek, met vier rollen die ieder hun eigen werk zien en niets daarbuiten. Geen enkele beslissing van de rekenmotor verschijnt zonder dat een onafhankelijke toets hem eerst heeft nagerekend, en geen enkele afwijzing komt zonder reden.</p>
+
+    <p class="body-text">Dat is een bewuste keuze en geen bijverschijnsel. Een roosterbeslissing raakt iemands vrije dag, zijn reistijd naar familie, zijn CAO-dagen. Software die dat soort beslissingen ondersteunt, moet uitleggen wat zij deed — niet alleen wat zij besliste.</p>
+
+    <div class="callout" style="margin-top:8mm;">
+      <p>&ldquo;Reproduceerbaar&rdquo; betekent hier iets concreets: dezelfde invoer levert altijd dezelfde uitkomst op, en die uitkomst is naderhand nog te verklaren aan de hand van het regelbestand waarmee hij is doorgerekend.</p>
+    </div>
+
+    <div class="cards g2" style="margin-top:8mm;">
+      <div class="card"><h3>Eén bron, geen kopieën</h3><p>Basisroosters, bezetting en regels staan één keer vast, niet verspreid over meerdere Excel-versies die uit de pas kunnen lopen.</p></div>
+      <div class="card"><h3>Herleidbaar</h3><p>Elke regel waar een beslissing aan wordt getoetst, heeft een bron: een CAO-artikel, een beleidskeuze of een lokale afspraak.</p></div>
+      <div class="card"><h3>Medewerkerinzicht</h3><p>Wie zijn eigen rooster wil zien, hoeft niet te bellen — de agenda staat er, met ruilen en CAO-dagen direct daarnaast.</p></div>
+      <div class="card"><h3>Zonder installatie te demonstreren</h3><p>De hele omgeving — database en rekenmotor inbegrepen — past op een USB-stick en start zonder iets op de ontvangende computer te installeren.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>Inleiding</span><span class="pagenum">3</span></div>
+</section>
+
+<!-- ================= 02 HET PLATFORM ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">02 · Het platform</div><div class="title">Vier rollen, één omgeving</div></div></div>
+
+    <p class="body-text">Het platform kent vier werkgebieden. Ieder ziet zijn eigen navigatie en dashboard; wat iemand niet mag doen, staat niet eens als knop op zijn scherm — en wordt onafhankelijk daarvan nog eens gecontroleerd door de service die de aanvraag verwerkt.</p>
+
+    <div class="diagram-flow" style="margin:9mm 0;">
+      <div class="node">Dienstenpakket<br><span style="font-weight:400;color:var(--ink-muted);">Rooster Commissie</span></div>
+      <div class="arrow">→</div>
+      <div class="node">Basisrooster<br><span style="font-weight:400;color:var(--ink-muted);">gegenereerd &amp; getoetst</span></div>
+      <div class="arrow">→</div>
+      <div class="node">Dagelijkse bezetting<br><span style="font-weight:400;color:var(--ink-muted);">Dienstindeling</span></div>
+      <div class="arrow">→</div>
+      <div class="node">Eigen rooster<br><span style="font-weight:400;color:var(--ink-muted);">Medewerker</span></div>
+    </div>
+
+    <p class="body-text">Beheer staat naast deze keten, niet erin: het bewaakt wie toegang heeft en wat de werkelijke status van het regelbestand is, maar plant zelf niets. Die scheiding voorkomt dat toegangsbeheer en roosterbeslissingen elkaar in de weg gaan zitten.</p>
+
+    <div class="two-col" style="margin-top:8mm;">
+      <div class="stat"><div class="n">4</div><div class="l">rollen, elk met een eigen dashboard en navigatie</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">regelbestand, door alle vier de rollen gedeeld</div></div>
+    </div>
+
+    <div class="two-col" style="margin-top:6mm;">
+      <div class="stat"><div class="n">67</div><div class="l">machinisten in de gedemonstreerde standplaats Dordrecht</div></div>
+      <div class="stat"><div class="n">223</div><div class="l">diensten in het meegeleverde dienstenpakket</div></div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>De navigatie is presentatie, geen poortwachter: het echte slot zit in de service die de gegevens ophaalt, en die controleert onafhankelijk van welk scherm de vraag stelde.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Het platform</span><span class="pagenum">4</span></div>
+</section>
+
+<!-- ================= 03 WAT KAN HET ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">03 · Overzicht</div><div class="title">Wat kan het?</div></div></div>
+
+    <div class="cards g2">
+      <div class="card"><h3>Roosteren</h3><p>Basisroosters, roosterprofielen, regelaantallen per dienstregelingronde en het genereren van complete roosters op vijf scenario's.</p></div>
+      <div class="card"><h3>Operatie</h3><p>Dagelijkse bezetting per standplaats, openstaande diensten, reservevoorstellen met uitleg, en een exporteerbare dagplanning.</p></div>
+      <div class="card"><h3>Medewerker</h3><p>Eigen rooster als echte agenda, de ruilmarkt, direct ruilen met een collega, CAO-dagen en kwartaalfeedback.</p></div>
+      <div class="card"><h3>Beheer</h3><p>Gebruikers en rollen, standplaatsen, de volledige technische regelbronnen en het auditlog van gevoelige handelingen.</p></div>
+    </div>
+
+    <div class="sect-h" style="margin-top:9mm;"><div class="kicker">Kernprincipes</div></div>
+    <div class="steps">
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Onafhankelijke eindvalidatie</h4><p>Elk voorstel van de rekenmotor — een gegenereerd rooster, een ruil, een reservetoewijzing — wordt door een aparte toets nagerekend vóórdat het zichtbaar wordt.</p></div></div>
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Vier eerlijke uitkomsten, nooit een placeholder</h4><p>Een opdracht levert gegenereerd, afgewezen met reden, geblokkeerd, of een technische fout op — nooit een lege plek die als succes oogt.</p></div></div>
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Herleidbaar naar de bron</h4><p>Elke regel in het regelbestand draagt waar hij vandaan komt en of NS hem al formeel heeft bevestigd.</p></div></div>
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Reproduceerbaar</h4><p>Dezelfde invoer, dezelfde regelversie, dezelfde uitkomst — ook maanden later nog na te rekenen.</p></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Wat kan het?</span><span class="pagenum">5</span></div>
+</section>
+
+<!-- ================= 04 MEDEWERKER ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">04 · Rol</div><div class="title">Medewerker</div></div></div>
+    <p class="body-text" style="margin-bottom:6mm;">De machinist zelf: zijn eigen rooster, wat hij kan ruilen, en de CAO-dagen waar hij recht op heeft — zonder de dienstindeling te hoeven bellen voor een vraag die het scherm al beantwoordt.</p>
+
+    <div class="role-card">
+      <div class="role-head"><h3>Wat een medewerker ziet en kan</h3><div class="sub">Zijn eigen gegevens, nooit die van een collega buiten wat een ruil vereist</div></div>
+      <div class="role-body">
+        <div class="lbl">Ziet</div>
+        <ul><li>Eigen rooster als maandagenda, opgebouwd uit basisrooster, rotatie en tijdelijke plaatsing samen</li><li>Eerstvolgende diensten, meldingen en kwartaalstatus</li><li>Beschikbare diensten, de ruilmarkt en eigen CAO-dagen</li></ul>
+        <div class="lbl">Kan</div>
+        <ul><li>Een dienst aanbieden op de ruilmarkt of rechtstreeks ruilen met een collega</li><li>Een beschikbare dienst overnemen na het reserve-rooster</li><li>CAO-dagen aanvragen en, zolang niet verwerkt, weer intrekken</li><li>Kwartaalfeedback geven en een reservevoorkeur opgeven</li></ul>
+        <div class="lbl">Bewust buiten bereik</div>
+        <ul class="dim"><li>Roosters van collega's inzien buiten wat een ruil laat zien</li><li>De roosterstructuur wijzigen of een dienst aan zichzelf toewijzen buiten de procedure om</li></ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Verlof- en WTV-saldo komen uit de personeelsadministratie en worden bewust niet getoond zolang die koppeling ontbreekt — een verzonnen getal is erger dan geen getal.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Medewerker</span><span class="pagenum">6</span></div>
+</section>
+
+<!-- ================= 05 ROOSTER COMMISSIE ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">05 · Rol</div><div class="title">Rooster Commissie</div></div></div>
+    <p class="body-text" style="margin-bottom:6mm;">Stelt de basisroosters samen: importeert dienstenpakketten, bepaalt de roosterstructuur en laat scenario's genereren en vergelijken vóórdat er iets wordt vastgelegd.</p>
+
+    <div class="role-card">
+      <div class="role-head"><h3>Wat de Rooster Commissie ziet en kan</h3><div class="sub">Alle basisroosters van de eigen standplaats, ongefilterd</div></div>
+      <div class="role-body">
+        <div class="lbl">Ziet</div>
+        <ul><li>Alle basisroosters en hun bezetting, dienstenpakketten en roosterprofielen</li><li>Gegenereerde scenario's met kwaliteitsscore en het oordeel van de onafhankelijke validator</li><li>Feedback van medewerkers, geaggregeerd per roosterprofiel</li></ul>
+        <div class="lbl">Kan</div>
+        <ul><li>Een dienstenpakket importeren (Excel of PDF), controleren en na bevestiging activeren</li><li>Regelaantallen per basisrooster voorstellen voor een nieuwe dienstregelingronde</li><li>Een roosteropdracht laten genereren op vijf scenario's en het resultaat laten valideren</li><li>Het roosterblad exporteren in de officiële NS-opmaak</li></ul>
+        <div class="lbl">Bewust buiten bereik</div>
+        <ul class="dim"><li>Publiceren zolang het regelbestand niet formeel door NS is bevestigd — die knop bestaat in deze fase bewust niet</li></ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Geen publicatieknop is niet hetzelfde als een uitgeschakelde knop. Een uitgeschakelde knop nodigt uit te zoeken naar de voorwaarde die hem aanzet; een afwezige knop laat niets te vinden.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Rooster Commissie</span><span class="pagenum">7</span></div>
+</section>
+
+<!-- ================= 06 DIENSTINDELING ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">06 · Rol</div><div class="title">Dienstindeling</div></div></div>
+    <p class="body-text" style="margin-bottom:6mm;">Regelt de dagelijkse bezetting: openstaande diensten, reservevoorstellen en tijdelijke plaatsingen, met de bestaande roosterstructuur als ongewijzigd uitgangspunt.</p>
+
+    <div class="role-card">
+      <div class="role-head"><h3>Wat Dienstindeling ziet en kan</h3><div class="sub">De operatie van vandaag en de komende dagen, niet de structuur van morgen</div></div>
+      <div class="role-body">
+        <div class="lbl">Ziet</div>
+        <ul><li>Dagelijkse bezetting per dag, niet alleen een totaal, met openstaande diensten en reservevoorstellen inclusief score en toelichting</li><li>Medewerkerroosters van de eigen standplaats en ruilverzoeken ter informatie</li></ul>
+        <div class="lbl">Kan</div>
+        <ul><li>Een openstaande dienst eerst bij reserve laten proberen, pas daarna openstellen voor medewerkers</li><li>Een medewerker tijdelijk in een ander rooster plaatsen — de permanente plaatsing blijft daaronder doorlopen</li><li>De dagplanning exporteren als overzichtelijk Excel-bestand</li></ul>
+        <div class="lbl">Bewust buiten bereik</div>
+        <ul class="dim"><li>De structuur van een basisrooster wijzigen of een rooster genereren — dat is het werk van de Rooster Commissie</li></ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Een reservevoorstel komt nooit kaal: score en toelichting staan erbij, zodat een keuze te verantwoorden is aan wie ernaar vraagt.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Dienstindeling</span><span class="pagenum">8</span></div>
+</section>
+
+<!-- ================= 07 BEHEER ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">07 · Rol</div><div class="title">Beheer</div></div></div>
+    <p class="body-text" style="margin-bottom:6mm;">Bewaakt wie toegang heeft en wat de werkelijke, technische staat van het regelbestand en het systeem is — en plant zelf niets.</p>
+
+    <div class="role-card">
+      <div class="role-head"><h3>Wat Beheer ziet en kan</h3><div class="sub">De volledige, ongefilterde technische waarheid</div></div>
+      <div class="role-body">
+        <div class="lbl">Ziet</div>
+        <ul><li>Gebruikers, rollen en organisatiestructuur (standplaatsen)</li><li>Systeemstatus: technische onderdelen, sessiebeleid en beveiligingssignalen</li><li>Regelbronnen: per regel de laag, bron, status en wie hem heeft bevestigd — zonder samenvatting</li><li>Auditlog van elke gevoelige handeling in het platform</li></ul>
+        <div class="lbl">Kan</div>
+        <ul><li>Rollen toekennen en standplaatsen in- of uitschakelen</li><li>De technische staat van het regelbestand filteren op laag, status of implementatiegat</li></ul>
+        <div class="lbl">Bewust buiten bereik</div>
+        <ul class="dim"><li>Roosterinhoud wijzigen — Beheer bestuurt toegang en bewaakt bronnen, maar plant zelf niet</li></ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Een groen vinkje voor een voorziening die niet draait, is gevaarlijker dan een leeg vak. Elke regel op het systeemstatusscherm is een echte controle, of hij meldt zich eerlijk als onbekend.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Beheer</span><span class="pagenum">9</span></div>
+</section>
+
+<!-- ================= 08 ROOSTERGENERATIE ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">08 · Roosteren</div><div class="title">Roostergeneratie</div></div></div>
+    <p class="body-text">Een compleet basisrooster laten doorrekenen is geen druk op de knop en klaar: het is een keten van berekening, onafhankelijke controle en vergelijking, met een uitleg bij elke stap.</p>
+
+    <div class="diagram-flow" style="margin:9mm 0;">
+      <div class="node">Dienstenpakket</div><div class="arrow">→</div>
+      <div class="node">Roosterstructuur</div><div class="arrow">→</div>
+      <div class="node">Optimalisatie<br><span style="font-weight:400;color:var(--ink-muted);">CP-SAT solver</span></div><div class="arrow">→</div>
+      <div class="node">Onafhankelijke<br>validatie</div>
+    </div>
+    <div class="diagram-flow">
+      <div class="node">Scenario</div><div class="arrow">→</div>
+      <div class="node">Vergelijken</div><div class="arrow">→</div>
+      <div class="node">Roosterblad<br>export</div>
+      <div style="flex:2"></div>
+    </div>
+
+    <div class="sect-h" style="margin-top:9mm;"><div class="kicker">Vijf scenario's, één opdracht</div></div>
+    <table class="brochure">
+      <tr><th>Scenario</th><th>Waar het zwaar op weegt</th></tr>
+      <tr><td class="mono">Nulmeting</td><td>Neemt het bestaande rooster letterlijk over, als ijkpunt voor de andere vier.</td></tr>
+      <tr><td>Beste totale balans</td><td>Weegt dekking, verdeling en ritme ongeveer even zwaar.</td></tr>
+      <tr><td>Beste rustkwaliteit</td><td>Laat de draairichting zwaarder wegen, ten koste van mogelijk minder geplaatste diensten.</td></tr>
+      <tr><td>Eerlijkste lastenverdeling</td><td>Legt het meeste gewicht op een gelijke verdeling van nacht-, rangeer- en weekenddiensten.</td></tr>
+      <tr><td>Minste verschil met nu</td><td>Houdt dienstnummers zoveel mogelijk op hun plek — het uitgangspunt voor een wijzigingsblad.</td></tr>
+    </table>
+
+    <p class="note" style="margin-top:6mm;">Een 40-urige werkweek is een gemiddelde per rooster, niet een optelsom over alle roosters heen; WTV telt als 8 uur credit en een rustdag telt niet als gewerkte tijd.</p>
+  </div>
+  <div class="footer"><span>Roostergeneratie</span><span class="pagenum">10</span></div>
+</section>
+
+<!-- ================= 09 DIENSTENPAKKETTEN ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">09 · Roosteren</div><div class="title">Dienstenpakketten</div></div></div>
+    <p class="body-text">Nieuwe diensten komen het platform in via een eenvoudig, herkenbaar sjabloon — geen aparte tool, geen conversieslag.</p>
+
+    <div class="card" style="margin:6mm 0;">
+      <h3 class="mono" style="font-size:10px;">Dag&nbsp;&nbsp;|&nbsp;&nbsp;Dienstnummer&nbsp;&nbsp;|&nbsp;&nbsp;Diensttijd</h3>
+      <p class="mono" style="margin-top:2mm;">Maandag&nbsp;&nbsp;|&nbsp;&nbsp;101&nbsp;&nbsp;|&nbsp;&nbsp;17:49 / 01:25</p>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Downloaden</h4><p>Het sjabloon voor de eigen standplaats en dienstregelingronde.</p></div></div>
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Invullen en uploaden</h4><p>Dezelfde drie kolommen; het platform herkent het bestand zonder aparte conversie.</p></div></div>
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Preview en valideren</h4><p>Wat er verandert ten opzichte van de vorige versie wordt getoond vóórdat er iets vastligt.</p></div></div>
+      <div class="step"><div class="idx"></div><div class="txt"><h4>Staging en activeren</h4><p>Pas na expliciete bevestiging wordt een pakket actief; daarvoor blijft het in zijn eigen fase staan.</p></div></div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Hetzelfde dienstnummer op verschillende weekdagen zijn verschillende diensten, geen duplicaten — en het verschil met de vorige versie kijkt naar dag én nummer samen, niet naar één van beide.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Dienstenpakketten</span><span class="pagenum">11</span></div>
+</section>
+
+<!-- ================= 10 RUILMARKT ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">10 · Medewerker</div><div class="title">Ruilmarkt</div></div></div>
+    <p class="body-text">Ruilen kon al rechtstreeks met een bekende collega. De ruilmarkt voegt de andere, veel voorkomende richting toe: een dienst aanbieden zonder vooraf te weten wie hem overneemt.</p>
+
+    <div class="callout" style="margin:6mm 0;">
+      <p>Van collega zoeken naar vraag en aanbod — binnen dezelfde, onveranderde roosterregels.</p>
+    </div>
+
+    <div class="diagram-flow" style="margin-bottom:8mm;">
+      <div class="node">Dienst<br>aanbieden</div><div class="arrow">→</div>
+      <div class="node">Zichtbaar in<br>de ruilmarkt</div><div class="arrow">→</div>
+      <div class="node">Collega kiest<br>eigen dienst</div><div class="arrow">→</div>
+      <div class="node">Ruilvoorstel<br>versturen</div><div class="arrow">→</div>
+      <div class="node">Aanbieder<br>accepteert</div>
+    </div>
+
+    <div class="cards g2">
+      <div class="card"><h3>Een voorkeur, geen regel</h3><p>&ldquo;Graag vroeger&rdquo; of &ldquo;graag later&rdquo; stuurt alleen de volgorde waarin geldige opties worden getoond — de rules engine beslist nog altijd wat mag.</p></div>
+      <div class="card"><h3>Geen ruil zonder geldige tegenpartij</h3><p>Zonder een dienst die er echt tegenover kan staan, verschijnt geen ruilknop en geen voorstel — nooit een schijnbevestiging.</p></div>
+      <div class="card"><h3>Eén dienst, één ruil</h3><p>Wanneer de aanbieder één voorstel accepteert, komt de aanbieding niet meer beschikbaar voor een tweede — ook niet bij twee gelijktijdige pogingen.</p></div>
+      <div class="card"><h3>Zonder naam of nummer</h3><p>De markt toont dienst, datum en voorkeur — nooit wie de aanbieder is, tenzij het ruilbeleid daar expliciet om vraagt.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>Ruilmarkt</span><span class="pagenum">12</span></div>
+</section>
+
+<!-- ================= 11 CAO-DAGEN ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">11 · Medewerker</div><div class="title">CAO-dagen</div></div></div>
+    <p class="body-text">Een CAO-dag aanvragen gaat via dezelfde regels waarmee de server ook echt weigert — een uitgeschakelde dag in de kalender is geen belofte, hij komt uit de server-toets zelf.</p>
+
+    <div class="cards g2" style="margin:7mm 0;">
+      <div class="card"><h3>Maximaal 2 per periode</h3><p>Een productinstelling, expliciet zo gemarkeerd zolang er geen CAO-artikel is aangeleverd dat het bevestigt.</p></div>
+      <div class="card"><h3>Minimaal 42 dagen vooruit</h3><p>Zes weken, gerekend in kalenderdagen — dat blijft ook rond de zomer- en wintertijdomschakeling exact zes weken.</p></div>
+      <div class="card"><h3>Nooit twee aaneengesloten</h3><p>Inclusief over de jaargrens: 31 december en 1 januari zijn buren, geen uitzondering.</p></div>
+      <div class="card"><h3>Alleen op een werkdag</h3><p>Een dag waarop al vrij is volgens het rooster, kost geen CAO-dag — een CAO-dag heeft daar geen functie.</p></div>
+    </div>
+
+    <div class="sect-h"><div class="kicker">Van aanvraag tot verlofboek</div></div>
+    <div class="diagram-flow">
+      <div class="node">Aanvragen</div><div class="arrow">→</div>
+      <div class="node">Server toetst<br>opnieuw</div><div class="arrow">→</div>
+      <div class="node">Melding naar<br>Dienstindeling</div><div class="arrow">→</div>
+      <div class="node">Verwerkt in<br>NS-verlofboek</div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Een ingetrokken aanvraag maakt de datum weer vrij: dezelfde dag opnieuw aanvragen na intrekken werkt gewoon, als een nette bevestiging in plaats van een storing.</p>
+    </div>
+  </div>
+  <div class="footer"><span>CAO-dagen</span><span class="pagenum">13</span></div>
+</section>
+
+<!-- ================= 12 RAPPORTAGES & EXPORTS ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">12 · Operatie</div><div class="title">Rapportages &amp; exports</div></div></div>
+    <p class="body-text">Wat het platform berekent, moet ook buiten het scherm bruikbaar zijn — in de opmaak die de ontvanger al kent.</p>
+
+    <table class="brochure" style="margin-top:6mm;">
+      <tr><th>Export</th><th>Formaat</th><th>Voor wie</th></tr>
+      <tr><td>Dagplanning</td><td class="mono">XLSX</td><td>Dienstindeling — de dagelijkse operatie, direct bruikbaar in Excel</td></tr>
+      <tr><td>Roosterblad</td><td class="mono">PDF</td><td>Rooster Commissie — in de bestaande, officiële NS-opmaak</td></tr>
+      <tr><td>Dienstenpakket-sjabloon</td><td class="mono">XLSX</td><td>Rooster Commissie — voor het aanleveren van een nieuw pakket</td></tr>
+      <tr><td>Regelcatalogus</td><td>Scherm</td><td>Iedereen — waarom een regel bestaat en of hij bevestigd is</td></tr>
+    </table>
+
+    <div class="callout" style="margin-top:9mm;">
+      <p>Zolang formele NS-validatie ontbreekt, blijft elk document dat als officieel operationeel stuk zou kunnen worden aangezien herkenbaar gemarkeerd als simulatie — een stempel op het blad zelf, niet alleen een mededeling op het scherm.</p>
+    </div>
+
+    <div class="two-col" style="margin-top:auto;">
+      <div class="stat"><div class="n">223</div><div class="l">diensten in het gedemonstreerde rooster, per export controleerbaar</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">renderer voor voorvertoning én PDF — geen tweede opmaak die kan afwijken</div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Rapportages &amp; exports</span><span class="pagenum">14</span></div>
+</section>
+
+<!-- ================= 13 BETROUWBAARHEID ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">13 · Bewijs</div><div class="title">Betrouwbaarheid</div></div></div>
+    <p class="body-text">Resultaten uit daadwerkelijke verificatieruns, gedraaid op 6 september 2026 — geen marketingcijfers.</p>
+
+    <div class="cards g4" style="margin:6mm 0;">
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">673/673</h3><p>Geautomatiseerde eenheidstests</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">265/265</h3><p>Controles in de volledige doorloop, 50/50 gevraagde scenario's afgedekt</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">32/32</h3><p>Schermen van alle vier de rollen, elk daadwerkelijk bevraagd</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">18/18</h3><p>Opzettelijke fouten in de rekenlogica, elk gevangen door een test</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">46/46</h3><p>Controles op de draagbare versie: starten, gebruiken, herstarten, stoppen</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">19/19</h3><p>Crashbestendigheid: een hard gedood proces verliest geen bevestigde wijziging</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">48/48</h3><p>CAO-dagen van aanvraag tot verlofboek, inclusief de jaargrens</p></div>
+      <div class="card"><h3 class="mono" style="font-size:16px;color:var(--ns-blue);">17/17</h3><p>Ruilmarkt: aanbieden, matchen, claimen en gelijktijdige acceptatie</p></div>
+    </div>
+
+    <p class="note">Mutatietoets: elke van 18 opzettelijk ingebrachte fouten in rotatie, structuurgeneratie, eindvalidatie, import en export maakte minstens één test rood — een test die bij een echte fout groen blijft, bewijst niets.</p>
+  </div>
+  <div class="footer"><span>Betrouwbaarheid</span><span class="pagenum">15</span></div>
+</section>
+
+<!-- ================= 14 PORTABLE ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">14 · Oplevering</div><div class="title">Het complete platform op één USB-stick</div></div></div>
+    <p class="body-text">Geen installatie op de ontvangende computer, geen internetverbinding nodig — alles wat het platform draaiende houdt, staat op de stick zelf.</p>
+
+    <div class="cards g2" style="margin:7mm 0;">
+      <div class="card"><h3>Node &amp; PostgreSQL</h3><p>De applicatie en haar database, allebei ingesloten in de bundel.</p></div>
+      <div class="card"><h3>Python met OR-Tools</h3><p>De rekenmotor voor roostergeneratie draait mee, zonder aparte installatie.</p></div>
+      <div class="card"><h3>Alleen 127.0.0.1</h3><p>Het platform is uitsluitend bereikbaar vanaf de computer zelf — ook niet op een gedeeld wifinetwerk.</p></div>
+      <div class="card"><h3>Demonstratiegegevens</h3><p>67 accounts en 223 diensten, klaar om direct te verkennen na de eerste start.</p></div>
+    </div>
+
+    <div class="sect-h"><div class="kicker">Starten en stoppen</div></div>
+    <div class="diagram-flow">
+      <div class="node">Kopiëren naar<br>de stick</div><div class="arrow">→</div>
+      <div class="node mono" style="font-size:9px;">Start NS<br>Roosterplatform.bat</div><div class="arrow">→</div>
+      <div class="node">Gebruiken op<br>127.0.0.1</div><div class="arrow">→</div>
+      <div class="node mono" style="font-size:9px;">Stop NS<br>Roosterplatform.bat</div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>HANDLEIDING.md en deze brochure gaan mee in dezelfde map — wie alleen de stick ontvangt, heeft ook de volledige uitleg.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Portable demonstratie</span><span class="pagenum">16</span></div>
+</section>
+
+<!-- ================= 15 VAN DEMO NAAR FORMEEL ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">15 · Vervolg</div><div class="title">Van demonstratie naar formele inzet</div></div></div>
+    <p class="body-text">Softwarematig is het platform klaar: het draait, het rekent, het legt vast. Wat resteert, is geen technische schuld — het zijn organisatorische en formele stappen die nu eenmaal bij elke overgang van demonstratie naar productie horen.</p>
+
+    <table class="brochure" style="margin:7mm 0;">
+      <tr><th>Onderwerp</th><th>Status</th></tr>
+      <tr><td>Software end-to-end functioneel</td><td><span class="pill ready">Gereed</span></td></tr>
+      <tr><td>Geautomatiseerd bewezen (673 tests, 265 doorloopcontroles)</td><td><span class="pill ready">Gereed</span></td></tr>
+      <tr><td>Formele NS-bevestiging van het regelbestand (0 van 71 regels)</td><td><span class="pill pending">Te doen door NS</span></td></tr>
+      <tr><td>Regels uit de Arbeidstijdenwet en het Arbeidstijdenbesluit vervoer formeel laten bevestigen</td><td><span class="pill pending">Te doen door NS</span></td></tr>
+      <tr><td>Beveiligingsbeoordeling en DPIA</td><td><span class="pill pending">Governance</span></td></tr>
+      <tr><td>Aansluiting op NS-inlogvoorzieningen (SSO)</td><td><span class="pill pending">Infrastructuur</span></td></tr>
+      <tr><td>Pilotbesluit</td><td><span class="pill pending">Organisatie</span></td></tr>
+    </table>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>Dit is geen negatieve slotsom. Het scheidt precies wat de software al bewijst van wat alleen NS zelf kan bevestigen — zodat het vervolgtraject weet waar het begint.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Van demonstratie naar formele inzet</span><span class="pagenum">17</span></div>
+</section>
+
+<!-- ================= 16 CONCLUSIE ================= -->
+<section class="page">
+  <div class="content">
+    <div class="masthead"><div><div class="eyebrow">16 · Slot</div><div class="title">Conclusie</div></div></div>
+
+    <p class="lede">Het NS Roosterplatform laat zien wat er gebeurt wanneer roosterlogica die nu verspreid zit over Excel-bladen en mondelinge afspraken, samenkomt op één plek: controleerbaar, herleidbaar, en met dezelfde uitkomst bij dezelfde invoer.</p>
+
+    <p class="body-text">Vier rollen, één regelbestand, één rekenmotor die zichzelf laat natoetsen — gedemonstreerd op de echte data van standplaats Dordrecht en bewezen met 673 geautomatiseerde tests, een volledige doorloop van 265 controles en een draagbare versie die start, herstart en een harde stop overleeft.</p>
+
+    <p class="body-text">Wat resteert, is geen softwarevraag. Het is de vraag of NS de volgende, formele stap wil zetten — en dat besluit verdient een demonstratie die zelf al aantoont dat zij overeind blijft.</p>
+
+    <div class="cards g2" style="margin-top:9mm;">
+      <div class="card"><h3>Voor wie dit doorneemt</h3><p>De portable versie op de USB-stick laat elke rol zelf zien wat hierboven staat — de kortste weg naar een eigen oordeel.</p></div>
+      <div class="card"><h3>Contact</h3><p>Vragen over deze demonstratie of het vervolgtraject: neem contact op met de Rooster Commissie van standplaats Dordrecht.</p></div>
+    </div>
+
+    <div class="callout" style="margin-top:auto;">
+      <p>NS Roosterplatform — Dordrecht. Demonstratieversie 6 september 2026.</p>
+    </div>
+  </div>
+  <div class="footer"><span>Conclusie</span><span class="pagenum">18</span></div>
+</section>
+
+</body>
+</html>

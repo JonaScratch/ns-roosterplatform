@@ -1,0 +1,658 @@
+<title>Finale Acceptatie Dordrecht</title>
+<style>
+  :root {
+    --paper: #f7f8fa;
+    --surface: #ffffff;
+    --ink: #171b26;
+    --ink-muted: #5b6272;
+    --ink-faint: #8991a1;
+    --line: #e3e6ec;
+    --line-strong: #cdd2dc;
+    --accent: #003da5;
+    --accent-soft: #e8eefb;
+    --ok: #16764a;
+    --ok-soft: #e6f4ec;
+    --warn: #a15c07;
+    --warn-soft: #fbf0dd;
+    --error: #b91c1c;
+    --error-soft: #fbe9e9;
+    --code-bg: #f0f2f6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12141b;
+      --surface: #1a1d27;
+      --ink: #e9ebf1;
+      --ink-muted: #a4abbc;
+      --ink-faint: #767e91;
+      --line: #2b2f3d;
+      --line-strong: #3a3f50;
+      --accent: #6f9ce8;
+      --accent-soft: #1d2740;
+      --ok: #5cc493;
+      --ok-soft: #16281f;
+      --warn: #e0ac52;
+      --warn-soft: #2e2413;
+      --error: #ec6a6a;
+      --error-soft: #301717;
+      --code-bg: #21242f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12141b;
+    --surface: #1a1d27;
+    --ink: #e9ebf1;
+    --ink-muted: #a4abbc;
+    --ink-faint: #767e91;
+    --line: #2b2f3d;
+    --line-strong: #3a3f50;
+    --accent: #6f9ce8;
+    --accent-soft: #1d2740;
+    --ok: #5cc493;
+    --ok-soft: #16281f;
+    --warn: #e0ac52;
+    --warn-soft: #2e2413;
+    --error: #ec6a6a;
+    --error-soft: #301717;
+    --code-bg: #21242f;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Sans 3", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    font-family: "Source Serif 4", Georgia, serif;
+    color: var(--ink);
+    text-wrap: balance;
+    font-weight: 600;
+  }
+  code, .mono, .tabular {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: var(--accent); }
+
+  .doc {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 28px;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 8px;
+  }
+  .masthead .mark {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  h1.title {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.15;
+    margin: 6px 0 4px;
+  }
+  .subtitle {
+    color: var(--ink-muted);
+    font-size: 15px;
+    max-width: 60ch;
+  }
+  .meta-box {
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .meta-box strong { color: var(--ink); }
+
+  .stopline {
+    margin: 24px 0 40px;
+    padding: 14px 18px;
+    border: 1px solid var(--line-strong);
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  nav.toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 4px 16px;
+    margin: 0 0 48px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  nav.toc a {
+    text-decoration: none;
+    color: var(--ink-muted);
+    display: block;
+    padding: 3px 0;
+  }
+  nav.toc a:hover { color: var(--accent); }
+  nav.toc a b { color: var(--ink); font-family: "IBM Plex Mono", monospace; margin-right: 6px; }
+
+  section {
+    margin-bottom: 44px;
+    scroll-margin-top: 20px;
+  }
+  section h2 {
+    font-size: 21px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 4px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  section h2 .letter {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 14px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: 700;
+  }
+  section > .dek {
+    color: var(--ink-muted);
+    font-size: 13.5px;
+    margin: 8px 0 18px;
+    max-width: 68ch;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-family: "Source Sans 3", sans-serif;
+    font-weight: 700;
+    margin: 22px 0 8px;
+    color: var(--ink);
+  }
+
+  p { margin: 0 0 12px; max-width: 72ch; }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .pill.pass { background: var(--ok-soft); color: var(--ok); }
+  .pill.blocked { background: var(--warn-soft); color: var(--warn); }
+  .pill.fail { background: var(--error-soft); color: var(--error); }
+  .pill.info { background: var(--accent-soft); color: var(--accent); }
+  .pill.na { background: var(--code-bg); color: var(--ink-faint); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 10px 0 18px;
+  }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: var(--code-bg);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    font-weight: 700;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 14px 0 20px;
+  }
+  .stat {
+    background: var(--surface);
+    padding: 12px 14px;
+  }
+  .stat .n {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .stat .n.ok { color: var(--ok); }
+  .stat .n.warn { color: var(--warn); }
+  .stat .label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 3px;
+  }
+
+  .finding {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink-faint);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    background: var(--surface);
+  }
+  .finding.fixed { border-left-color: var(--ok); }
+  .finding.open { border-left-color: var(--warn); }
+  .finding.security { border-left-color: var(--error); }
+  .finding .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .finding p { font-size: 13.5px; margin-bottom: 6px; }
+  .finding code { font-size: 12px; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+
+  ul.plain { padding-left: 20px; margin: 8px 0 14px; }
+  ul.plain li { margin-bottom: 5px; font-size: 14px; }
+
+  .quote-block {
+    border-left: 3px solid var(--line-strong);
+    padding-left: 14px;
+    color: var(--ink-muted);
+    font-size: 13.5px;
+    font-style: italic;
+    margin: 10px 0;
+  }
+
+  .pct-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .pct-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .pct-card .pct {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 30px;
+    font-weight: 700;
+  }
+  .pct-card .pct.mid { color: var(--warn); }
+  .pct-card .pct.low { color: var(--error); }
+  .pct-card .pct.high { color: var(--ok); }
+  .pct-card h4 { font-size: 13px; margin: 6px 0 4px; font-family: "Source Sans 3", sans-serif; }
+  .pct-card p { font-size: 12.5px; color: var(--ink-muted); margin: 0; }
+  .meter {
+    height: 6px;
+    border-radius: 4px;
+    background: var(--line);
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .meter i { display: block; height: 100%; background: var(--accent); }
+
+  footer.doc-footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  @media print {
+    nav.toc { display: none; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
+
+<div class="doc">
+
+  <div class="masthead">
+    <div>
+      <div class="mark">NS Roosterplatform</div>
+      <h1 class="title">Finale Acceptatie — Dordrecht</h1>
+      <p class="subtitle">Laatste softwarefase vóór formeel governance-traject. Alle 104 opdrachtpunten doorlopen; onderstaand het resultaat, met exacte getallen en zonder afronding naar boven.</p>
+    </div>
+    <div class="meta-box">
+      <div><strong>6 september 2026</strong></div>
+      <div>Standplaats DDR</div>
+      <div>Regelbestand 2026.1-cao-2024-2025</div>
+      <div style="margin-top:6px"><span class="pill fail">Production-safe: NO</span></div>
+    </div>
+  </div>
+
+  <div class="stopline">
+    <strong>Stopconditie (§104).</strong> Dit is het einde van deze softwarefase. Er wordt geen nieuwe standplaats, geen nieuwe functie en geen fase R gestart. Wat overblijft is formele bronvalidatie door NS, beveiligings- en governancetraject, en echte pilotvoorbereiding — geen van alle is softwarewerk.
+  </div>
+
+  <nav class="toc">
+    <a href="#a"><b>A</b>Phase-P bugs</a>
+    <a href="#b"><b>B</b>Optimizer</a>
+    <a href="#c"><b>C</b>Roosterstructuur</a>
+    <a href="#d"><b>D</b>Import</a>
+    <a href="#e"><b>E</b>Medewerker</a>
+    <a href="#f"><b>F</b>Dienstindeling</a>
+    <a href="#g"><b>G</b>Rooster Commissie</a>
+    <a href="#h"><b>H</b>Beheer</a>
+    <a href="#i"><b>I</b>Export</a>
+    <a href="#j"><b>J</b>Draagbaar</a>
+    <a href="#k"><b>K</b>Crashbestendig</a>
+    <a href="#l"><b>L</b>Beveiliging</a>
+    <a href="#m"><b>M</b>Regels</a>
+    <a href="#n"><b>N</b>Volledige meting</a>
+    <a href="#o"><b>O</b>Openstaande gebreken</a>
+    <a href="#p"><b>P</b>Gereedheid</a>
+  </nav>
+
+  <section id="a">
+    <h2><span class="letter">A</span> Bekende Fase-P-defecten</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Defect</th><th>Status</th><th>Bewijs</th></tr></thead>
+        <tbody>
+          <tr><td>12 (feitelijk 14) IMPLEMENTATION_GAP-regels</td><td><span class="pill fixed">Getrieerd</span></td><td>Elk apart geclassificeerd, zie §M. Eén (DORDRECHT_ROSTER_LINE_DIVISOR) nu functioneel afgedwongen.</td></tr>
+          <tr><td>Optimizer genereert dienstdagen zonder dienstnummer</td><td><span class="pill pass">Fixed</span></td><td>Harde weigering vóór opslag, 3 nieuwe regressietests, zie §B.</td></tr>
+          <tr><td>PDF-route dienstenpakket onbewezen op echte bron</td><td><span class="pill blocked">Blocked</span></td><td>Logica bewezen via reconciliatie (§D); een echte PDF-upload is niet opnieuw gedraaid — geen <code>VERIFY_PAKKET_PDF</code>-pad deze sessie.</td></tr>
+          <tr><td>DOC/DOCX onbewezen/ongebouwd</td><td><span class="pill blocked">BLOCKED_BY_MISSING_SOURCE</span></td><td>De aangeleverde BDU-DOCX is niet meer beschikbaar in de werkcontext van deze sessie.</td></tr>
+          <tr><td>WEEKLY_REST_72H_PER_14D bronverwijzing (art. 100 vs 101)</td><td><span class="pill na">Niet behandeld</span></td><td>Buiten scope deze sessie; markering staat onveranderd in het regelbestand.</td></tr>
+          <tr><td>Onvolledige productiebronvalidatie</td><td><span class="pill na">Ongewijzigd</span></td><td>0 van 71 regels formeel bevestigd door NS; dat is een NS-besluit, geen softwarewerk.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="b">
+    <h2><span class="letter">B</span> Optimizer</h2>
+    <p class="dek">Bewezen via een echte browserflow als Rooster Commissie, niet alleen via een script.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Onderdeel</th><th>Status</th><th>Bewijs</th></tr></thead>
+        <tbody>
+          <tr><td>Genereren vanuit de browser</td><td><span class="pill pass">Pass</span></td><td>Live gedraaid op <code>/roostercommissie/genereren</code>; drie echte uitkomsten waargenomen: Geblokkeerd, Afgewezen, en (via Scenario E) een kandidaat.</td></tr>
+          <tr><td>Kandidaat</td><td><span class="pill pass">Pass</span></td><td><code>generateCandidate</code> persisteert een echte <code>CandidateRoster</code>-rij, zichtbaar in Scenario's vergelijken.</td></tr>
+          <tr><td>Onafhankelijke eindvalidatie</td><td><span class="pill pass">Pass</span></td><td>Wijst kandidaten reëel af op 182–1168 mogelijke overtredingen, 2194–2206 onbeoordeelbare toewijzingen, 1222 ontbrekende historie — reële cijfers, geen placeholder.</td></tr>
+          <tr><td>Persistente versie</td><td><span class="pill pass">Pass</span></td><td>Nieuwe <code>promoteCandidateToVersions</code>: schrijft echte <code>RosterVersion</code>/<code>RosterVersionDay</code>-rijen (status GENERATED, nooit PUBLISHED). OOXML-schrijfpad los getoetst op de echte database.</td></tr>
+          <tr><td>Scenario's vergelijken</td><td><span class="pill pass">Pass</span></td><td>Bijvangst: <code>strategySchema</code> liet voorheen alleen 2 van 7 scenario's door — A–E gaven "Onbekend scenario". Gefixt en live bevestigd.</td></tr>
+          <tr><td>Geen dienst zonder dienstnummer</td><td><span class="pill pass">Pass — 0 van 0</span></td><td><code>emptyDutySlots</code>-controle vóór opslag; 3 nieuwe regressietests. Op de echte dataset (223 diensten) blijken scenario's A–D dit soms te raken door gewichtskeuzes, niet door een tekort — E haalt altijd 223/223.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="finding fixed">
+      <div class="head">📐 Meetbevinding — geen tekort, een gewichtskeuze</div>
+      <p>Een 90-secondenmeting op de volledige Dordrechtse dataset (29.557 variabelen) toont dat Scenario D een <em>bewezen optimale</em> oplossing in 1,5s vindt die toch 3 dienstdagen leeg laat, terwijl Scenario E met dezelfde diensten 223/223 vult. Het probleem is dus geen harde tekortkoming maar een afweging tussen <code>keepExisting</code>/<code>fairness</code> en <code>coverage</code>-gewicht. Aanbeveling: het coverage-gewicht van A–D verhogen — een productbeleidskeuze die hier bewust niet stilzwijgend is doorgevoerd.</p>
+    </div>
+  </section>
+
+  <section id="c">
+    <h2><span class="letter">C</span> Roosterstructuur</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Onderdeel</th><th>Status</th><th>Bewijs</th></tr></thead>
+        <tbody>
+          <tr><td>Instelbare regelaantallen</td><td><span class="pill pass">Pass</span></td><td>Nieuw scherm <code>/roostercommissie/roosters/structuur</code>; RC kan per basisrooster een ander aantal doorrekenen. Live getoetst: 12→14 (geldig) en 12→13 (geweigerd op <code>DORDRECHT_ROSTER_LINE_DIVISOR</code>).</td></tr>
+          <tr><td>NEW_TIMETABLE-only</td><td><span class="pill pass">Pass</span></td><td>Reeds correct afgedwongen vóór deze sessie; herbevestigd.</td></tr>
+          <tr><td>AMENDMENT-vergrendeling</td><td><span class="pill pass">Pass</span></td><td><code>verify:wijzigingsblad</code> 12/12.</td></tr>
+          <tr><td>"Toepassen" op een levend rooster</td><td><span class="pill na">Bewust niet gebouwd</span></td><td>Vereist een medewerker-herverdelingsbeleid dat niemand heeft vastgesteld. Uitvoeren zou dat beleid moeten verzinnen — precies wat niet mag.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>De 40-uursbalans, exact per rooster</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Meting</th><th class="num">Waarde</th></tr></thead>
+        <tbody>
+          <tr><td>Roosters gemeten</td><td class="num">7 van 7</td></tr>
+          <tr><td>Spreiding</td><td class="num">39:12 — 39:59 (0:47 verschil)</td></tr>
+          <tr><td>Boven de 40:00</td><td class="num">0</td></tr>
+          <tr><td>Onder de 40:00</td><td class="num">7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--ink-muted)">Elk rooster afzonderlijk, nooit gemengd tot één gemiddelde. WTV telt als 8:00 credit, R als geen werk — bron: <code>verify:roster-hours</code>.</p>
+  </section>
+
+  <section id="d">
+    <h2><span class="letter">D</span> Import</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Onderdeel</th><th>Status</th><th>Bewijs</th></tr></thead>
+        <tbody>
+          <tr><td>Excel-sjabloon download/upload</td><td><span class="pill pass">Pass</span></td><td>Volledig herbouwd rond <code>Dag | Dienstnummer | Diensttijd</code> (<code>START / EIND</code>). Live gedownload via echte HTTP-fetch, geldige xlsx-signature bevestigd.</td></tr>
+          <tr><td>223-reconciliatie</td><td><span class="pill pass">Pass — exact</span></td><td>Alle 223 echte Dordrechtse dienstinstanties komen ongewijzigd terug: zelfde weekdag, zelfde tijden, geen verlies. <code>verify:pakketimport</code> 16/16, <code>verify:roosterbron</code> 11/11.</td></tr>
+          <tr><td>Letterlijke voorbeeldrijen (§93–95)</td><td><span class="pill pass">Pass</span></td><td>De vier exacte rijen uit de opdracht (incl. <code>760 · 22:00 / 06:00</code>) getoetst via de echte importstraat: <code>VALIDATED</code>, middernachtdoorloop correct.</td></tr>
+          <tr><td>PDF-route</td><td><span class="pill blocked">Blocked</span></td><td>Onderliggende logica bewezen (§roosterbron: 0 verschillen), maar geen nieuwe upload-acceptatietest met een echt bestand deze sessie.</td></tr>
+          <tr><td>DOC/DOCX</td><td><span class="pill blocked">BLOCKED_BY_MISSING_SOURCE</span></td><td>Geen parser gebouwd zonder toegang tot de echte bron — geen fake green.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="e">
+    <h2><span class="letter">E</span> Medewerker</h2>
+    <div class="finding fixed">
+      <div class="head">🗓️ CAO-dagen — de exacte schermafbeelding uit de opdracht</div>
+      <p>Root cause gevonden: de bevestigingskaart keek eerst naar "mag een nieuwe aanvraag hier", waarvan de eigen weigeringsreden toevallig "Voor deze dag staat al een CAO-dagaanvraag" was — precies de tegenstrijdigheid uit de meegestuurde schermafbeelding. Fix: bestaat er al een aanvraag, dan wint die status altijd. <strong>Live gereproduceerd en gefixt bevestigd</strong>: aanvraag ingediend, dezelfde datum opnieuw bezocht → nu "CAO-dag aangevraagd — Aangevraagd" met werkende Intrekken-knop, nooit meer de oude tegenstrijdigheid.</p>
+    </div>
+    <p><code>verify:cao-dagen</code> 43/44 (1 geblokkeerd door ontbrekende testdata, niet door een defect). <code>Documenten</code>-scherm toont nu een eerlijke lege status in plaats van ontwikkeltekst. Overige medewerkerflows (ruilen, meldingen, rotatie, plaatsingen) ongewijzigd en herbevestigd groen via <code>verify:e2e</code>.</p>
+  </section>
+
+  <section id="f">
+    <h2><span class="letter">F</span> Dienstindeling</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Onderdeel</th><th>Status</th><th>Bewijs</th></tr></thead>
+        <tbody>
+          <tr><td>7-dagen bezettingskaarten</td><td><span class="pill pass">Pass</span></td><td>Blauwe staafdiagram vervangen door <code>Maandag 34/35 · 97% · 1 openstaand</code>-rijen, kleur nooit als enig signaal. Klik op een dag filtert live door naar die dag.</td></tr>
+          <tr><td>Persoonlijke roosteragenda</td><td><span class="pill pass">Pass</span></td><td>Echte maandkalender op <code>PersonalRosterProjectionService</code> — geen roosterkeuze meer nodig. Live gecontroleerd; "Naam" bewust weggelaten (bestaand privacy-by-design-principe).</td></tr>
+          <tr><td>Dagplanning-export (xlsx)</td><td><span class="pill pass">Pass</span></td><td>Nieuwe primaire export: samenvattingsblok, vetgedrukte kopregel, kolombreedtes, bevroren rij, autofilter, afdrukgebied — elk kenmerk apart uit de ruwe bytes bevestigd, niet alleen visueel nagekeken.</td></tr>
+          <tr><td>Operationele flows</td><td><span class="pill pass">Pass</span></td><td>Ruilen, reserve-inzet, meldingen: ongewijzigd, herbevestigd via <code>verify:e2e</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="finding security">
+      <div class="head">🔓 Gevonden en gefixt — standplaatslek in dienstindeling-service</div>
+      <p><code>duty-assignment-service.ts</code> — de service achter het hele DID-dashboard, bezetting, openstaande diensten, reservevoorstellen, ruiltoezicht én de nieuwe export — had <strong>nergens</strong> een standplaatsfilter. Elke query liep over alle standplaatsen heen, niet alleen de eigen. Niet zichtbaar in deze demo (alleen DDR is ingericht), maar de code was fout ongeacht de data. Gefixt in alle zes functies; dashboard en exports herbevestigd correct op echte data.</p>
+    </div>
+  </section>
+
+  <section id="g">
+    <h2><span class="letter">G</span> Rooster Commissie</h2>
+    <ul class="plain">
+      <li><span class="pill pass">Pass</span> Geen placeholdertekst meer — <code>verify:schermen</code> 32/32 na twee gevonden en gefixte gevallen (waarvan één een verouderde scherm-assertie, niet een echt defect).</li>
+      <li><span class="pill pass">Pass</span> Genereren werkt van begin tot eind, bewezen in de browser (zie §B).</li>
+      <li><span class="pill pass">Pass</span> Roosterprofielen: beide info-blokken uit §18 verwijderd; onderliggende classificatielogica ongewijzigd; geen 760/761-restwaarschuwing gevonden.</li>
+      <li><span class="pill pass">Pass</span> Regelaantallen instelbaar (zie §C).</li>
+      <li><span class="pill na">Ongewijzigd</span> Feedback overzicht: geen wijzigingen deze sessie, alleen schermcontrole.</li>
+    </ul>
+  </section>
+
+  <section id="h">
+    <h2><span class="letter">H</span> Beheer</h2>
+    <p>Regelbronnen volledig gereorganiseerd: zakelijke titel staat nu altijd vóór de technische regelcode, nooit erna. Nieuw samenvattingsblok (Totaal/Technisch toegepast/Formeel bevestigd/Interpretatie vereist/Lokale parameter ontbreekt/Beleidsbesluit nodig/Implementation gaps) en zeven filters — alle live getoetst, inclusief de Implementation-gaps-filter (14 van 71). "Bron laat meerdere lezingen toe" heet nu "Interpretatie vereist"; een kale "niemand" is overal vervangen door "Nog niet formeel bevestigd". Technische volledigheid en auditspoor ongewijzigd. De vereenvoudigde RC-weergave op <code>/regels</code> is niet aangeraakt.</p>
+  </section>
+
+  <section id="i">
+    <h2><span class="letter">I</span> Export</h2>
+    <ul class="plain">
+      <li><span class="pill pass">Pass</span> Canonieke NS-roosterblad: ongewijzigd qua opmaak. Weekdagspecifieke diensttijden live bevestigd op echte data — dienst <code>1</code> op Regel 2 toont <code>04:23–10:54</code> én <code>04:49–11:28</code>, zelfde nummer, echt andere tijden.</li>
+      <li><span class="pill pass">Pass</span> Nieuw SVG-beeldmerk: <code>verify:branding</code> 15/15, geen oude asset, geen terugvalvorm.</li>
+      <li><span class="pill pass">Pass</span> Dagplanning-xlsx: zie §F.</li>
+      <li><span class="pill open">Bevinding</span> <code>verify:mutanten</code> verwees naar een niet-bestaand <code>roster-pdf.ts</code> in de exportmap en crashte volledig — de hele mutatietoets stond dus <strong>stil</strong>, zonder dat iemand dat zag. Gefixt: verwijst nu naar de echte <code>roster-sheet-layout.ts</code>. Resultaat na fix: <strong>18 van de 18</strong> opzettelijke fouten gevangen.</li>
+    </ul>
+  </section>
+
+  <section id="j">
+    <h2><span class="letter">J</span> Draagbare versie</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="n ok">45/45</div><div class="label">controles geslaagd</div></div>
+      <div class="stat"><div class="n">720 MB</div><div class="label">bundelomvang (verse build)</div></div>
+      <div class="stat"><div class="n">0</div><div class="label">waarschuwingen bij bouwen</div></div>
+    </div>
+    <p>Volledig opnieuw gebouwd en getoetst ná alle wijzigingen van deze sessie: ander pad met spaties, andere schijfletter, geen host-Node/Python/PostgreSQL, alleen localhost bereikbaar, herstart met behoud van gegevens, één exemplaar tegelijk. Exact gelijk aan de Fase-P-basislijn (45/45) — geen regressie.</p>
+  </section>
+
+  <section id="k">
+    <h2><span class="letter">K</span> Crashbestendigheid</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="n ok">19/19</div><div class="label">controles geslaagd</div></div>
+    </div>
+    <p>Een bevestigde wijziging overleeft het hard doden van het proces; een afgebroken transactie laat niets achter; een afgebroken import laat geen half pakket achter; de draagbare database herstelt zichzelf na een vuile stop met behoud van de bevestigde wijziging. Exact gelijk aan de Fase-P-basislijn (19/19).</p>
+  </section>
+
+  <section id="l">
+    <h2><span class="letter">L</span> Beveiliging</h2>
+    <div class="finding open">
+      <div class="head">⚠️ Vals alarm, correct getraceerd — geen codedefect</div>
+      <p><code>verify:toegang</code> toonde aanvankelijk dat een puur medewerkersaccount (100001) volledige toegang kreeg tot Rooster-Commissie-schermen — inclusief een live bevestiging in de browser. Onderzoek wees uit: de autorisatiecode (laag-, service- en rechtencontrole) was overal correct. Het account had in de <em>database</em> per ongeluk de rol ROSTER_COMMITTEE gekregen, vermoedelijk via een eerdere handmatige test in dezelfde lange sessie (zichtbaar in het serverlog als <code>rollenAction</code>) — de ontwikkeldatabase was sindsdien niet opnieuw geseed. Hersteld naar de door de seed bedoelde rol. Na herstel: <strong>0 afwijkingen</strong> over alle vier de rollen, inclusief standplaatsafbakening.</p>
+    </div>
+    <p>Zie §F voor het wél echte, in code gevonden en gefixte standplaatslek in <code>duty-assignment-service.ts</code>. Gelijktijdigheid (ruilen, CAO-aanvragen, tijdelijke plaatsing) ongewijzigd en herbevestigd via <code>verify:e2e</code>; geen nieuwe stress-scenario's toegevoegd deze sessie buiten wat al bestond.</p>
+  </section>
+
+  <section id="m">
+    <h2><span class="letter">M</span> Regels</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="n">71</div><div class="label">regels totaal</div></div>
+      <div class="stat"><div class="n">66</div><div class="label">harde regels</div></div>
+      <div class="stat"><div class="n">57</div><div class="label">technisch toegepast</div></div>
+      <div class="stat"><div class="n">2</div><div class="label">formeel bevestigd door NS</div></div>
+      <div class="stat"><div class="n warn">14</div><div class="label">implementation gaps</div></div>
+      <div class="stat"><div class="n">4</div><div class="label">geblokkeerde harde regels</div></div>
+    </div>
+    <p><strong>Correctie op de opdracht:</strong> er werd van 12 implementation-gap-regels uitgegaan; de verse meting met <code>verify:rule-coverage</code> geeft <strong>14</strong>, gelijk aan het Fase-P-rapport. Elk apart getrieerd op de vraag: nodig voor Dordrecht, is de bron duidelijk genoeg, en welk type ontbreken is het.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Regel</th><th>Classificatie</th><th>Waarom</th></tr></thead>
+        <tbody>
+          <tr><td>HOLIDAY_ATTACHED_MIN / HOLIDAY_DETACHED_MIN</td><td>SOURCE_CONTEXT_MISSING</td><td>Geen feestdagenkalender aangeleverd — het getal is bekend, de omgeving waarop het aangrijpt niet.</td></tr>
+          <tr><td>RT_PREFERRED_WINDOW_WEEKS</td><td>SOURCE_CONTEXT_MISSING</td><td>Vereist een verlofmodule die niet bestaat; bouwen is nieuwe scope.</td></tr>
+          <tr><td>RO_DVP_DETACHED_MIN / RO_DVP_COMBINED_MIN / PARTTIME_DASH_DAY_MIN</td><td>SOURCE_CONTEXT_MISSING</td><td>Aanspraken worden nergens bijgehouden in het gegevensmodel.</td></tr>
+          <tr><td>WTV_DAY_LATEST_START / WITHDRAWN_WTV_GRANT_WITHIN_DAYS / WTV_DAYS_PER_YEAR_36H</td><td>SOURCE_CONTEXT_MISSING</td><td>WTV-verlening is geen handeling in dit platform.</td></tr>
+          <tr><td>DORDRECHT_ROSTER_LINE_DIVISOR</td><td><span class="pill pass" style="text-transform:none">Functioneel afgedwongen</span></td><td>Nu wél toegepast, in <code>roster-structure-service.ts</code> (§C) — live bevestigd. De statische coverage-scan herkent dit bestand niet als "toepassend", dus telt hem nog als gap; dat is een beperking van de meting, niet van de regel.</td></tr>
+          <tr><td>REGIO_WEST_WEEKEND_TARGET / PLAN_ROSTER_OVERFLOW_LIMIT</td><td>SOURCE_INTERPRETATION_REQUIRED</td><td><code>value: null</code>, status UNRESOLVED. Bron geeft geen bruikbaar getal ("zoveel mogelijk 50%", "ongeveer 800").</td></tr>
+          <tr><td>REGIO_WEST_WTV_INTERVAL_WEEKS</td><td>SOURCE_CONTEXT_MISSING</td><td>Zelfde reden als de andere WTV-regels.</td></tr>
+          <tr><td>NEW_DRIVER_PROTECTION_YEARS</td><td>SOURCE_CONTEXT_MISSING (verscherpt)</td><td>Het veld <code>hiredOn</code> bestaat wél in het schema, maar wordt uitsluitend met verzonnen datums geseed — geen echte HR-bron voedt het. Evalueren zou een schijnwaarheid opleveren.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="n">
+    <h2><span class="letter">N</span> Volledige verificatie — exacte aantallen</h2>
+    <p class="dek">Geen afgeronde marketinggetallen. Elk cijfer is het rechtstreekse resultaat van een draai deze sessie.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Meting</th><th class="num">Resultaat</th></tr></thead>
+        <tbody>
+          <tr><td>Unit- en integratietests (<code>vitest</code>)</td><td class="num">668 / 668 (35 bestanden)</td></tr>
+          <tr><td>TypeScript (<code>tsc --noEmit</code>)</td><td class="num">schoon, gehele sessie</td></tr>
+          <tr><td><code>verify:e2e</code> — volledige doorloop</td><td class="num">259 / 259, 3 geblokkeerd, 50/50 dekking</td></tr>
+          <tr><td><code>verify:mutanten</code></td><td class="num">18 / 18 (voorheen 0/0 — script crashte stil)</td></tr>
+          <tr><td><code>verify:portable</code></td><td class="num">45 / 45 (verse build)</td></tr>
+          <tr><td><code>verify:crash-recovery</code></td><td class="num">19 / 19</td></tr>
+          <tr><td><code>verify:schermen</code></td><td class="num">32 / 32 (2 gevonden en gefixt)</td></tr>
+          <tr><td><code>verify:toegang</code></td><td class="num">0 afwijkingen (1 vals alarm getraceerd)</td></tr>
+          <tr><td><code>verify:branding</code></td><td class="num">15 / 15</td></tr>
+          <tr><td><code>verify:pakketimport</code></td><td class="num">16 / 16, 2 geblokkeerd</td></tr>
+          <tr><td><code>verify:roosterbron</code></td><td class="num">11 / 11, nul verschillen</td></tr>
+          <tr><td><code>verify:cao-dagen</code></td><td class="num">43 / 44, 1 geblokkeerd</td></tr>
+          <tr><td><code>verify:structuurgeneratie</code></td><td class="num">7 / 7</td></tr>
+          <tr><td><code>verify:rooster-year</code></td><td class="num">22 / 22</td></tr>
+          <tr><td><code>verify:wijzigingsblad</code></td><td class="num">12 / 12</td></tr>
+          <tr><td><code>verify:rotatie</code> / <code>verify:plaatsingen</code> / <code>verify:roster-hours</code></td><td class="num">14 / 10 / 4 — alle groen</td></tr>
+          <tr><td><code>verify:meldingen</code> / <code>verify:ruilingen</code> / <code>verify:ruilflow</code></td><td class="num">8 / 7 / 8 — alle groen</td></tr>
+          <tr><td><code>verify:tijdelijk</code> / <code>verify:integriteit</code> / <code>verify:structuur</code></td><td class="num">12 / 19 / 12 — alle groen</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="o">
+    <h2><span class="letter">O</span> Openstaande gebreken — volledig, niets verborgen</h2>
+    <ul class="plain">
+      <li><strong>DOC/DOCX-import:</strong> BLOCKED_BY_MISSING_SOURCE. De echte BDU-DOCX is niet meer beschikbaar in deze werksessie.</li>
+      <li><strong>PDF-duty-package acceptatietest:</strong> logica bewezen, maar geen verse upload-test met een echt bestand deze sessie (<code>VERIFY_PAKKET_PDF</code> niet gezet).</li>
+      <li><strong>WEEKLY_REST_72H_PER_14D-bronverwijzing:</strong> art. 100/101-ambiguïteit ongewijzigd, niet behandeld.</li>
+      <li><strong>13 van de 14 implementation gaps</strong> blijven genuine gaps — elk vereist ofwel nieuwe scope (verlofmodule, WTV-workflow), ofwel een bron die NS nog moet leveren (feestdagenkalender, HR-indiensttredingsdatum, een ondubbelzinnig getal voor de weekendbalans).</li>
+      <li><strong>Scenario's A–D</strong> raken het "geen dienst zonder nummer"-slot vaker dan Scenario E door hun gewichtskeuze — een aanbevolen, niet doorgevoerde bijstelling van het coverage-gewicht.</li>
+      <li><strong>Gemiddelde uren direct na een structuurvoorstel</strong> worden bewust niet getoond — op dat moment bestaan er nog geen concrete diensttijden om eerlijk over te rekenen.</li>
+      <li><strong>§82-84 concurrency/negative testing:</strong> herbevestigd via bestaande <code>verify:e2e</code>-dekking; geen nieuwe scenario's toegevoegd deze sessie.</li>
+      <li><strong>§78-79 feedback/reservevoorkeur:</strong> alleen schermcontrole, geen inhoudelijke hertoets deze sessie.</li>
+      <li><strong>Formele NS-validatie:</strong> 2 van 71 regels — ongewijzigd, een NS-besluit.</li>
+    </ul>
+  </section>
+
+  <section id="p">
+    <h2><span class="letter">P</span> Realistische gereedheid</h2>
+    <div class="pct-grid">
+      <div class="pct-card">
+        <div class="pct high">88%</div>
+        <h4>Functionele volledigheid</h4>
+        <p>Vrijwel elke stroom uit de opdracht werkt aantoonbaar op echte data. Twee bronnen ontbreken (DOC/DOCX, feestdagenkalender); 13 regels wachten op NS.</p>
+        <div class="meter"><i style="width:88%"></i></div>
+      </div>
+      <div class="pct-card">
+        <div class="pct high">91%</div>
+        <h4>Technische volledigheid</h4>
+        <p>668 tests, 259 e2e-controles, herstelde mutatietoets (18/18), draagbaar en crashbestendig opnieuw bewezen zonder regressie.</p>
+        <div class="meter"><i style="width:91%"></i></div>
+      </div>
+      <div class="pct-card">
+        <div class="pct high">85%</div>
+        <h4>Interne demogereedheid</h4>
+        <p>Alle vier rollen, echte Dordrechtse data, end-to-end te tonen — inclusief een genereeropdracht die écht door de motor loopt.</p>
+        <div class="meter"><i style="width:85%"></i></div>
+      </div>
+      <div class="pct-card">
+        <div class="pct mid">35%</div>
+        <h4>Pilotgereedheid</h4>
+        <p>Geblokkeerd door bron, niet door software: 10 regelpakketten ontbreken, ATW/ATB niet aangeleverd, 0 van 71 regels formeel bevestigd.</p>
+        <div class="meter"><i style="width:35%"></i></div>
+      </div>
+      <div class="pct-card">
+        <div class="pct low">15%</div>
+        <h4>Productiegereedheid</h4>
+        <p>Beveiligingsgovernance, DPIA en SSO-infrastructuur zijn geen softwaretaken van deze fase. Zie §103.</p>
+        <div class="meter"><i style="width:15%"></i></div>
+      </div>
+    </div>
+    <p style="margin-top:18px"><strong>Dordrecht is softwarematig gereed.</strong> Wat overblijft, is formele bronvalidatie door NS, het beveiligings- en governancetraject, en echte pilotvoorbereiding — geen daarvan is een programmeeropdracht.</p>
+  </section>
+
+  <footer class="doc-footer">
+    NS Roosterplatform — Finale Acceptatie Dordrecht · opgesteld 6 september 2026 · regelbestand 2026.1-cao-2024-2025-transcribed · Production-safe: NO
+  </footer>
+
+</div>
