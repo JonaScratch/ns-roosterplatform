@@ -268,6 +268,7 @@ export function Button({
   disabled,
   name,
   value,
+  onClick,
   children,
 }: {
   variant?: "primary" | "secondary" | "outline-rc" | "outline-did" | "danger";
@@ -277,6 +278,8 @@ export function Button({
   disabled?: boolean;
   name?: string;
   value?: string;
+  /** Alleen vanuit een clientcomponent; een servercomponent kan geen functie doorgeven. */
+  onClick?: () => void;
   children: ReactNode;
 }) {
   const styles = {
@@ -292,6 +295,7 @@ export function Button({
       type={type}
       name={name}
       value={value}
+      onClick={onClick}
       disabled={disabled}
       className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
         size === "small" ? "px-2.5 py-1 text-[11.5px]" : "px-3.5 py-2 text-[12.5px]"

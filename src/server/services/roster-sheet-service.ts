@@ -6,7 +6,7 @@ import { brandLogoDataUri } from "@/server/branding/assets";
 import { prisma } from "@/server/data/prisma";
 import { SIMULATION_LABEL, cellFor } from "@/server/export/roster-document";
 import type { RosterSheet, SheetCell, SheetLine, SummaryField } from "@/server/export/roster-sheet-layout";
-import { renderSheetPdf, renderSheetSvg } from "@/server/export/roster-sheet-render";
+import { renderSheetPdf, renderSheetSvg, renderSheetsPdf } from "@/server/export/roster-sheet-render";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
 import { NotFoundError, requirePermission } from "@/server/security/authorize";
 import { locationScopeFor } from "@/server/security/location-scope";
@@ -302,6 +302,48 @@ export async function exportCandidateSheetPdf(
   });
 
   return { filename: `${gebouwd.rosterCode}-SCENARIO-SIMULATIE.pdf`, bytes };
+}
+
+/**
+ * Alle basisroosters van een kandidaat in één PDF.
+ *
+ * Per rooster hetzelfde blad als bij het losse exporteren, in de volgorde van de
+ * roostercodes. Eén auditregel voor het hele bestand, met de roosters erin.
+ */
+export async function exportCandidatePackagePdf(
+  candidateId: string,
+): Promise<{ readonly filename: string; readonly bytes: Buffer }> {
+  const actor = await requirePermission(PERMISSIONS.ROSTER_COMPARE);
+  const kandidaat = await prisma.candidateRoster.findUnique({
+    where: { id: candidateId },
+    select: { assignments: true, candidateNumber: true },
+  });
+  if (!kandidaat) {
+    throw new NotFoundError("Dit scenario bestaat niet (meer).");
+  }
+  const codes = [
+    ...new Set(
+      ((kandidaat.assignments ?? []) as unknown as readonly { readonly baseRosterCode: string }[]).map(
+        (entry) => entry.baseRosterCode,
+      ),
+    ),
+  ].sort();
+  const bladen = [];
+  for (const code of codes) {
+    bladen.push(await buildCandidateSheet(candidateId, code));
+  }
+  const bytes = renderSheetsPdf(bladen.map((blad) => blad.sheet));
+
+  await recordAudit({
+    actor,
+    action: "scenario.pakket-geexporteerd-pdf",
+    objectType: "CandidateRoster",
+    objectId: candidateId,
+    newValue: { roosters: codes, simulatie: true, bytes: bytes.length },
+  });
+
+  const nummer = kandidaat.candidateNumber ? `-KANDIDAAT-${kandidaat.candidateNumber}` : "";
+  return { filename: `BASISROOSTERS${nummer}-SCENARIO-SIMULATIE.pdf`, bytes };
 }
 
 /** Hetzelfde scenarioblad als SVG, voor de voorvertoning op het scherm. */

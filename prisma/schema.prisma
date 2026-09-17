@@ -1129,10 +1129,107 @@ model CandidateRoster {
   validationSummary Json?
   validatedAt       DateTime?
 
+  /// De generatieopdracht waaruit deze kandidaat kwam. Null bij kandidaten van
+  /// vóór v1.0.3; die heten op het scherm "legacy".
+  generationRunId String?
+  generationRun   GenerationRun? @relation(fields: [generationRunId], references: [id], onDelete: SetNull)
+  /// 1, 2 of 3 binnen de opdracht.
+  candidateNumber Int?
+  /// Bij een herbouw: de kandidaat die werd verbeterd.
+  parentCandidateId String?
+  /// De kandidaat waarmee de Roostercommissie verder wil. Geen publicatie.
+  preferred       Boolean   @default(false)
+  /// Opgeborgen onder de geschiedenis; blijft leesbaar.
+  archivedAt      DateTime?
+  /// De roosterkwaliteit bij het opslaan: deelscores, nachtreeksen, overgangen.
+  qualityMetrics  Json?
+
   createdAt DateTime @default(now())
 
   @@index([validationState])
   @@index([generatedAt])
+  @@index([generationRunId])
+}
+
+/// Eén generatieopdracht: een strategie, een roosterjaar, tot drie kandidaten.
+///
+/// De opdracht leeft in de database en niet in een browserverzoek. Een
+/// berekening van vijf minuten mag niet stoppen omdat iemand de pagina ververst,
+/// en na het verversen moet te zien zijn hoe ver hij is.
+model GenerationRun {
+  id              String              @id @default(uuid())
+  locationCode    String
+  kind            GenerationRunKind   @default(GENERATE)
+  strategy        String
+  strategyLabel   String
+  rosterYear      Int
+  periodStart     DateTime            @db.Date
+  periodEnd       DateTime            @db.Date
+  dutyPackageId   String?
+  status          GenerationRunStatus @default(QUEUED)
+  /// De technische stap, voor logboek en tests.
+  stage           String?
+  /// Wat de gebruiker leest: "Kandidaat 2 wordt gevalideerd."
+  stageMessage    String?
+  /// Voortgang zoals de server hem kent: stappen, kandidaat, pogingen.
+  progress        Json?
+  requestedCandidates Int
+  foundCandidates Int                 @default(0)
+  /// Waarom een opdracht (deels) niet lukte, in gewone taal.
+  failureReason   String?
+  /// Per poging: geaccepteerd of verworpen, en waarom. Plus rekentijden.
+  log             Json?
+  cancelRequested Boolean             @default(false)
+  /// Een lopende opdracht meldt zich regelmatig. Stopt dat, dan is het proces
+  /// weg en wordt de opdracht als onderbroken gemarkeerd.
+  heartbeatAt     DateTime?
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  createdByUserId String?
+  createdAt       DateTime            @default(now())
+  /// Bij een herbouw: de kandidaat die verbeterd wordt.
+  parentCandidateId String?
+  adjustmentId    String?             @unique
+  adjustment      RosterCommitteeAdjustment? @relation(fields: [adjustmentId], references: [id])
+  candidates      CandidateRoster[]
+
+  @@index([locationCode, createdAt])
+  @@index([status])
+}
+
+enum GenerationRunStatus {
+  QUEUED
+  RUNNING
+  /// Alle gevraagde kandidaten gevonden.
+  COMPLETED
+  /// Minder kandidaten gevonden dan gevraagd, maar wel ten minste één.
+  PARTIAL
+  FAILED
+  CANCELLED
+  /// Het proces verdween halverwege; er is niets half opgeslagen.
+  INTERRUPTED
+}
+
+enum GenerationRunKind {
+  GENERATE
+  REBUILD
+}
+
+/// Een verbeteropdracht van de Roostercommissie bij een herbouw.
+///
+/// Uitdrukkelijk iets anders dan medewerkersfeedback: dit is een instructie van
+/// de commissie over één kandidaatpakket, en weegt als zodanig zwaarder. De
+/// gestructureerde doelen sturen de optimizer; de vrije opmerking wordt alleen
+/// bewaard voor de geschiedenis en stuurt niets.
+model RosterCommitteeAdjustment {
+  id                String   @id @default(uuid())
+  parentCandidateId String
+  goals             String[]
+  preserveGoodParts Boolean  @default(true)
+  note              String?
+  createdByUserId   String?
+  createdAt         DateTime @default(now())
+  run               GenerationRun?
 }
 
 // ── Landelijke standplaatsstructuur ──────────────────────────────────────────

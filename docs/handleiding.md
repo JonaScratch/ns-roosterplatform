@@ -1,6 +1,6 @@
 # NS Roosterplatform — Handleiding
 
-*Versie bij oplevering: 6 september 2026 · Standplaats Dordrecht (DDR) · Simulatieomgeving*
+*Versie 1.0.3 · 17 september 2026 · Standplaats Dordrecht (DDR) · Simulatieomgeving*
 
 ## A. Wat is dit platform?
 
@@ -27,10 +27,22 @@ USB-stick.
 - **Dienstenpakketten importeren** — een Excel-sjabloon downloaden, invullen en
   terugsturen; het systeem controleert, laat zien wat er verandert, en legt pas
   na bevestiging iets vast.
-- **Genereren & simuleren** — de constraint-solver (CP-SAT) laat een compleet
-  basisrooster doorrekenen op vijf scenario's, met een onafhankelijke
-  eindvalidatie die elk voorstel nog eens langs de regels legt vóórdat het als
-  roosterversie wordt vastgelegd.
+- **Genereren & simulatie** — kies een strategie (bijvoorbeeld *Optimale
+  totaalbalans* of *Rust & regelmaat*) en een roosterjaar. Eén opdracht levert
+  tot drie complete, onderling verschillende kandidaten op: alle basisroosters
+  tegelijk, elke dienst geplaatst, binnen de roosterprofielen, onafhankelijk
+  gevalideerd. De opdracht loopt op de achtergrond door; de voortgang is echt
+  (per afgeronde stap) en blijft zichtbaar na verversen.
+- **Scenario's vergelijken** — de uitkomsten per opdracht: elke kandidaat als
+  pakket openen, per basisrooster in agendavorm bekijken (regel voor regel of
+  alle regels tegelijk), twee of drie kandidaten naast elkaar leggen, en een
+  kandidaat gericht laten herbouwen ("meer rust", "nachten beter clusteren",
+  …). Een PDF komt pas op verzoek, uit dezelfde generator als het officiële
+  roosterblad.
+- **Roosterkwaliteit** — per kandidaat en naast het huidige rooster: uren rond
+  40:00, rust, overgangen tussen dagdelen, nachten in reeksen en een eerlijke
+  verdeling van nacht, rangeer en weekend. Dit is comfort en regelmaat, geen
+  juridisch oordeel.
 - **Medewerkerroosters bekijken** — een echte maandagenda per medewerker,
   opgebouwd uit basisrooster, rotatie, tijdelijke plaatsing en operationele
   wijzigingen samen — niet een aanname, maar de werkelijke projectie.
@@ -79,13 +91,14 @@ Dienstindeling heeft daar geen recht toe.
 ### Rooster Commissie
 
 **Ziet:** alle basisroosters en hun bezetting, dienstenpakketten,
-roosterprofielen, gegenereerde scenario's met kwaliteitsscore en
-validatie-oordeel, feedback geaggregeerd per profiel.
+roosterprofielen, generatieopdrachten met hun kandidaten, roosterkwaliteit en
+validatie-oordeel per kandidaat, feedback geaggregeerd per profiel.
 
 **Kan:** een dienstenpakket importeren (Excel of PDF) en na controle
 activeren, regelaantallen per basisrooster voorstellen voor een nieuwe
-dienstregelingronde, een roosteropdracht laten genereren en het resultaat laten
-valideren, een goedgekeurde versie publiceren, het roosterblad exporteren.
+dienstregelingronde, een generatieopdracht geven en volgen of stoppen,
+kandidaten openen, vergelijken, als voorkeurskandidaat markeren, archiveren of
+gericht laten herbouwen, en het roosterblad van een kandidaat exporteren.
 
 **Bewust buiten bereik:** publiceren zolang het regelbestand niet formeel door
 NS is bevestigd — die knop bestaat in deze fase niet, juist om te voorkomen dat
@@ -116,16 +129,24 @@ heeft en bewaakt de regelbronnen, maar plant niet zelf.
    roosterlijn en bezetting; onder Regelaantallen voorstellen kan de Rooster
    Commissie voor een nieuwe dienstregelingronde een ander aantal regels
    doorrekenen.
-5. **Genereren & simuleren** *(Rooster Commissie)* — kies een scenario en een
-   roosterjaar, en start de opdracht. Het resultaat is altijd een van vier
-   eerlijke uitkomsten: gegenereerd, afgewezen (met de exacte reden),
-   geblokkeerd, of een technische fout — nooit een placeholder.
-6. **Medewerkerroosters of dagplanning bekijken** *(Dienstindeling)* — een
+5. **Genereren & simulatie** *(Rooster Commissie)* — kies een strategietegel
+   en een roosterjaar en druk op *Genereren starten*. Een opdracht met drie
+   kandidaten duurt op een gewone laptop enkele minuten (gemeten op Dordrecht:
+   ruim drie minuten). U ziet welke stap loopt; verversen of wegklikken stopt de
+   opdracht niet, en *Generatie stoppen* wel. Lukt een derde, echt afwijkende
+   kandidaat niet binnen de rekentijd, dan staat er precies dat — er wordt geen
+   slechter rooster bijgezet om het aantal vol te maken.
+6. **Scenario's vergelijken** *(Rooster Commissie)* — open een kandidaat om de
+   zeven basisroosters te zien, open een basisrooster voor de dagkaarten per
+   regel, vink twee of drie kandidaten aan om te vergelijken, of kies *Opnieuw
+   bouwen* met wat er beter moet. Er wordt geen winnaar aangewezen: het scherm
+   noemt hooguit welke kandidaat op één maat het hoogst scoort.
+7. **Medewerkerroosters of dagplanning bekijken** *(Dienstindeling)* — een
    medewerker kiezen toont direct de echte agenda; de bezettingskaarten per dag
    linken door naar de openstaande diensten van die specifieke dag.
-7. **Exporteren** — een dagplanning als Excel (primair) of CSV (technisch), of
-   het roosterblad als PDF.
-8. **Portable gebruiken** — zie hoofdstuk G hieronder.
+8. **Exporteren** — een dagplanning als Excel (primair) of CSV (technisch), het
+   roosterblad als PDF, of alle basisroosters van een kandidaat in één PDF.
+9. **Portable gebruiken** — zie hoofdstuk G hieronder.
 
 ## E. Waarom dit waardevol is
 
@@ -142,14 +163,22 @@ en voor de volgende, formele stap richting NS.
 
 **Softwarematig gereed:** alle bovenstaande functies werken end-to-end op
 echte Dordrechtse data en zijn met geautomatiseerde en handmatige controles
-bewezen (668 geautomatiseerde tests, ruim 250 losse praktijkcontroles, een
-draagbare bundel die start, herstart en een harde stop overleeft).
+bewezen (751 geautomatiseerde tests, 28 opzettelijk ingebouwde fouten die allemaal
+worden gevangen, ruim 250 losse praktijkcontroles, een draagbare bundel die
+start, herstart en een harde stop overleeft, en een bestaande 1.0.2-database die
+bij de eerste start zonder gegevensverlies wordt bijgewerkt).
 
 **Afhankelijk van formele NS-validatie:**
 - 0 van de 71 regels is formeel door NS bevestigd; alles wat in deze omgeving
   gebeurt, is een simulatie, zichtbaar gemarkeerd, en niet bindend.
 - Voor 10 regelpakketten ontbreekt nog de formele bevestiging, waaronder de
   Arbeidstijdenwet en het Arbeidstijdenbesluit vervoer.
+
+**Roosterprofielen als harde grens:** een dienst die het profiel niet toestaat
+(bijvoorbeeld een vroege dienst in Laat/Nacht) komt nooit in een kandidaat. De
+eindvalidatie meldt zo'n plaatsing als *mogelijke* overtreding zolang de regel
+"Grenzen van het roosterprofiel" formeel niet is bevestigd; de generatie
+bewaart zo'n kandidaat toch nooit.
 
 **Bewust niet gebouwd:**
 - Een knop om een roosterversie te publiceren zolang het regelbestand niet is

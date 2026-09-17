@@ -79,6 +79,38 @@ describe("een kandidaat die de regels overtreedt", () => {
     expect(firedRules(result)).toContain(RULE.ROSTER_PROFILE_BOUNDS);
   });
 
+  // De fout uit het scenario-PDF van v1.0.2: 701 (05:01–13:00) in Laat/Nacht.
+  // Een vroege dienst in dat profiel is geen kwaliteitskwestie maar een harde
+  // grens, en de eindvalidatie moet hem zelf vinden — niet op de optimizer
+  // vertrouwen.
+  it("wijst een vroege dienst in het profiel Laat/Nacht af", async () => {
+    const result = await review({
+      lines: [{ pattern: "VRRRRRR RRRRRRR", employee: { ...EMPLOYEE, rosterProfile: RosterProfile.LAAT_NACHT } }],
+    });
+    expect(firedRules(result)).toContain(RULE.ROSTER_PROFILE_BOUNDS);
+  });
+
+  it("wijst een late dienst in het profiel Vroeg af", async () => {
+    const result = await review({
+      lines: [{ pattern: "LRRRRRR RRRRRRR", employee: { ...EMPLOYEE, rosterProfile: RosterProfile.VROEG } }],
+    });
+    expect(firedRules(result)).toContain(RULE.ROSTER_PROFILE_BOUNDS);
+  });
+
+  it("wijst een nachtdienst in het profiel Vroeg/Laat af", async () => {
+    const result = await review({
+      lines: [{ pattern: "NRRRRRR RRRRRRR", employee: { ...EMPLOYEE, rosterProfile: RosterProfile.VROEG_LAAT } }],
+    });
+    expect(firedRules(result)).toContain(RULE.ROSTER_PROFILE_BOUNDS);
+  });
+
+  it("laat een late en een nachtdienst in Laat/Nacht toe", async () => {
+    const result = await review({
+      lines: [{ pattern: "LRRNRRR RRRRRRR", employee: { ...EMPLOYEE, rosterProfile: RosterProfile.LAAT_NACHT } }],
+    });
+    expect(firedRules(result)).not.toContain(RULE.ROSTER_PROFILE_BOUNDS);
+  });
+
   it("wijst een dubbele toewijzing op dezelfde cyclusdag af", async () => {
     const spec: CandidateSpec = {
       lines: [{ pattern: "VRRRRRR RRRRRRR" }],

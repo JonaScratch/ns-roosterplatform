@@ -120,7 +120,16 @@ export function dutyKeyOf(code: string, weekday: number): string {
 
 // ── De cyclus uitrollen ──────────────────────────────────────────────────────
 
-/** De dagen van een lijn op volgorde, met de dienst erbij gezocht. */
+/**
+ * De dagen van een lijn op volgorde, met de dienst erbij gezocht.
+ *
+ * De weekindex in de gegevens telt vanaf 1: zo staat hij in de database, in de
+ * kandidaten en in de eindvalidator. Hier werd vanaf 0 gezocht, dus vond elke
+ * opzoeking niets en telde elke lijn nul diensten. Alle deelscores kwamen
+ * daardoor op 100 uit en elk scenario scoorde exact hetzelfde. De tests merkten
+ * het niet, omdat hun fixtures óók vanaf 0 telden — twee fouten die elkaar
+ * precies ophieven.
+ */
 export function cycleOf(
   line: OptimizerLine,
   duties: ReadonlyMap<string, OptimizerDuty>,
@@ -130,10 +139,10 @@ export function cycleOf(
 
   for (let week = 0; week < line.cycleWeeks; week += 1) {
     for (let weekday = 1; weekday <= 7; weekday += 1) {
-      const entry = byKey.get(`${week}|${weekday}`);
+      const entry = byKey.get(`${week + 1}|${weekday}`);
       days.push({
         index: week * 7 + (weekday - 1),
-        weekIndex: week,
+        weekIndex: week + 1,
         weekday,
         positionType: entry?.positionType ?? "RUST",
         duty: entry?.dutyCode ? (duties.get(dutyKeyOf(entry.dutyCode, weekday)) ?? null) : null,

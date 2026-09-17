@@ -215,6 +215,69 @@ const MUTANTEN: readonly Mutant[] = [
     naar: "  const sleutel = (duty: ComparableDuty): string => duty.code;",
     tests: ["tests/import/dienstenpakket.test.ts"],
   },
+
+  // ── v1.0.3: roosterkwaliteit, dagdelen, profielen, generatie ─────────────
+  {
+    // De fout waardoor alle scenario's dezelfde score kregen: de cyclus zocht
+    // week 0 op, die bestaat niet, en elk rooster mat nul diensten.
+    naam: "meting: de cyclus telt de weekindex weer vanaf nul",
+    bestand: "src/server/optimizer/metrics.ts",
+    van: "      const entry = byKey.get(`${week + 1}|${weekday}`);",
+    naar: "      const entry = byKey.get(`${week}|${weekday}`);",
+    tests: ["tests/optimizer/scoremodel.test.ts", "tests/optimizer/baseline.test.ts"],
+  },
+  {
+    naam: "roosterkwaliteit: een nachtreeks over het einde van de cyclus wordt in tweeën geteld",
+    bestand: "src/domain/roster-quality.ts",
+    van: "      if (!isNacht(i) || isNacht(i - 1)) {",
+    naar: "      if (!isNacht(i) || (i > 0 && isNacht(i - 1))) {",
+    tests: ["tests/domain/roosterkwaliteit.test.ts"],
+  },
+  {
+    naam: "dagdeel: de afstand op de klok loopt niet meer rond middernacht",
+    bestand: "src/domain/duty-classification.ts",
+    van: "  return Math.min(verschil, MINUTEN_PER_DAG - verschil);",
+    naar: "  return verschil;",
+    tests: ["tests/domain/dagdeel.test.ts"],
+  },
+  {
+    // De fout uit het scenario-PDF: een vroege dienst in Laat/Nacht.
+    naam: "profiel: Laat/Nacht staat ineens vroege diensten toe",
+    bestand: "src/domain/roster-profiles.ts",
+    van: "  LAAT_NACHT: [DutyKind.LAAT, DutyKind.NACHT],",
+    naar: "  LAAT_NACHT: [DutyKind.VROEG, DutyKind.LAAT, DutyKind.NACHT],",
+    tests: ["tests/domain/dagdeel.test.ts", "tests/optimizer/mutanten.test.ts"],
+  },
+  {
+    naam: "tijd: de zomertijdoffset wordt per dag in plaats van per uur onthouden",
+    bestand: "src/domain/amsterdam-time.ts",
+    van: "  const uur = Math.floor(instant / UUR_MS);",
+    naar: "  const uur = Math.floor(instant / (24 * UUR_MS)) * 24;",
+    tests: ["tests/domain/amsterdam-tijd-geheugen.test.ts"],
+  },
+  {
+    naam: "voortgang: een stap die nog loopt telt al als klaar",
+    bestand: "src/domain/generation-progress.ts",
+    van: '  const klaar = progress.steps.filter((step) => step.state === "done" || step.state === "skipped").length;',
+    naar: '  const klaar = progress.steps.filter((step) => step.state !== "pending" && step.state !== "failed").length;',
+    tests: ["tests/domain/generatie-voortgang.test.ts"],
+  },
+  {
+    // Zonder dit zoekt een generatie door naar een derde kandidaat die niet
+    // bestaat, omdat de toelichtende tweede poging OPTIMAL meldt.
+    naam: "generatie: de uitkomst mét volledige dekking wordt weer uit de toelichting gelezen",
+    bestand: "src/server/optimizer/cpsat-optimizer.ts",
+    van: "    fullCoverageStatus: result.fullCoverageStatus ?? result.status,",
+    naar: "    fullCoverageStatus: result.status,",
+    tests: ["tests/optimizer/roosterkwaliteit-solver.test.ts"],
+  },
+  {
+    naam: "generatie: een mogelijke profielovertreding wordt weer als bruikbaar bewaard",
+    bestand: "src/domain/candidate-acceptance.ts",
+    van: "  if (profiel > 0) {",
+    naar: "  if (profiel > 0 && review.tally.confirmedHardViolations > 0) {",
+    tests: ["tests/domain/kandidaat-acceptatie.test.ts"],
+  },
 ];
 
 interface Uitkomst {

@@ -2,13 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { DutyPackageStatus, RosterVersionStatus } from "@/lib/generated/prisma/enums";
 import type { FeedbackCategory, RosterProfile } from "@/lib/generated/prisma/enums";
-import type {
-  CandidateAssignment,
-  CandidateRoster,
-  CandidateValidationStatus,
-  ReviewableRoster,
-} from "@/domain/candidate";
-import { publicationEligible, simulationEligible } from "@/domain/candidate";
+import type { CandidateAssignment, CandidateRoster, ReviewableRoster } from "@/domain/candidate";
 import { recordAudit } from "@/server/audit/log";
 import { prisma } from "@/server/data/prisma";
 import { toJson } from "@/server/data/json";
@@ -24,15 +18,8 @@ import { requirePermission } from "@/server/security/authorize";
 import type { Actor } from "@/server/auth/session";
 import { locationScopeFor } from "@/server/security/location-scope";
 import { PERMISSIONS } from "@/server/security/permissions";
-import { BaselineOptimizer, type BaselineStrategy } from "@/server/optimizer/baseline-optimizer";
-import {
-  type CpSatOutcomeExtras,
-  CpSatOptimizer,
-  SCENARIO_PROFILES,
-  type ScenarioProfile,
-} from "@/server/optimizer/cpsat-optimizer";
-import { compareRosters, type RosterComparison } from "@/server/optimizer/comparison";
-import { dutyIndex } from "@/server/optimizer/metrics";
+import type { BaselineStrategy } from "@/server/optimizer/baseline-optimizer";
+import { SCENARIO_PROFILES, type ScenarioProfile } from "@/server/optimizer/cpsat-optimizer";
 import type {
   AggregatedFeedback,
   OptimizerConstraint,
@@ -40,7 +27,6 @@ import type {
   OptimizerInput,
   OptimizerLine,
 } from "@/server/optimizer/contract";
-import { rankCandidates, type RankedCandidate } from "@/server/optimizer/ranking";
 
 /**
  * De simulatiedienst: genereren, bewaren, onafhankelijk laten toetsen.
@@ -72,6 +58,11 @@ export interface SimulationScenario {
    * herverdelen. Beide leveren een kandidaat op die daarna hetzelfde pad volgt.
    */
   readonly engine: "BASELINE" | "SOLVER";
+  /**
+   * Staat als hoofdtegel op het generatiescherm. De overige strategieën staan
+   * onder "Meer strategieën": ze bestaan en werken, maar zijn geen eerste keus.
+   */
+  readonly primary: boolean;
 }
 
 export const SCENARIOS: readonly SimulationScenario[] = [
@@ -82,6 +73,7 @@ export const SCENARIOS: readonly SimulationScenario[] = [
       "Neemt het bestaande rooster letterlijk over. Wat de validator hierover zegt, " +
       "geldt dus ook voor het rooster dat nu draait.",
     engine: "BASELINE",
+    primary: true,
   },
   {
     key: "BALANCE_SHUNTING",
@@ -90,126 +82,16 @@ export const SCENARIOS: readonly SimulationScenario[] = [
       "Wisselt rangeerdiensten tussen lijnen van hetzelfde basisrooster tot het " +
       "verschil tussen de zwaarste en de lichtste lijn hooguit één dienst is.",
     engine: "BASELINE",
+    primary: false,
   },
   ...SCENARIO_PROFILES.map((profile) => ({
     key: profile.key as ScenarioKey,
     label: profile.label,
     description: profile.description,
     engine: "SOLVER" as const,
+    primary: profile.primary,
   })),
 ];
-
-/**
- * De rekentijd per scenario.
- *
- * Stond op 30 seconden. Sinds volledige dekking een harde eis is in plaats van
- * een kostenpost, moet de oplosser een compleet rooster vínden voordat hij iets
- * mag verbeteren, en dat lukte binnen 30 seconden niet altijd — op een machine
- * die tegelijk iets anders doet kwam er dan "geen afgerond scenario gevonden"
- * uit terwijl er wel degelijk een rooster bestaat. Eén zoekdraad is een bewuste
- * keuze (twee runs met dezelfde invoer moeten hetzelfde opleveren), dus de
- * ruimte moet uit de klok komen.
- */
-const SOLVER_TIME_LIMIT_SECONDS = Number(process.env.NS_SOLVER_SECONDS ?? 60);
-
-// ── Genereren ────────────────────────────────────────────────────────────────
-
-export async function generateCandidate(
-  strategy: ScenarioKey,
-  requestedLocation?: string | null,
-): Promise<CandidateRoster> {
-  const actor = await requirePermission(PERMISSIONS.ROSTER_GENERATE);
-  const scope = await locationScopeFor(actor, requestedLocation);
-  const input = await buildOptimizerInput(scope.code);
-  const scenario = SCENARIOS.find((entry) => entry.key === strategy);
-  const label = scenario?.label ?? strategy;
-
-  // Twee motoren, één pad erna. Welke van de twee het voorstel maakte, doet
-  // voor de validatie niets af: hij wordt hoe dan ook opnieuw doorgerekend.
-  let extras: CpSatOutcomeExtras | null = null;
-  let outcome;
-  if (scenario?.engine === "SOLVER") {
-    const profiel = SCENARIO_PROFILES.find((entry) => entry.key === strategy);
-    if (!profiel) {
-      throw new Error(`Onbekend scenario: ${strategy}`);
-    }
-    const optimizer = new CpSatOptimizer(profiel, SOLVER_TIME_LIMIT_SECONDS, profiel.key === "MINIMAL_CHANGE");
-    outcome = await optimizer.generate(input, label);
-    extras = optimizer.lastExtras;
-  } else {
-    outcome = await new BaselineOptimizer(strategy as BaselineStrategy).generate(input, label);
-  }
-
-  if (outcome.status === "REFUSED") {
-    await recordAudit({
-      actor,
-      action: "simulatie.generatie-geweigerd",
-      objectType: "CandidateRoster",
-      result: "FAILED",
-      reason: outcome.reason,
-      newValue: {
-        strategy,
-        solverStatus: extras?.solverStatus ?? null,
-        knelpunten: extras?.diagnostics ?? [],
-      },
-    });
-    throw new Error(outcome.reason);
-  }
-
-  const candidate = outcome.candidate;
-
-  await prisma.candidateRoster.create({
-    data: {
-      id: candidate.id,
-      locationCode: scope.code,
-      scenarioLabel: candidate.scenarioLabel,
-      optimizerName: candidate.optimizerName,
-      optimizerVersion: candidate.optimizerVersion,
-      mode: candidate.mode,
-      legalStatus: candidate.legalStatus,
-      sourceScheduleVersion: candidate.sourceScheduleVersion,
-      rulesetVersion: candidate.rulesetVersion,
-      inputDataVersion: candidate.inputDataVersion,
-      hash: candidate.hash,
-      generatedAt: new Date(candidate.generatedAt),
-      generatedByUserId: actor.userId,
-      assignments: toJson([...candidate.assignments]),
-      scoreBreakdown: toJson({ ...candidate.scoreBreakdown }),
-      solverRun: extras ? toJson({ ...extras }) : undefined,
-    },
-  });
-
-  await recordAudit({
-    actor,
-    action: "simulatie.kandidaat-gegenereerd",
-    objectType: "CandidateRoster",
-    objectId: candidate.id,
-    result: "SUCCESS",
-    reason: `Scenario ${candidate.scenarioLabel}`,
-    // Geen persoonsgegevens: versies, scores en modus, verder niets.
-    newValue: {
-      optimizer: `${candidate.optimizerName}@${candidate.optimizerVersion}`,
-      sourceScheduleVersion: candidate.sourceScheduleVersion,
-      rulesetVersion: candidate.rulesetVersion,
-      inputDataVersion: candidate.inputDataVersion,
-      overallQualityScore: candidate.scoreBreakdown.overallQualityScore,
-      mode: candidate.mode,
-      assignments: candidate.assignments.length,
-      standplaats: scope.code,
-      solverStatus: extras?.solverStatus ?? "n.v.t.",
-      optimaliteitBewezen: extras?.optimal ?? null,
-      rekentijdSeconden: extras?.wallTimeSeconds ?? null,
-      zaadwaarde: extras?.seed ?? null,
-      dienstenVerantwoord: extras
-        ? extras.accounting.fixedRoster +
-          extras.accounting.operationalPool.length +
-          extras.accounting.unassignable.length
-        : null,
-    },
-  });
-
-  return candidate;
-}
 
 /**
  * De standplaats waar een opgeslagen kandidaat over gaat.
@@ -248,21 +130,7 @@ export async function validateStoredCandidate(candidateId: string): Promise<Revi
     data: {
       validationState: review.status,
       validatedAt: new Date(review.validatedAt),
-      validationSummary: toJson({
-        tally: { ...review.tally },
-        perRule: review.perRule.map((entry) => ({ ...entry })),
-        uncertainties: review.uncertainties.map((entry) => ({ ...entry })),
-        reasons: {
-          structural: [...review.reasons.structural],
-          violations: [...review.reasons.violations],
-          uncertainty: [...review.reasons.uncertainty],
-          formal: [...review.reasons.formal],
-        },
-        blockingReasons: [...review.blockingReasons],
-        simulationEligible: review.simulationEligible,
-        publishable: review.publishable,
-        rulesetVersionAtValidation: review.rulesetVersionAtValidation,
-      }),
+      validationSummary: validationSummaryJson(review),
     },
   });
 
@@ -285,21 +153,27 @@ export async function validateStoredCandidate(candidateId: string): Promise<Revi
   return review;
 }
 
-export async function discardCandidate(candidateId: string): Promise<void> {
-  const actor = await requirePermission(PERMISSIONS.ROSTER_GENERATE);
-  const candidate = await prisma.candidateRoster.findUnique({
-    where: { id: candidateId },
-    select: { scenarioLabel: true },
-  });
-  await prisma.candidateRoster.delete({ where: { id: candidateId } });
-
-  await recordAudit({
-    actor,
-    action: "simulatie.kandidaat-verworpen",
-    objectType: "CandidateRoster",
-    objectId: candidateId,
-    result: "SUCCESS",
-    reason: `Scenario ${candidate?.scenarioLabel ?? candidateId} verworpen door de planner.`,
+/**
+ * De opgeslagen vorm van een validatie.
+ *
+ * Eén plek, zodat een kandidaat die tijdens het genereren is getoetst precies
+ * dezelfde samenvatting krijgt als een kandidaat die achteraf wordt getoetst.
+ */
+export function validationSummaryJson(review: ReviewableRoster) {
+  return toJson({
+    tally: { ...review.tally },
+    perRule: review.perRule.map((entry) => ({ ...entry })),
+    uncertainties: review.uncertainties.map((entry) => ({ ...entry })),
+    reasons: {
+      structural: [...review.reasons.structural],
+      violations: [...review.reasons.violations],
+      uncertainty: [...review.reasons.uncertainty],
+      formal: [...review.reasons.formal],
+    },
+    blockingReasons: [...review.blockingReasons],
+    simulationEligible: review.simulationEligible,
+    publishable: review.publishable,
+    rulesetVersionAtValidation: review.rulesetVersionAtValidation,
   });
 }
 
@@ -525,198 +399,6 @@ function countsByLine(days: readonly CandidateAssignment[]): readonly {
 }
 
 // ── Lezen ────────────────────────────────────────────────────────────────────
-
-export interface CandidateSummary {
-  readonly id: string;
-  readonly scenarioLabel: string;
-  readonly optimizer: string;
-  readonly generatedAt: Date;
-  readonly mode: string;
-  readonly legalStatus: string;
-  readonly validationState: string;
-  readonly validatedAt: Date | null;
-  readonly overallQualityScore: number;
-  /**
-   * Hoeveel dienstdagen dit scenario werkelijk heeft toegewezen, en hoeveel er
-   * leeg bleven.
-   *
-   * Geteld uit de toewijzingen zelf, niet uit de boekhouding van de solver. Die
-   * boekhouding bestaat alleen bij een CP-SAT-scenario, en de kaart toonde
-   * daardoor een streepje bij de nulmeting terwijl de vergelijkingstabel
-   * ernaast 223 van 223 zei. Twee antwoorden op dezelfde vraag is erger dan
-   * een antwoord dat ontbreekt.
-   */
-  readonly dutiesPlaced: number;
-  readonly dutiesUnfilled: number;
-  /** De basisroosters die in dit scenario voorkomen, gesorteerd. */
-  readonly rosterCodes: readonly string[];
-  readonly tally: ReviewableRoster["tally"] | null;
-  readonly blockingReasons: readonly string[];
-  /** Per regel gegroepeerd wat er niet beoordeeld kon worden. */
-  readonly uncertainties: ReviewableRoster["uncertainties"];
-  /** De blokkades, gescheiden naar soort. */
-  readonly reasons: ReviewableRoster["reasons"];
-  /** Mag dit scenario worden geanalyseerd en vergeleken? */
-  readonly simulationEligible: boolean;
-  /** Mag dit scenario formeel worden gepubliceerd? Nu altijd false. */
-  readonly publicationEligible: boolean;
-  readonly stale: boolean;
-  /**
-   * Wat de solver deed, wanneer een solver het scenario maakte. Null bij de
-   * nulmeting en de eenvoudige varianten.
-   */
-  readonly solver: {
-    readonly status: string;
-    readonly optimal: boolean;
-    readonly seconds: number;
-    readonly seed: number;
-    readonly variables: number;
-    readonly constraints: number;
-    readonly dutyInstances: number;
-    readonly fixedRoster: number;
-    readonly operationalPool: number;
-    readonly unassignable: number;
-    readonly excluded: number;
-    readonly balanced: boolean;
-    readonly emptyDutySlots: number;
-    readonly dutySlots: number;
-    readonly weights: Record<string, number>;
-    readonly diagnostics: readonly string[];
-  } | null;
-}
-
-export async function listCandidates(
-  requestedLocation?: string | null,
-): Promise<readonly CandidateSummary[]> {
-  const actor = await requirePermission(PERMISSIONS.ROSTER_COMPARE);
-  const scope = await locationScopeFor(actor, requestedLocation);
-
-  const [rows, schedule, input] = await Promise.all([
-    prisma.candidateRoster.findMany({
-      // Kandidaten van vóór de standplaatsstructuur horen bij de enige
-      // standplaats die er toen was; ze verdwijnen niet uit beeld.
-      where: { OR: [{ locationCode: scope.code }, { locationCode: null }] },
-      orderBy: { generatedAt: "desc" },
-      take: 25,
-    }),
-    scheduleVersion(scope.code),
-    inputDataVersion(scope.code),
-  ]);
-  const ruleset = activeRuleset().version;
-
-  const regelbestand = activeRuleset();
-
-  return rows.map((row) => {
-    const summary = row.validationSummary as {
-      tally?: ReviewableRoster["tally"];
-      blockingReasons?: string[];
-      uncertainties?: ReviewableRoster["uncertainties"];
-      reasons?: ReviewableRoster["reasons"];
-    } | null;
-    const run = row.solverRun as CpSatOutcomeExtras | null;
-    const status = row.validationState as CandidateValidationStatus;
-    const toewijzingen = (row.assignments ?? []) as unknown as ReadonlyArray<{
-      positionType: string;
-      dutyCode: string | null;
-      baseRosterCode: string;
-    }>;
-
-    return {
-      id: row.id,
-      scenarioLabel: row.scenarioLabel,
-      optimizer: `${row.optimizerName}@${row.optimizerVersion}`,
-      generatedAt: row.generatedAt,
-      mode: row.mode,
-      legalStatus: row.legalStatus,
-      validationState: row.validationState,
-      validatedAt: row.validatedAt,
-      overallQualityScore:
-        (row.scoreBreakdown as { overallQualityScore?: number } | null)?.overallQualityScore ?? 0,
-      dutiesPlaced: toewijzingen.filter(
-        (entry) => entry.positionType === "DUTY" && entry.dutyCode !== null,
-      ).length,
-      dutiesUnfilled: run?.emptyDutySlots ?? 0,
-      rosterCodes: [...new Set(toewijzingen.map((entry) => entry.baseRosterCode))].sort(),
-      tally: summary?.tally ?? null,
-      blockingReasons: summary?.blockingReasons ?? [],
-      uncertainties: summary?.uncertainties ?? [],
-      reasons:
-        summary?.reasons ?? { structural: [], violations: [], uncertainty: [], formal: [] },
-      // Beide worden hier opnieuw uitgerekend in plaats van uit de opgeslagen
-      // samenvatting gelezen: het regelbestand kan sinds de validatie zijn
-      // gewijzigd, en dan hoort publicatie mee te bewegen — nooit de andere
-      // kant op dan strenger.
-      simulationEligible: simulationEligible(status),
-      publicationEligible: publicationEligible({
-        status,
-        rulesetLegallyVerified: regelbestand.legalStatus === "LEGAL_RULESET_VERIFIED",
-        missingRulePackages: regelbestand.missingPackages.length,
-      }),
-      // Vooraf zichtbaar maken dat een kandidaat verouderd is, zodat niemand
-      // eerst een validatie start om dat te ontdekken.
-      stale:
-        row.sourceScheduleVersion !== schedule ||
-        row.rulesetVersion !== ruleset ||
-        row.inputDataVersion !== input,
-      solver: run
-        ? {
-            status: run.solverStatus,
-            optimal: run.optimal,
-            seconds: run.wallTimeSeconds,
-            seed: run.seed,
-            variables: run.variables,
-            constraints: run.constraints,
-            dutyInstances: run.accounting.sourceInstances,
-            fixedRoster: run.accounting.fixedRoster,
-            operationalPool: run.accounting.operationalPool.length,
-            unassignable: run.accounting.unassignable.length,
-            excluded: run.accounting.excluded.length,
-            balanced: run.accounting.balanced,
-            emptyDutySlots: run.emptyDutySlots ?? 0,
-            dutySlots: run.dutySlots ?? 0,
-            weights: run.weights,
-            diagnostics: run.diagnostics,
-          }
-        : null,
-    };
-  });
-}
-
-export async function comparisonFor(candidateId: string): Promise<RosterComparison> {
-  const actor = await requirePermission(PERMISSIONS.ROSTER_COMPARE);
-  const candidate = await loadCandidate(candidateId);
-  // De standplaats van de kandidaat zelf, niet die van de kijker: anders wordt
-  // een Dordrechtse kandidaat vergeleken met een Rotterdams rooster.
-  const opgeslagen = await prisma.candidateRoster.findUnique({
-    where: { id: candidateId },
-    select: { locationCode: true },
-  });
-  const scope = await locationScopeFor(actor, opgeslagen?.locationCode ?? null);
-  const input = await buildOptimizerInput(opgeslagen?.locationCode ?? scope.code);
-
-  return compareRosters({
-    currentLines: input.rosterLines,
-    candidateAssignments: candidate.assignments,
-    duties: dutyIndex(input.duties),
-    feedback: input.aggregatedFeedback,
-  });
-}
-
-export async function rankStoredCandidates(): Promise<readonly RankedCandidate[]> {
-  const candidates = await listCandidates();
-  return rankCandidates(
-    candidates.map((entry) => ({
-      candidateId: entry.id,
-      label: entry.scenarioLabel,
-      validationStatus: entry.validationState as RankedCandidate["validationStatus"],
-      confirmedHardViolations: entry.tally?.confirmedHardViolations ?? 0,
-      potentialHardViolations: entry.tally?.potentialHardViolations ?? 0,
-      rulesetIncomplete: entry.tally?.rulesetIncomplete ?? 0,
-      missingCriticalContext: entry.tally?.missingCriticalContext ?? 0,
-      overallQualityScore: entry.overallQualityScore,
-    })),
-  );
-}
 
 async function loadCandidate(candidateId: string): Promise<CandidateRoster> {
   const row = await prisma.candidateRoster.findUnique({ where: { id: candidateId } });

@@ -215,6 +215,28 @@ const PROBES: readonly Probe[] = [
     },
   },
   {
+    // De voortgang van een generatie, als JSON. Een route handler: zonder
+    // controle zou hij strategie, status en kandidaatverwijzingen prijsgeven.
+    path: "/roostercommissie/genereren/voortgang",
+    description: "generatievoortgang (API)",
+    expect: {
+      medewerker: "geweigerd",
+      "rooster-commissie": "toegang",
+      dienstindeling: "geweigerd",
+      admin: "toegang",
+    },
+  },
+  {
+    path: "/roostercommissie/simulatie/vergelijken",
+    description: "kandidaten vergelijken",
+    expect: {
+      medewerker: "geweigerd",
+      "rooster-commissie": "toegang",
+      dienstindeling: "geweigerd",
+      admin: "toegang",
+    },
+  },
+  {
     path: "/roostercommissie/simulatie",
     description: "simulatie en scenario's",
     expect: {

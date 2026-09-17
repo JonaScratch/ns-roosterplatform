@@ -39,6 +39,8 @@ interface Meting {
   readonly server?: boolean;
   /** Heeft deze meting een gebouwde draagbare bundel nodig? */
   readonly bundel?: boolean;
+  /** Extra argumenten voor het script. */
+  readonly args?: readonly string[];
 }
 
 const METINGEN: readonly Meting[] = [
@@ -101,6 +103,36 @@ const METINGEN: readonly Meting[] = [
     ],
   },
   {
+    naam: "Roosterprofielen: dagdeel, profielgrens en weigering",
+    script: "verify-profielen.ts",
+    dekt: [
+      "v1.0.3: dagdeel uit aanvangstijd gelijk in database en code",
+      "v1.0.3: geen vroege dienst in Laat/Nacht",
+      "v1.0.3: profielovertreding wordt nooit bewaard",
+    ],
+  },
+  {
+    naam: "Generatie: drie kandidaten, stoppen en herbouwen",
+    script: "verify-generatie.ts",
+    args: ["--stop", "--herbouw"],
+    dekt: [
+      "v1.0.3: één generatie tegelijk",
+      "v1.0.3: onderbroken opdracht blokkeert niet",
+      "v1.0.3: drie verschillende complete kandidaten",
+      "v1.0.3: stoppen tijdens het rekenen",
+      "v1.0.3: gericht herbouwen met herkomst",
+    ],
+  },
+  {
+    naam: "Roosterkwaliteit: officieel naast gegenereerd",
+    script: "verify-kwaliteit.ts",
+    dekt: [
+      "v1.0.3: nachten in reeksen, geen losse nachten",
+      "v1.0.3: niet meer zware overgangen dan officieel",
+      "v1.0.3: kwaliteitsmeting onderscheidt roosters",
+    ],
+  },
+  {
     naam: "Ruilingen van voorstel tot uitvoering",
     script: "verify-ruilflow.ts",
     dekt: ["medewerker: ruilen", "DID: toezicht op ruilingen"],
@@ -150,6 +182,10 @@ const METINGEN: readonly Meting[] = [
       "RC: regels en kaders vereenvoudigd",
       "export: roosterblad als PDF",
       "export: Excel-sjabloon",
+      "v1.0.3: resultaten zonder generatieknoppen",
+      "v1.0.3: kandidaat als pakket en rooster in agendavorm",
+      "v1.0.3: kandidaten vergelijken zonder winnaar",
+      "v1.0.3: alle basisroosters als één PDF",
     ],
   },
   {
@@ -244,6 +280,22 @@ const GEVRAAGD: readonly string[] = [
   "demo: onzekerheid is geen overtreding",
   "demo: simulatie mag terwijl publicatie geblokkeerd blijft",
   "demo: twee scenario's naast elkaar",
+  // v1.0.3: generatie, kandidaten en roosterkwaliteit.
+  "v1.0.3: dagdeel uit aanvangstijd gelijk in database en code",
+  "v1.0.3: geen vroege dienst in Laat/Nacht",
+  "v1.0.3: profielovertreding wordt nooit bewaard",
+  "v1.0.3: één generatie tegelijk",
+  "v1.0.3: onderbroken opdracht blokkeert niet",
+  "v1.0.3: drie verschillende complete kandidaten",
+  "v1.0.3: stoppen tijdens het rekenen",
+  "v1.0.3: gericht herbouwen met herkomst",
+  "v1.0.3: nachten in reeksen, geen losse nachten",
+  "v1.0.3: niet meer zware overgangen dan officieel",
+  "v1.0.3: kwaliteitsmeting onderscheidt roosters",
+  "v1.0.3: resultaten zonder generatieknoppen",
+  "v1.0.3: kandidaat als pakket en rooster in agendavorm",
+  "v1.0.3: kandidaten vergelijken zonder winnaar",
+  "v1.0.3: alle basisroosters als één PDF",
 ];
 
 interface Uitkomst {
@@ -308,6 +360,7 @@ function main(): void {
         path.join(WORTEL, "node_modules", "tsx", "dist", "cli.mjs"),
         "--conditions=react-server",
         path.join(WORTEL, "scripts", meting.script),
+        ...(meting.args ?? []),
       ],
       { encoding: "utf8", cwd: WORTEL, env: process.env, maxBuffer: 64 * 1024 * 1024 },
     );

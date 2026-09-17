@@ -27,10 +27,21 @@ import {
 
 /** Het blad als PDF-bestand. */
 export function renderSheetPdf(sheet: RosterSheet): Buffer {
-  const pdf = new PdfDocument();
-  const logo = sheet.hasLogo ? laadBeeldmerk() : null;
+  return renderSheetsPdf([sheet]);
+}
 
-  for (const pagina of layoutRosterSheet(sheet)) {
+/**
+ * Meerdere bladen in één PDF, na elkaar.
+ *
+ * Voor "Alle basisroosters exporteren": elk blad krijgt precies dezelfde
+ * primitieven als wanneer het los wordt opgehaald. Er wordt niets samengevoegd
+ * of herschikt; de pagina's staan alleen in één bestand.
+ */
+export function renderSheetsPdf(sheets: readonly RosterSheet[]): Buffer {
+  const pdf = new PdfDocument();
+  const logo = sheets.some((sheet) => sheet.hasLogo) ? laadBeeldmerk() : null;
+
+  for (const pagina of sheets.flatMap((sheet) => layoutRosterSheet(sheet))) {
     const page = pdf.addPage(SHEET);
     for (const item of pagina.primitives) {
       switch (item.kind) {

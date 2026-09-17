@@ -12,11 +12,21 @@ import type {
 import { dutyIndex, linesFromAssignments, measureLine } from "./metrics";
 import { scoreRoster } from "./scoring";
 import {
+  type SlotAssignment,
   type SolverDuty,
   type SolverLine,
+  type SolverOptions,
   type SolverResult,
   runSolver,
 } from "./cpsat-solver";
+import { type ObjectiveWeights, STRATEGY_WEIGHTS } from "./objective-weights";
+import {
+  ADJACENT_TRANSITION_PENALTY,
+  COMFORTABLE_REST_MINUTES,
+  OFF_POSITION_TYPES,
+  OVER_ONE_OFF_DAY_PENALTY,
+} from "@/domain/roster-quality-config";
+import { ANCHOR_CREDIT_MINUTES, TARGET_WEEKLY_MINUTES } from "@/domain/roster-hours";
 
 /**
  * De globale roosteroptimizer.
@@ -63,54 +73,64 @@ export interface ScenarioDefinition {
   readonly key: ScenarioProfile;
   readonly label: string;
   readonly description: string;
-  readonly weights: Record<string, number>;
+  /** De gewichten van de zachte doelen. Zie objective-weights.ts. */
+  readonly objective: ObjectiveWeights;
   readonly seed: number;
+  /** Op de hoofdtegels, of onder "Meer strategieën". */
+  readonly primary: boolean;
 }
 
 export const SCENARIO_PROFILES: readonly ScenarioDefinition[] = [
   {
     key: "BALANCED",
-    label: "Scenario A — beste totale balans",
-    description: "Weegt dekking, verdeling en ritme ongeveer even zwaar.",
-    weights: { coverage: 100, fairness: 30, rotation: 10, keepExisting: 20 },
+    label: "Optimale totaalbalans",
+    description:
+      "Maakt het rooster als geheel zo goed mogelijk: uren rond 40:00 per rooster, rust, " +
+      "nachten in reeksen, rustige overgangen tussen dagdelen en een eerlijke verdeling " +
+      "van nacht, rangeer en weekend — tegelijk, binnen alle harde regels.",
+    objective: STRATEGY_WEIGHTS.BALANCED,
     seed: 1,
+    primary: true,
   },
   {
     key: "REST_QUALITY",
-    label: "Scenario B — beste rustkwaliteit",
+    label: "Rust & regelmaat",
     description:
-      "Laat de draairichting zwaarder wegen, zodat opeenvolgende dagen rustiger in " +
-      "elkaar overlopen. Kan ten koste gaan van het aantal geplaatste diensten.",
-    weights: { coverage: 80, fairness: 20, rotation: 40, keepExisting: 10 },
+      "Legt extra gewicht op ruime rust, stabiele dienstreeksen, zo weinig mogelijk " +
+      "heen-en-weer tussen dagdelen en herstel na een nachtreeks.",
+    objective: STRATEGY_WEIGHTS.REST_QUALITY,
     seed: 2,
+    primary: true,
   },
   {
     key: "FAIR_BURDEN",
-    label: "Scenario C — eerlijkste lastenverdeling",
+    label: "Eerlijkste lastenverdeling",
     description:
-      "Legt het meeste gewicht op een gelijke verdeling van nacht-, rangeer- en " +
-      "weekenddiensten binnen hetzelfde roosterprofiel.",
-    weights: { coverage: 90, fairness: 70, rotation: 10, keepExisting: 5 },
+      "Legt extra gewicht op een gelijke verdeling van nachten, rangeerdiensten en " +
+      "weekenduren over de roosters die ze dragen, per regel gerekend.",
+    objective: STRATEGY_WEIGHTS.FAIR_BURDEN,
     seed: 3,
+    primary: true,
   },
   {
     key: "MINIMAL_CHANGE",
-    label: "Scenario D — minste verschil met het huidige rooster",
+    label: "Minste verschil met huidig rooster",
     description:
-      "Houdt zoveel mogelijk dienstnummers op hun huidige plek. Voor een " +
-      "wijzigingsblad meestal het uitgangspunt: minder verandering is minder " +
-      "verstoring voor medewerkers.",
-    weights: { coverage: 100, fairness: 10, rotation: 5, keepExisting: 120 },
+      "Houdt zoveel mogelijk dienstnummers op hun huidige plek en verbetert alleen waar " +
+      "dat weinig verandering kost. Voor een wijzigingsblad meestal het uitgangspunt.",
+    objective: STRATEGY_WEIGHTS.MINIMAL_CHANGE,
     seed: 4,
+    primary: false,
   },
   {
     key: "COVERAGE",
-    label: "Scenario E — maximale plaatsing in vaste roosters",
+    label: "Maximale plaatsing in vaste roosters",
     description:
-      "Plaatst zoveel mogelijk diensten in vaste roosterlijnen, zodat de " +
-      "dienstindeling er zo min mogelijk operationeel hoeft in te vullen.",
-    weights: { coverage: 200, fairness: 15, rotation: 5, keepExisting: 10 },
+      "Plaatst alle diensten in vaste roosterlijnen. Omdat volledige dekking inmiddels voor " +
+      "elke strategie een harde eis is, weegt deze variant verder als de totaalbalans.",
+    objective: STRATEGY_WEIGHTS.COVERAGE,
     seed: 5,
+    primary: false,
   },
 ];
 
@@ -129,6 +149,12 @@ export interface CpSatOutcomeExtras {
   readonly emptyDutySlots: number;
   readonly dutySlots: number;
   readonly solverStatus: string;
+  /**
+   * De uitkomst van de poging mét volledige dekking. INFEASIBLE betekent: er
+   * bestaat binnen de harde eisen geen rooster meer — bij een diversiteitseis
+   * dus geen afwijkende kandidaat.
+   */
+  readonly fullCoverageStatus: string;
   readonly optimal: boolean;
   readonly wallTimeSeconds: number;
   readonly variables: number;
@@ -136,7 +162,60 @@ export interface CpSatOutcomeExtras {
   readonly diagnostics: readonly string[];
   readonly accounting: DutyAccounting;
   readonly seed: number;
-  readonly weights: Record<string, number>;
+  readonly weights: Readonly<Record<string, number>>;
+  /** Hoeveel zoekdraden er werden gebruikt. */
+  readonly workers: number;
+}
+
+/** Wat een aanroeper per run kan meegeven bovenop de strategie. */
+export interface CpSatRunOptions {
+  /** Andere gewichten dan die van de strategie, bijvoorbeeld bij een herbouw. */
+  readonly objective?: ObjectiveWeights;
+  readonly workers?: number;
+  readonly seed?: number;
+  /** Roosters waar nachten horen; alleen daartussen wordt de nachtbelasting vergeleken. */
+  readonly nightRosterCodes?: readonly string[];
+  /** Een eerdere oplossing als vertrekpunt, en voor preserveHint. */
+  readonly hint?: readonly CandidateAssignment[];
+  /** Eerdere kandidaten waarvan deze moet verschillen. */
+  readonly exclude?: readonly (readonly CandidateAssignment[])[];
+  /** Zie SolverOptions.explainShortfall. */
+  readonly explainShortfall?: boolean;
+  /** Op ten minste zoveel dienstdagen anders dan elke uitgesloten kandidaat. */
+  readonly minDifferentSlots?: number;
+  readonly feedbackPenalties?: SolverOptions["feedbackPenalties"];
+  readonly signal?: AbortSignal;
+}
+
+function slotKeyOf(entry: {
+  readonly baseRosterCode: string;
+  readonly lineNumber: number;
+  readonly weekIndex: number;
+  readonly weekday: number;
+}): string {
+  return `${entry.baseRosterCode}|${entry.lineNumber}|${entry.weekIndex}|${entry.weekday}`;
+}
+
+function slotAssignmentsOf(assignments: readonly CandidateAssignment[]): readonly SlotAssignment[] {
+  return assignments
+    .filter((entry) => entry.positionType === "DUTY" && entry.dutyCode)
+    .map((entry) => ({ slotKey: slotKeyOf(entry), dutyKey: `${entry.dutyCode}|${entry.weekday}` }));
+}
+
+function slotAssignmentsOfLines(lines: readonly OptimizerLine[]): readonly SlotAssignment[] {
+  return lines.flatMap((line) =>
+    line.days
+      .filter((day) => day.positionType === "DUTY" && day.dutyCode)
+      .map((day) => ({
+        slotKey: slotKeyOf({
+          baseRosterCode: line.baseRosterCode,
+          lineNumber: line.lineNumber,
+          weekIndex: day.weekIndex,
+          weekday: day.weekday,
+        }),
+        dutyKey: `${day.dutyCode}|${day.weekday}`,
+      })),
+  );
 }
 
 /** Eén dienstinstantie: een dienstnummer op een concrete weekdag. */
@@ -149,7 +228,10 @@ interface DutyInstance {
 
 export class CpSatOptimizer implements RosterOptimizer {
   readonly name = "cp-sat";
-  readonly version = "1.0.0";
+  // 2.0.0 sinds platformversie 1.0.3: cyclus in rotatievolgorde, nachtreeksen,
+  // overgangen en diversiteit. Een kandidaat van 1.0.0 is met een ander model
+  // gemaakt, en dat hoort aan de stempel te zien zijn.
+  readonly version = "2.0.0";
   readonly describe =
     "Constraint-optimalisatie over alle roosterlijnen en profielen tegelijk, met " +
     "harde grenzen als uitsluiting en de overige doelen als kosten.";
@@ -160,8 +242,7 @@ export class CpSatOptimizer implements RosterOptimizer {
   constructor(
     private readonly scenario: ScenarioDefinition = SCENARIO_PROFILES[0],
     private readonly timeLimitSeconds = 30,
-    /** Bij een wijzigingsblad blijven bestaande dienstnummers zoveel mogelijk staan. */
-    private readonly keepExisting = false,
+    private readonly options: CpSatRunOptions = {},
   ) {}
 
   async generate(input: OptimizerInput, scenarioLabel: string): Promise<OptimizerOutcome> {
@@ -192,11 +273,26 @@ export class CpSatOptimizer implements RosterOptimizer {
         minRestMinutes: constraintValue(input, "RP_DAILY_REST_PLANNED", 0),
         maxConsecutiveDuties: constraintValue(input, "MAX_CONSECUTIVE_SERVICES", 0),
         timeLimitSeconds: this.timeLimitSeconds,
-        seed: this.scenario.seed,
-        keepExisting: this.keepExisting,
-        weights: this.scenario.weights,
+        seed: this.options.seed ?? this.scenario.seed,
+        workers: this.options.workers ?? 1,
+        objective: { ...(this.options.objective ?? this.scenario.objective) },
+        transitionPenalties: {
+          adjacent: ADJACENT_TRANSITION_PENALTY,
+          overOffDay: OVER_ONE_OFF_DAY_PENALTY,
+        },
+        offPositionTypes: OFF_POSITION_TYPES,
+        comfortableRestMinutes: COMFORTABLE_REST_MINUTES,
+        targetWeeklyMinutes: TARGET_WEEKLY_MINUTES,
+        anchorCreditMinutes: ANCHOR_CREDIT_MINUTES as Record<string, number>,
+        nightRosterCodes: this.options.nightRosterCodes ?? [],
+        referenceAssignments: slotAssignmentsOfLines(input.rosterLines),
+        hintAssignments: this.options.hint ? slotAssignmentsOf(this.options.hint) : [],
+        excludeSolutions: (this.options.exclude ?? []).map(slotAssignmentsOf),
+        minDifferentSlots: this.options.minDifferentSlots ?? 0,
+        explainShortfall: this.options.explainShortfall ?? true,
+        feedbackPenalties: this.options.feedbackPenalties ?? [],
       },
-    });
+    }, this.options.signal);
 
     if (result.status !== "OPTIMAL" && result.status !== "FEASIBLE") {
       this.lastExtras = extras(result, this.scenario, {
@@ -411,6 +507,13 @@ function toSolverDuty(instance: DutyInstance): SolverDuty {
     timeOfDayKinds: duty.kinds.filter((kind) =>
       (TIME_OF_DAY as readonly string[]).includes(kind),
     ),
+    category: duty.kinds.includes("NACHT")
+      ? "NIGHT"
+      : duty.kinds.includes("LAAT")
+        ? "LATE"
+        : duty.kinds.includes("VROEG")
+          ? "EARLY"
+          : null,
     isNight: duty.kinds.includes("NACHT"),
     isShunting: duty.kinds.includes("RANGEER"),
     isWeekend: instance.weekday >= 6,
@@ -433,6 +536,7 @@ function toSolverLine(line: OptimizerLine): SolverLine {
       // enkele oplossing worden verplaatst.
       assignable: day.positionType === "DUTY",
       dutyCode: day.dutyCode,
+      positionType: day.positionType,
     })),
   };
 }
@@ -557,6 +661,7 @@ function extras(
     dutySlots: slots.total,
     emptyDutySlots: slots.empty,
     solverStatus: result.status,
+    fullCoverageStatus: result.fullCoverageStatus ?? result.status,
     optimal: result.statistics?.optimal ?? false,
     wallTimeSeconds: result.statistics?.wallTimeSeconds ?? 0,
     variables: result.statistics?.variables ?? 0,
@@ -564,6 +669,7 @@ function extras(
     diagnostics: result.diagnostics,
     accounting,
     seed: scenario.seed,
-    weights: scenario.weights,
+    weights: { ...scenario.objective },
+    workers: result.statistics?.workers ?? 1,
   };
 }

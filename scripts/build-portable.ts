@@ -391,8 +391,8 @@ DB_PORT=5434
 PRIVACY_MIN_COHORT=5
 `;
 
-const LEESMIJ = `NS ROOSTERPLATFORM — DRAAGBARE VERSIE
-=====================================
+const LEESMIJ = `NS ROOSTERPLATFORM — DRAAGBARE VERSIE 1.0.3
+===========================================
 
 LEES DIT EERST
   Deze LEESMIJ gaat over starten, stoppen en de stick zelf.
@@ -434,6 +434,18 @@ WAT ER OP DEZE STICK STAAT
   logs\\       logbestanden
   exports\\    wat u exporteert komt hier terecht
   backups\\    reservekopieën
+
+NIEUW IN VERSIE 1.0.3
+  - Genereren & simulatie: kies een strategie en een roosterjaar; één opdracht
+    levert tot drie complete, onderling verschillende kandidaten op. Een
+    opdracht duurt enkele minuten en loopt door als u het scherm ververst.
+  - Scenario's vergelijken: kandidaten openen als pakket, elk basisrooster in
+    agendavorm bekijken, kandidaten naast elkaar leggen, gericht herbouwen.
+  - Nachten in reeksen, rustiger overgangen tussen dagdelen, en nooit een
+    vroege dienst in Laat/Nacht.
+  - De eindvalidatie rekent ongeveer tien keer sneller.
+  De publicatiepoort is ongewijzigd: publiceren blijft uitgeschakeld zolang de
+  regelbron niet formeel is bevestigd.
 
 WAT U NODIG HEEFT OP DE COMPUTER
   Niets. Er hoeft geen Node, geen Python en geen PostgreSQL geïnstalleerd te

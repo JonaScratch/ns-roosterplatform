@@ -1,6 +1,6 @@
 {
   "name": "ns-roosterplatform",
-  "version": "0.1.0",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -59,7 +59,10 @@
     "verify:crash-recovery": "tsx --conditions=react-server scripts/verify-crash-recovery.ts",
     "outbox:flush": "tsx --conditions=react-server scripts/flush-outbox.ts",
     "verify:rule-coverage": "tsx --conditions=react-server scripts/verify-rule-coverage.ts",
-    "verify:e2e": "tsx --conditions=react-server scripts/verify-e2e.ts"
+    "verify:e2e": "tsx --conditions=react-server scripts/verify-e2e.ts",
+    "verify:generatie": "tsx --conditions=react-server scripts/verify-generatie.ts",
+    "verify:profielen": "tsx --conditions=react-server scripts/verify-profielen.ts",
+    "verify:kwaliteit": "tsx --conditions=react-server scripts/verify-kwaliteit.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

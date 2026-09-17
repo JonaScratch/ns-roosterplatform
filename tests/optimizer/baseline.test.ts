@@ -41,7 +41,9 @@ function line(pattern: string, lineNumber: number): OptimizerLine {
     contractHours: 40,
     occupiedBy: `10000${lineNumber}`,
     days: tokens.map((token, index) => ({
-      weekIndex: Math.floor(index / 7),
+      // Vanaf 1, zoals in de database. Deze fixture telde vanaf 0 en verborg
+      // daarmee dat cycleOf dat ook deed.
+      weekIndex: Math.floor(index / 7) + 1,
       weekday: (index % 7) + 1,
       positionType: token === "R" ? "RUST" : "DUTY",
       dutyCode: token === "G" ? "711" : token === "V" ? "041" : null,

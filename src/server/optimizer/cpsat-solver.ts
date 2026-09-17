@@ -26,6 +26,8 @@ export interface SolverDuty {
   readonly startMinute: number;
   readonly endMinute: number;
   readonly timeOfDayKinds: readonly string[];
+  /** Het dagdeel voor overgangen en nachtreeksen: EARLY, LATE of NIGHT. */
+  readonly category: "EARLY" | "LATE" | "NIGHT" | null;
   readonly isNight: boolean;
   readonly isShunting: boolean;
   readonly isWeekend: boolean;
@@ -38,6 +40,8 @@ export interface SolverLineDay {
   /** Mag de solver dit slot vullen? Ankerdagen staan hier op false. */
   readonly assignable: boolean;
   readonly dutyCode: string | null;
+  /** DUTY, RUST, RES, WR of CO: nodig om een vrije dag tussen twee diensten te herkennen. */
+  readonly positionType?: string;
 }
 
 export interface SolverLine {
@@ -49,13 +53,47 @@ export interface SolverLine {
   readonly days: readonly SolverLineDay[];
 }
 
+/** Een dienst op een dienstdag, voor warme start, behoud en diversiteit. */
+export interface SlotAssignment {
+  /** `rooster|regel|week|weekdag` */
+  readonly slotKey: string;
+  /** `nummer|weekdag` */
+  readonly dutyKey: string;
+}
+
 export interface SolverOptions {
   readonly minRestMinutes: number;
   readonly maxConsecutiveDuties: number;
   readonly timeLimitSeconds: number;
   readonly seed: number;
-  readonly keepExisting: boolean;
-  readonly weights: Record<string, number>;
+  /** Zoekdraden. Eén is herhaalbaar; meer vindt binnen dezelfde tijd betere roosters. */
+  readonly workers?: number;
+  /** Gewichten van de zachte doelen; zie objective-weights.ts. */
+  readonly objective?: Readonly<Record<string, number>>;
+  readonly transitionPenalties?: {
+    readonly adjacent: Readonly<Record<string, Readonly<Record<string, number>>>>;
+    readonly overOffDay: Readonly<Record<string, Readonly<Record<string, number>>>>;
+  };
+  readonly offPositionTypes?: readonly string[];
+  readonly comfortableRestMinutes?: number;
+  readonly targetWeeklyMinutes?: number;
+  readonly anchorCreditMinutes?: Readonly<Record<string, number>>;
+  readonly nightRosterCodes?: readonly string[];
+  readonly referenceAssignments?: readonly SlotAssignment[];
+  readonly hintAssignments?: readonly SlotAssignment[];
+  readonly excludeSolutions?: readonly (readonly SlotAssignment[])[];
+  readonly minDifferentSlots?: number;
+  /** Na een mislukte poging mét volledige dekking uitleggen wat leeg blijft. Standaard aan. */
+  readonly explainShortfall?: boolean;
+  readonly feedbackPenalties?: readonly {
+    readonly rosterCode: string;
+    readonly burden: "NIGHT" | "EARLY" | "SHUNTING" | "WEEKEND";
+    readonly weight: number;
+  }[];
+  /** Verouderd: stond voor minimale verandering. Wordt genegeerd. */
+  readonly keepExisting?: boolean;
+  /** Verouderd: de gewichten van vóór v1.0.3. Wordt genegeerd. */
+  readonly weights?: Record<string, number>;
 }
 
 export interface SolverRequest {
@@ -82,6 +120,7 @@ export interface SolverStatistics {
   readonly variables: number;
   readonly constraints: number;
   readonly branches: number;
+  readonly workers?: number;
 }
 
 export type SolverStatus =
@@ -102,6 +141,11 @@ export interface SolverResult {
   readonly diagnostics: readonly string[];
   readonly statistics: SolverStatistics | null;
   readonly error?: string;
+  /**
+   * Hoe de poging mét volledige dekking afliep. Wijkt af van `status` wanneer
+   * het antwoord uit de toelichtende tweede poging komt.
+   */
+  readonly fullCoverageStatus?: SolverStatus;
 }
 
 /** Het commando waarmee Python wordt gestart. Op Windows is dat `py`. */
@@ -109,7 +153,10 @@ const PYTHON = process.env.NS_PYTHON ?? (process.platform === "win32" ? "py" : "
 
 const SCRIPT = path.join(process.cwd(), "python", "cpsat_roster.py");
 
-export async function runSolver(request: SolverRequest): Promise<SolverResult> {
+export async function runSolver(
+  request: SolverRequest,
+  signal?: AbortSignal,
+): Promise<SolverResult> {
   const invoer = JSON.stringify(request);
   // Een ruime marge boven de eigen tijdslimiet van de solver: loopt het proces
   // vast vóórdat hij zelf afrondt, dan hakken wij de knoop door.
@@ -151,6 +198,26 @@ export async function runSolver(request: SolverRequest): Promise<SolverResult> {
       });
     }, hardeLimiet);
 
+    // Stoppen op verzoek: de generatie is geannuleerd. Het proces wordt
+    // beëindigd en er komt geen half antwoord terug.
+    const bijAfbreken = () => {
+      kind.kill();
+      klaar({
+        status: "UNKNOWN",
+        assignments: [],
+        unplacedDuties: [],
+        diagnostics: ["De berekening is op verzoek gestopt."],
+        statistics: null,
+        error: "CANCELLED",
+      });
+    };
+    if (signal?.aborted) {
+      bijAfbreken();
+      return;
+    }
+    signal?.addEventListener("abort", bijAfbreken, { once: true });
+
+
     kind.stdout?.on("data", (chunk) => {
       uit += String(chunk);
     });
@@ -185,6 +252,7 @@ export async function runSolver(request: SolverRequest): Promise<SolverResult> {
           diagnostics: antwoord.diagnostics ?? [],
           statistics: antwoord.statistics ?? null,
           error: antwoord.error,
+          fullCoverageStatus: antwoord.fullCoverageStatus,
         });
       } catch (error) {
         klaar(
@@ -225,6 +293,7 @@ export async function solverHealth(): Promise<{
         startMinute: 480,
         endMinute: 960,
         timeOfDayKinds: ["VROEG"],
+        category: "EARLY",
         isNight: false,
         isShunting: false,
         isWeekend: false,

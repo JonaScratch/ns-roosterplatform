@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { currentActor } from "@/server/auth/session";
 import { actorHasPermission } from "@/server/security/authorize";
 import { type Permission, PERMISSIONS, homePathForRoles } from "@/server/security/permissions";
+import { APP_VERSION } from "@/lib/app-version";
 import { AppShell, type HeaderProps, markActive, visibleSections } from "./app-shell";
 import {
   adminNavigation,
@@ -62,7 +63,7 @@ export async function EmployeeShell({ header, activeHref, children }: AreaShellP
       actor={actor}
       sections={markActive(visibleSections(actor, employeeNavigation(counts)), activeHref)}
       header={{ ...header, notificationCount: counts.messages }}
-      footerNote="Versie 1.0.0"
+      footerNote={`Versie ${APP_VERSION}`}
       statusBadge={<DemoStatusBadge />}
     >
       {children}
@@ -115,7 +116,7 @@ export async function AdminShell({ header, activeHref, children }: AreaShellProp
       actor={actor}
       sections={markActive(visibleSections(actor, adminNavigation()), activeHref)}
       header={header}
-      footerNote="NS Roosterplatform v1.0.0"
+      footerNote={`NS Roosterplatform v${APP_VERSION}`}
     >
       <RulesetBanner />
       {children}

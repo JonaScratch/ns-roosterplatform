@@ -13,6 +13,7 @@ import {
   ShieldIcon,
 } from "@/components/ui/icons";
 import { NsLogo } from "@/components/ui/ns-logo";
+import { APP_VERSION } from "@/lib/app-version";
 import { ownIdentity } from "@/server/data/repositories/identity-repository";
 import { logoutAction } from "@/app/(auth)/acties";
 
@@ -158,7 +159,7 @@ function Sidebar({ sections }: { sections: readonly NavSection[] }) {
       </div>
 
       <p className="border-t border-rail-line px-5 py-3 text-[11px] text-rail-muted">
-        NS Roosterplatform v1.0.0
+        NS Roosterplatform v{APP_VERSION}
       </p>
     </aside>
   );

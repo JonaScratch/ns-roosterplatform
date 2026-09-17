@@ -346,11 +346,13 @@ describe("geen dienstdag zonder dienstnummer", () => {
 describe("de scenario's", () => {
   it("verschillen alleen in gewichten, niet in harde grenzen", () => {
     for (const scenario of SCENARIO_PROFILES) {
-      expect(Object.keys(scenario.weights).length).toBeGreaterThan(0);
+      expect(Object.keys(scenario.objective).length).toBeGreaterThan(0);
       // Geen enkel scenario mag een sleutel dragen die naar een harde regel
-      // verwijst: dan zou een gewicht een grens kunnen verschuiven.
-      expect(Object.keys(scenario.weights)).not.toContain("minRest");
-      expect(Object.keys(scenario.weights)).not.toContain("maxConsecutive");
+      // verwijst: dan zou een gewicht een grens kunnen verschuiven. Dekking
+      // hoort daar sinds v1.0.3 ook bij.
+      for (const verboden of ["minRest", "maxConsecutive", "coverage", "profile"]) {
+        expect(Object.keys(scenario.objective)).not.toContain(verboden);
+      }
     }
   });
 

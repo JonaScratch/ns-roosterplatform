@@ -119,7 +119,7 @@ async function main(): Promise<void> {
 
   console.log("── constraint solver ────────────────────────────────────────");
   for (const profiel of SCENARIO_PROFILES) {
-    const optimizer = new CpSatOptimizer(profiel, 30, profiel.key === "MINIMAL_CHANGE");
+    const optimizer = new CpSatOptimizer(profiel, 30);
     const start = performance.now();
     const outcome = await optimizer.generate(input, profiel.label);
     const generateMs = performance.now() - start;

@@ -20,8 +20,24 @@ export type CalendarDate = string;
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+// Rust- en roostertoetsen controleren dezelfde paar honderd datums honderd-
+// duizenden keren. Het antwoord per tekst verandert nooit, dus het wordt
+// onthouden; de begrenzing voorkomt dat een langlopend proces blijft groeien.
+const DATUM_GELDIG = new Map<string, boolean>();
+const DAGNUMMER = new Map<string, number>();
+const GEHEUGEN_MAX = 50_000;
+
 export function isCalendarDate(value: string): value is CalendarDate {
-  return DATE_PATTERN.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+  const bekend = DATUM_GELDIG.get(value);
+  if (bekend !== undefined) {
+    return bekend;
+  }
+  const geldig = DATE_PATTERN.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+  if (DATUM_GELDIG.size > GEHEUGEN_MAX) {
+    DATUM_GELDIG.clear();
+  }
+  DATUM_GELDIG.set(value, geldig);
+  return geldig;
 }
 
 export function assertCalendarDate(value: string): CalendarDate {
@@ -43,7 +59,16 @@ export function toDatabaseDate(value: CalendarDate): Date {
 
 /** Dagnummer sinds epoch. Basis voor alle datumrekenkunde hier. */
 export function dayNumber(date: CalendarDate): number {
-  return Math.round(Date.parse(`${assertCalendarDate(date)}T00:00:00Z`) / 86_400_000);
+  const bekend = DAGNUMMER.get(date);
+  if (bekend !== undefined) {
+    return bekend;
+  }
+  const dag = Math.round(Date.parse(`${assertCalendarDate(date)}T00:00:00Z`) / 86_400_000);
+  if (DAGNUMMER.size > GEHEUGEN_MAX) {
+    DAGNUMMER.clear();
+  }
+  DAGNUMMER.set(date, dag);
+  return dag;
 }
 
 export function fromDayNumber(day: number): CalendarDate {

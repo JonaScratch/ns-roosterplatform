@@ -142,24 +142,24 @@ const SCHERMEN: Readonly<Record<string, readonly Scherm[]>> = {
       bevat: ["Bezetting per weekdag", "maandag", "zondag", "Reservedagen", "geen norm"],
     },
     {
+      // Het resultatenscherm. Hier wordt niets gegenereerd: geen strategiekeuze,
+      // geen startknop. Wat er wél staat: de opdrachten met hun kandidaten, de
+      // vergelijkknop, het huidige rooster als ijkpunt en de publicatieuitleg.
       path: "/roostercommissie/simulatie",
       bevat: [
-        "Scenario",
-        // Waar dit scherm voor is, vóór de eerste tabel. Wie hier binnenkomt
-        // zonder de code te kennen, moet weten wat een scenario is.
-        "Vergelijk scenario's op urenverdeling",
-        // De uitkomst staat in drie losse blokken. Vallen ze samen, dan leest
-        // "geen overtredingen" weer als onderdeel van één probleem.
-        "Technische controle",
-        "Onzekerheden",
-        "Formele publicatie",
-        "Nog niet toegestaan",
+        "Resultaten",
+        "Nieuwe generatie",
+        "Geselecteerde vergelijken",
+        "Huidig rooster als ijkpunt",
+        "Diensten geplaatst",
+        "Bevestigde overtredingen",
+        "Nachtclustering",
+        "Overgangskwaliteit",
+        "Opnieuw bouwen",
+        "formeel worden gepubliceerd",
       ],
-      // De oude verzamelbak mag nergens meer staan, ook niet dichtgeklapt:
-      // niemand kon eruit opmaken wát er mis was.
-      bevatNiet: ["REJECTED"],
-      // De overige technische namen bestaan nog en horen onder "Details" te
-      // blijven staan — opzoekbaar, maar niet in beeld.
+      bevatNiet: ["REJECTED", "Genereren starten", "Er is iets misgegaan", "Optimalisatiescore"],
+      bronBevatNiet: ['name="strategy"'],
       bevatNietZichtbaar: [
         "TECHNICALLY_VALIDATED",
         "TECHNICALLY_VALID_UNVERIFIED_RULES",
@@ -170,42 +170,62 @@ const SCHERMEN: Readonly<Record<string, readonly Scherm[]>> = {
       ],
     },
     {
-      // Twee scenario's naast elkaar. De vinkjes horen via het `form`-attribuut
-      // bij het vergelijkformulier: stopt iemand ze ooit weer in een <form> om
-      // de kaarten heen, dan gooit de browser dat formulier weg en komt er nog
-      // één id mee. Deze URL bewijst dat het scherm er twee aankan.
-      path: "/roostercommissie/simulatie",
-      bevat: ["Vergelijking (", "Gemiddelde weekomvang per rooster", "Optimalisatiescore"],
+      // Eén kandidaat als pakket van alle basisroosters.
+      path: "/roostercommissie/simulatie/{kandidaat}",
+      bevat: [
+        "Basisroosters in dit pakket",
+        "DDR-LN",
+        "Nachtreeksen",
+        "Roosterkwaliteit",
+        "Huidig rooster",
+        "Validatie",
+        "Formele publicatie",
+        "Opnieuw bouwen",
+        "Wat moet beter?",
+        "Alle basisroosters exporteren (PDF)",
+      ],
+      bevatNiet: ["Er is iets misgegaan", "CAO-score", "Perfect rooster"],
+      bevatNietZichtbaar: ["TECHNICALLY_VALID_UNVERIFIED_RULES"],
+    },
+    {
+      // Eén basisrooster in de agendavorm, met regelkeuze.
+      path: "/roostercommissie/simulatie/{kandidaat}/DDR-LN?regel=1",
+      bevat: ["DDR-LN", "Regel 1", "Alle regels", "Maandag", "Zondag", "Exporteren naar PDF", "Nachtreeksen", "Zware overgangen"],
+      bronBevat: ["formaat=pdf"],
+      bevatNiet: ["Er is iets misgegaan"],
+    },
+    {
+      path: "/roostercommissie/simulatie/{kandidaat}/DDR-LN?regel=alle",
+      bevat: ["Alle regels", "Uren", "Regel 1", "Regel 6"],
+    },
+    {
+      // Twee kandidaten naast elkaar, zonder winnaar.
+      path: "/roostercommissie/simulatie/vergelijken",
+      bevat: ["Kandidaten vergelijken", "Roosterkwaliteit", "Per basisrooster", "Er wordt geen winnaar aangewezen"],
+      bevatNiet: ["Beste rooster", "Er is iets misgegaan"],
       queryUitScenarios: 2,
     },
     {
-      // Eén scenario is geen vergelijking, en dat hoort het scherm te zeggen in
-      // plaats van een tabel met één kolom te tonen.
-      path: "/roostercommissie/simulatie",
-      bevat: ["Eén scenario geselecteerd"],
-      bevatNiet: ["Vergelijking (1 scenario"],
-      queryUitScenarios: 1,
-    },
-    {
-      // Een verwijzing naar een scenario dat er niet meer is. Dat gebeurt zodra
-      // iemand een scenario verwerpt terwijl de analyse ervan nog openstaat, of
-      // na een nieuwe vulling van de database. Het scherm haalde die kandidaat
-      // dan alsnog op, de service gooide "Onbekende kandidaat", en de bezoeker
-      // kreeg de foutpagina met een code — terwijl er niets kapot is.
-      path: "/roostercommissie/simulatie?kandidaat=00000000-0000-4000-8000-000000000000",
-      bevat: ["Dit scenario staat niet meer in het overzicht", "Terug naar het overzicht"],
-      // De foutpagina van de errorgrens mag hier niet verschijnen.
+      // Een verwijzing naar een kandidaat die er niet (meer) is: een nette 404
+      // in plaats van de foutpagina.
+      path: "/roostercommissie/simulatie/vergelijken?k=00000000-0000-4000-8000-000000000000",
+      bevat: ["Kies twee of drie kandidaten"],
       bevatNiet: ["Er is iets misgegaan", "Opnieuw proberen"],
     },
     {
       path: "/roostercommissie/genereren",
       bevat: [
+        "Nieuw rooster genereren",
+        "Nulmeting",
+        "Optimale totaalbalans",
+        "Rust & regelmaat",
+        "Eerlijkste lastenverdeling",
+        "Meer strategieën",
         "Roosterjaar",
-        "Periode wordt automatisch berekend",
-        "tweede zondag van december",
+        "Recente opdrachten",
         "tot en met",
       ],
-      // Geen vrije datumkeuze meer: de periode volgt uit het roosterjaar.
+      // Geen vrije datumkeuze: de periode volgt uit het roosterjaar.
       bronBevatNiet: ['name="from"', 'name="to"', 'type="date"'],
     },
     {
@@ -508,6 +528,20 @@ function doodeLinks(): void {
  * aanroeper meldt dat dan als "niet getoetst" — niet als geslaagd.
  */
 async function metScenarioQuery(scherm: Scherm): Promise<string | null> {
+  // `{kandidaat}` in het pad: de nieuwste bruikbare kandidaat uit een
+  // generatieopdracht. Is die er niet, dan is het scherm niet te toetsen.
+  if (scherm.path.includes("{kandidaat}")) {
+    const kandidaat = await prisma.candidateRoster.findFirst({
+      where: {
+        generationRunId: { not: null },
+        archivedAt: null,
+        validationState: { in: ["TECHNICALLY_VALIDATED", "TECHNICALLY_VALID_UNVERIFIED_RULES"] },
+      },
+      orderBy: { generatedAt: "desc" },
+      select: { id: true },
+    });
+    return kandidaat ? scherm.path.replace("{kandidaat}", kandidaat.id) : null;
+  }
   if (scherm.queryUitScenarios === undefined) {
     return scherm.path;
   }
@@ -534,7 +568,7 @@ async function metScenarioQuery(scherm: Scherm): Promise<string | null> {
     return null;
   }
 
-  const query = scenarios.map((scenario) => `vergelijk=${scenario.id}`).join("&");
+  const query = scenarios.map((scenario) => `k=${scenario.id}`).join("&");
   return `${scherm.path}?${query}`;
 }
 
@@ -685,6 +719,41 @@ async function main(): Promise<void> {
     } else {
       mislukt += 1;
       console.log(`  ✗ een verdwenen scenario geeft ${weg.status}: ${wegTekst.slice(0, 80)}`);
+    }
+  }
+
+  // Alle basisroosters van een kandidaat in één PDF: één blad per rooster, met
+  // de simulatiestempel in de bestandsnaam.
+  const pakket = await prisma.candidateRoster.findFirst({
+    where: { generationRunId: { not: null }, archivedAt: null },
+    orderBy: { generatedAt: "desc" },
+    select: { id: true, assignments: true },
+  });
+  if (!pakket) {
+    geblokkeerd += 1;
+    console.log("  … pakket-PDF — niet getoetst: er is nog geen kandidaat uit een generatieopdracht");
+  } else {
+    const roosters = new Set(
+      (pakket.assignments as unknown as { baseRosterCode: string }[]).map((entry) => entry.baseRosterCode),
+    ).size;
+    const antwoord = await fetch(`${BASE_URL}/roostercommissie/simulatie/${pakket.id}/pdf`, {
+      headers: { cookie: `${SESSION_COOKIE}=${rcToken}` },
+      redirect: "manual",
+    });
+    const bytes = Buffer.from(await antwoord.arrayBuffer());
+    const naam = /filename="([^"]*)"/.exec(antwoord.headers.get("content-disposition") ?? "")?.[1] ?? "";
+    const paginas = (bytes.toString("latin1").match(/\/Type\s*\/Page(?!s)/g) ?? []).length;
+    const goed =
+      antwoord.status === 200 &&
+      bytes.subarray(0, 5).toString("latin1") === "%PDF-" &&
+      naam.includes("SIMULATIE") &&
+      paginas >= roosters;
+    if (goed) {
+      geslaagd += 1;
+      console.log(`  ✓ alle basisroosters als één PDF (${naam}, ${paginas} bladen voor ${roosters} roosters)`);
+    } else {
+      mislukt += 1;
+      console.log(`  ✗ pakket-PDF (${antwoord.status}, ${naam || "geen naam"}, ${paginas} bladen voor ${roosters} roosters)`);
     }
   }
 

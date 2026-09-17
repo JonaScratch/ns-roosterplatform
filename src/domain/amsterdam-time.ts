@@ -40,8 +40,38 @@ const ZONE_FORMAT = new Intl.DateTimeFormat("en-US", {
   second: "2-digit",
 });
 
-/** De lokale wandkloktijd op een absoluut moment, als "epoch-achtige" waarde. */
+const UUR_MS = 3_600_000;
+const offsetPerUur = new Map<number, number>();
+
+/**
+ * De lokale wandkloktijd op een absoluut moment, als "epoch-achtige" waarde.
+ *
+ * ## Waarom per uur onthouden
+ *
+ * `formatToParts` is traag, en de eindvalidatie vraagt dit honderdduizenden
+ * keren: de helft van de validatietijd zat hier. De offset van Europe/Amsterdam
+ * verandert alleen op hele UTC-uren (de EU-overgangen vallen om 01:00 UTC), dus
+ * binnen één UTC-uur is hij voor elk moment gelijk. Hij wordt per uur één keer
+ * via `Intl` bepaald en daarna hergebruikt. De uitkomst is exact dezelfde als
+ * zonder geheugen, tot op de seconde afgerond zoals `formatToParts` doet; de
+ * test vergelijkt beide over twee jaar met alle overgangen erin.
+ */
 function localAsIfUtc(instant: number): number {
+  const uur = Math.floor(instant / UUR_MS);
+  let offset = offsetPerUur.get(uur);
+  if (offset === undefined) {
+    const begin = uur * UUR_MS;
+    offset = localAsIfUtcViaIntl(begin) - begin;
+    if (offsetPerUur.size > 200_000) {
+      offsetPerUur.clear();
+    }
+    offsetPerUur.set(uur, offset);
+  }
+  return Math.floor(instant / 1000) * 1000 + offset;
+}
+
+/** De rechtstreekse omzetting, zonder geheugen. Exporteerd voor de vergelijkingstest. */
+export function localAsIfUtcViaIntl(instant: number): number {
   const parts = ZONE_FORMAT.formatToParts(new Date(instant));
   const get = (type: Intl.DateTimeFormatPartTypes): number =>
     Number(parts.find((part) => part.type === type)?.value ?? "0");
@@ -54,6 +84,9 @@ function localAsIfUtc(instant: number): number {
     get("second"),
   );
 }
+
+/** Zie `localAsIfUtc`; exporteerd voor de vergelijkingstest. */
+export { localAsIfUtc };
 
 /** De offset van de zone ten opzichte van UTC op dit moment, in minuten. */
 export function offsetMinutesAt(instant: number): number {
@@ -71,8 +104,9 @@ export function offsetMinutesAt(instant: number): number {
  * Bij het ingaan van de zomertijd bestaat 02:30 lokale tijd niet. De omzetting
  * levert dan het moment waarop de klok is doorgesprongen; dat is de enige
  * zinnige uitkomst en hij is stabiel. Bij het einde van de zomertijd bestaat
- * 02:30 twee keer; deze functie kiest dan het eerste voorkomen (zomertijd).
- * Beide keuzes zijn expliciet en worden getest.
+ * 02:30 twee keer; deze functie kiest dan het tweede voorkomen (wintertijd).
+ * Dat stond hier eerder als "het eerste voorkomen", maar zo rekende de code
+ * nooit; de test legt het werkelijke gedrag vast.
  */
 export function zonedInstant(date: CalendarDate, minuteOfDay: number): number {
   assertCalendarDate(date);
