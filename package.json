@@ -62,7 +62,8 @@
     "verify:e2e": "tsx --conditions=react-server scripts/verify-e2e.ts",
     "verify:generatie": "tsx --conditions=react-server scripts/verify-generatie.ts",
     "verify:profielen": "tsx --conditions=react-server scripts/verify-profielen.ts",
-    "verify:kwaliteit": "tsx --conditions=react-server scripts/verify-kwaliteit.ts"
+    "verify:kwaliteit": "tsx --conditions=react-server scripts/verify-kwaliteit.ts",
+    "verify:optimizer-benchmark": "tsx --conditions=react-server scripts/optimizer-benchmark.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

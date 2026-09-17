@@ -295,7 +295,7 @@ export class CpSatOptimizer implements RosterOptimizer {
     }, this.options.signal);
 
     if (result.status !== "OPTIMAL" && result.status !== "FEASIBLE") {
-      this.lastExtras = extras(result, this.scenario, {
+      this.lastExtras = extras(result, this.scenario, this.options.seed ?? this.scenario.seed, {
         sourceInstances: instances.length,
         fixedRoster: 0,
         operationalPool: [],
@@ -349,7 +349,7 @@ export class CpSatOptimizer implements RosterOptimizer {
       (som, line) => som + line.days.filter((day) => day.positionType === "DUTY").length,
       0,
     );
-    this.lastExtras = extras(result, this.scenario, { ...accounting, balanced: sluitend }, {
+    this.lastExtras = extras(result, this.scenario, this.options.seed ?? this.scenario.seed, { ...accounting, balanced: sluitend }, {
       total: dienstdagen,
       empty: dienstdagen - result.assignments.length,
     });
@@ -654,6 +654,10 @@ function refusalReason(result: SolverResult): string {
 function extras(
   result: SolverResult,
   scenario: ScenarioDefinition,
+  // De zaadwaarde die werkelijk is gebruikt. Stond eerder als die van de
+  // strategie in de statistiek, terwijl de generatie per poging een andere
+  // meegeeft: een kandidaat was daardoor niet naar zijn zoekpoging te herleiden.
+  seed: number,
   accounting: DutyAccounting,
   slots: { readonly total: number; readonly empty: number } = { total: 0, empty: 0 },
 ): CpSatOutcomeExtras {
@@ -668,7 +672,7 @@ function extras(
     constraints: result.statistics?.constraints ?? 0,
     diagnostics: result.diagnostics,
     accounting,
-    seed: scenario.seed,
+    seed,
     weights: { ...scenario.objective },
     workers: result.statistics?.workers ?? 1,
   };
