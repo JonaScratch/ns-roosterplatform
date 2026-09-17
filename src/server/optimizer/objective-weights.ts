@@ -56,7 +56,11 @@ export const BALANCED_WEIGHTS: ObjectiveWeights = {
   restComfort: 1,
   transitions: 40,
   nightSingleton: 900,
-  nightPair: 300,
+  // Stond op 300. Gemeten op Dordrecht (60 s, 3 kandidaten): nachtclustering
+  // 78,9 → 89,5/100/100, eerlijke nachtverdeling 89,9 → 95,1, geen zware
+  // overgangen, zelfde rekentijd. Een reeks van twee bleef anders te goedkoop
+  // naast de verdeling van nachten over de roosters.
+  nightPair: 700,
   nightOutsideReference: 400,
   nightFairness: 12,
   shuntingFairness: 6,
@@ -84,7 +88,8 @@ export const STRATEGY_WEIGHTS: Readonly<Record<SolverStrategyKey, ObjectiveWeigh
     restComfort: 3,
     transitions: 100,
     nightSingleton: 1100,
-    nightPair: 400,
+    // Niet lager dan de totaalbalans: rust en regelmaat weegt reeksen zwaarder.
+    nightPair: 900,
   },
   FAIR_BURDEN: {
     ...BALANCED_WEIGHTS,
@@ -97,7 +102,7 @@ export const STRATEGY_WEIGHTS: Readonly<Record<SolverStrategyKey, ObjectiveWeigh
     ...BALANCED_WEIGHTS,
     transitions: 20,
     nightSingleton: 400,
-    nightPair: 140,
+    nightPair: 300,
     preserveReference: 120,
   },
   // Sinds dekking een harde eis is, plaatst elke strategie alle diensten. Deze
