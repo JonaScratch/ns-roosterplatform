@@ -278,6 +278,60 @@ const MUTANTEN: readonly Mutant[] = [
     naar: "  if (profiel > 0 && review.tally.confirmedHardViolations > 0) {",
     tests: ["tests/domain/kandidaat-acceptatie.test.ts"],
   },
+
+  // ── De zoekmachine van v1.0.4 ────────────────────────────────────────────
+  // Deze onderdelen bepalen welk rooster de Roostercommissie te zien krijgt.
+  // Een fout hierin levert geen foutmelding op maar een slechter rooster, en
+  // dat is precies wat zonder deze mutaties onopgemerkt zou blijven.
+  {
+    naam: "kwaliteit: een losse nacht telt even zwaar als een nacht in een reeks",
+    bestand: "src/domain/quality-evaluator.ts",
+    van: "  const nightsClustering = totaalNachten > 0 ? (nachtenIn3 + 0.5 * nachtenIn2) / totaalNachten : null;",
+    naar: "  const nightsClustering = totaalNachten > 0 ? 1 : null;",
+    tests: ["tests/domain/kwaliteitsevaluator.test.ts"],
+  },
+  {
+    naam: "kwaliteit: een zware overgang wordt niet meer als zwaar geteld",
+    bestand: "src/domain/quality-evaluator.ts",
+    van: "        if (straf >= HEAVY_TRANSITION_PENALTY) {",
+    naar: "        if (straf >= HEAVY_TRANSITION_PENALTY * 10) {",
+    tests: ["tests/domain/kwaliteitsevaluator.test.ts"],
+  },
+  {
+    naam: "kwaliteit: de urenafwijking wordt niet meer als absolute waarde gemeten",
+    bestand: "src/domain/quality-evaluator.ts",
+    van: "  const contractScores = urenRoosters.map((r) => 100 * clamp01(1 - Math.abs(r.deviationMinutes) / c.hours.parts.contract.zeroAtMinutes));",
+    naar: "  const contractScores = urenRoosters.map((r) => 100 * clamp01(1 - r.deviationMinutes / c.hours.parts.contract.zeroAtMinutes));",
+    tests: ["tests/domain/kwaliteitsevaluator.test.ts"],
+  },
+  {
+    naam: "rangschikking: de slechtste roosterregel telt niet meer mee",
+    bestand: "src/domain/adaptive-search.ts",
+    van: "  if (worstLine === null || medianLine === null) {",
+    naar: "  if (true || worstLine === null || medianLine === null) {",
+    tests: ["tests/domain/adaptief-zoeken.test.ts"],
+  },
+  {
+    naam: "bijschaven: een ruil mag ook buiten het roosterprofiel",
+    bestand: "src/domain/roster-polish.ts",
+    van: "    return d !== undefined && profileAllowsDuty(slot.profile as RosterProfile, d.kinds as DutyKind[]);",
+    naar: "    return d !== undefined;",
+    tests: ["tests/domain/bijschaven.test.ts"],
+  },
+  {
+    naam: "bijschaven: de rust tussen twee diensten wordt niet meer getoetst",
+    bestand: "src/domain/roster-polish.ts",
+    van: "    return 1440 + b.startMinute - a.endMinute >= input.minRestMinutes;",
+    naar: "    return true;",
+    tests: ["tests/domain/bijschaven.test.ts"],
+  },
+  {
+    naam: "bijschaven: de beste stand wordt niet bewaard, de laatste wel",
+    bestand: "src/domain/roster-polish.ts",
+    van: "    if (huidig > besteScore) {",
+    naar: "    if (huidig >= -Infinity) {",
+    tests: ["tests/domain/bijschaven.test.ts"],
+  },
 ];
 
 interface Uitkomst {

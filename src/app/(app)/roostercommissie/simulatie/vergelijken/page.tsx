@@ -11,6 +11,7 @@ import { RosterCommitteeShell } from "@/components/layout/area-shell";
 import { Alert, EmptyState, WidgetCard } from "@/components/ui/primitives";
 import { TD, TH, THead, TR, Table } from "@/components/ui/table";
 import { CompareIcon } from "@/components/ui/icons";
+import { VoorkeurKeuze } from "../beoordeling";
 import {
   Nachtreeksen,
   PERCENTAGE_SCORES,
@@ -303,6 +304,31 @@ export default async function KandidatenVergelijken({
               </ul>
             </WidgetCard>
           </div>
+
+          {vergelijking.candidates.length >= 2 ? (
+            <WidgetCard
+              tone="neutral"
+              title="Welke rijdt menselijker?"
+              subtitle="Alleen voor de training van de zoekmachine: uw keuze wordt bewaard en gebruikt bij de volgende ijking, niet automatisch"
+              bodyClassName="border-t border-line p-4"
+            >
+              <div className="grid gap-4 lg:grid-cols-2">
+                {vergelijking.candidates.flatMap((eerste, i) =>
+                  vergelijking.candidates.slice(i + 1).map((tweede) => (
+                    <div key={`${eerste.id}-${tweede.id}`} className="rounded-lg border border-line p-3">
+                      <p className="mb-2 text-[12.5px] font-semibold text-ink-strong">
+                        {naamVan(eerste)} tegenover {naamVan(tweede)}
+                      </p>
+                      <VoorkeurKeuze
+                        first={{ id: eerste.id, label: naamVan(eerste) }}
+                        second={{ id: tweede.id, label: naamVan(tweede) }}
+                      />
+                    </div>
+                  )),
+                )}
+              </div>
+            </WidgetCard>
+          ) : null}
         </div>
       )}
     </RosterCommitteeShell>

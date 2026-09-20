@@ -1,0 +1,45 @@
+CRASHBESTENDIGHEID
+════════════════════════════════════════════════════════════════════════
+
+1. Een bevestigde wijziging overleeft het doodmaken van het proces
+  ✓ de rij staat er nog nadat het proces is doodgemaakt
+
+2. Een transactie die halverwege ophoudt, laat niets achter
+  ✓ er staat niets van de afgebroken transactie
+  ✓ en dat komt niet doordat er nooit iets is geschreven
+
+3. Een openstaande gebeurtenis blijft staan en wordt later verwerkt
+  ✓ de gebeurtenis staat vast op PENDING
+  ✓ na een herstart wordt zij alsnog verwerkt
+  ✓ en de melding is er alsnog gekomen
+
+4. Een afgebroken import laat geen half pakket achter
+  ✓ er blijft geen half pakket achter
+  ✓ en ook geen losse dienst zonder pakket
+  ✓ een bevestigd pakket blijft in zijn eigen fase staan en wordt niet actief
+
+5. De duurzaamheidsinstellingen van de ontwikkeldatabase
+  ✓ fsync staat op on
+  ✓ full_page_writes staat op on
+  ✓ synchronous_commit staat op on
+      wal_level: replica
+
+6. De draagbare database na een harde stop
+      Een verse kopie van de bundel klaarzetten…
+      Poorten voor deze proef: web 3401, database 5441.
+  ✓ de draagbare versie komt volledig op
+  ✓ de draagbare database heeft fsync op on
+  ✓ de draagbare database heeft full_page_writes op on
+  ✓ de draagbare database heeft synchronous_commit op on
+  ✓ de database is werkelijk weg (vuile stop)
+  ✓ de database herstelt zichzelf en komt weer op
+  ✓ de bevestigde wijziging heeft de vuile stop overleefd
+      Het serverlog meldt herstel uit het transactielogboek.
+
+════════════════════════════════════════════════════════════════════════
+19 controles geslaagd, 0 mislukt, 0 geblokkeerd.
+
+Wat hiermee niet is aangetoond: dat een defecte schijf geen gegevens kan
+kwijtraken. Dat kan geen enkele software garanderen. Wat is aangetoond, is
+dat wat bevestigd is een harde stop overleeft, en dat de instellingen
+waarop die belofte rust werkelijk aanstaan.

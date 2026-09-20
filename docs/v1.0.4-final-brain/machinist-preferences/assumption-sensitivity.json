@@ -1,0 +1,25 @@
+{
+  "schema": "ns-machinist-sensitivity/1",
+  "measuredAt": "2026-09-19T08:54:27.112Z",
+  "baseline": "brain-after (60 kandidaten)",
+  "results": {
+    "official": {
+      "dayDutyDistance.perProfile.V10": 0.213,
+      "dayDutyDistance.perLine.V10": 0.246,
+      "dayDutyDistance.perProfile.V0": 0.2323,
+      "dayDutyDistance.perProfile.V20": 0.197,
+      "popularFairness.floor0.33": 0.9645,
+      "popularFairness.floor0.5": 0.9426,
+      "popularFairness.floor0.67": 0.9225
+    },
+    "baseline": {
+      "dayDutyDistance.perProfile.V10": 0.4692,
+      "dayDutyDistance.perLine.V10": 0.4138,
+      "dayDutyDistance.perProfile.V0": 0.4847,
+      "dayDutyDistance.perProfile.V20": 0.4562,
+      "popularFairness.floor0.33": 0.954,
+      "popularFairness.floor0.5": 0.9266,
+      "popularFairness.floor0.67": 0.8903
+    }
+  }
+}

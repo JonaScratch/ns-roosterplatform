@@ -19,7 +19,14 @@ import type { CandidateAssignment } from "@/domain/candidate";
 
 export const BENCHMARK_ROOT = path.resolve(__dirname, "..", "..", "docs", "optimizer-benchmark");
 
-export type Phase = "before" | "after" | "ablation" | "budget";
+/**
+ * De meetfasen. "human" is de AFTER-meting van de ijking op de menselijke
+ * roosters (engine adaptive-1.0.4-rhythm; de eerste metingen heetten 1.0.5); de BEFORE daarvan is "after" (v1.0.4),
+ * met hetzelfde kwaliteitsmodel v2 opnieuw doorgerekend. "human-dev1" is de
+ * eerste AFTER-meting, vóór de herziening H09 van de meetdefinities; bewaard
+ * als ontwikkelmeting en met de definitieve v2 opnieuw door te rekenen.
+ */
+export type Phase = "before" | "after" | "ablation" | "budget" | "human" | "human-dev1" | (string & {});
 
 export interface RawCandidate {
   readonly number: number;
@@ -66,6 +73,8 @@ export interface RawRun {
     readonly logicalCpus: number;
   };
   readonly ablation?: string | null;
+  /** Het zoekmachineprofiel en eventuele ablatie (NS_ENGINE_PROFILE / NS_ENGINE_VARIANT). */
+  readonly variant?: Record<string, unknown> | null;
 }
 
 export function encodeAssignments(assignments: readonly CandidateAssignment[]): RawCandidate["roster"] {

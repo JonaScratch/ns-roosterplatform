@@ -1,0 +1,237 @@
+{
+  "schema": "ns-machinist-gates/1",
+  "rule": "M4",
+  "decidedAt": "2026-09-19T11:17:02.336Z",
+  "before": {
+    "phase": "brain-after",
+    "candidates": 60,
+    "qualityModelV3Hash": "4525b9106095c24b"
+  },
+  "after": {
+    "phase": "mp-after",
+    "candidates": 60,
+    "qualityModelV3Hash": "4525b9106095c24b"
+  },
+  "sameModel": true,
+  "gates": [
+    {
+      "nr": 1,
+      "label": "Hard: 0 overtredingen, volledige dekking, 0 profielbreuken",
+      "before": 60,
+      "after": 60,
+      "ci95": null,
+      "rule": "alle 60 kandidaten",
+      "pass": true
+    },
+    {
+      "nr": 2,
+      "label": "Operationeel: elk rooster ≤ 40:00 en elke vrije-weekendvrijdag conform",
+      "before": 4,
+      "after": 60,
+      "ci95": null,
+      "rule": "alle 60 kandidaten",
+      "pass": true
+    },
+    {
+      "nr": 3,
+      "label": "Losse nachten niet significant slechter",
+      "before": 0.13,
+      "after": 0.23,
+      "ci95": [
+        -0.05,
+        0.27
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 3,
+      "label": "Reeksen van twee niet significant slechter",
+      "before": 0.35,
+      "after": 0.37,
+      "ci95": [
+        -0.22,
+        0.27
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 3,
+      "label": "Slechtste nachtuitgang niet significant slechter",
+      "before": 39.17,
+      "after": 45,
+      "ci95": [
+        -8.33,
+        19.58
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 3,
+      "label": "Kortste herstel na nachten (u) niet significant slechter",
+      "before": 44.97,
+      "after": 48.04,
+      "ci95": [
+        -1.45,
+        7.38
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 4,
+      "label": "Rust niet significant slechter",
+      "before": 81.75,
+      "after": 82.74,
+      "ci95": [
+        -0.25,
+        2.13
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 5,
+      "label": "Slechtste regel (v2) niet significant slechter",
+      "before": 80.23,
+      "after": 80.44,
+      "ci95": [
+        -2.44,
+        2.7
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 6,
+      "label": "Eerlijkheid gemiddeld hooguit 0,5 lager",
+      "before": 85.55,
+      "after": 85,
+      "ci95": null,
+      "rule": "AFTER ≥ baseline − 0,5",
+      "pass": false
+    },
+    {
+      "nr": 7,
+      "label": "Voorkeur significant hoger",
+      "before": 73.14,
+      "after": 73.89,
+      "ci95": [
+        0.03,
+        1.45
+      ],
+      "rule": "interval geheel boven 0",
+      "pass": true
+    },
+    {
+      "nr": 7,
+      "label": "Affiniteit niet significant slechter",
+      "before": 65.04,
+      "after": 65.39,
+      "ci95": [
+        0.02,
+        0.68
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 7,
+      "label": "Geen restbak niet significant slechter",
+      "before": 71.14,
+      "after": 72.54,
+      "ci95": [
+        -0.41,
+        3.43
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 8,
+      "label": "Populair eerlijk niet significant slechter",
+      "before": 92.67,
+      "after": 92.06,
+      "ci95": [
+        -2.33,
+        1.1
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 9,
+      "label": "Rangeer: spreiding per regel (CV) niet significant slechter",
+      "before": 0.07,
+      "after": 0.07,
+      "ci95": [
+        -0.01,
+        0.01
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 9,
+      "label": "Rangeer: grootste aandeel één rooster niet significant slechter",
+      "before": 0.18,
+      "after": 0.18,
+      "ci95": [
+        0,
+        0
+      ],
+      "rule": "interval niet geheel aan de slechte kant",
+      "pass": true
+    },
+    {
+      "nr": 10,
+      "label": "Adversariële toetsen 1–10 groen",
+      "before": null,
+      "after": null,
+      "ci95": null,
+      "rule": "vitest: machinistenvoorkeur, operationele-eisen(-solver)",
+      "pass": true
+    },
+    {
+      "nr": 10,
+      "label": "Ruw aantal lager: lessAssignments",
+      "before": 21.35,
+      "after": 20.37,
+      "ci95": [
+        -1.9,
+        -0.08
+      ],
+      "rule": "gemiddeld lager dan de baseline",
+      "pass": true
+    },
+    {
+      "nr": 10,
+      "label": "Ruw aantal lager: dayDutyDeviation",
+      "before": 30.97,
+      "after": 29.54,
+      "ci95": [
+        -2.68,
+        -0.21
+      ],
+      "rule": "gemiddeld lager dan de baseline",
+      "pass": true
+    },
+    {
+      "nr": 10,
+      "label": "Ruw aantal lager: laatEarlyLates",
+      "before": 9.63,
+      "after": 9.22,
+      "ci95": [
+        -0.88,
+        0.05
+      ],
+      "rule": "gemiddeld lager dan de baseline",
+      "pass": true
+    }
+  ],
+  "green": 18,
+  "total": 19,
+  "allGreen": false
+}

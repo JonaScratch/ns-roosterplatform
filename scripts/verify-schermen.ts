@@ -74,6 +74,15 @@ interface Scherm {
    * opleveren als de lege pagina die deze controle juist moest vangen.
    */
   readonly queryUitScenarios?: number;
+  /**
+   * Sla dit scherm over wanneer het iets anders toont dan bedoeld, met reden.
+   *
+   * Het generatiescherm laat een lopende opdracht zien in plaats van het
+   * keuzeformulier. Draait er tijdens de controle toevallig een meting, dan zou
+   * de controle een fout melden die er geen is. Overslaan met een zichtbare
+   * melding is eerlijker dan de eis versoepelen tot hij altijd slaagt.
+   */
+  readonly slaOverAls?: () => Promise<string | null>;
 }
 
 const SCHERMEN: Readonly<Record<string, readonly Scherm[]>> = {
@@ -221,12 +230,27 @@ const SCHERMEN: Readonly<Record<string, readonly Scherm[]>> = {
         "Rust & regelmaat",
         "Eerlijkste lastenverdeling",
         "Meer strategieën",
+        // De rekentijdmodi van de adaptieve zoekmachine.
+        "Hoe grondig mag gezocht worden?",
+        "Snel",
+        "Normaal",
+        "Grondig",
+        "Zeer grondig",
         "Roosterjaar",
         "Recente opdrachten",
         "tot en met",
       ],
       // Geen vrije datumkeuze: de periode volgt uit het roosterjaar.
       bronBevatNiet: ['name="from"', 'name="to"', 'type="date"'],
+      // Loopt er een opdracht, dan toont dit scherm terecht de voortgang en niet
+      // het keuzeformulier. Dat is geen fout en wordt ook niet als goed geteld.
+      slaOverAls: async () => {
+        const actief = await prisma.generationRun.findFirst({
+          where: { status: { in: ["QUEUED", "RUNNING"] } },
+          select: { strategyLabel: true },
+        });
+        return actief ? `er loopt een generatieopdracht (${actief.strategyLabel}); het scherm toont de voortgang` : null;
+      },
     },
     {
       path: "/roostercommissie/pakketten",
@@ -594,6 +618,13 @@ async function main(): Promise<void> {
           `  … ${scherm.path} — niet getoetst: ${scherm.queryUitScenarios} vergelijkbare ` +
             "scenario's nodig, die staan niet in deze database",
         );
+        continue;
+      }
+
+      const overslaan = scherm.slaOverAls ? await scherm.slaOverAls() : null;
+      if (overslaan !== null) {
+        geblokkeerd += 1;
+        console.log(`  … ${scherm.path} — niet getoetst: ${overslaan}`);
         continue;
       }
 

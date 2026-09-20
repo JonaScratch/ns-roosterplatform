@@ -1,0 +1,22 @@
+{
+  "schema": "ns-machinist-test-notes/1",
+  "recordedAt": "2026-09-19",
+  "battery": "test-results.json (volledige doorloop 13:33–13:58, daarna Eenheidstests, Crashherstel en Draagbare bundel opnieuw na herstel van de oorzaak)",
+  "notes": [
+    {
+      "suites": ["Eenheidstests"],
+      "status": "hersteld",
+      "cause": "De configuratie-afdruk van adaptive-1.0.4-rhythm liep achter: ADAPTIVE_CONFIG kreeg preferenceParity. Opgelost door de configuratie een eigen versie te geven (adaptive-1.0.4-machinist, eigen afdruk); de rhythm-afdruk blijft byte voor byte het verslag van de Final-Brain-meting."
+    },
+    {
+      "suites": ["Crashherstel", "Draagbare bundel"],
+      "status": "oorzaak gevonden; opnieuw gedraaid en geslaagd; defect apart voorgesteld",
+      "cause": "De crashproef doodt alleen de postgres-hoofdprocessen. Onder Windows overleven soms io_worker-kindprocessen (Postgres 18) die de luistersocket hebben geërfd: de poort blijft open. Wezen van 06:53, 07:12 (vorige ronde) en 13:47 hielden poort 5443 bezet. Dit verklaart ook de crashfout die de Final-Brain-ronde als 'oorzaak onbekend' vastlegde. Na het opruimen van de wezen: beide suites geslaagd, en de nieuwe crashproef liet geen wezen achter (de fout is wisselend)."
+    },
+    {
+      "suites": ["Kwaliteitsmodel", "Roosterkwaliteit", "Doorloop (e2e)"],
+      "status": "GEFAALD — niet opnieuw gedraaid",
+      "cause": "Eén en dezelfde bevinding: de doorloop genereerde via de applicatie (profiel machinist) drie kandidaten; kandidaat 2 heeft één losse nacht. De twee kwaliteitssuites toetsen de nieuwste opdracht in de database en vinden dezelfde losse nacht. Losse nachten zijn een zacht doel, geen harde regel; de toets is strenger dan het contract van de zoekmachine en faalde in de vorige ronde ook al eens. Toch niet weggepoetst: in de AFTER is het aantal losse nachten 0,23 per kandidaat tegen 0,13 in de baseline — niet significant (interval [−0,05; 0,27]), maar wel de verkeerde kant op. Niet opnieuw gedraaid tot het groen is: dat zou schijnvooruitgang zijn."
+    }
+  ]
+}

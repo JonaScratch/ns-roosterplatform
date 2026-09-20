@@ -1,0 +1,226 @@
+{
+  "schema": "ns-final-brain-gates/1",
+  "before": "v1.0.4 bevroren (BEFORE)",
+  "after": "v1.0.4 final brain (AFTER)",
+  "qualityModel": "quality-model-v2",
+  "gates": [
+    {
+      "group": "hard",
+      "key": "hardValid",
+      "label": "Alle kandidaten hard geldig",
+      "before": 1,
+      "after": 1,
+      "delta": null,
+      "ci95": null,
+      "rule": "alle",
+      "pass": true
+    },
+    {
+      "group": "hard",
+      "key": "unassigned",
+      "label": "Niet toegewezen diensten (max)",
+      "before": 0,
+      "after": 0,
+      "delta": null,
+      "ci95": null,
+      "rule": "= 0",
+      "pass": true
+    },
+    {
+      "group": "hard",
+      "key": "profileBreaches",
+      "label": "Profielovertredingen (max)",
+      "before": 0,
+      "after": 0,
+      "delta": null,
+      "ci95": null,
+      "rule": "= 0",
+      "pass": true
+    },
+    {
+      "group": "hard",
+      "key": "confirmedHard",
+      "label": "Bevestigde harde overtredingen (max)",
+      "before": 0,
+      "after": 0,
+      "delta": null,
+      "ci95": null,
+      "rule": "= 0",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "key": "singletons",
+      "label": "Losse nachten",
+      "before": 0.15,
+      "after": 0.13333333333333333,
+      "delta": -0.016666666666666663,
+      "ci95": [
+        -0.15000000000000002,
+        0.11666666666666667
+      ],
+      "rule": "≤ BEFORE",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "key": "pairs",
+      "label": "Reeksen van twee nachten",
+      "before": 0.2,
+      "after": 0.35,
+      "delta": 0.14999999999999997,
+      "ci95": [
+        -0.033333333333333326,
+        0.35000000000000003
+      ],
+      "rule": "≤ BEFORE",
+      "pass": false
+    },
+    {
+      "group": "structure",
+      "key": "nightBlockValue",
+      "label": "Waarde nachtreeksen",
+      "before": 93.89473684210526,
+      "after": 93.76315789473685,
+      "delta": -0.13157894736841058,
+      "ci95": [
+        -1.8859649122807554,
+        1.5877192982455455
+      ],
+      "rule": "≥ BEFORE",
+      "pass": false
+    },
+    {
+      "group": "structure",
+      "key": "worstNightExit",
+      "label": "Slechtste nachtuitgang",
+      "before": 26.666666666666668,
+      "after": 39.166666666666664,
+      "delta": 12.499999999999996,
+      "ci95": [
+        0.8333333333333286,
+        24.166666666666668
+      ],
+      "rule": "≥ BEFORE",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "key": "minRecoveryHours",
+      "label": "Kortste herstel na nachtreeks (u)",
+      "before": 43.6886111111111,
+      "after": 44.970833333333324,
+      "delta": 1.2822222222222237,
+      "ci95": [
+        -3.112499999999976,
+        5.6291666666667055
+      ],
+      "rule": "≥ BEFORE",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "key": "coherence",
+      "label": "Samenhang werkblokken (dagen, %)",
+      "before": 98.94353369763212,
+      "after": 98.42440801457197,
+      "delta": -0.5191256830601532,
+      "ci95": [
+        -0.865209471766903,
+        -0.1821493624772188
+      ],
+      "rule": "≥ BEFORE",
+      "pass": false
+    },
+    {
+      "group": "structure",
+      "key": "oscillations",
+      "label": "Heen-en-weer (op de klok)",
+      "before": 0.16666666666666666,
+      "after": 0.016666666666666666,
+      "delta": -0.15,
+      "ci95": [
+        -0.25,
+        -0.06666666666666667
+      ],
+      "rule": "≤ BEFORE",
+      "pass": true
+    },
+    {
+      "group": "structure",
+      "key": "startJitterMean",
+      "label": "Begintijdsprong gemiddeld (min)",
+      "before": 84.4843103989636,
+      "after": 72.04272121693288,
+      "delta": -12.441589182030725,
+      "ci95": [
+        -14.322896818514224,
+        -10.512597304667153
+      ],
+      "rule": "≤ BEFORE, of binnen de menselijke band (gem ≤ 73, p90 ≤ 150)",
+      "pass": true
+    },
+    {
+      "group": "guardrail",
+      "key": "fairness",
+      "label": "Eerlijkheid",
+      "before": 85.0833333333333,
+      "after": 85.54999999999998,
+      "delta": 0.4666666666666828,
+      "ci95": [
+        -0.8483333333333576,
+        1.6933333333333422
+      ],
+      "rule": "≥ BEFORE − 0,5",
+      "pass": true
+    },
+    {
+      "group": "guardrail",
+      "key": "hours",
+      "label": "Uren",
+      "before": 89.66000000000004,
+      "after": 89.67500000000003,
+      "delta": 0.014999999999986358,
+      "ci95": [
+        -0.04166666666661456,
+        0.06833333333339908
+      ],
+      "rule": "≥ BEFORE − 1",
+      "pass": true
+    },
+    {
+      "group": "guardrail",
+      "key": "rest",
+      "label": "Rust",
+      "before": 82.80333333333334,
+      "after": 81.75333333333334,
+      "delta": -1.0499999999999972,
+      "ci95": [
+        -2.263333333333321,
+        0.22833333333332462
+      ],
+      "rule": "≥ BEFORE",
+      "pass": false
+    },
+    {
+      "group": "guardrail",
+      "key": "worstLine",
+      "label": "Slechtste regel",
+      "before": 78.51119791666665,
+      "after": 80.22740547839507,
+      "delta": 1.7162075617284245,
+      "ci95": [
+        -0.19352237654319993,
+        3.5874238040123316
+      ],
+      "rule": "≥ BEFORE",
+      "pass": true
+    }
+  ],
+  "runtime": {
+    "beforeMeanSeconds": 276.8850000000001,
+    "afterMeanSeconds": 280.51,
+    "changePct": 1.3092077938493905
+  },
+  "allPass": false
+}

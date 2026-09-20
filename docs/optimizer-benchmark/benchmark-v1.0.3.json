@@ -1,0 +1,167 @@
+{
+  "schema": "ns-optimizer-benchmark-manifest/1",
+  "phase": "before",
+  "createdAt": "2026-09-17T17:31:07.430Z",
+  "version": "1.0.3",
+  "git": {
+    "commit": "e2b20918d703322b0a19c9d4ee02195669c97935",
+    "dirty": false,
+    "branch": "v1.0.4"
+  },
+  "data": {
+    "location": "DDR",
+    "dutyPackage": {
+      "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+      "label": "DDR-BDU-05-10-2026-V1",
+      "timetableId": "BDU-05-10-2026",
+      "sourceChecksum": "425b37902bf70752fd9f9ca7f5326f823516ce212c3024bbe7afcec883fe3d83",
+      "duties": 223
+    },
+    "rosterStructureVersion": "e2611821d375c42d",
+    "inputDataVersion": "7ff588d3e53e4f87",
+    "rosters": [
+      {
+        "code": "DDR-50MIX",
+        "profile": "MIX_50PLUS",
+        "lines": 6,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-BLM",
+        "profile": "BLM",
+        "lines": 6,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-L",
+        "profile": "LAAT",
+        "lines": 12,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-LN",
+        "profile": "LAAT_NACHT",
+        "lines": 6,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-MIX",
+        "profile": "MIX",
+        "lines": 12,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-V",
+        "profile": "VROEG",
+        "lines": 12,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-VL",
+        "profile": "VROEG_LAAT",
+        "lines": 10,
+        "cycleWeeks": 1
+      }
+    ]
+  },
+  "hashes": {
+    "profileConfig": "e73a3bab43b59be285560a65772078aa2053848fb1df98dc614d8523c65dc06f",
+    "ruleset": "6dd5d1619bd3d3d74f8115bf683a9d9a44efda269f4aec6c666ca8e5ab76cdf1",
+    "optimizerConfig": "c3d50ebc3e0db5217c2f88a99e16866480319de42d60b06dfd6aafbd47038962",
+    "solverScript": "9a76e9638cc09c4bdbf0ca0d13fb9acd94ebf2279313e584ab307c376d29b34d"
+  },
+  "ruleset": {
+    "version": "2026.1-cao-2024-2025-transcribed",
+    "legalStatus": "LEGAL_RULESET_NOT_CURRENTLY_VERIFIED",
+    "rules": 71
+  },
+  "optimizerConfig": {
+    "solveSeconds": 60,
+    "repairSeconds": 30,
+    "repairHoursThresholdMinutes": 30,
+    "extraAttempts": 2,
+    "minDifferentShare": 0.1,
+    "strategyWeights": {
+      "BALANCED": {
+        "hoursBalance": 15,
+        "hoursWorst": 40,
+        "restComfort": 1,
+        "transitions": 40,
+        "nightSingleton": 900,
+        "nightPair": 700,
+        "nightOutsideReference": 400,
+        "nightFairness": 12,
+        "shuntingFairness": 6,
+        "weekendFairness": 1,
+        "preserveReference": 1,
+        "preserveHint": 0
+      },
+      "REST_QUALITY": {
+        "hoursBalance": 10,
+        "hoursWorst": 25,
+        "restComfort": 3,
+        "transitions": 100,
+        "nightSingleton": 1100,
+        "nightPair": 900,
+        "nightOutsideReference": 400,
+        "nightFairness": 12,
+        "shuntingFairness": 6,
+        "weekendFairness": 1,
+        "preserveReference": 1,
+        "preserveHint": 0
+      },
+      "FAIR_BURDEN": {
+        "hoursBalance": 15,
+        "hoursWorst": 40,
+        "restComfort": 1,
+        "transitions": 25,
+        "nightSingleton": 900,
+        "nightPair": 700,
+        "nightOutsideReference": 400,
+        "nightFairness": 60,
+        "shuntingFairness": 35,
+        "weekendFairness": 5,
+        "preserveReference": 1,
+        "preserveHint": 0
+      },
+      "MINIMAL_CHANGE": {
+        "hoursBalance": 15,
+        "hoursWorst": 40,
+        "restComfort": 1,
+        "transitions": 20,
+        "nightSingleton": 400,
+        "nightPair": 300,
+        "nightOutsideReference": 400,
+        "nightFairness": 12,
+        "shuntingFairness": 6,
+        "weekendFairness": 1,
+        "preserveReference": 120,
+        "preserveHint": 0
+      },
+      "COVERAGE": {
+        "hoursBalance": 15,
+        "hoursWorst": 40,
+        "restComfort": 1,
+        "transitions": 40,
+        "nightSingleton": 900,
+        "nightPair": 700,
+        "nightOutsideReference": 400,
+        "nightFairness": 12,
+        "shuntingFairness": 6,
+        "weekendFairness": 1,
+        "preserveReference": 1,
+        "preserveHint": 0
+      }
+    }
+  },
+  "machine": {
+    "cpuModel": "Intel(R) Core(TM) i7-14700K",
+    "logicalCpus": 28,
+    "totalMemoryBytes": 68468662272,
+    "os": "Windows_NT 10.0.26200 x64",
+    "node": "v24.17.0",
+    "python": "3.11.1",
+    "ortools": "9.15.6755",
+    "solverWorkers": 8
+  }
+}

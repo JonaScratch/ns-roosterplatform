@@ -1,0 +1,41 @@
+﻿START 2026-09-19T06:37:25.6094664+02:00
+
+> ns-roosterplatform@1.0.3 test:battery
+> tsx --conditions=react-server scripts/test-battery.ts --out docs/v1.0.4-final-brain/test-results.json
+
+Typecontrole             ÔÇª geslaagd 2.1 s
+Codestijl                ÔÇª geslaagd 30.8 s
+Eenheidstests            ÔÇª geslaagd 15.7 s
+Mutatietests             ÔÇª geslaagd 86.3 s
+Regels                   ÔÇª geslaagd 0.4 s
+Regeldekking             ÔÇª geslaagd 0.5 s
+Roosteruren              ÔÇª geslaagd 0.8 s
+Kwaliteitsmodel          ÔÇª geslaagd 0.8 s
+Roosterkwaliteit         ÔÇª geslaagd 0.9 s
+Profielen                ÔÇª geslaagd 5.1 s
+Menselijke beoordeling   ÔÇª geslaagd 0.8 s
+Scenario's               ÔÇª geslaagd 15.3 s
+Structuurgeneratie       ÔÇª geslaagd 0.6 s
+Toegang per rol          ÔÇª geslaagd 22.3 s
+Schermen                 ÔÇª geslaagd 15.7 s
+Doorloop (e2e)           ÔÇª GEFAALD  775.2 s
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    Dekking van de gevraagde doorloop
+      afgedekt en geslaagd   66/71
+      Niet aangetoond:
+        mislukt: crash: bevestigde wijziging overleeft
+        mislukt: crash: halve transactie verdwijnt
+        mislukt: crash: uitgaande wachtrij hervat
+        mislukt: crash: import blijft consistent
+        mislukt: crash: draagbare database na vuile stop
+    ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+    De doorloop is niet volledig aangetoond. Wat hierboven bij 'Niet aangetoond'
+    staat, hoort in het eindrapport te staan ÔÇö niet als afgerond.
+Crashherstel             ÔÇª geslaagd 39.1 s
+Productiebouw            ÔÇª geslaagd 151.6 s
+Draagbare bundel         ÔÇª geslaagd 33.1 s
+
+18 van de 19 suites geslaagd in 1197 s.
+Geschreven: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\docs\v1.0.4-final-brain\test-results.json
+Gefaald: Doorloop (e2e)
+KLAAR 2026-09-19T06:57:23.3283375+02:00

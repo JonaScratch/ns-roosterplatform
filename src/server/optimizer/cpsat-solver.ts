@@ -32,6 +32,10 @@ export interface SolverDuty {
   readonly isShunting: boolean;
   readonly isWeekend: boolean;
   readonly isLong: boolean;
+  /** Klasse op de klok (duty-class.ts), voor de voorkeurstermen. */
+  readonly preferenceClass?: string;
+  /** Dagachtige dienst (dagachtig vroeg of vroege late). */
+  readonly isDayDuty?: boolean;
 }
 
 export interface SolverLineDay {
@@ -73,7 +77,12 @@ export interface SolverOptions {
   readonly transitionPenalties?: {
     readonly adjacent: Readonly<Record<string, Readonly<Record<string, number>>>>;
     readonly overOffDay: Readonly<Record<string, Readonly<Record<string, number>>>>;
+    /** Alleen bij de menselijke ritmevoorkeuren: nacht → vroeg over twee vrije dagen. */
+    readonly overTwoOffDays?: Readonly<Record<string, Readonly<Record<string, number>>>>;
   };
+  /** Sprong in begintijd binnen een dagdeel: tot hier gratis, vanaf `startJitterFullMinutes` vol. */
+  readonly startJitterFreeMinutes?: number;
+  readonly startJitterFullMinutes?: number;
   readonly offPositionTypes?: readonly string[];
   readonly comfortableRestMinutes?: number;
   readonly targetWeeklyMinutes?: number;
@@ -82,6 +91,10 @@ export interface SolverOptions {
   readonly referenceAssignments?: readonly SlotAssignment[];
   readonly hintAssignments?: readonly SlotAssignment[];
   readonly excludeSolutions?: readonly (readonly SlotAssignment[])[];
+  /** Plaatsingen die tijdens een gerichte reparatie blijven staan. */
+  readonly fixedAssignments?: readonly SlotAssignment[];
+  /** Zoekopzet van CP-SAT; varieert het zoekpad, niet wat is toegestaan. */
+  readonly linearizationLevel?: number;
   readonly minDifferentSlots?: number;
   /** Na een mislukte poging mét volledige dekking uitleggen wat leeg blijft. Standaard aan. */
   readonly explainShortfall?: boolean;
@@ -90,6 +103,29 @@ export interface SolverOptions {
     readonly burden: "NIGHT" | "EARLY" | "SHUNTING" | "WEEKEND";
     readonly weight: number;
   }[];
+  /**
+   * Operationele ontwerpeisen van de gebruiker (USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT),
+   * hard in het model: het roostergemiddelde en de vrijdag vóór een vrij weekend.
+   * Zie `operational-requirements.ts`. Zonder dit veld gelden ze niet.
+   */
+  readonly operationalRequirements?: {
+    readonly maxAverageWeeklyMinutes: number;
+    readonly fridayLatestEndMinute: number;
+    readonly fridayExemptKinds: readonly string[];
+    readonly freeWeekendTypes: readonly string[];
+  };
+  /**
+   * Profielaffiniteit per profiel en dienstklasse (0–1), voor de kostenpost
+   * `profileAffinity`: (1 − affiniteit) × 10 × gewicht per plaatsing.
+   * MACHINIST_PREFERENCE; zie profile-affinity.ts.
+   */
+  readonly profileAffinityTable?: Readonly<Record<string, Readonly<Record<string, number>>>>;
+  /**
+   * Verwacht aantal dagachtige diensten per basisrooster (relatieve gewichten,
+   * per profiel genormaliseerd; machinist-preference.ts). Kostenpost
+   * `dayDutyTarget` per tiende dienst afwijking.
+   */
+  readonly dayDutyTargets?: Readonly<Record<string, number>>;
   /** Verouderd: stond voor minimale verandering. Wordt genegeerd. */
   readonly keepExisting?: boolean;
   /** Verouderd: de gewichten van vóór v1.0.3. Wordt genegeerd. */

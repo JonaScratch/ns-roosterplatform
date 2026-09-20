@@ -1,0 +1,99 @@
+
+> ns-roosterplatform@1.0.3 test:battery
+> tsx --conditions=react-server scripts/test-battery.ts --out docs/v1.0.4-final-brain/machinist-preferences/test-results.json
+
+Typecontrole             … geslaagd 2.3 s
+Codestijl                … geslaagd 31.6 s
+Eenheidstests            … GEFAALD  13.3 s
+            "decay": 0.8,
+            "max": 4,
+            "step": 1.5,
+          },
+     ❯ tests/domain/adaptief-zoeken.test.ts:238:21
+        236|     const naam = `optimizer-config-${ADAPTIVE_CONFIG.version.replace("…
+        237|     const bestand = JSON.parse(readFileSync(path.resolve(__dirname, ".…
+        238|     expect(bestand).toEqual(
+           |                     ^
+        239|       JSON.parse(
+        240|         JSON.stringify({
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+Mutatietests             … geslaagd 87.1 s
+Regels                   … geslaagd 0.5 s
+Regeldekking             … geslaagd 0.5 s
+Roosteruren              … geslaagd 0.8 s
+Kwaliteitsmodel          … GEFAALD  0.9 s
+      ✓ het officiële rooster is hard geldig volgens de evaluator
+      ✓ geen enkele component van het officiële rooster onder de 40
+      ✓ het officiële rooster heeft patroonafstand 0 tot zichzelf — 0
+      ✓ continuïteit van het officiële rooster is 100
+      Meting BALANCED — kandidaat 1: totaal 87.6 robuust 83.3 patroonafstand 13.5 · 223/223 diensten geplaatst | 1 losse nacht(en) | 1 zware overgang(en)
+      ✓ Meting BALANCED — kandidaat 1: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 2: totaal 87.5 robuust 83.2 patroonafstand 12.7 · 223/223 diensten geplaatst | 1 losse nacht(en) | 1 zware overgang(en)
+      ✓ Meting BALANCED — kandidaat 2: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 3: totaal 83.8 robuust 80.4 patroonafstand 17.7 · 223/223 diensten geplaatst | 1 reeks(en) van twee nachten | grootste afwijking van 40:00: 28 min (DDR-MIX)
+      ✓ Meting BALANCED — kandidaat 3: hard geldig volgens de evaluator
+    ══════════════════════════════════════════════════════════════════════════════
+    35 geslaagd, 2 mislukt, 0 geblokkeerd
+Roosterkwaliteit         … GEFAALD  0.8 s
+      ✓ het officiële rooster is hard geldig volgens de evaluator
+      ✓ geen enkele component van het officiële rooster onder de 40
+      ✓ het officiële rooster heeft patroonafstand 0 tot zichzelf — 0
+      ✓ continuïteit van het officiële rooster is 100
+      Meting BALANCED — kandidaat 1: totaal 87.6 robuust 83.3 patroonafstand 13.5 · 223/223 diensten geplaatst | 1 losse nacht(en) | 1 zware overgang(en)
+      ✓ Meting BALANCED — kandidaat 1: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 2: totaal 87.5 robuust 83.2 patroonafstand 12.7 · 223/223 diensten geplaatst | 1 losse nacht(en) | 1 zware overgang(en)
+      ✓ Meting BALANCED — kandidaat 2: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 3: totaal 83.8 robuust 80.4 patroonafstand 17.7 · 223/223 diensten geplaatst | 1 reeks(en) van twee nachten | grootste afwijking van 40:00: 28 min (DDR-MIX)
+      ✓ Meting BALANCED — kandidaat 3: hard geldig volgens de evaluator
+    ══════════════════════════════════════════════════════════════════════════════
+    35 geslaagd, 2 mislukt, 0 geblokkeerd
+Profielen                … geslaagd 5.3 s
+Menselijke beoordeling   … geslaagd 0.8 s
+Scenario's               … geslaagd 15.4 s
+Structuurgeneratie       … geslaagd 0.6 s
+Toegang per rol          … geslaagd 17.9 s
+Schermen                 … geslaagd 12.3 s
+Doorloop (e2e)           … GEFAALD  773.5 s
+    ──────────────────────────────────────────────────────────────────────────────
+    20 metingen: 393 controles geslaagd, 1 mislukt, 2 geblokkeerd door een ontbrekende bron.
+    ──────────────────────────────────────────────────────────────────────────────
+    Dekking van de gevraagde doorloop
+      afgedekt en geslaagd   68/71
+      Niet aangetoond:
+        mislukt: v1.0.3: nachten in reeksen, geen losse nachten
+        mislukt: v1.0.3: niet meer zware overgangen dan officieel
+        mislukt: v1.0.3: kwaliteitsmeting onderscheidt roosters
+    ══════════════════════════════════════════════════════════════════════════════
+    De doorloop is niet volledig aangetoond. Wat hierboven bij 'Niet aangetoond'
+    staat, hoort in het eindrapport te staan — niet als afgerond.
+Crashherstel             … GEFAALD  50.5 s
+      ✓ de draagbare versie komt volledig op
+      ✓ de draagbare database heeft fsync op on
+      ✓ de draagbare database heeft full_page_writes op on
+      ✓ de draagbare database heeft synchronous_commit op on
+      ✗ de database is werkelijk weg (vuile stop) — de poort bleef open; er draaide nog een postgres-proces
+      ✗ de herstartproef is uitvoerbaar — afgebroken: de database ging niet omlaag
+    ════════════════════════════════════════════════════════════════════════
+    16 controles geslaagd, 2 mislukt, 0 geblokkeerd.
+    Wat hiermee niet is aangetoond: dat een defecte schijf geen gegevens kan
+    kwijtraken. Dat kan geen enkele software garanderen. Wat is aangetoond, is
+    dat wat bevestigd is een harde stop overleeft, en dat de instellingen
+    waarop die belofte rust werkelijk aanstaan.
+Productiebouw            … geslaagd 179.0 s
+Draagbare bundel         … GEFAALD  259.4 s
+      ✓ het startbestand rekent vanaf zijn eigen map (%~dp0)
+      ✓ en zet elk pad tussen aanhalingstekens, zodat een spatie het niet breekt
+      ✓ het stopbestand stopt niet zomaar alle node-processen
+    3. Starten vanaf X:\proef met spaties
+          De bundel is nu bereikbaar als X:\proef met spaties\portableproef-bundel
+      ✓ de bundel is bereikbaar via de nieuwe schijfletter
+      ✓ het pad bevat een spatie
+    4. De eerste start (database wordt aangemaakt)
+      ✗ het platform komt op zonder dat er iets geïnstalleerd is — 2026-09-19 11:51:22        Er draait iets anders op deze computer dat dezelfde poort gebruikt. Pas PORT of DB_PORT aan in config\instellingen.env, of sluit dat programma af. | 2026-09-19 11:51:22   | 2026-09-19 11:51:22  Het platform is niet gestart. Er is niets gewijzigd.
+    Opruimen
+          X: losgekoppeld en de proefmap verwijderd.
+    Error: gestopt: de eerste start is mislukt
+
+13 van de 19 suites geslaagd in 1453 s.
+Geschreven: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\docs\v1.0.4-final-brain\machinist-preferences\test-results.json
+Gefaald: Eenheidstests, Kwaliteitsmodel, Roosterkwaliteit, Doorloop (e2e), Crashherstel, Draagbare bundel

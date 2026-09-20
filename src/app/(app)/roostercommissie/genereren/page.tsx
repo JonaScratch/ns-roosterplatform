@@ -14,6 +14,7 @@ import {
   recentGenerationRuns,
   runJson,
 } from "@/server/services/generation-service";
+import { standaardZoekmodus, zoekmodi } from "@/server/services/search-mode-options";
 import { RosterCommitteeShell } from "@/components/layout/area-shell";
 import { Alert, Badge, EmptyState, type Tone, WidgetCard } from "@/components/ui/primitives";
 import { ClockIcon, SparkIcon } from "@/components/ui/icons";
@@ -86,6 +87,8 @@ export default async function Genereren({
               <GeneratieWerkblad
                 strategies={strategyTiles()}
                 years={jaren}
+                modes={zoekmodi()}
+                defaultMode={standaardZoekmodus()}
                 defaultYear={volgend.year}
                 initialRun={getoond ? runJson(getoond) : null}
               />

@@ -1,0 +1,6276 @@
+{
+  "schema": "ns-optimizer-benchmark-run/1",
+  "phase": "ablation",
+  "runNumber": 22,
+  "engine": "adaptive",
+  "mode": "NORMAL",
+  "strategy": "BALANCED",
+  "label": "Benchmark ablation BALANCED #22",
+  "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+  "startedAt": "2026-09-18T06:44:42.919Z",
+  "finishedAt": "2026-09-18T06:49:04.837Z",
+  "runtimeSeconds": 261.9,
+  "generationRun": {
+    "id": "dc06730a-0c54-4f33-aee8-72698973f5c4",
+    "status": "COMPLETED",
+    "requested": 3,
+    "found": 3,
+    "stageMessage": "Klaar: 5 varianten onderzocht, 5 geldige kandidaten, 3 topkandidaat/kandidaten. Gestopt omdat: tijdsbudget voor reparatie op.",
+    "failureReason": null,
+    "log": {
+      "entries": [],
+      "timings": [
+        {
+          "step": "zoeken",
+          "seconds": 262
+        }
+      ]
+    },
+    "searchJournal": {
+      "gate": {
+        "minRobust": 54.900000000000006,
+        "minWorstLine": 5.625,
+        "maxSingletonNights": 2,
+        "maxHeavyTransitions": 4,
+        "maxRosterHoursDeviation": 60
+      },
+      "entries": [
+        {
+          "at": "2026-09-18T06:45:23.678Z",
+          "kind": "START",
+          "seed": 101,
+          "phase": "SEARCH",
+          "polish": {
+            "gain": 3.19,
+            "kicks": 0,
+            "moves": [
+              {
+                "a": "DDR-VL|6|1|6",
+                "b": "DDR-VL|9|1|6",
+                "gain": 1.556,
+                "dutyA": "110",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-BLM|3|1|5",
+                "b": "DDR-V|6|1|5",
+                "gain": 0.298,
+                "dutyA": "71",
+                "dutyB": "601"
+              },
+              {
+                "a": "DDR-BLM|2|1|1",
+                "b": "DDR-BLM|5|1|1",
+                "gain": 0.387,
+                "dutyA": "104",
+                "dutyB": "71"
+              },
+              {
+                "a": "DDR-BLM|2|1|4",
+                "b": "DDR-MIX|1|1|4",
+                "gain": 0.289,
+                "dutyA": "71",
+                "dutyB": "107"
+              },
+              {
+                "a": "DDR-50MIX|1|1|1",
+                "b": "DDR-50MIX|2|1|1",
+                "gain": 0.174,
+                "dutyA": "11",
+                "dutyB": "109"
+              },
+              {
+                "a": "DDR-MIX|3|1|4",
+                "b": "DDR-VL|8|1|4",
+                "gain": 0.111,
+                "dutyA": "14",
+                "dutyB": "170"
+              },
+              {
+                "a": "DDR-50MIX|4|1|4",
+                "b": "DDR-MIX|11|1|4",
+                "gain": 0.085,
+                "dutyA": "106",
+                "dutyB": "3"
+              },
+              {
+                "a": "DDR-V|2|1|6",
+                "b": "DDR-VL|6|1|6",
+                "gain": 0.072,
+                "dutyA": "5",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-50MIX|4|1|3",
+                "b": "DDR-50MIX|6|1|3",
+                "gain": 0.042,
+                "dutyA": "12",
+                "dutyB": "703"
+              },
+              {
+                "a": "DDR-VL|1|1|3",
+                "b": "DDR-VL|2|1|3",
+                "gain": 0.038,
+                "dutyA": "113",
+                "dutyB": "106"
+              },
+              {
+                "a": "DDR-MIX|6|1|3",
+                "b": "DDR-V|11|1|3",
+                "gain": 0.03,
+                "dutyA": "11",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-MIX|5|1|2",
+                "b": "DDR-VL|8|1|2",
+                "gain": 0.047,
+                "dutyA": "1",
+                "dutyB": "3"
+              },
+              {
+                "a": "DDR-L|3|1|6",
+                "b": "DDR-MIX|3|1|6",
+                "gain": 0.03,
+                "dutyA": "103",
+                "dutyB": "101"
+              },
+              {
+                "a": "DDR-MIX|5|1|2",
+                "b": "DDR-V|2|1|2",
+                "gain": 0.03,
+                "dutyA": "3",
+                "dutyB": "9"
+              }
+            ],
+            "swaps": 14,
+            "climbs": 1,
+            "ranking": 76.62,
+            "seconds": 15,
+            "variants": 20929,
+            "stopReason": "tijd op",
+            "startRanking": 73.43
+          },
+          "reason": "opgenomen in de elitepool",
+          "solver": {
+            "status": "FEASIBLE",
+            "optimal": false,
+            "wallTimeSeconds": 40.059,
+            "fullCoverageStatus": "FEASIBLE"
+          },
+          "target": null,
+          "attempt": 1,
+          "quality": {
+            "robust": 76.6,
+            "overall": 80.8,
+            "ranking": 76.6,
+            "worstLine": 53.125,
+            "components": {
+              "flow": 77.3,
+              "rest": 74.5,
+              "hours": 76.8,
+              "nights": 100,
+              "fairness": 86.2,
+              "stability": 58.4
+            }
+          },
+          "verdict": "VALID_ELITE",
+          "weights": {
+            "nightPair": 700,
+            "hoursWorst": 40,
+            "restComfort": 1,
+            "transitions": 0,
+            "hoursBalance": 15,
+            "preserveHint": 0,
+            "nightFairness": 12,
+            "nightSingleton": 900,
+            "weekendFairness": 1,
+            "shuntingFairness": 6,
+            "preserveReference": 1,
+            "nightOutsideReference": 400
+          },
+          "workers": 8,
+          "pressure": {
+            "flow": 1,
+            "rest": 1,
+            "hours": 1,
+            "nights": 1,
+            "fairness": 1
+          },
+          "diagnosis": [
+            "223/223 diensten geplaatst",
+            "1 zware overgang(en)",
+            "grootste afwijking van 40:00: 26 min (DDR-V)",
+            "slechtste regel: DDR-BLM regel 3 (53.1) — week 29:22, 1 zware overgang(en)",
+            "rangeer per regel 0.6–0.7"
+          ],
+          "fixedSlots": 0,
+          "validation": {
+            "status": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+            "confirmed": 0,
+            "rejection": null
+          },
+          "assignments": {
+            "DDR-L": {
+              "1|1": [
+                "732",
+                "~RUST",
+                "730",
+                "109",
+                "114",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RUST",
+                "732",
+                "~RES",
+                "~RUST",
+                "730",
+                "~RES",
+                "115"
+              ],
+              "3|1": [
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "111",
+                "101",
+                "106"
+              ],
+              "4|1": [
+                "~RES",
+                "~RUST",
+                "112",
+                "112",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "116",
+                "107",
+                "171",
+                "103",
+                "~CO",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "117",
+                "107",
+                "731",
+                "~RUST",
+                "~RES",
+                "~RES"
+              ],
+              "7|1": [
+                "~RES",
+                "106",
+                "~WR",
+                "~RES",
+                "113",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "113",
+                "113",
+                "~RUST",
+                "~RUST",
+                "~RES",
+                "105",
+                "108"
+              ],
+              "9|1": [
+                "171",
+                "~WR",
+                "~RUST",
+                "102",
+                "101",
+                "~RES",
+                "104"
+              ],
+              "10|1": [
+                "~RUST",
+                "115",
+                "732",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "~CO",
+                "~RES",
+                "102",
+                "730",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "104",
+                "~RES",
+                "~WR",
+                "102",
+                "~RES",
+                "102"
+              ]
+            },
+            "DDR-V": {
+              "1|1": [
+                "~RES",
+                "4",
+                "6",
+                "5",
+                "6",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "701",
+                "3",
+                "13",
+                "~WR",
+                "~RUST",
+                "1",
+                "702"
+              ],
+              "3|1": [
+                "702",
+                "~RUST",
+                "~RUST",
+                "701",
+                "7",
+                "71",
+                "6"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "4",
+                "1",
+                "1",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "10",
+                "~RES",
+                "8",
+                "~RUST",
+                "~RUST",
+                "701",
+                "~RES"
+              ],
+              "6|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "71",
+                "601",
+                "5"
+              ],
+              "7|1": [
+                "~RUST",
+                "~CO",
+                "~RES",
+                "~RES",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "7",
+                "2",
+                "~WR",
+                "~RUST",
+                "8",
+                "~RES",
+                "2"
+              ],
+              "9|1": [
+                "~RUST",
+                "13",
+                "~RES",
+                "~RES",
+                "11",
+                "~RUST",
+                "~RUST"
+              ],
+              "10|1": [
+                "8",
+                "~RES",
+                "7",
+                "13",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "5",
+                "701",
+                "11",
+                "~RUST",
+                "~RUST",
+                "4",
+                "701"
+              ],
+              "12|1": [
+                "6",
+                "~WR",
+                "10",
+                "8",
+                "13",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-LN": {
+              "1|1": [
+                "~RES",
+                "~RUST",
+                "108",
+                "~RES",
+                "107",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "170",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "104",
+                "109",
+                "114"
+              ],
+              "3|1": [
+                "115",
+                "170",
+                "109",
+                "~RUST",
+                "~RUST",
+                "760",
+                "761"
+              ],
+              "4|1": [
+                "761",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "110",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "~CO",
+                "110",
+                "111",
+                "108",
+                "105",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "201",
+                "201",
+                "760",
+                "~WR",
+                "104",
+                "107"
+              ]
+            },
+            "DDR-VL": {
+              "1|1": [
+                "111",
+                "731",
+                "106",
+                "101",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RES",
+                "5",
+                "113",
+                "110",
+                "103",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "112",
+                "108",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "730",
+                "109"
+              ],
+              "4|1": [
+                "~RUST",
+                "103",
+                "103",
+                "105",
+                "106",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "730",
+                "102",
+                "~WR",
+                "~RUST",
+                "~RUST",
+                "111",
+                "105"
+              ],
+              "6|1": [
+                "107",
+                "~RES",
+                "~CO",
+                "~RUST",
+                "702",
+                "5",
+                "~RES"
+              ],
+              "7|1": [
+                "~WR",
+                "~RUST",
+                "~RES",
+                "114",
+                "112",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "~RUST",
+                "1",
+                "~RES",
+                "14",
+                "~RUST",
+                "108",
+                "730"
+              ],
+              "9|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "115",
+                "~RES",
+                "110",
+                "101"
+              ],
+              "10|1": [
+                "~RUST",
+                "~RES",
+                "105",
+                "~RES",
+                "731",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-BLM": {
+              "1|1": [
+                "9",
+                "70",
+                "~RUST",
+                "~RUST",
+                "70",
+                "70",
+                "1"
+              ],
+              "2|1": [
+                "71",
+                "~WR",
+                "~RUST",
+                "107",
+                "201",
+                "761",
+                "760"
+              ],
+              "3|1": [
+                "760",
+                "~RUST",
+                "70",
+                "70",
+                "601",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "108",
+                "111",
+                "101",
+                "104",
+                "~RUST",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "104",
+                "109",
+                "170",
+                "~WR",
+                "~RUST",
+                "2",
+                "8"
+              ],
+              "6|1": [
+                "~CO",
+                "12",
+                "5",
+                "702",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-MIX": {
+              "1|1": [
+                "601",
+                "7",
+                "~RES",
+                "71",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "3",
+                "6",
+                "~RUST",
+                "11",
+                "2",
+                "8",
+                "7"
+              ],
+              "3|1": [
+                "102",
+                "~RUST",
+                "~RUST",
+                "170",
+                "109",
+                "103",
+                "103"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "601",
+                "~RES",
+                "5",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "1",
+                "9",
+                "~RUST",
+                "~RUST",
+                "~CO",
+                "102",
+                "~RES"
+              ],
+              "6|1": [
+                "~RUST",
+                "~RES",
+                "1",
+                "~WR",
+                "~RUST",
+                "9",
+                "3"
+              ],
+              "7|1": [
+                "106",
+                "~WR",
+                "3",
+                "601",
+                "72",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "201",
+                "760",
+                "761",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST"
+              ],
+              "9|1": [
+                "101",
+                "101",
+                "~CO",
+                "~RUST",
+                "~RUST",
+                "11",
+                "~RES"
+              ],
+              "10|1": [
+                "~WR",
+                "761",
+                "760",
+                "201",
+                "761",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "105",
+                "~RES",
+                "~RES",
+                "106",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "8",
+                "9",
+                "2",
+                "~RUST",
+                "~RES",
+                "601"
+              ]
+            },
+            "DDR-50MIX": {
+              "1|1": [
+                "109",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "701",
+                "7",
+                "70"
+              ],
+              "2|1": [
+                "11",
+                "~RUST",
+                "701",
+                "10",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "~RES",
+                "10",
+                "~WR",
+                "9",
+                "10",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "~RUST",
+                "703",
+                "703",
+                "3",
+                "~RUST",
+                "170",
+                "~RES"
+              ],
+              "5|1": [
+                "70",
+                "~RUST",
+                "~RES",
+                "7",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~CO",
+                "601",
+                "12",
+                "~RUST",
+                "~RES",
+                "107",
+                "~RES"
+              ]
+            }
+          },
+          "freeRosters": null,
+          "hintAttempt": null,
+          "evaluationMs": 1,
+          "validationMs": 3963,
+          "deltaToParent": null,
+          "parentAttempt": null,
+          "excludedAttempts": [],
+          "timeLimitSeconds": 40,
+          "distanceToNearest": null,
+          "minDifferentSlots": 0,
+          "excludedCandidates": 0
+        },
+        {
+          "at": "2026-09-18T06:46:23.457Z",
+          "kind": "START",
+          "seed": 102,
+          "phase": "SEARCH",
+          "polish": {
+            "gain": 4.66,
+            "kicks": 0,
+            "moves": [
+              {
+                "a": "DDR-50MIX|6|1|6",
+                "b": "DDR-VL|6|1|6",
+                "gain": 0.651,
+                "dutyA": "11",
+                "dutyB": "105"
+              },
+              {
+                "a": "DDR-MIX|7|1|1",
+                "b": "DDR-MIX|8|1|1",
+                "gain": 0.383,
+                "dutyA": "112",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-BLM|3|1|1",
+                "b": "DDR-BLM|5|1|1",
+                "gain": 0.323,
+                "dutyA": "109",
+                "dutyB": "11"
+              },
+              {
+                "a": "DDR-50MIX|2|1|1",
+                "b": "DDR-50MIX|5|1|1",
+                "gain": 1.353,
+                "dutyA": "101",
+                "dutyB": "70"
+              },
+              {
+                "a": "DDR-VL|4|1|2",
+                "b": "DDR-VL|8|1|2",
+                "gain": 0.543,
+                "dutyA": "3",
+                "dutyB": "108"
+              },
+              {
+                "a": "DDR-BLM|2|1|4",
+                "b": "DDR-BLM|3|1|4",
+                "gain": 0.597,
+                "dutyA": "71",
+                "dutyB": "3"
+              },
+              {
+                "a": "DDR-50MIX|5|1|1",
+                "b": "DDR-MIX|5|1|1",
+                "gain": 0.149,
+                "dutyA": "101",
+                "dutyB": "730"
+              },
+              {
+                "a": "DDR-L|11|1|3",
+                "b": "DDR-MIX|4|1|3",
+                "gain": 0.106,
+                "dutyA": "102",
+                "dutyB": "106"
+              },
+              {
+                "a": "DDR-MIX|7|1|5",
+                "b": "DDR-V|6|1|5",
+                "gain": 0.059,
+                "dutyA": "70",
+                "dutyB": "601"
+              },
+              {
+                "a": "DDR-50MIX|4|1|4",
+                "b": "DDR-50MIX|5|1|4",
+                "gain": 0.047,
+                "dutyA": "112",
+                "dutyB": "7"
+              },
+              {
+                "a": "DDR-MIX|10|1|4",
+                "b": "DDR-MIX|11|1|4",
+                "gain": 0.047,
+                "dutyA": "107",
+                "dutyB": "10"
+              },
+              {
+                "a": "DDR-50MIX|2|1|4",
+                "b": "DDR-50MIX|3|1|4",
+                "gain": 0.047,
+                "dutyA": "702",
+                "dutyB": "9"
+              },
+              {
+                "a": "DDR-BLM|3|1|5",
+                "b": "DDR-MIX|7|1|5",
+                "gain": 0.357,
+                "dutyA": "105",
+                "dutyB": "601"
+              }
+            ],
+            "swaps": 13,
+            "climbs": 1,
+            "ranking": 78.5,
+            "seconds": 15,
+            "variants": 20272,
+            "stopReason": "tijd op",
+            "startRanking": 73.84
+          },
+          "reason": "opgenomen in de elitepool",
+          "solver": {
+            "status": "FEASIBLE",
+            "optimal": false,
+            "wallTimeSeconds": 40.054,
+            "fullCoverageStatus": "FEASIBLE"
+          },
+          "target": null,
+          "attempt": 2,
+          "quality": {
+            "robust": 78.5,
+            "overall": 81.4,
+            "ranking": 78.5,
+            "worstLine": 61.927083333333336,
+            "components": {
+              "flow": 75.5,
+              "rest": 88,
+              "hours": 75.4,
+              "nights": 94.7,
+              "fairness": 86.2,
+              "stability": 61.8
+            }
+          },
+          "verdict": "VALID_ELITE",
+          "weights": {
+            "nightPair": 674,
+            "hoursWorst": 37,
+            "restComfort": 2,
+            "transitions": 0,
+            "hoursBalance": 13,
+            "preserveHint": 0,
+            "nightFairness": 13,
+            "nightSingleton": 1034,
+            "weekendFairness": 1,
+            "shuntingFairness": 6,
+            "preserveReference": 1,
+            "nightOutsideReference": 400
+          },
+          "workers": 8,
+          "pressure": {
+            "flow": 1,
+            "rest": 1.5,
+            "hours": 1,
+            "nights": 1,
+            "fairness": 1
+          },
+          "diagnosis": [
+            "223/223 diensten geplaatst",
+            "1 reeks(en) van twee nachten",
+            "grootste afwijking van 40:00: 23 min (DDR-V)",
+            "slechtste regel: DDR-MIX regel 2 (61.9) — week 46:51",
+            "rangeer per regel 0.6–0.7"
+          ],
+          "fixedSlots": 0,
+          "validation": {
+            "status": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+            "confirmed": 0,
+            "rejection": null
+          },
+          "assignments": {
+            "DDR-L": {
+              "1|1": [
+                "107",
+                "~RUST",
+                "730",
+                "109",
+                "114",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RUST",
+                "732",
+                "~RES",
+                "~RUST",
+                "104",
+                "~RES",
+                "115"
+              ],
+              "3|1": [
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "730",
+                "101",
+                "104"
+              ],
+              "4|1": [
+                "~RES",
+                "~RUST",
+                "112",
+                "101",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "116",
+                "170",
+                "109",
+                "103",
+                "~CO",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "117",
+                "107",
+                "731",
+                "~RUST",
+                "~RES",
+                "~RES"
+              ],
+              "7|1": [
+                "~RES",
+                "106",
+                "~WR",
+                "~RES",
+                "113",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "113",
+                "113",
+                "~RUST",
+                "~RUST",
+                "~RES",
+                "107",
+                "106"
+              ],
+              "9|1": [
+                "732",
+                "~WR",
+                "~RUST",
+                "102",
+                "101",
+                "~RES",
+                "102"
+              ],
+              "10|1": [
+                "~RUST",
+                "115",
+                "732",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "~CO",
+                "~RES",
+                "106",
+                "730",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "101",
+                "~RES",
+                "~WR",
+                "112",
+                "~RES",
+                "108"
+              ]
+            },
+            "DDR-V": {
+              "1|1": [
+                "~RES",
+                "4",
+                "5",
+                "5",
+                "6",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "701",
+                "701",
+                "601",
+                "~WR",
+                "~RUST",
+                "1",
+                "702"
+              ],
+              "3|1": [
+                "702",
+                "~RUST",
+                "~RUST",
+                "601",
+                "7",
+                "71",
+                "7"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "9",
+                "701",
+                "71",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "10",
+                "~RES",
+                "8",
+                "~RUST",
+                "~RUST",
+                "701",
+                "~RES"
+              ],
+              "6|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "70",
+                "601",
+                "5"
+              ],
+              "7|1": [
+                "~RUST",
+                "~CO",
+                "~RES",
+                "~RES",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "7",
+                "2",
+                "~WR",
+                "~RUST",
+                "8",
+                "~RES",
+                "2"
+              ],
+              "9|1": [
+                "~RUST",
+                "13",
+                "~RES",
+                "~RES",
+                "11",
+                "~RUST",
+                "~RUST"
+              ],
+              "10|1": [
+                "8",
+                "~RES",
+                "7",
+                "13",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "5",
+                "1",
+                "1",
+                "~RUST",
+                "~RUST",
+                "4",
+                "701"
+              ],
+              "12|1": [
+                "6",
+                "~WR",
+                "10",
+                "8",
+                "13",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-LN": {
+              "1|1": [
+                "~RES",
+                "~RUST",
+                "105",
+                "~RES",
+                "111",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "106",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "110",
+                "108",
+                "109"
+              ],
+              "3|1": [
+                "104",
+                "102",
+                "101",
+                "~RUST",
+                "~RUST",
+                "761",
+                "761"
+              ],
+              "4|1": [
+                "760",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "106",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "~CO",
+                "110",
+                "760",
+                "201",
+                "201",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "107",
+                "113",
+                "110",
+                "~WR",
+                "111",
+                "107"
+              ]
+            },
+            "DDR-VL": {
+              "1|1": [
+                "111",
+                "731",
+                "171",
+                "106",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RES",
+                "5",
+                "111",
+                "108",
+                "103",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "115",
+                "104",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "104",
+                "101"
+              ],
+              "4|1": [
+                "~RUST",
+                "108",
+                "103",
+                "104",
+                "102",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "171",
+                "111",
+                "~WR",
+                "~RUST",
+                "~RUST",
+                "110",
+                "730"
+              ],
+              "6|1": [
+                "170",
+                "~RES",
+                "~CO",
+                "~RUST",
+                "702",
+                "11",
+                "~RES"
+              ],
+              "7|1": [
+                "~WR",
+                "~RUST",
+                "~RES",
+                "114",
+                "731",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "~RUST",
+                "3",
+                "~RES",
+                "1",
+                "~RUST",
+                "109",
+                "114"
+              ],
+              "9|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "115",
+                "~RES",
+                "730",
+                "105"
+              ],
+              "10|1": [
+                "~RUST",
+                "~RES",
+                "108",
+                "~RES",
+                "701",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-BLM": {
+              "1|1": [
+                "9",
+                "70",
+                "~RUST",
+                "~RUST",
+                "5",
+                "70",
+                "1"
+              ],
+              "2|1": [
+                "71",
+                "~WR",
+                "~RUST",
+                "3",
+                "72",
+                "5",
+                "8"
+              ],
+              "3|1": [
+                "11",
+                "~RUST",
+                "4",
+                "71",
+                "601",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "761",
+                "761",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "109",
+                "109",
+                "170",
+                "~WR",
+                "~RUST",
+                "2",
+                "6"
+              ],
+              "6|1": [
+                "~CO",
+                "7",
+                "13",
+                "170",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-MIX": {
+              "1|1": [
+                "601",
+                "9",
+                "~RES",
+                "11",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "3",
+                "12",
+                "~RUST",
+                "14",
+                "2",
+                "170",
+                "103"
+              ],
+              "3|1": [
+                "102",
+                "~RUST",
+                "~RUST",
+                "105",
+                "761",
+                "760",
+                "760"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "102",
+                "~RES",
+                "107",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "101",
+                "103",
+                "~RUST",
+                "~RUST",
+                "~CO",
+                "7",
+                "~RES"
+              ],
+              "6|1": [
+                "~RUST",
+                "~RES",
+                "70",
+                "~WR",
+                "~RUST",
+                "8",
+                "601"
+              ],
+              "7|1": [
+                "1",
+                "~WR",
+                "701",
+                "70",
+                "105",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "112",
+                "760",
+                "201",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST"
+              ],
+              "9|1": [
+                "201",
+                "201",
+                "~CO",
+                "~RUST",
+                "~RUST",
+                "102",
+                "~RES"
+              ],
+              "10|1": [
+                "~WR",
+                "6",
+                "6",
+                "10",
+                "109",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "105",
+                "~RES",
+                "~RES",
+                "107",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "8",
+                "3",
+                "2",
+                "~RUST",
+                "~RES",
+                "3"
+              ]
+            },
+            "DDR-50MIX": {
+              "1|1": [
+                "108",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "1",
+                "9",
+                "70"
+              ],
+              "2|1": [
+                "70",
+                "~RUST",
+                "703",
+                "9",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "~RES",
+                "10",
+                "~WR",
+                "702",
+                "10",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "~RUST",
+                "703",
+                "12",
+                "7",
+                "~RUST",
+                "103",
+                "~RES"
+              ],
+              "5|1": [
+                "730",
+                "~RUST",
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~CO",
+                "601",
+                "11",
+                "~RUST",
+                "~RES",
+                "105",
+                "~RES"
+              ]
+            }
+          },
+          "freeRosters": null,
+          "hintAttempt": null,
+          "evaluationMs": 2,
+          "validationMs": 3995,
+          "deltaToParent": null,
+          "parentAttempt": null,
+          "excludedAttempts": [
+            1
+          ],
+          "timeLimitSeconds": 40,
+          "distanceToNearest": 136,
+          "minDifferentSlots": 9,
+          "excludedCandidates": 1
+        },
+        {
+          "at": "2026-09-18T06:47:23.215Z",
+          "kind": "START",
+          "seed": 103,
+          "phase": "SEARCH",
+          "polish": {
+            "gain": 5.1,
+            "kicks": 0,
+            "moves": [
+              {
+                "a": "DDR-VL|2|1|4",
+                "b": "DDR-VL|9|1|4",
+                "gain": 0.958,
+                "dutyA": "10",
+                "dutyB": "731"
+              },
+              {
+                "a": "DDR-VL|6|1|6",
+                "b": "DDR-VL|9|1|6",
+                "gain": 2.305,
+                "dutyA": "104",
+                "dutyB": "11"
+              },
+              {
+                "a": "DDR-MIX|3|1|1",
+                "b": "DDR-MIX|8|1|1",
+                "gain": 0.37,
+                "dutyA": "108",
+                "dutyB": "70"
+              },
+              {
+                "a": "DDR-MIX|3|1|4",
+                "b": "DDR-MIX|11|1|4",
+                "gain": 0.246,
+                "dutyA": "8",
+                "dutyB": "108"
+              },
+              {
+                "a": "DDR-50MIX|5|1|1",
+                "b": "DDR-BLM|2|1|1",
+                "gain": 0.166,
+                "dutyA": "10",
+                "dutyB": "106"
+              },
+              {
+                "a": "DDR-50MIX|2|1|4",
+                "b": "DDR-50MIX|3|1|4",
+                "gain": 0.108,
+                "dutyA": "1",
+                "dutyB": "9"
+              },
+              {
+                "a": "DDR-50MIX|1|1|7",
+                "b": "DDR-L|12|1|7",
+                "gain": 0.122,
+                "dutyA": "103",
+                "dutyB": "108"
+              },
+              {
+                "a": "DDR-BLM|2|1|1",
+                "b": "DDR-BLM|3|1|1",
+                "gain": 0.19,
+                "dutyA": "10",
+                "dutyB": "105"
+              },
+              {
+                "a": "DDR-50MIX|1|1|6",
+                "b": "DDR-V|6|1|6",
+                "gain": 0.1,
+                "dutyA": "9",
+                "dutyB": "601"
+              },
+              {
+                "a": "DDR-50MIX|4|1|4",
+                "b": "DDR-MIX|11|1|4",
+                "gain": 0.212,
+                "dutyA": "112",
+                "dutyB": "8"
+              },
+              {
+                "a": "DDR-MIX|7|1|1",
+                "b": "DDR-MIX|11|1|1",
+                "gain": 0.115,
+                "dutyA": "102",
+                "dutyB": "7"
+              },
+              {
+                "a": "DDR-50MIX|1|1|5",
+                "b": "DDR-MIX|2|1|5",
+                "gain": 0.112,
+                "dutyA": "2",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-50MIX|4|1|2",
+                "b": "DDR-V|11|1|2",
+                "gain": 0.094,
+                "dutyA": "703",
+                "dutyB": "701"
+              }
+            ],
+            "swaps": 13,
+            "climbs": 1,
+            "ranking": 77.77,
+            "seconds": 15,
+            "variants": 20673,
+            "stopReason": "tijd op",
+            "startRanking": 72.68
+          },
+          "reason": "opgenomen in de elitepool",
+          "solver": {
+            "status": "FEASIBLE",
+            "optimal": false,
+            "wallTimeSeconds": 40.052,
+            "fullCoverageStatus": "FEASIBLE"
+          },
+          "target": null,
+          "attempt": 3,
+          "quality": {
+            "robust": 77.8,
+            "overall": 81.1,
+            "ranking": 77.8,
+            "worstLine": 59.0625,
+            "components": {
+              "flow": 75.2,
+              "rest": 86.1,
+              "hours": 76.2,
+              "nights": 94.7,
+              "fairness": 86.2,
+              "stability": 60.1
+            }
+          },
+          "verdict": "VALID_ELITE",
+          "weights": {
+            "nightPair": 855,
+            "hoursWorst": 48,
+            "restComfort": 1,
+            "transitions": 0,
+            "hoursBalance": 15,
+            "preserveHint": 0,
+            "nightFairness": 12,
+            "nightSingleton": 1405,
+            "weekendFairness": 1,
+            "shuntingFairness": 7,
+            "preserveReference": 1,
+            "nightOutsideReference": 400
+          },
+          "workers": 8,
+          "pressure": {
+            "flow": 1,
+            "rest": 1.2000000000000002,
+            "hours": 1,
+            "nights": 1.5,
+            "fairness": 1
+          },
+          "diagnosis": [
+            "223/223 diensten geplaatst",
+            "1 reeks(en) van twee nachten",
+            "grootste afwijking van 40:00: 22 min (DDR-MIX)",
+            "slechtste regel: DDR-50MIX regel 1 (59.1) — week 47:16",
+            "rangeer per regel 0.6–0.7"
+          ],
+          "fixedSlots": 0,
+          "validation": {
+            "status": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+            "confirmed": 0,
+            "rejection": null
+          },
+          "assignments": {
+            "DDR-L": {
+              "1|1": [
+                "107",
+                "~RUST",
+                "730",
+                "106",
+                "114",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RUST",
+                "732",
+                "~RES",
+                "~RUST",
+                "104",
+                "~RES",
+                "106"
+              ],
+              "3|1": [
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "730",
+                "101",
+                "104"
+              ],
+              "4|1": [
+                "~RES",
+                "~RUST",
+                "112",
+                "107",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "116",
+                "731",
+                "109",
+                "103",
+                "~CO",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "117",
+                "107",
+                "101",
+                "~RUST",
+                "~RES",
+                "~RES"
+              ],
+              "7|1": [
+                "~RES",
+                "106",
+                "~WR",
+                "~RES",
+                "113",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "113",
+                "113",
+                "~RUST",
+                "~RUST",
+                "~RES",
+                "103",
+                "102"
+              ],
+              "9|1": [
+                "732",
+                "~WR",
+                "~RUST",
+                "115",
+                "101",
+                "~RES",
+                "115"
+              ],
+              "10|1": [
+                "~RUST",
+                "115",
+                "732",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "~CO",
+                "~RES",
+                "170",
+                "730",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "170",
+                "~RES",
+                "~WR",
+                "102",
+                "~RES",
+                "103"
+              ]
+            },
+            "DDR-V": {
+              "1|1": [
+                "~RES",
+                "4",
+                "3",
+                "702",
+                "6",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "11",
+                "13",
+                "13",
+                "~WR",
+                "~RUST",
+                "1",
+                "2"
+              ],
+              "3|1": [
+                "702",
+                "~RUST",
+                "~RUST",
+                "3",
+                "7",
+                "71",
+                "7"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "601",
+                "5",
+                "5",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "71",
+                "~RES",
+                "12",
+                "~RUST",
+                "~RUST",
+                "701",
+                "~RES"
+              ],
+              "6|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "601",
+                "9",
+                "5"
+              ],
+              "7|1": [
+                "~RUST",
+                "~CO",
+                "~RES",
+                "~RES",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "701",
+                "2",
+                "~WR",
+                "~RUST",
+                "8",
+                "~RES",
+                "702"
+              ],
+              "9|1": [
+                "~RUST",
+                "1",
+                "~RES",
+                "~RES",
+                "11",
+                "~RUST",
+                "~RUST"
+              ],
+              "10|1": [
+                "8",
+                "~RES",
+                "7",
+                "13",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "5",
+                "703",
+                "11",
+                "~RUST",
+                "~RUST",
+                "4",
+                "701"
+              ],
+              "12|1": [
+                "6",
+                "~WR",
+                "10",
+                "7",
+                "13",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-LN": {
+              "1|1": [
+                "~RES",
+                "~RUST",
+                "106",
+                "~RES",
+                "109",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "111",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "112",
+                "108",
+                "109"
+              ],
+              "3|1": [
+                "104",
+                "102",
+                "102",
+                "~RUST",
+                "~RUST",
+                "761",
+                "761"
+              ],
+              "4|1": [
+                "760",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "110",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "~CO",
+                "110",
+                "760",
+                "201",
+                "201",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "108",
+                "113",
+                "110",
+                "~WR",
+                "111",
+                "107"
+              ]
+            },
+            "DDR-VL": {
+              "1|1": [
+                "171",
+                "107",
+                "101",
+                "102",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RES",
+                "3",
+                "171",
+                "731",
+                "111",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "115",
+                "104",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "110",
+                "101"
+              ],
+              "4|1": [
+                "~RUST",
+                "103",
+                "103",
+                "104",
+                "106",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "112",
+                "111",
+                "~WR",
+                "~RUST",
+                "~RUST",
+                "730",
+                "105"
+              ],
+              "6|1": [
+                "170",
+                "~RES",
+                "~CO",
+                "~RUST",
+                "701",
+                "11",
+                "~RES"
+              ],
+              "7|1": [
+                "~WR",
+                "~RUST",
+                "~RES",
+                "114",
+                "731",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "~RUST",
+                "101",
+                "~RES",
+                "105",
+                "~RUST",
+                "109",
+                "730"
+              ],
+              "9|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "10",
+                "~RES",
+                "104",
+                "114"
+              ],
+              "10|1": [
+                "~RUST",
+                "~RES",
+                "108",
+                "~RES",
+                "702",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-BLM": {
+              "1|1": [
+                "9",
+                "70",
+                "~RUST",
+                "~RUST",
+                "70",
+                "70",
+                "8"
+              ],
+              "2|1": [
+                "105",
+                "~WR",
+                "~RUST",
+                "71",
+                "72",
+                "5",
+                "6"
+              ],
+              "3|1": [
+                "10",
+                "~RUST",
+                "8",
+                "70",
+                "71",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "761",
+                "761",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "109",
+                "109",
+                "105",
+                "~WR",
+                "~RUST",
+                "2",
+                "1"
+              ],
+              "6|1": [
+                "~CO",
+                "9",
+                "5",
+                "170",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-MIX": {
+              "1|1": [
+                "601",
+                "7",
+                "~RES",
+                "701",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "3",
+                "12",
+                "~RUST",
+                "11",
+                "2",
+                "8",
+                "70"
+              ],
+              "3|1": [
+                "70",
+                "~RUST",
+                "~RUST",
+                "108",
+                "761",
+                "760",
+                "760"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "1",
+                "~RES",
+                "107",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "1",
+                "5",
+                "~RUST",
+                "~RUST",
+                "~CO",
+                "107",
+                "~RES"
+              ],
+              "6|1": [
+                "~RUST",
+                "~RES",
+                "70",
+                "~WR",
+                "~RUST",
+                "7",
+                "601"
+              ],
+              "7|1": [
+                "7",
+                "~WR",
+                "111",
+                "109",
+                "105",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "108",
+                "760",
+                "201",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST"
+              ],
+              "9|1": [
+                "201",
+                "201",
+                "~CO",
+                "~RUST",
+                "~RUST",
+                "102",
+                "~RES"
+              ],
+              "10|1": [
+                "~WR",
+                "6",
+                "6",
+                "14",
+                "103",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "102",
+                "~RES",
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "8",
+                "4",
+                "2",
+                "~RUST",
+                "~RES",
+                "3"
+              ]
+            },
+            "DDR-50MIX": {
+              "1|1": [
+                "730",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "1",
+                "601",
+                "108"
+              ],
+              "2|1": [
+                "101",
+                "~RUST",
+                "703",
+                "9",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "~RES",
+                "10",
+                "~WR",
+                "1",
+                "10",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "~RUST",
+                "701",
+                "701",
+                "8",
+                "~RUST",
+                "170",
+                "~RES"
+              ],
+              "5|1": [
+                "106",
+                "~RUST",
+                "~RES",
+                "601",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~CO",
+                "601",
+                "9",
+                "~RUST",
+                "~RES",
+                "105",
+                "~RES"
+              ]
+            }
+          },
+          "freeRosters": null,
+          "hintAttempt": 2,
+          "evaluationMs": 1,
+          "validationMs": 4196,
+          "deltaToParent": null,
+          "parentAttempt": null,
+          "excludedAttempts": [
+            2,
+            1
+          ],
+          "timeLimitSeconds": 40,
+          "distanceToNearest": 108,
+          "minDifferentSlots": 9,
+          "excludedCandidates": 2
+        },
+        {
+          "at": "2026-09-18T06:47:58.186Z",
+          "kind": "REPAIR",
+          "seed": 1003,
+          "phase": "REPAIR",
+          "polish": {
+            "gain": 1.19,
+            "kicks": 0,
+            "moves": [
+              {
+                "a": "DDR-MIX|7|1|1",
+                "b": "DDR-MIX|8|1|1",
+                "gain": 0.374,
+                "dutyA": "115",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-L|8|1|6",
+                "b": "DDR-MIX|2|1|6",
+                "gain": 0.289,
+                "dutyA": "107",
+                "dutyB": "170"
+              },
+              {
+                "a": "DDR-BLM|2|1|6",
+                "b": "DDR-V|3|1|6",
+                "gain": 0.068,
+                "dutyA": "5",
+                "dutyB": "71"
+              },
+              {
+                "a": "DDR-MIX|1|1|4",
+                "b": "DDR-MIX|2|1|4",
+                "gain": 0.044,
+                "dutyA": "11",
+                "dutyB": "14"
+              },
+              {
+                "a": "DDR-LN|1|1|5",
+                "b": "DDR-LN|2|1|5",
+                "gain": 0.047,
+                "dutyA": "111",
+                "dutyB": "110"
+              },
+              {
+                "a": "DDR-L|3|1|5",
+                "b": "DDR-VL|7|1|5",
+                "gain": 0.06,
+                "dutyA": "730",
+                "dutyB": "731"
+              },
+              {
+                "a": "DDR-50MIX|5|1|4",
+                "b": "DDR-BLM|6|1|4",
+                "gain": 0.122,
+                "dutyA": "112",
+                "dutyB": "170"
+              },
+              {
+                "a": "DDR-MIX|7|1|1",
+                "b": "DDR-V|10|1|1",
+                "gain": 0.043,
+                "dutyA": "1",
+                "dutyB": "8"
+              },
+              {
+                "a": "DDR-50MIX|1|1|6",
+                "b": "DDR-MIX|5|1|6",
+                "gain": 0.034,
+                "dutyA": "9",
+                "dutyB": "7"
+              },
+              {
+                "a": "DDR-L|4|1|4",
+                "b": "DDR-MIX|3|1|4",
+                "gain": 0.051,
+                "dutyA": "101",
+                "dutyB": "105"
+              },
+              {
+                "a": "DDR-VL|2|1|5",
+                "b": "DDR-VL|7|1|5",
+                "gain": 0.03,
+                "dutyA": "103",
+                "dutyB": "730"
+              },
+              {
+                "a": "DDR-V|2|1|2",
+                "b": "DDR-V|11|1|2",
+                "gain": 0.03,
+                "dutyA": "701",
+                "dutyB": "1"
+              }
+            ],
+            "swaps": 12,
+            "climbs": 1,
+            "ranking": 79.35,
+            "seconds": 15,
+            "variants": 19278,
+            "stopReason": "tijd op",
+            "startRanking": 78.16
+          },
+          "reason": "opgenomen in de elitepool",
+          "solver": {
+            "status": "FEASIBLE",
+            "optimal": false,
+            "wallTimeSeconds": 15.051,
+            "fullCoverageStatus": "FEASIBLE"
+          },
+          "target": "HOURS",
+          "attempt": 4,
+          "quality": {
+            "robust": 79.3,
+            "overall": 81.9,
+            "ranking": 79.4,
+            "worstLine": 65.10416666666666,
+            "components": {
+              "flow": 76.3,
+              "rest": 88.9,
+              "hours": 76.8,
+              "nights": 94.7,
+              "fairness": 86.2,
+              "stability": 60.4
+            }
+          },
+          "verdict": "VALID_ELITE",
+          "weights": {
+            "nightPair": 1575,
+            "hoursWorst": 160,
+            "restComfort": 1,
+            "transitions": 0,
+            "hoursBalance": 60,
+            "preserveHint": 30,
+            "nightFairness": 12,
+            "nightSingleton": 2025,
+            "weekendFairness": 1,
+            "shuntingFairness": 6,
+            "preserveReference": 1,
+            "nightOutsideReference": 400
+          },
+          "workers": 8,
+          "pressure": {
+            "flow": 1,
+            "rest": 1,
+            "hours": 1,
+            "nights": 2.25,
+            "fairness": 1
+          },
+          "diagnosis": [
+            "223/223 diensten geplaatst",
+            "1 reeks(en) van twee nachten",
+            "grootste afwijking van 40:00: 34 min (DDR-V)",
+            "slechtste regel: DDR-50MIX regel 1 (65.1) — week 48:33",
+            "rangeer per regel 0.6–0.7"
+          ],
+          "fixedSlots": 104,
+          "validation": {
+            "status": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+            "confirmed": 0,
+            "rejection": null
+          },
+          "assignments": {
+            "DDR-L": {
+              "1|1": [
+                "107",
+                "~RUST",
+                "730",
+                "109",
+                "114",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RUST",
+                "732",
+                "~RES",
+                "~RUST",
+                "104",
+                "~RES",
+                "115"
+              ],
+              "3|1": [
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "731",
+                "101",
+                "104"
+              ],
+              "4|1": [
+                "~RES",
+                "~RUST",
+                "112",
+                "105",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "116",
+                "170",
+                "109",
+                "103",
+                "~CO",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "117",
+                "107",
+                "731",
+                "~RUST",
+                "~RES",
+                "~RES"
+              ],
+              "7|1": [
+                "~RES",
+                "106",
+                "~WR",
+                "~RES",
+                "113",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "113",
+                "113",
+                "~RUST",
+                "~RUST",
+                "~RES",
+                "170",
+                "106"
+              ],
+              "9|1": [
+                "732",
+                "~WR",
+                "~RUST",
+                "102",
+                "101",
+                "~RES",
+                "102"
+              ],
+              "10|1": [
+                "~RUST",
+                "115",
+                "732",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "~CO",
+                "~RES",
+                "106",
+                "730",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "101",
+                "~RES",
+                "~WR",
+                "112",
+                "~RES",
+                "108"
+              ]
+            },
+            "DDR-V": {
+              "1|1": [
+                "~RES",
+                "4",
+                "5",
+                "5",
+                "6",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "701",
+                "1",
+                "601",
+                "~WR",
+                "~RUST",
+                "1",
+                "702"
+              ],
+              "3|1": [
+                "702",
+                "~RUST",
+                "~RUST",
+                "601",
+                "7",
+                "5",
+                "7"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "9",
+                "701",
+                "71",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "10",
+                "~RES",
+                "8",
+                "~RUST",
+                "~RUST",
+                "11",
+                "~RES"
+              ],
+              "6|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "701",
+                "601",
+                "5"
+              ],
+              "7|1": [
+                "~RUST",
+                "~CO",
+                "~RES",
+                "~RES",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "7",
+                "2",
+                "~WR",
+                "~RUST",
+                "8",
+                "~RES",
+                "2"
+              ],
+              "9|1": [
+                "~RUST",
+                "13",
+                "~RES",
+                "~RES",
+                "11",
+                "~RUST",
+                "~RUST"
+              ],
+              "10|1": [
+                "1",
+                "~RES",
+                "7",
+                "13",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "5",
+                "701",
+                "1",
+                "~RUST",
+                "~RUST",
+                "4",
+                "701"
+              ],
+              "12|1": [
+                "6",
+                "~WR",
+                "10",
+                "8",
+                "13",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-LN": {
+              "1|1": [
+                "~RES",
+                "~RUST",
+                "105",
+                "~RES",
+                "110",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "106",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "111",
+                "108",
+                "109"
+              ],
+              "3|1": [
+                "104",
+                "102",
+                "101",
+                "~RUST",
+                "~RUST",
+                "761",
+                "761"
+              ],
+              "4|1": [
+                "760",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "106",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "~CO",
+                "110",
+                "760",
+                "201",
+                "201",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "107",
+                "113",
+                "110",
+                "~WR",
+                "111",
+                "107"
+              ]
+            },
+            "DDR-VL": {
+              "1|1": [
+                "111",
+                "731",
+                "171",
+                "106",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RES",
+                "5",
+                "111",
+                "108",
+                "730",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "112",
+                "104",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "104",
+                "101"
+              ],
+              "4|1": [
+                "~RUST",
+                "108",
+                "103",
+                "104",
+                "102",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "171",
+                "111",
+                "~WR",
+                "~RUST",
+                "~RUST",
+                "110",
+                "730"
+              ],
+              "6|1": [
+                "170",
+                "~RES",
+                "~CO",
+                "~RUST",
+                "702",
+                "701",
+                "~RES"
+              ],
+              "7|1": [
+                "~WR",
+                "~RUST",
+                "~RES",
+                "114",
+                "103",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "~RUST",
+                "3",
+                "~RES",
+                "1",
+                "~RUST",
+                "109",
+                "114"
+              ],
+              "9|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "115",
+                "~RES",
+                "730",
+                "105"
+              ],
+              "10|1": [
+                "~RUST",
+                "~RES",
+                "108",
+                "~RES",
+                "105",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-BLM": {
+              "1|1": [
+                "9",
+                "70",
+                "~RUST",
+                "~RUST",
+                "5",
+                "70",
+                "1"
+              ],
+              "2|1": [
+                "71",
+                "~WR",
+                "~RUST",
+                "3",
+                "72",
+                "71",
+                "8"
+              ],
+              "3|1": [
+                "11",
+                "~RUST",
+                "4",
+                "71",
+                "601",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "761",
+                "761",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "109",
+                "109",
+                "170",
+                "~WR",
+                "~RUST",
+                "2",
+                "6"
+              ],
+              "6|1": [
+                "~CO",
+                "7",
+                "13",
+                "112",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-MIX": {
+              "1|1": [
+                "601",
+                "9",
+                "~RES",
+                "14",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "3",
+                "12",
+                "~RUST",
+                "11",
+                "2",
+                "107",
+                "103"
+              ],
+              "3|1": [
+                "102",
+                "~RUST",
+                "~RUST",
+                "101",
+                "761",
+                "760",
+                "760"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "102",
+                "~RES",
+                "107",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "101",
+                "103",
+                "~RUST",
+                "~RUST",
+                "~CO",
+                "9",
+                "~RES"
+              ],
+              "6|1": [
+                "~RUST",
+                "~RES",
+                "70",
+                "~WR",
+                "~RUST",
+                "8",
+                "601"
+              ],
+              "7|1": [
+                "8",
+                "~WR",
+                "701",
+                "70",
+                "70",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "115",
+                "760",
+                "201",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST"
+              ],
+              "9|1": [
+                "201",
+                "201",
+                "~CO",
+                "~RUST",
+                "~RUST",
+                "102",
+                "~RES"
+              ],
+              "10|1": [
+                "~WR",
+                "6",
+                "6",
+                "10",
+                "109",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "105",
+                "~RES",
+                "~RES",
+                "107",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "8",
+                "3",
+                "2",
+                "~RUST",
+                "~RES",
+                "3"
+              ]
+            },
+            "DDR-50MIX": {
+              "1|1": [
+                "108",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "1",
+                "7",
+                "70"
+              ],
+              "2|1": [
+                "70",
+                "~RUST",
+                "703",
+                "9",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "~RES",
+                "10",
+                "~WR",
+                "702",
+                "10",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "~RUST",
+                "703",
+                "12",
+                "7",
+                "~RUST",
+                "103",
+                "~RES"
+              ],
+              "5|1": [
+                "730",
+                "~RUST",
+                "~RES",
+                "170",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~CO",
+                "601",
+                "11",
+                "~RUST",
+                "~RES",
+                "105",
+                "~RES"
+              ]
+            }
+          },
+          "freeRosters": [
+            "DDR-V",
+            "DDR-VL",
+            "DDR-MIX"
+          ],
+          "hintAttempt": 2,
+          "evaluationMs": 1,
+          "validationMs": 4161,
+          "deltaToParent": {
+            "flow": 0.8,
+            "rest": 0.9,
+            "hours": 1.4,
+            "nights": 0,
+            "ranking": 0.8,
+            "fairness": 0,
+            "stability": -1.4
+          },
+          "parentAttempt": 2,
+          "excludedAttempts": [
+            2
+          ],
+          "timeLimitSeconds": 15,
+          "distanceToNearest": 28,
+          "minDifferentSlots": 1,
+          "excludedCandidates": 1
+        },
+        {
+          "at": "2026-09-18T06:48:33.192Z",
+          "kind": "REPAIR",
+          "seed": 1004,
+          "phase": "REPAIR",
+          "polish": {
+            "gain": 1.18,
+            "kicks": 1,
+            "moves": [
+              {
+                "a": "DDR-50MIX|1|1|1",
+                "b": "DDR-50MIX|2|1|1",
+                "gain": 0.5,
+                "dutyA": "70",
+                "dutyB": "101"
+              },
+              {
+                "a": "DDR-MIX|5|1|1",
+                "b": "DDR-MIX|7|1|1",
+                "gain": 0.543,
+                "dutyA": "1",
+                "dutyB": "108"
+              },
+              {
+                "a": "DDR-MIX|7|1|1",
+                "b": "DDR-V|10|1|1",
+                "gain": 0.042,
+                "dutyA": "1",
+                "dutyB": "8"
+              },
+              {
+                "a": "DDR-MIX|12|1|4",
+                "b": "DDR-V|3|1|4",
+                "gain": 0.021,
+                "dutyA": "2",
+                "dutyB": "601"
+              },
+              {
+                "a": "DDR-MIX|5|1|6",
+                "b": "DDR-V|3|1|6",
+                "gain": 0.03,
+                "dutyA": "9",
+                "dutyB": "5"
+              },
+              {
+                "a": "DDR-V|2|1|3",
+                "b": "DDR-V|11|1|3",
+                "gain": 0.017,
+                "dutyA": "601",
+                "dutyB": "1"
+              },
+              {
+                "a": "DDR-L|4|1|4",
+                "b": "DDR-MIX|11|1|4",
+                "gain": 0.017,
+                "dutyA": "105",
+                "dutyB": "107"
+              },
+              {
+                "a": "DDR-VL|3|1|6",
+                "b": "DDR-VL|8|1|6",
+                "gain": 0.013,
+                "dutyA": "104",
+                "dutyB": "109"
+              }
+            ],
+            "swaps": 8,
+            "climbs": 2,
+            "ranking": 79.47,
+            "seconds": 15,
+            "variants": 20062,
+            "stopReason": "tijd op",
+            "startRanking": 78.29
+          },
+          "reason": "opgenomen in de elitepool",
+          "solver": {
+            "status": "FEASIBLE",
+            "optimal": false,
+            "wallTimeSeconds": 15.043,
+            "fullCoverageStatus": "FEASIBLE"
+          },
+          "target": "HOURS",
+          "attempt": 5,
+          "quality": {
+            "robust": 79.5,
+            "overall": 82,
+            "ranking": 79.5,
+            "worstLine": 65.10416666666666,
+            "components": {
+              "flow": 76.3,
+              "rest": 89.7,
+              "hours": 77.1,
+              "nights": 94.7,
+              "fairness": 86.2,
+              "stability": 60
+            }
+          },
+          "verdict": "VALID_ELITE",
+          "weights": {
+            "nightPair": 1575,
+            "hoursWorst": 160,
+            "restComfort": 1,
+            "transitions": 0,
+            "hoursBalance": 60,
+            "preserveHint": 30,
+            "nightFairness": 12,
+            "nightSingleton": 2025,
+            "weekendFairness": 1,
+            "shuntingFairness": 6,
+            "preserveReference": 1,
+            "nightOutsideReference": 400
+          },
+          "workers": 8,
+          "pressure": {
+            "flow": 1,
+            "rest": 1,
+            "hours": 1,
+            "nights": 2.25,
+            "fairness": 1
+          },
+          "diagnosis": [
+            "223/223 diensten geplaatst",
+            "1 reeks(en) van twee nachten",
+            "grootste afwijking van 40:00: 34 min (DDR-V)",
+            "slechtste regel: DDR-50MIX regel 1 (65.1) — week 48:05",
+            "rangeer per regel 0.6–0.7"
+          ],
+          "fixedSlots": 119,
+          "validation": {
+            "status": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+            "confirmed": 0,
+            "rejection": null
+          },
+          "assignments": {
+            "DDR-L": {
+              "1|1": [
+                "107",
+                "~RUST",
+                "730",
+                "109",
+                "114",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RUST",
+                "732",
+                "~RES",
+                "~RUST",
+                "104",
+                "~RES",
+                "115"
+              ],
+              "3|1": [
+                "~RES",
+                "112",
+                "~WR",
+                "~RUST",
+                "731",
+                "101",
+                "104"
+              ],
+              "4|1": [
+                "~RES",
+                "~RUST",
+                "112",
+                "107",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "116",
+                "170",
+                "109",
+                "103",
+                "~CO",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "117",
+                "107",
+                "731",
+                "~RUST",
+                "~RES",
+                "~RES"
+              ],
+              "7|1": [
+                "~RES",
+                "106",
+                "~WR",
+                "~RES",
+                "113",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "113",
+                "113",
+                "~RUST",
+                "~RUST",
+                "~RES",
+                "170",
+                "106"
+              ],
+              "9|1": [
+                "732",
+                "~WR",
+                "~RUST",
+                "102",
+                "101",
+                "~RES",
+                "102"
+              ],
+              "10|1": [
+                "~RUST",
+                "115",
+                "732",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "~CO",
+                "~RES",
+                "106",
+                "730",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "101",
+                "~RES",
+                "~WR",
+                "112",
+                "~RES",
+                "108"
+              ]
+            },
+            "DDR-V": {
+              "1|1": [
+                "~RES",
+                "4",
+                "5",
+                "5",
+                "6",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "701",
+                "1",
+                "1",
+                "~WR",
+                "~RUST",
+                "1",
+                "702"
+              ],
+              "3|1": [
+                "702",
+                "~RUST",
+                "~RUST",
+                "2",
+                "7",
+                "9",
+                "7"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "9",
+                "701",
+                "71",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "10",
+                "~RES",
+                "8",
+                "~RUST",
+                "~RUST",
+                "11",
+                "~RES"
+              ],
+              "6|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "701",
+                "601",
+                "5"
+              ],
+              "7|1": [
+                "~RUST",
+                "~CO",
+                "~RES",
+                "~RES",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "7",
+                "2",
+                "~WR",
+                "~RUST",
+                "8",
+                "~RES",
+                "2"
+              ],
+              "9|1": [
+                "~RUST",
+                "13",
+                "~RES",
+                "~RES",
+                "11",
+                "~RUST",
+                "~RUST"
+              ],
+              "10|1": [
+                "1",
+                "~RES",
+                "7",
+                "13",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "5",
+                "701",
+                "601",
+                "~RUST",
+                "~RUST",
+                "4",
+                "701"
+              ],
+              "12|1": [
+                "6",
+                "~WR",
+                "10",
+                "8",
+                "13",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-LN": {
+              "1|1": [
+                "~RES",
+                "~RUST",
+                "105",
+                "~RES",
+                "110",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "106",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "111",
+                "108",
+                "109"
+              ],
+              "3|1": [
+                "104",
+                "102",
+                "101",
+                "~RUST",
+                "~RUST",
+                "761",
+                "761"
+              ],
+              "4|1": [
+                "760",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "106",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "~CO",
+                "110",
+                "760",
+                "201",
+                "201",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~RUST",
+                "107",
+                "113",
+                "110",
+                "~WR",
+                "111",
+                "107"
+              ]
+            },
+            "DDR-VL": {
+              "1|1": [
+                "111",
+                "731",
+                "171",
+                "106",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "~RES",
+                "5",
+                "111",
+                "108",
+                "730",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "112",
+                "104",
+                "~WR",
+                "~RUST",
+                "~RES",
+                "109",
+                "101"
+              ],
+              "4|1": [
+                "~RUST",
+                "108",
+                "103",
+                "104",
+                "102",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "171",
+                "111",
+                "~WR",
+                "~RUST",
+                "~RUST",
+                "110",
+                "730"
+              ],
+              "6|1": [
+                "170",
+                "~RES",
+                "~CO",
+                "~RUST",
+                "702",
+                "701",
+                "~RES"
+              ],
+              "7|1": [
+                "~WR",
+                "~RUST",
+                "~RES",
+                "114",
+                "103",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "~RUST",
+                "3",
+                "~RES",
+                "1",
+                "~RUST",
+                "104",
+                "114"
+              ],
+              "9|1": [
+                "~RES",
+                "~WR",
+                "~RUST",
+                "115",
+                "~RES",
+                "730",
+                "105"
+              ],
+              "10|1": [
+                "~RUST",
+                "~RES",
+                "108",
+                "~RES",
+                "105",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-BLM": {
+              "1|1": [
+                "9",
+                "70",
+                "~RUST",
+                "~RUST",
+                "5",
+                "70",
+                "1"
+              ],
+              "2|1": [
+                "71",
+                "~WR",
+                "~RUST",
+                "3",
+                "72",
+                "71",
+                "8"
+              ],
+              "3|1": [
+                "11",
+                "~RUST",
+                "4",
+                "71",
+                "601",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "761",
+                "761",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "109",
+                "109",
+                "170",
+                "~WR",
+                "~RUST",
+                "2",
+                "6"
+              ],
+              "6|1": [
+                "~CO",
+                "7",
+                "13",
+                "112",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ]
+            },
+            "DDR-MIX": {
+              "1|1": [
+                "601",
+                "9",
+                "~RES",
+                "14",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "2|1": [
+                "3",
+                "12",
+                "~RUST",
+                "11",
+                "2",
+                "107",
+                "103"
+              ],
+              "3|1": [
+                "102",
+                "~RUST",
+                "~RUST",
+                "101",
+                "761",
+                "760",
+                "760"
+              ],
+              "4|1": [
+                "~WR",
+                "~RUST",
+                "102",
+                "~RES",
+                "107",
+                "~RUST",
+                "~RUST"
+              ],
+              "5|1": [
+                "108",
+                "103",
+                "~RUST",
+                "~RUST",
+                "~CO",
+                "5",
+                "~RES"
+              ],
+              "6|1": [
+                "~RUST",
+                "~RES",
+                "70",
+                "~WR",
+                "~RUST",
+                "8",
+                "601"
+              ],
+              "7|1": [
+                "8",
+                "~WR",
+                "701",
+                "70",
+                "70",
+                "~RUST",
+                "~RUST"
+              ],
+              "8|1": [
+                "115",
+                "760",
+                "201",
+                "761",
+                "760",
+                "~RUST",
+                "~RUST"
+              ],
+              "9|1": [
+                "201",
+                "201",
+                "~CO",
+                "~RUST",
+                "~RUST",
+                "105",
+                "~RES"
+              ],
+              "10|1": [
+                "~WR",
+                "6",
+                "6",
+                "10",
+                "109",
+                "~RUST",
+                "~RUST"
+              ],
+              "11|1": [
+                "105",
+                "~RES",
+                "~RES",
+                "105",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "12|1": [
+                "~RUST",
+                "8",
+                "3",
+                "601",
+                "~RUST",
+                "~RES",
+                "3"
+              ]
+            },
+            "DDR-50MIX": {
+              "1|1": [
+                "101",
+                "~RES",
+                "~WR",
+                "~RUST",
+                "1",
+                "7",
+                "70"
+              ],
+              "2|1": [
+                "70",
+                "~RUST",
+                "703",
+                "9",
+                "~RES",
+                "~RUST",
+                "~RUST"
+              ],
+              "3|1": [
+                "~RES",
+                "10",
+                "~WR",
+                "702",
+                "10",
+                "~RUST",
+                "~RUST"
+              ],
+              "4|1": [
+                "~RUST",
+                "703",
+                "12",
+                "7",
+                "~RUST",
+                "103",
+                "~RES"
+              ],
+              "5|1": [
+                "730",
+                "~RUST",
+                "~RES",
+                "170",
+                "~WR",
+                "~RUST",
+                "~RUST"
+              ],
+              "6|1": [
+                "~CO",
+                "601",
+                "11",
+                "~RUST",
+                "~RES",
+                "102",
+                "~RES"
+              ]
+            }
+          },
+          "freeRosters": [
+            "DDR-V",
+            "DDR-50MIX",
+            "DDR-MIX"
+          ],
+          "hintAttempt": 4,
+          "evaluationMs": 1,
+          "validationMs": 4164,
+          "deltaToParent": {
+            "flow": 0,
+            "rest": 0.8,
+            "hours": 0.3,
+            "nights": 0,
+            "ranking": 0.1,
+            "fairness": 0,
+            "stability": -0.4
+          },
+          "parentAttempt": 4,
+          "excludedAttempts": [
+            4
+          ],
+          "timeLimitSeconds": 15,
+          "distanceToNearest": 14,
+          "minDifferentSlots": 1,
+          "excludedCandidates": 1
+        }
+      ],
+      "stopReason": "tijdsbudget voor reparatie op"
+    },
+    "counters": {
+      "gate": {
+        "minRobust": 54.900000000000006,
+        "minWorstLine": 5.625,
+        "maxSingletonNights": 2,
+        "maxHeavyTransitions": 4,
+        "maxRosterHoursDeviation": 60
+      },
+      "elite": 5,
+      "starts": 3,
+      "repairs": 2,
+      "attempts": 5,
+      "rejected": 0,
+      "bestRobust": 79.5,
+      "duplicates": 0,
+      "lowQuality": 0,
+      "polishRuns": 5,
+      "stopReason": "tijdsbudget voor reparatie op",
+      "bestRanking": 79.5,
+      "polishSwaps": 60,
+      "budgetSeconds": 300,
+      "repairsFailed": 0,
+      "elapsedSeconds": 262,
+      "polishImproved": 5,
+      "polishVariants": 101214,
+      "diversifyStarts": 0,
+      "polishGainTotal": 15.32,
+      "repairsAccepted": 2,
+      "validCandidates": 5,
+      "evaluationMsTotal": 75014,
+      "validationMsTotal": 20479,
+      "solverSecondsTotal": 150.259,
+      "repairsImprovedTarget": 2,
+      "repairsRejectedRegression": 0
+    }
+  },
+  "candidates": [
+    {
+      "number": 1,
+      "candidateId": "6282404b-c9a9-493e-890a-4c023c6d6be8",
+      "label": "Benchmark ablation BALANCED #22 — kandidaat 1",
+      "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+      "confirmedHardViolations": 0,
+      "perRule": [
+        {
+          "title": "Rust na een reeks van drie of meer nachtdiensten",
+          "ruleId": "NIGHT_SEQUENCE_RECOVERY",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 97
+        },
+        {
+          "title": "Driewekelijks vrij weekend (rood weekend)",
+          "ruleId": "RED_WEEKEND_MIN_REST",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 71
+        },
+        {
+          "title": "Dienst die start vóór 02:30 en eindigt na 02:30: maximale arbeidstijd",
+          "ruleId": "RP_NIGHT_ACROSS_0230_MAX_WORK",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 1
+        },
+        {
+          "title": "Dienst die start vóór 02:30 en eindigt na 02:30: maximale dienstlengte",
+          "ruleId": "RP_NIGHT_ACROSS_0230_MAX_DUTY",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 1
+        }
+      ],
+      "solver": {
+        "seed": 1004,
+        "optimal": false,
+        "weights": {
+          "nightPair": 700,
+          "hoursWorst": 40,
+          "restComfort": 1,
+          "transitions": 40,
+          "hoursBalance": 15,
+          "preserveHint": 0,
+          "nightFairness": 12,
+          "nightSingleton": 900,
+          "weekendFairness": 1,
+          "shuntingFairness": 6,
+          "preserveReference": 1,
+          "nightOutsideReference": 400
+        },
+        "workers": 8,
+        "dutySlots": 223,
+        "variables": 5760,
+        "accounting": {
+          "balanced": true,
+          "excluded": [],
+          "fixedRoster": 223,
+          "unassignable": [],
+          "operationalPool": [],
+          "sourceInstances": 223
+        },
+        "constraints": 1486,
+        "diagnostics": [],
+        "solverStatus": "FEASIBLE",
+        "emptyDutySlots": 0,
+        "wallTimeSeconds": 15.043,
+        "fullCoverageStatus": "FEASIBLE"
+      },
+      "provenance": {
+        "mode": "NORMAL",
+        "seed": 1004,
+        "engine": "adaptive",
+        "attempt": 5,
+        "lineage": [
+          {
+            "kind": "REPAIR",
+            "target": "HOURS",
+            "attempt": 5
+          },
+          {
+            "kind": "REPAIR",
+            "target": "HOURS",
+            "attempt": 4
+          },
+          {
+            "kind": "START",
+            "target": null,
+            "attempt": 2
+          }
+        ],
+        "ranking": 79.5,
+        "weights": {
+          "nightPair": 1575,
+          "hoursWorst": 160,
+          "restComfort": 1,
+          "transitions": 0,
+          "hoursBalance": 60,
+          "preserveHint": 30,
+          "nightFairness": 12,
+          "nightSingleton": 2025,
+          "weekendFairness": 1,
+          "shuntingFairness": 6,
+          "preserveReference": 1,
+          "nightOutsideReference": 400
+        },
+        "workers": 8,
+        "strategy": "BALANCED",
+        "versions": {
+          "configHash": "80985207cc830bb57a6bbe4c66d50f97d97d1c9d95840beccde96fb51f414376",
+          "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+          "inputDataVersion": "7ff588d3e53e4f87",
+          "sourceScheduleVersion": "e2611821d375c42d"
+        },
+        "fixedSlots": 119,
+        "freeRosters": [
+          "DDR-V",
+          "DDR-50MIX",
+          "DDR-MIX"
+        ],
+        "paretoFront": true,
+        "whySurvived": [
+          "0 bevestigde harde overtredingen",
+          "223/223 diensten geplaatst, 0 buiten het roosterprofiel",
+          "0 losse nachten, 1 reeksen van twee",
+          "0 zware overgangen",
+          "grootste urenafwijking 34 min",
+          "robuuste kwaliteit 79.5 (slechtste regel 65.1)",
+          "niet gedomineerd in de pool"
+        ],
+        "explanations": [
+          {
+            "kind": "TWO_NIGHT_BLOCK",
+            "facts": [
+              "nachtreeks van 2"
+            ],
+            "roster": "DDR-MIX",
+            "activeSoftTerms": [
+              "nightPair × 1575"
+            ]
+          },
+          {
+            "kind": "HOURS_DEVIATION",
+            "facts": [
+              "gemiddeld 39u, afwijking -34 min"
+            ],
+            "roster": "DDR-V",
+            "activeSoftTerms": [
+              "hoursBalance × 60",
+              "hoursWorst × 160"
+            ],
+            "competitorsExample": {
+              "current": "4",
+              "weekday": 2,
+              "alternatives": [
+                {
+                  "duty": "1",
+                  "placedIn": "DDR-V regel 2"
+                },
+                {
+                  "duty": "10",
+                  "placedIn": "DDR-50MIX regel 3"
+                },
+                {
+                  "duty": "12",
+                  "placedIn": "DDR-MIX regel 2"
+                },
+                {
+                  "duty": "13",
+                  "placedIn": "DDR-V regel 9"
+                },
+                {
+                  "duty": "2",
+                  "placedIn": "DDR-V regel 8"
+                },
+                {
+                  "duty": "3",
+                  "placedIn": "DDR-VL regel 8"
+                }
+              ]
+            }
+          }
+        ],
+        "timeLimitSeconds": 15,
+        "qualityModelVersion": "quality-model-v1",
+        "optimizerModelVersion": "adaptive-1.0.4/cp-sat@2.1.0+BALANCED"
+      },
+      "roster": {
+        "DDR-50MIX": {
+          "1|1": [
+            "101",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "1",
+            "7",
+            "70"
+          ],
+          "2|1": [
+            "70",
+            "~RUST",
+            "703",
+            "9",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "3|1": [
+            "~RES",
+            "10",
+            "~WR",
+            "702",
+            "10",
+            "~RUST",
+            "~RUST"
+          ],
+          "4|1": [
+            "~RUST",
+            "703",
+            "12",
+            "7",
+            "~RUST",
+            "103",
+            "~RES"
+          ],
+          "5|1": [
+            "730",
+            "~RUST",
+            "~RES",
+            "170",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~CO",
+            "601",
+            "11",
+            "~RUST",
+            "~RES",
+            "102",
+            "~RES"
+          ]
+        },
+        "DDR-BLM": {
+          "1|1": [
+            "9",
+            "70",
+            "~RUST",
+            "~RUST",
+            "5",
+            "70",
+            "1"
+          ],
+          "2|1": [
+            "71",
+            "~WR",
+            "~RUST",
+            "3",
+            "72",
+            "71",
+            "8"
+          ],
+          "3|1": [
+            "11",
+            "~RUST",
+            "4",
+            "71",
+            "601",
+            "~RUST",
+            "~RUST"
+          ],
+          "4|1": [
+            "761",
+            "761",
+            "761",
+            "760",
+            "~RUST",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "109",
+            "109",
+            "170",
+            "~WR",
+            "~RUST",
+            "2",
+            "6"
+          ],
+          "6|1": [
+            "~CO",
+            "7",
+            "13",
+            "112",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ]
+        },
+        "DDR-L": {
+          "1|1": [
+            "107",
+            "~RUST",
+            "730",
+            "109",
+            "114",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "~RUST",
+            "732",
+            "~RES",
+            "~RUST",
+            "104",
+            "~RES",
+            "115"
+          ],
+          "3|1": [
+            "~RES",
+            "112",
+            "~WR",
+            "~RUST",
+            "731",
+            "101",
+            "104"
+          ],
+          "4|1": [
+            "~RES",
+            "~RUST",
+            "112",
+            "107",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "116",
+            "170",
+            "109",
+            "103",
+            "~CO",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~RUST",
+            "117",
+            "107",
+            "731",
+            "~RUST",
+            "~RES",
+            "~RES"
+          ],
+          "7|1": [
+            "~RES",
+            "106",
+            "~WR",
+            "~RES",
+            "113",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "113",
+            "113",
+            "~RUST",
+            "~RUST",
+            "~RES",
+            "170",
+            "106"
+          ],
+          "9|1": [
+            "732",
+            "~WR",
+            "~RUST",
+            "102",
+            "101",
+            "~RES",
+            "102"
+          ],
+          "10|1": [
+            "~RUST",
+            "115",
+            "732",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "~CO",
+            "~RES",
+            "106",
+            "730",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "12|1": [
+            "~RUST",
+            "101",
+            "~RES",
+            "~WR",
+            "112",
+            "~RES",
+            "108"
+          ]
+        },
+        "DDR-LN": {
+          "1|1": [
+            "~RES",
+            "~RUST",
+            "105",
+            "~RES",
+            "110",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "106",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "111",
+            "108",
+            "109"
+          ],
+          "3|1": [
+            "104",
+            "102",
+            "101",
+            "~RUST",
+            "~RUST",
+            "761",
+            "761"
+          ],
+          "4|1": [
+            "760",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "106",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "~CO",
+            "110",
+            "760",
+            "201",
+            "201",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~RUST",
+            "107",
+            "113",
+            "110",
+            "~WR",
+            "111",
+            "107"
+          ]
+        },
+        "DDR-MIX": {
+          "1|1": [
+            "601",
+            "9",
+            "~RES",
+            "14",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "3",
+            "12",
+            "~RUST",
+            "11",
+            "2",
+            "107",
+            "103"
+          ],
+          "3|1": [
+            "102",
+            "~RUST",
+            "~RUST",
+            "101",
+            "761",
+            "760",
+            "760"
+          ],
+          "4|1": [
+            "~WR",
+            "~RUST",
+            "102",
+            "~RES",
+            "107",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "108",
+            "103",
+            "~RUST",
+            "~RUST",
+            "~CO",
+            "5",
+            "~RES"
+          ],
+          "6|1": [
+            "~RUST",
+            "~RES",
+            "70",
+            "~WR",
+            "~RUST",
+            "8",
+            "601"
+          ],
+          "7|1": [
+            "8",
+            "~WR",
+            "701",
+            "70",
+            "70",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "115",
+            "760",
+            "201",
+            "761",
+            "760",
+            "~RUST",
+            "~RUST"
+          ],
+          "9|1": [
+            "201",
+            "201",
+            "~CO",
+            "~RUST",
+            "~RUST",
+            "105",
+            "~RES"
+          ],
+          "10|1": [
+            "~WR",
+            "6",
+            "6",
+            "10",
+            "109",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "105",
+            "~RES",
+            "~RES",
+            "105",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "12|1": [
+            "~RUST",
+            "8",
+            "3",
+            "601",
+            "~RUST",
+            "~RES",
+            "3"
+          ]
+        },
+        "DDR-V": {
+          "1|1": [
+            "~RES",
+            "4",
+            "5",
+            "5",
+            "6",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "701",
+            "1",
+            "1",
+            "~WR",
+            "~RUST",
+            "1",
+            "702"
+          ],
+          "3|1": [
+            "702",
+            "~RUST",
+            "~RUST",
+            "2",
+            "7",
+            "9",
+            "7"
+          ],
+          "4|1": [
+            "~WR",
+            "~RUST",
+            "9",
+            "701",
+            "71",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "10",
+            "~RES",
+            "8",
+            "~RUST",
+            "~RUST",
+            "11",
+            "~RES"
+          ],
+          "6|1": [
+            "~RES",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "701",
+            "601",
+            "5"
+          ],
+          "7|1": [
+            "~RUST",
+            "~CO",
+            "~RES",
+            "~RES",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "7",
+            "2",
+            "~WR",
+            "~RUST",
+            "8",
+            "~RES",
+            "2"
+          ],
+          "9|1": [
+            "~RUST",
+            "13",
+            "~RES",
+            "~RES",
+            "11",
+            "~RUST",
+            "~RUST"
+          ],
+          "10|1": [
+            "1",
+            "~RES",
+            "7",
+            "13",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "5",
+            "701",
+            "601",
+            "~RUST",
+            "~RUST",
+            "4",
+            "701"
+          ],
+          "12|1": [
+            "6",
+            "~WR",
+            "10",
+            "8",
+            "13",
+            "~RUST",
+            "~RUST"
+          ]
+        },
+        "DDR-VL": {
+          "1|1": [
+            "111",
+            "731",
+            "171",
+            "106",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "~RES",
+            "5",
+            "111",
+            "108",
+            "730",
+            "~RUST",
+            "~RUST"
+          ],
+          "3|1": [
+            "112",
+            "104",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "109",
+            "101"
+          ],
+          "4|1": [
+            "~RUST",
+            "108",
+            "103",
+            "104",
+            "102",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "171",
+            "111",
+            "~WR",
+            "~RUST",
+            "~RUST",
+            "110",
+            "730"
+          ],
+          "6|1": [
+            "170",
+            "~RES",
+            "~CO",
+            "~RUST",
+            "702",
+            "701",
+            "~RES"
+          ],
+          "7|1": [
+            "~WR",
+            "~RUST",
+            "~RES",
+            "114",
+            "103",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "~RUST",
+            "3",
+            "~RES",
+            "1",
+            "~RUST",
+            "104",
+            "114"
+          ],
+          "9|1": [
+            "~RES",
+            "~WR",
+            "~RUST",
+            "115",
+            "~RES",
+            "730",
+            "105"
+          ],
+          "10|1": [
+            "~RUST",
+            "~RES",
+            "108",
+            "~RES",
+            "105",
+            "~RUST",
+            "~RUST"
+          ]
+        }
+      }
+    },
+    {
+      "number": 2,
+      "candidateId": "c6950964-b752-4061-a0b7-18400e7bff20",
+      "label": "Benchmark ablation BALANCED #22 — kandidaat 2",
+      "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+      "confirmedHardViolations": 0,
+      "perRule": [
+        {
+          "title": "Rust na een reeks van drie of meer nachtdiensten",
+          "ruleId": "NIGHT_SEQUENCE_RECOVERY",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 61
+        },
+        {
+          "title": "Driewekelijks vrij weekend (rood weekend)",
+          "ruleId": "RED_WEEKEND_MIN_REST",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 36
+        },
+        {
+          "title": "Dienst die start vóór 02:30 en eindigt na 02:30: maximale arbeidstijd",
+          "ruleId": "RP_NIGHT_ACROSS_0230_MAX_WORK",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 1
+        },
+        {
+          "title": "Dienst die start vóór 02:30 en eindigt na 02:30: maximale dienstlengte",
+          "ruleId": "RP_NIGHT_ACROSS_0230_MAX_DUTY",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 1
+        }
+      ],
+      "solver": {
+        "seed": 102,
+        "optimal": false,
+        "weights": {
+          "nightPair": 700,
+          "hoursWorst": 40,
+          "restComfort": 1,
+          "transitions": 40,
+          "hoursBalance": 15,
+          "preserveHint": 0,
+          "nightFairness": 12,
+          "nightSingleton": 900,
+          "weekendFairness": 1,
+          "shuntingFairness": 6,
+          "preserveReference": 1,
+          "nightOutsideReference": 400
+        },
+        "workers": 8,
+        "dutySlots": 223,
+        "variables": 5760,
+        "accounting": {
+          "balanced": true,
+          "excluded": [],
+          "fixedRoster": 223,
+          "unassignable": [],
+          "operationalPool": [],
+          "sourceInstances": 223
+        },
+        "constraints": 1367,
+        "diagnostics": [],
+        "solverStatus": "FEASIBLE",
+        "emptyDutySlots": 0,
+        "wallTimeSeconds": 40.054,
+        "fullCoverageStatus": "FEASIBLE"
+      },
+      "provenance": {
+        "mode": "NORMAL",
+        "seed": 102,
+        "engine": "adaptive",
+        "attempt": 2,
+        "lineage": [
+          {
+            "kind": "START",
+            "target": null,
+            "attempt": 2
+          }
+        ],
+        "ranking": 78.5,
+        "weights": {
+          "nightPair": 674,
+          "hoursWorst": 37,
+          "restComfort": 2,
+          "transitions": 0,
+          "hoursBalance": 13,
+          "preserveHint": 0,
+          "nightFairness": 13,
+          "nightSingleton": 1034,
+          "weekendFairness": 1,
+          "shuntingFairness": 6,
+          "preserveReference": 1,
+          "nightOutsideReference": 400
+        },
+        "workers": 8,
+        "strategy": "BALANCED",
+        "versions": {
+          "configHash": "80985207cc830bb57a6bbe4c66d50f97d97d1c9d95840beccde96fb51f414376",
+          "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+          "inputDataVersion": "7ff588d3e53e4f87",
+          "sourceScheduleVersion": "e2611821d375c42d"
+        },
+        "fixedSlots": 0,
+        "freeRosters": null,
+        "paretoFront": true,
+        "whySurvived": [
+          "0 bevestigde harde overtredingen",
+          "223/223 diensten geplaatst, 0 buiten het roosterprofiel",
+          "0 losse nachten, 1 reeksen van twee",
+          "0 zware overgangen",
+          "grootste urenafwijking 23 min",
+          "robuuste kwaliteit 78.5 (slechtste regel 61.9)",
+          "niet gedomineerd in de pool",
+          "verschilt op 39 dienstdagen van de eerdere kandidaten"
+        ],
+        "explanations": [
+          {
+            "kind": "TWO_NIGHT_BLOCK",
+            "facts": [
+              "nachtreeks van 2"
+            ],
+            "roster": "DDR-MIX",
+            "activeSoftTerms": [
+              "nightPair × 674"
+            ]
+          },
+          {
+            "kind": "HOURS_DEVIATION",
+            "facts": [
+              "gemiddeld 40u, afwijking -23 min"
+            ],
+            "roster": "DDR-V",
+            "activeSoftTerms": [
+              "hoursBalance × 13",
+              "hoursWorst × 37"
+            ],
+            "competitorsExample": {
+              "current": "4",
+              "weekday": 2,
+              "alternatives": [
+                {
+                  "duty": "1",
+                  "placedIn": "DDR-V regel 11"
+                },
+                {
+                  "duty": "10",
+                  "placedIn": "DDR-50MIX regel 3"
+                },
+                {
+                  "duty": "12",
+                  "placedIn": "DDR-MIX regel 2"
+                },
+                {
+                  "duty": "13",
+                  "placedIn": "DDR-V regel 9"
+                },
+                {
+                  "duty": "2",
+                  "placedIn": "DDR-V regel 8"
+                },
+                {
+                  "duty": "3",
+                  "placedIn": "DDR-VL regel 8"
+                }
+              ]
+            }
+          }
+        ],
+        "timeLimitSeconds": 40,
+        "qualityModelVersion": "quality-model-v1",
+        "optimizerModelVersion": "adaptive-1.0.4/cp-sat@2.1.0+BALANCED"
+      },
+      "roster": {
+        "DDR-50MIX": {
+          "1|1": [
+            "108",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "1",
+            "9",
+            "70"
+          ],
+          "2|1": [
+            "70",
+            "~RUST",
+            "703",
+            "9",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "3|1": [
+            "~RES",
+            "10",
+            "~WR",
+            "702",
+            "10",
+            "~RUST",
+            "~RUST"
+          ],
+          "4|1": [
+            "~RUST",
+            "703",
+            "12",
+            "7",
+            "~RUST",
+            "103",
+            "~RES"
+          ],
+          "5|1": [
+            "730",
+            "~RUST",
+            "~RES",
+            "112",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~CO",
+            "601",
+            "11",
+            "~RUST",
+            "~RES",
+            "105",
+            "~RES"
+          ]
+        },
+        "DDR-BLM": {
+          "1|1": [
+            "9",
+            "70",
+            "~RUST",
+            "~RUST",
+            "5",
+            "70",
+            "1"
+          ],
+          "2|1": [
+            "71",
+            "~WR",
+            "~RUST",
+            "3",
+            "72",
+            "5",
+            "8"
+          ],
+          "3|1": [
+            "11",
+            "~RUST",
+            "4",
+            "71",
+            "601",
+            "~RUST",
+            "~RUST"
+          ],
+          "4|1": [
+            "761",
+            "761",
+            "761",
+            "760",
+            "~RUST",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "109",
+            "109",
+            "170",
+            "~WR",
+            "~RUST",
+            "2",
+            "6"
+          ],
+          "6|1": [
+            "~CO",
+            "7",
+            "13",
+            "170",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ]
+        },
+        "DDR-L": {
+          "1|1": [
+            "107",
+            "~RUST",
+            "730",
+            "109",
+            "114",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "~RUST",
+            "732",
+            "~RES",
+            "~RUST",
+            "104",
+            "~RES",
+            "115"
+          ],
+          "3|1": [
+            "~RES",
+            "112",
+            "~WR",
+            "~RUST",
+            "730",
+            "101",
+            "104"
+          ],
+          "4|1": [
+            "~RES",
+            "~RUST",
+            "112",
+            "101",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "116",
+            "170",
+            "109",
+            "103",
+            "~CO",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~RUST",
+            "117",
+            "107",
+            "731",
+            "~RUST",
+            "~RES",
+            "~RES"
+          ],
+          "7|1": [
+            "~RES",
+            "106",
+            "~WR",
+            "~RES",
+            "113",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "113",
+            "113",
+            "~RUST",
+            "~RUST",
+            "~RES",
+            "107",
+            "106"
+          ],
+          "9|1": [
+            "732",
+            "~WR",
+            "~RUST",
+            "102",
+            "101",
+            "~RES",
+            "102"
+          ],
+          "10|1": [
+            "~RUST",
+            "115",
+            "732",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "~CO",
+            "~RES",
+            "106",
+            "730",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "12|1": [
+            "~RUST",
+            "101",
+            "~RES",
+            "~WR",
+            "112",
+            "~RES",
+            "108"
+          ]
+        },
+        "DDR-LN": {
+          "1|1": [
+            "~RES",
+            "~RUST",
+            "105",
+            "~RES",
+            "111",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "106",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "110",
+            "108",
+            "109"
+          ],
+          "3|1": [
+            "104",
+            "102",
+            "101",
+            "~RUST",
+            "~RUST",
+            "761",
+            "761"
+          ],
+          "4|1": [
+            "760",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "106",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "~CO",
+            "110",
+            "760",
+            "201",
+            "201",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~RUST",
+            "107",
+            "113",
+            "110",
+            "~WR",
+            "111",
+            "107"
+          ]
+        },
+        "DDR-MIX": {
+          "1|1": [
+            "601",
+            "9",
+            "~RES",
+            "11",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "3",
+            "12",
+            "~RUST",
+            "14",
+            "2",
+            "170",
+            "103"
+          ],
+          "3|1": [
+            "102",
+            "~RUST",
+            "~RUST",
+            "105",
+            "761",
+            "760",
+            "760"
+          ],
+          "4|1": [
+            "~WR",
+            "~RUST",
+            "102",
+            "~RES",
+            "107",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "101",
+            "103",
+            "~RUST",
+            "~RUST",
+            "~CO",
+            "7",
+            "~RES"
+          ],
+          "6|1": [
+            "~RUST",
+            "~RES",
+            "70",
+            "~WR",
+            "~RUST",
+            "8",
+            "601"
+          ],
+          "7|1": [
+            "1",
+            "~WR",
+            "701",
+            "70",
+            "105",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "112",
+            "760",
+            "201",
+            "761",
+            "760",
+            "~RUST",
+            "~RUST"
+          ],
+          "9|1": [
+            "201",
+            "201",
+            "~CO",
+            "~RUST",
+            "~RUST",
+            "102",
+            "~RES"
+          ],
+          "10|1": [
+            "~WR",
+            "6",
+            "6",
+            "10",
+            "109",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "105",
+            "~RES",
+            "~RES",
+            "107",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "12|1": [
+            "~RUST",
+            "8",
+            "3",
+            "2",
+            "~RUST",
+            "~RES",
+            "3"
+          ]
+        },
+        "DDR-V": {
+          "1|1": [
+            "~RES",
+            "4",
+            "5",
+            "5",
+            "6",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "701",
+            "701",
+            "601",
+            "~WR",
+            "~RUST",
+            "1",
+            "702"
+          ],
+          "3|1": [
+            "702",
+            "~RUST",
+            "~RUST",
+            "601",
+            "7",
+            "71",
+            "7"
+          ],
+          "4|1": [
+            "~WR",
+            "~RUST",
+            "9",
+            "701",
+            "71",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "10",
+            "~RES",
+            "8",
+            "~RUST",
+            "~RUST",
+            "701",
+            "~RES"
+          ],
+          "6|1": [
+            "~RES",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "70",
+            "601",
+            "5"
+          ],
+          "7|1": [
+            "~RUST",
+            "~CO",
+            "~RES",
+            "~RES",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "7",
+            "2",
+            "~WR",
+            "~RUST",
+            "8",
+            "~RES",
+            "2"
+          ],
+          "9|1": [
+            "~RUST",
+            "13",
+            "~RES",
+            "~RES",
+            "11",
+            "~RUST",
+            "~RUST"
+          ],
+          "10|1": [
+            "8",
+            "~RES",
+            "7",
+            "13",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "5",
+            "1",
+            "1",
+            "~RUST",
+            "~RUST",
+            "4",
+            "701"
+          ],
+          "12|1": [
+            "6",
+            "~WR",
+            "10",
+            "8",
+            "13",
+            "~RUST",
+            "~RUST"
+          ]
+        },
+        "DDR-VL": {
+          "1|1": [
+            "111",
+            "731",
+            "171",
+            "106",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "~RES",
+            "5",
+            "111",
+            "108",
+            "103",
+            "~RUST",
+            "~RUST"
+          ],
+          "3|1": [
+            "115",
+            "104",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "104",
+            "101"
+          ],
+          "4|1": [
+            "~RUST",
+            "108",
+            "103",
+            "104",
+            "102",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "171",
+            "111",
+            "~WR",
+            "~RUST",
+            "~RUST",
+            "110",
+            "730"
+          ],
+          "6|1": [
+            "170",
+            "~RES",
+            "~CO",
+            "~RUST",
+            "702",
+            "11",
+            "~RES"
+          ],
+          "7|1": [
+            "~WR",
+            "~RUST",
+            "~RES",
+            "114",
+            "731",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "~RUST",
+            "3",
+            "~RES",
+            "1",
+            "~RUST",
+            "109",
+            "114"
+          ],
+          "9|1": [
+            "~RES",
+            "~WR",
+            "~RUST",
+            "115",
+            "~RES",
+            "730",
+            "105"
+          ],
+          "10|1": [
+            "~RUST",
+            "~RES",
+            "108",
+            "~RES",
+            "701",
+            "~RUST",
+            "~RUST"
+          ]
+        }
+      }
+    },
+    {
+      "number": 3,
+      "candidateId": "2f8d5bf9-b7cd-46fe-a0b0-cb322b5ee0fd",
+      "label": "Benchmark ablation BALANCED #22 — kandidaat 3",
+      "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+      "confirmedHardViolations": 0,
+      "perRule": [
+        {
+          "title": "Rust na een reeks van drie of meer nachtdiensten",
+          "ruleId": "NIGHT_SEQUENCE_RECOVERY",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 86
+        },
+        {
+          "title": "Driewekelijks vrij weekend (rood weekend)",
+          "ruleId": "RED_WEEKEND_MIN_REST",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 14
+        },
+        {
+          "title": "Rustdag aansluitend op een dienst",
+          "ruleId": "R_DAY_ATTACHED_MIN",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 7
+        },
+        {
+          "title": "Dienst die start vóór 02:30 en eindigt na 02:30: maximale arbeidstijd",
+          "ruleId": "RP_NIGHT_ACROSS_0230_MAX_WORK",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 2
+        },
+        {
+          "title": "Dienst die start vóór 02:30 en eindigt na 02:30: maximale dienstlengte",
+          "ruleId": "RP_NIGHT_ACROSS_0230_MAX_DUTY",
+          "confidence": "POTENTIAL",
+          "uniqueViolations": 2
+        }
+      ],
+      "solver": {
+        "seed": 101,
+        "optimal": false,
+        "weights": {
+          "nightPair": 700,
+          "hoursWorst": 40,
+          "restComfort": 1,
+          "transitions": 40,
+          "hoursBalance": 15,
+          "preserveHint": 0,
+          "nightFairness": 12,
+          "nightSingleton": 900,
+          "weekendFairness": 1,
+          "shuntingFairness": 6,
+          "preserveReference": 1,
+          "nightOutsideReference": 400
+        },
+        "workers": 8,
+        "dutySlots": 223,
+        "variables": 5760,
+        "accounting": {
+          "balanced": true,
+          "excluded": [],
+          "fixedRoster": 223,
+          "unassignable": [],
+          "operationalPool": [],
+          "sourceInstances": 223
+        },
+        "constraints": 1366,
+        "diagnostics": [],
+        "solverStatus": "FEASIBLE",
+        "emptyDutySlots": 0,
+        "wallTimeSeconds": 40.059,
+        "fullCoverageStatus": "FEASIBLE"
+      },
+      "provenance": {
+        "mode": "NORMAL",
+        "seed": 101,
+        "engine": "adaptive",
+        "attempt": 1,
+        "lineage": [
+          {
+            "kind": "START",
+            "target": null,
+            "attempt": 1
+          }
+        ],
+        "ranking": 76.6,
+        "weights": {
+          "nightPair": 700,
+          "hoursWorst": 40,
+          "restComfort": 1,
+          "transitions": 0,
+          "hoursBalance": 15,
+          "preserveHint": 0,
+          "nightFairness": 12,
+          "nightSingleton": 900,
+          "weekendFairness": 1,
+          "shuntingFairness": 6,
+          "preserveReference": 1,
+          "nightOutsideReference": 400
+        },
+        "workers": 8,
+        "strategy": "BALANCED",
+        "versions": {
+          "configHash": "80985207cc830bb57a6bbe4c66d50f97d97d1c9d95840beccde96fb51f414376",
+          "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+          "inputDataVersion": "7ff588d3e53e4f87",
+          "sourceScheduleVersion": "e2611821d375c42d"
+        },
+        "fixedSlots": 0,
+        "freeRosters": null,
+        "paretoFront": true,
+        "whySurvived": [
+          "0 bevestigde harde overtredingen",
+          "223/223 diensten geplaatst, 0 buiten het roosterprofiel",
+          "0 losse nachten, 0 reeksen van twee",
+          "1 zware overgangen",
+          "grootste urenafwijking 26 min",
+          "robuuste kwaliteit 76.6 (slechtste regel 53.1)",
+          "niet gedomineerd in de pool",
+          "verschilt op 136 dienstdagen van de eerdere kandidaten"
+        ],
+        "explanations": [
+          {
+            "kind": "HEAVY_TRANSITION",
+            "facts": [
+              "week 29:22",
+              "1 zware overgang(en)"
+            ],
+            "roster": "DDR-BLM",
+            "lineNumber": 3,
+            "activeSoftTerms": [
+              "transitions × 0 per strafpunt"
+            ]
+          },
+          {
+            "kind": "HOURS_DEVIATION",
+            "facts": [
+              "gemiddeld 40u, afwijking -26 min"
+            ],
+            "roster": "DDR-V",
+            "activeSoftTerms": [
+              "hoursBalance × 15",
+              "hoursWorst × 40"
+            ],
+            "competitorsExample": {
+              "current": "4",
+              "weekday": 2,
+              "alternatives": [
+                {
+                  "duty": "1",
+                  "placedIn": "DDR-VL regel 8"
+                },
+                {
+                  "duty": "10",
+                  "placedIn": "DDR-50MIX regel 3"
+                },
+                {
+                  "duty": "12",
+                  "placedIn": "DDR-BLM regel 6"
+                },
+                {
+                  "duty": "13",
+                  "placedIn": "DDR-V regel 9"
+                },
+                {
+                  "duty": "2",
+                  "placedIn": "DDR-V regel 8"
+                },
+                {
+                  "duty": "3",
+                  "placedIn": "DDR-V regel 2"
+                }
+              ]
+            }
+          }
+        ],
+        "timeLimitSeconds": 40,
+        "qualityModelVersion": "quality-model-v1",
+        "optimizerModelVersion": "adaptive-1.0.4/cp-sat@2.1.0+BALANCED"
+      },
+      "roster": {
+        "DDR-50MIX": {
+          "1|1": [
+            "109",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "701",
+            "7",
+            "70"
+          ],
+          "2|1": [
+            "11",
+            "~RUST",
+            "701",
+            "10",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "3|1": [
+            "~RES",
+            "10",
+            "~WR",
+            "9",
+            "10",
+            "~RUST",
+            "~RUST"
+          ],
+          "4|1": [
+            "~RUST",
+            "703",
+            "703",
+            "3",
+            "~RUST",
+            "170",
+            "~RES"
+          ],
+          "5|1": [
+            "70",
+            "~RUST",
+            "~RES",
+            "7",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~CO",
+            "601",
+            "12",
+            "~RUST",
+            "~RES",
+            "107",
+            "~RES"
+          ]
+        },
+        "DDR-BLM": {
+          "1|1": [
+            "9",
+            "70",
+            "~RUST",
+            "~RUST",
+            "70",
+            "70",
+            "1"
+          ],
+          "2|1": [
+            "71",
+            "~WR",
+            "~RUST",
+            "107",
+            "201",
+            "761",
+            "760"
+          ],
+          "3|1": [
+            "760",
+            "~RUST",
+            "70",
+            "70",
+            "601",
+            "~RUST",
+            "~RUST"
+          ],
+          "4|1": [
+            "108",
+            "111",
+            "101",
+            "104",
+            "~RUST",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "104",
+            "109",
+            "170",
+            "~WR",
+            "~RUST",
+            "2",
+            "8"
+          ],
+          "6|1": [
+            "~CO",
+            "12",
+            "5",
+            "702",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ]
+        },
+        "DDR-L": {
+          "1|1": [
+            "732",
+            "~RUST",
+            "730",
+            "109",
+            "114",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "~RUST",
+            "732",
+            "~RES",
+            "~RUST",
+            "730",
+            "~RES",
+            "115"
+          ],
+          "3|1": [
+            "~RES",
+            "112",
+            "~WR",
+            "~RUST",
+            "111",
+            "101",
+            "106"
+          ],
+          "4|1": [
+            "~RES",
+            "~RUST",
+            "112",
+            "112",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "116",
+            "107",
+            "171",
+            "103",
+            "~CO",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~RUST",
+            "117",
+            "107",
+            "731",
+            "~RUST",
+            "~RES",
+            "~RES"
+          ],
+          "7|1": [
+            "~RES",
+            "106",
+            "~WR",
+            "~RES",
+            "113",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "113",
+            "113",
+            "~RUST",
+            "~RUST",
+            "~RES",
+            "105",
+            "108"
+          ],
+          "9|1": [
+            "171",
+            "~WR",
+            "~RUST",
+            "102",
+            "101",
+            "~RES",
+            "104"
+          ],
+          "10|1": [
+            "~RUST",
+            "115",
+            "732",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "~CO",
+            "~RES",
+            "102",
+            "730",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "12|1": [
+            "~RUST",
+            "104",
+            "~RES",
+            "~WR",
+            "102",
+            "~RES",
+            "102"
+          ]
+        },
+        "DDR-LN": {
+          "1|1": [
+            "~RES",
+            "~RUST",
+            "108",
+            "~RES",
+            "107",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "170",
+            "~RES",
+            "~WR",
+            "~RUST",
+            "104",
+            "109",
+            "114"
+          ],
+          "3|1": [
+            "115",
+            "170",
+            "109",
+            "~RUST",
+            "~RUST",
+            "760",
+            "761"
+          ],
+          "4|1": [
+            "761",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "110",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "~CO",
+            "110",
+            "111",
+            "108",
+            "105",
+            "~RUST",
+            "~RUST"
+          ],
+          "6|1": [
+            "~RUST",
+            "201",
+            "201",
+            "760",
+            "~WR",
+            "104",
+            "107"
+          ]
+        },
+        "DDR-MIX": {
+          "1|1": [
+            "601",
+            "7",
+            "~RES",
+            "71",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "3",
+            "6",
+            "~RUST",
+            "11",
+            "2",
+            "8",
+            "7"
+          ],
+          "3|1": [
+            "102",
+            "~RUST",
+            "~RUST",
+            "170",
+            "109",
+            "103",
+            "103"
+          ],
+          "4|1": [
+            "~WR",
+            "~RUST",
+            "601",
+            "~RES",
+            "5",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "1",
+            "9",
+            "~RUST",
+            "~RUST",
+            "~CO",
+            "102",
+            "~RES"
+          ],
+          "6|1": [
+            "~RUST",
+            "~RES",
+            "1",
+            "~WR",
+            "~RUST",
+            "9",
+            "3"
+          ],
+          "7|1": [
+            "106",
+            "~WR",
+            "3",
+            "601",
+            "72",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "201",
+            "760",
+            "761",
+            "761",
+            "760",
+            "~RUST",
+            "~RUST"
+          ],
+          "9|1": [
+            "101",
+            "101",
+            "~CO",
+            "~RUST",
+            "~RUST",
+            "11",
+            "~RES"
+          ],
+          "10|1": [
+            "~WR",
+            "761",
+            "760",
+            "201",
+            "761",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "105",
+            "~RES",
+            "~RES",
+            "106",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "12|1": [
+            "~RUST",
+            "8",
+            "9",
+            "2",
+            "~RUST",
+            "~RES",
+            "601"
+          ]
+        },
+        "DDR-V": {
+          "1|1": [
+            "~RES",
+            "4",
+            "6",
+            "5",
+            "6",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "701",
+            "3",
+            "13",
+            "~WR",
+            "~RUST",
+            "1",
+            "702"
+          ],
+          "3|1": [
+            "702",
+            "~RUST",
+            "~RUST",
+            "701",
+            "7",
+            "71",
+            "6"
+          ],
+          "4|1": [
+            "~WR",
+            "~RUST",
+            "4",
+            "1",
+            "1",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "10",
+            "~RES",
+            "8",
+            "~RUST",
+            "~RUST",
+            "701",
+            "~RES"
+          ],
+          "6|1": [
+            "~RES",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "71",
+            "601",
+            "5"
+          ],
+          "7|1": [
+            "~RUST",
+            "~CO",
+            "~RES",
+            "~RES",
+            "~RES",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "7",
+            "2",
+            "~WR",
+            "~RUST",
+            "8",
+            "~RES",
+            "2"
+          ],
+          "9|1": [
+            "~RUST",
+            "13",
+            "~RES",
+            "~RES",
+            "11",
+            "~RUST",
+            "~RUST"
+          ],
+          "10|1": [
+            "8",
+            "~RES",
+            "7",
+            "13",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "11|1": [
+            "5",
+            "701",
+            "11",
+            "~RUST",
+            "~RUST",
+            "4",
+            "701"
+          ],
+          "12|1": [
+            "6",
+            "~WR",
+            "10",
+            "8",
+            "13",
+            "~RUST",
+            "~RUST"
+          ]
+        },
+        "DDR-VL": {
+          "1|1": [
+            "111",
+            "731",
+            "106",
+            "101",
+            "~WR",
+            "~RUST",
+            "~RUST"
+          ],
+          "2|1": [
+            "~RES",
+            "5",
+            "113",
+            "110",
+            "103",
+            "~RUST",
+            "~RUST"
+          ],
+          "3|1": [
+            "112",
+            "108",
+            "~WR",
+            "~RUST",
+            "~RES",
+            "730",
+            "109"
+          ],
+          "4|1": [
+            "~RUST",
+            "103",
+            "103",
+            "105",
+            "106",
+            "~RUST",
+            "~RUST"
+          ],
+          "5|1": [
+            "730",
+            "102",
+            "~WR",
+            "~RUST",
+            "~RUST",
+            "111",
+            "105"
+          ],
+          "6|1": [
+            "107",
+            "~RES",
+            "~CO",
+            "~RUST",
+            "702",
+            "5",
+            "~RES"
+          ],
+          "7|1": [
+            "~WR",
+            "~RUST",
+            "~RES",
+            "114",
+            "112",
+            "~RUST",
+            "~RUST"
+          ],
+          "8|1": [
+            "~RUST",
+            "1",
+            "~RES",
+            "14",
+            "~RUST",
+            "108",
+            "730"
+          ],
+          "9|1": [
+            "~RES",
+            "~WR",
+            "~RUST",
+            "115",
+            "~RES",
+            "110",
+            "101"
+          ],
+          "10|1": [
+            "~RUST",
+            "~RES",
+            "105",
+            "~RES",
+            "731",
+            "~RUST",
+            "~RUST"
+          ]
+        }
+      }
+    }
+  ],
+  "diversity": [
+    {
+      "a": 1,
+      "b": 2,
+      "changedDutyDays": 39
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "changedDutyDays": 137
+    },
+    {
+      "a": 2,
+      "b": 3,
+      "changedDutyDays": 136
+    }
+  ],
+  "resources": {
+    "peakPythonWorkingSetBytes": 490270720,
+    "peakNodeRssBytes": 329654272,
+    "logicalCpus": 28
+  },
+  "ablation": "no-transitions"
+}

@@ -1,0 +1,194 @@
+{
+  "version": "adaptive-1.0.4-machinist",
+  "qualityModelVersion": "quality-model-v2",
+  "adaptive": {
+    "version": "adaptive-1.0.4-machinist",
+    "modes": {
+      "FAST": {
+        "label": "Snel",
+        "budgetSeconds": 120,
+        "startSeconds": 20,
+        "repairSeconds": 10,
+        "polishSeconds": 8,
+        "minStarts": 3,
+        "maxStarts": 4,
+        "startShare": 0.6,
+        "eliteSize": 8,
+        "plateauWindow": 3
+      },
+      "NORMAL": {
+        "label": "Normaal",
+        "budgetSeconds": 300,
+        "startSeconds": 40,
+        "repairSeconds": 15,
+        "polishSeconds": 15,
+        "minStarts": 3,
+        "maxStarts": 4,
+        "startShare": 0.55,
+        "eliteSize": 12,
+        "plateauWindow": 5
+      },
+      "DEEP": {
+        "label": "Grondig",
+        "budgetSeconds": 900,
+        "startSeconds": 60,
+        "repairSeconds": 20,
+        "polishSeconds": 25,
+        "minStarts": 5,
+        "maxStarts": 8,
+        "startShare": 0.5,
+        "eliteSize": 20,
+        "plateauWindow": 8
+      },
+      "EXTENSIVE": {
+        "label": "Zeer grondig",
+        "budgetSeconds": 1800,
+        "startSeconds": 75,
+        "repairSeconds": 25,
+        "polishSeconds": 30,
+        "minStarts": 8,
+        "maxStarts": 14,
+        "startShare": 0.5,
+        "eliteSize": 20,
+        "plateauWindow": 12
+      }
+    },
+    "overheadSecondsPerCandidate": 6,
+    "plateauMinGain": 0.2,
+    "diversity": {
+      "duplicateShare": 0.04,
+      "finalMinShare": 0.1,
+      "diversifyStartShare": 0.1
+    },
+    "repair": {
+      "minRankingGain": 0.1,
+      "maxComponentLoss": 2,
+      "targetBoost": 4,
+      "keepGoodPartsWeight": 30,
+      "nightExitRepair": false,
+      "nightFirst": false
+    },
+    "pressure": {
+      "step": 1.5,
+      "max": 4,
+      "decay": 0.8
+    },
+    "humanRhythm": {
+      "enabled": true,
+      "startJitterWeight": 0,
+      "nightExitScale": 5
+    },
+    "worstCaseInRanking": true,
+    "preferenceParity": {
+      "affinityPerTenth": 51,
+      "dayDutyPerTenth": 114.5
+    },
+    "guards": {
+      "tolerances": {
+        "fairness": 0.5,
+        "hours": 1,
+        "rest": 1
+      },
+      "penaltyPerPoint": 10
+    },
+    "gateTolerance": {
+      "robustPoints": 10,
+      "singletonNights": 2,
+      "heavyTransitions": 2,
+      "hoursMinutes": 12,
+      "hoursFloorMinutes": 30,
+      "worstLinePoints": 10
+    },
+    "rankingTilt": {
+      "BALANCED": {},
+      "REST_QUALITY": {
+        "flow": 1.6,
+        "rest": 1.6
+      },
+      "FAIR_BURDEN": {
+        "fairness": 2
+      },
+      "MINIMAL_CHANGE": {
+        "stability": 4
+      },
+      "COVERAGE": {}
+    }
+  },
+  "baseWeights": {
+    "BALANCED": {
+      "hoursBalance": 15,
+      "hoursWorst": 40,
+      "restComfort": 1,
+      "transitions": 40,
+      "nightSingleton": 900,
+      "nightPair": 700,
+      "nightOutsideReference": 400,
+      "nightFairness": 12,
+      "shuntingFairness": 6,
+      "weekendFairness": 1,
+      "preserveReference": 1,
+      "preserveHint": 0,
+      "startJitter": 0
+    },
+    "REST_QUALITY": {
+      "hoursBalance": 10,
+      "hoursWorst": 25,
+      "restComfort": 3,
+      "transitions": 100,
+      "nightSingleton": 1100,
+      "nightPair": 900,
+      "nightOutsideReference": 400,
+      "nightFairness": 12,
+      "shuntingFairness": 6,
+      "weekendFairness": 1,
+      "preserveReference": 1,
+      "preserveHint": 0,
+      "startJitter": 0
+    },
+    "FAIR_BURDEN": {
+      "hoursBalance": 15,
+      "hoursWorst": 40,
+      "restComfort": 1,
+      "transitions": 25,
+      "nightSingleton": 900,
+      "nightPair": 700,
+      "nightOutsideReference": 400,
+      "nightFairness": 60,
+      "shuntingFairness": 35,
+      "weekendFairness": 5,
+      "preserveReference": 1,
+      "preserveHint": 0,
+      "startJitter": 0
+    },
+    "MINIMAL_CHANGE": {
+      "hoursBalance": 15,
+      "hoursWorst": 40,
+      "restComfort": 1,
+      "transitions": 20,
+      "nightSingleton": 400,
+      "nightPair": 300,
+      "nightOutsideReference": 400,
+      "nightFairness": 12,
+      "shuntingFairness": 6,
+      "weekendFairness": 1,
+      "preserveReference": 120,
+      "preserveHint": 0,
+      "startJitter": 0
+    },
+    "COVERAGE": {
+      "hoursBalance": 15,
+      "hoursWorst": 40,
+      "restComfort": 1,
+      "transitions": 40,
+      "nightSingleton": 900,
+      "nightPair": 700,
+      "nightOutsideReference": 400,
+      "nightFairness": 12,
+      "shuntingFairness": 6,
+      "weekendFairness": 1,
+      "preserveReference": 1,
+      "preserveHint": 0,
+      "startJitter": 0
+    }
+  }
+}

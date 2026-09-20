@@ -1,0 +1,222 @@
+{
+  "schema": "ns-human-profile-priors/1",
+  "learnedFromBenchmark": "DDR_BDU_05_10_2026",
+  "use": "SOFT_PRIOR — alleen als zachte voorkeur en diagnostiek, nooit als harde eis en nooit als kopieerpatroon.",
+  "profiles": {
+    "VROEG": {
+      "roster": "DDR-V",
+      "lines": 12,
+      "daypartShare": {
+        "E": 100
+      },
+      "adjacentTransitionShare": {
+        "E→E": 100
+      },
+      "workBlockLengths": {
+        "1": 8,
+        "2": 2,
+        "3": 7,
+        "4": 2
+      },
+      "meanWorkBlockLength": 2.2,
+      "nightBlockLengths": [],
+      "startTimeSdPerDaypart": {
+        "E": 84.7,
+        "L": null,
+        "N": null
+      },
+      "sameDaypartStartJitterMean": 80.7,
+      "oscillations": 0,
+      "weekendWorkedDaysPerLineMean": 0.8,
+      "lineHoursSpreadMinutes": 1186
+    },
+    "VROEG_LAAT": {
+      "roster": "DDR-VL",
+      "lines": 10,
+      "daypartShare": {
+        "E": 55.9,
+        "L": 44.1
+      },
+      "adjacentTransitionShare": {
+        "E→E": 55.6,
+        "L→L": 44.4
+      },
+      "workBlockLengths": {
+        "1": 5,
+        "2": 7,
+        "3": 1,
+        "4": 3
+      },
+      "meanWorkBlockLength": 2.1,
+      "nightBlockLengths": [],
+      "startTimeSdPerDaypart": {
+        "E": 70.5,
+        "L": 133,
+        "N": null
+      },
+      "sameDaypartStartJitterMean": 62.4,
+      "oscillations": 0,
+      "weekendWorkedDaysPerLineMean": 0.9,
+      "lineHoursSpreadMinutes": 1204
+    },
+    "LAAT": {
+      "roster": "DDR-L",
+      "lines": 12,
+      "daypartShare": {
+        "L": 100
+      },
+      "adjacentTransitionShare": {
+        "L→L": 100
+      },
+      "workBlockLengths": {
+        "1": 9,
+        "2": 6,
+        "3": 4,
+        "4": 1
+      },
+      "meanWorkBlockLength": 1.9,
+      "nightBlockLengths": [],
+      "startTimeSdPerDaypart": {
+        "E": null,
+        "L": 128.2,
+        "N": null
+      },
+      "sameDaypartStartJitterMean": 92.3,
+      "oscillations": 0,
+      "weekendWorkedDaysPerLineMean": 0.6,
+      "lineHoursSpreadMinutes": 1128
+    },
+    "LAAT_NACHT": {
+      "roster": "DDR-LN",
+      "lines": 6,
+      "daypartShare": {
+        "L": 72.7,
+        "N": 27.3
+      },
+      "adjacentTransitionShare": {
+        "N→N": 38.5,
+        "L→L": 61.5
+      },
+      "workBlockLengths": {
+        "1": 4,
+        "2": 1,
+        "3": 2,
+        "4": 1,
+        "6": 1
+      },
+      "meanWorkBlockLength": 2.4,
+      "nightBlockLengths": [
+        6
+      ],
+      "startTimeSdPerDaypart": {
+        "E": null,
+        "L": 118,
+        "N": 43.4
+      },
+      "sameDaypartStartJitterMean": 66.1,
+      "oscillations": 0,
+      "weekendWorkedDaysPerLineMean": 1,
+      "lineHoursSpreadMinutes": 1028
+    },
+    "MIX": {
+      "roster": "DDR-MIX",
+      "lines": 12,
+      "daypartShare": {
+        "E": 34.1,
+        "N": 22.7,
+        "L": 43.2
+      },
+      "adjacentTransitionShare": {
+        "E→E": 32,
+        "N→N": 32,
+        "L→L": 36
+      },
+      "workBlockLengths": {
+        "1": 8,
+        "2": 3,
+        "3": 4,
+        "4": 2,
+        "5": 2
+      },
+      "meanWorkBlockLength": 2.3,
+      "nightBlockLengths": [
+        5,
+        5
+      ],
+      "startTimeSdPerDaypart": {
+        "E": 85.6,
+        "L": 119,
+        "N": 44.2
+      },
+      "sameDaypartStartJitterMean": 69.2,
+      "oscillations": 0,
+      "weekendWorkedDaysPerLineMean": 0.8,
+      "lineHoursSpreadMinutes": 533
+    },
+    "BLM": {
+      "roster": "DDR-BLM",
+      "lines": 6,
+      "daypartShare": {
+        "E": 53.8,
+        "L": 34.6,
+        "N": 11.5
+      },
+      "adjacentTransitionShare": {
+        "E→E": 55.6,
+        "L→N": 5.6,
+        "N→N": 11.1,
+        "L→L": 27.8
+      },
+      "workBlockLengths": {
+        "2": 2,
+        "3": 3,
+        "4": 2,
+        "5": 1
+      },
+      "meanWorkBlockLength": 3.3,
+      "nightBlockLengths": [
+        3
+      ],
+      "startTimeSdPerDaypart": {
+        "E": 65,
+        "L": 115,
+        "N": 34.6
+      },
+      "sameDaypartStartJitterMean": 63.3,
+      "oscillations": 0,
+      "weekendWorkedDaysPerLineMean": 1,
+      "lineHoursSpreadMinutes": 1254
+    },
+    "MIX_50PLUS": {
+      "roster": "DDR-50MIX",
+      "lines": 6,
+      "daypartShare": {
+        "L": 42.1,
+        "E": 57.9
+      },
+      "adjacentTransitionShare": {
+        "L→L": 12.5,
+        "L→E": 25,
+        "E→L": 25,
+        "E→E": 37.5
+      },
+      "workBlockLengths": {
+        "1": 6,
+        "2": 3,
+        "3": 1,
+        "4": 1
+      },
+      "meanWorkBlockLength": 1.7,
+      "nightBlockLengths": [],
+      "startTimeSdPerDaypart": {
+        "E": 75,
+        "L": 59.9,
+        "N": null
+      },
+      "sameDaypartStartJitterMean": 95.8,
+      "oscillations": 3,
+      "weekendWorkedDaysPerLineMean": 0.7,
+      "lineHoursSpreadMinutes": 1152
+    }
+  }
+}

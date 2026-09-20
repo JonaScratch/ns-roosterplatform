@@ -1,0 +1,32 @@
+﻿START 2026-09-19T00:04:15.4794266+02:00
+
+> ns-roosterplatform@1.0.3 final-brain:solver-ab
+> tsx --conditions=react-server scripts/final-brain/solver-ab.ts --seconds 40 --seeds 101,102,103,104,105 --variants klassiek,mens1,mens3,mens5,mens8
+
+klassiek 101: robuust 84.4 ┬À nachten 91.8 ┬À uren 89.3 (max 20 min/w) ┬À eerlijk 90.7 ┬À onder 46 u 1 ┬À kortste 32.5 u ┬À los 0 ┬À twee 0
+mens1    101: robuust 84.7 ┬À nachten 91.8 ┬À uren 89.6 (max 24 min/w) ┬À eerlijk 90.7 ┬À onder 46 u 1 ┬À kortste 31.1 u ┬À los 0 ┬À twee 0
+mens3    101: robuust 82.4 ┬À nachten 85.8 ┬À uren 89.5 (max 21 min/w) ┬À eerlijk 85.5 ┬À onder 46 u 1 ┬À kortste 32.8 u ┬À los 0 ┬À twee 0
+mens5    101: robuust 85.9 ┬À nachten 98.9 ┬À uren 89.4 (max 20 min/w) ┬À eerlijk 81.9 ┬À onder 46 u 0 ┬À kortste 55.7 u ┬À los 0 ┬À twee 0
+mens8    101: robuust 88.5 ┬À nachten 98.9 ┬À uren 89.8 (max 19 min/w) ┬À eerlijk 83 ┬À onder 46 u 0 ┬À kortste 55.5 u ┬À los 0 ┬À twee 0
+klassiek 102: robuust 82.4 ┬À nachten 91.4 ┬À uren 89.5 (max 26 min/w) ┬À eerlijk 86.6 ┬À onder 46 u 1 ┬À kortste 24.5 u ┬À los 0 ┬À twee 0
+mens1    102: robuust 77.9 ┬À nachten 84.3 ┬À uren 89.8 (max 19 min/w) ┬À eerlijk 86.2 ┬À onder 46 u 2 ┬À kortste 12.3 u ┬À los 0 ┬À twee 0
+mens3    102: robuust 85.7 ┬À nachten 93.3 ┬À uren 89.6 (max 20 min/w) ┬À eerlijk 81.9 ┬À onder 46 u 0 ┬À kortste 52.4 u ┬À los 0 ┬À twee 0
+mens5    102: robuust 83.9 ┬À nachten 91.8 ┬À uren 89.7 (max 20 min/w) ┬À eerlijk 90.7 ┬À onder 46 u 1 ┬À kortste 29.8 u ┬À los 0 ┬À twee 0
+mens8    102: robuust 80.4 ┬À nachten 78.9 ┬À uren 89.7 (max 22 min/w) ┬À eerlijk 85.3 ┬À onder 46 u 2 ┬À kortste 29.1 u ┬À los 1 ┬À twee 1
+klassiek 103: robuust 84.4 ┬À nachten 91.8 ┬À uren 89.8 (max 20 min/w) ┬À eerlijk 90.7 ┬À onder 46 u 1 ┬À kortste 23.3 u ┬À los 0 ┬À twee 0
+mens1    103: robuust 88.1 ┬À nachten 98.5 ┬À uren 89.6 (max 20 min/w) ┬À eerlijk 85.1 ┬À onder 46 u 0 ┬À kortste 54.3 u ┬À los 0 ┬À twee 0
+mens3    103: robuust 86.7 ┬À nachten 96.3 ┬À uren 89.6 (max 21 min/w) ┬À eerlijk 80.3 ┬À onder 46 u 0 ┬À kortste 54.6 u ┬À los 0 ┬À twee 0
+mens5    103: robuust 82.9 ┬À nachten 94.5 ┬À uren 89.8 (max 20 min/w) ┬À eerlijk 85.1 ┬À onder 46 u 0 ┬À kortste 51.9 u ┬À los 1 ┬À twee 0
+mens8    103: robuust 87.9 ┬À nachten 98.9 ┬À uren 89.6 (max 20 min/w) ┬À eerlijk 83 ┬À onder 46 u 0 ┬À kortste 57.5 u ┬À los 0 ┬À twee 0
+klassiek 104: robuust 79.7 ┬À nachten 84.7 ┬À uren 89.8 (max 20 min/w) ┬À eerlijk 83.9 ┬À onder 46 u 2 ┬À kortste 12.1 u ┬À los 0 ┬À twee 0
+mens1    104: robuust 83.2 ┬À nachten 85.8 ┬À uren 89.5 (max 22 min/w) ┬À eerlijk 86.6 ┬À onder 46 u 1 ┬À kortste 30.3 u ┬À los 0 ┬À twee 0
+mens3    104: robuust 84.1 ┬À nachten 91.8 ┬À uren 89.8 (max 19 min/w) ┬À eerlijk 90.7 ┬À onder 46 u 1 ┬À kortste 23.3 u ┬À los 0 ┬À twee 0
+mens5    104: robuust 85.3 ┬À nachten 91.8 ┬À uren 89.7 (max 19 min/w) ┬À eerlijk 85.1 ┬À onder 46 u 0 ┬À kortste 58.1 u ┬À los 0 ┬À twee 0
+mens8    104: robuust 80.3 ┬À nachten 84.7 ┬À uren 89.8 (max 19 min/w) ┬À eerlijk 83.9 ┬À onder 46 u 2 ┬À kortste 13.1 u ┬À los 0 ┬À twee 0
+klassiek 105: robuust 85.4 ┬À nachten 92.9 ┬À uren 89.7 (max 19 min/w) ┬À eerlijk 82.9 ┬À onder 46 u 0 ┬À kortste 47.2 u ┬À los 0 ┬À twee 0
+mens1    105: robuust 79.2 ┬À nachten 80.8 ┬À uren 89.8 (max 19 min/w) ┬À eerlijk 80.3 ┬À onder 46 u 2 ┬À kortste 13.1 u ┬À los 0 ┬À twee 1
+mens3    105: robuust 88.4 ┬À nachten 98.5 ┬À uren 89.6 (max 20 min/w) ┬À eerlijk 85.1 ┬À onder 46 u 0 ┬À kortste 51.9 u ┬À los 0 ┬À twee 0
+mens5    105: robuust 88.3 ┬À nachten 98.9 ┬À uren 89.6 (max 20 min/w) ┬À eerlijk 83 ┬À onder 46 u 0 ┬À kortste 54.3 u ┬À los 0 ┬À twee 0
+mens8    105: robuust 82.5 ┬À nachten 87.3 ┬À uren 89.8 (max 19 min/w) ┬À eerlijk 80.3 ┬À onder 46 u 1 ┬À kortste 23.2 u ┬À los 1 ┬À twee 0
+Geschreven: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\docs\v1.0.4-final-brain\solver-ab-nightrow.json
+KLAAR 2026-09-19T00:21:18.6342120+02:00

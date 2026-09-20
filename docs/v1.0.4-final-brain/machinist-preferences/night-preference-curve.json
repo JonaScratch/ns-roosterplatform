@@ -1,0 +1,70 @@
+{
+  "schema": "ns-machinist-night-curve/1",
+  "sourceStatus": "MACHINIST_PREFERENCE — praktijk van machinisten, geen medische of fysiologische claim",
+  "userInput": {
+    "1": "zeer onprettig",
+    "2": "als het moet",
+    "3": "vaak nét niet lekker: je komt in het ritme en moet er alweer uit",
+    "4": "prima",
+    "5": "goed / decent",
+    "6": "qua ritme zeer prettig, maar meer totale nachtbelasting",
+    "7": "qua ritme zeer sterk, maar als structureel patroon niet wenselijk"
+  },
+  "curve": [
+    {
+      "length": 1,
+      "rhythm": 0,
+      "load": 0,
+      "worthV3": 0,
+      "valueV2": 0
+    },
+    {
+      "length": 2,
+      "rhythm": 0.35,
+      "load": 0,
+      "worthV3": 0.35,
+      "valueV2": 0.4
+    },
+    {
+      "length": 3,
+      "rhythm": 0.7,
+      "load": 0,
+      "worthV3": 0.7,
+      "valueV2": 0.9
+    },
+    {
+      "length": 4,
+      "rhythm": 0.85,
+      "load": 0,
+      "worthV3": 0.85,
+      "valueV2": 0.95
+    },
+    {
+      "length": 5,
+      "rhythm": 0.95,
+      "load": 0,
+      "worthV3": 0.95,
+      "valueV2": 1
+    },
+    {
+      "length": 6,
+      "rhythm": 1,
+      "load": 0.05,
+      "worthV3": 0.95,
+      "valueV2": 1
+    },
+    {
+      "length": 7,
+      "rhythm": 1,
+      "load": 0.3,
+      "worthV3": 0.7,
+      "valueV2": 1
+    }
+  ],
+  "notes": [
+    "Model v3 rekent met worthV3 = ritme − belasting; model v2 (Final Brain) met valueV2.",
+    "Zes nachten scoort op ritme hoger dan drie, maar krijgt geen voorkeur boven vijf (worth 0,95 = 0,95); zeven zakt naar 0,70.",
+    "Zeven is ook het maximum aantal diensten in een reeks; langer bestaat in dit pakket niet.",
+    "Model v3 hash-bron: quality-model-v3."
+  ]
+}

@@ -1,0 +1,49 @@
+GEGEVENSINTEGRITEIT
+════════════════════════════════════════════════════════════
+
+Dienstboekhouding
+────────────────────────────────────────────────────────────
+  ✓ DDR-BDU-05-10-2026-V1: geen dienst twee keer op dezelfde weekdag
+  ✓ DDR-BDU-05-10-2026-V1: alle diensten horen bij standplaats DDR
+  ✓ DDR-BDU-05-10-2026-V1: roosterlijnen verwijzen alleen naar diensten uit het pakket
+    223 diensten (46 nummers) · 223 in vaste roosters · 0 niet in een vaste roosterlijn
+
+Reserverooster
+────────────────────────────────────────────────────────────
+    Er is nog geen reserverooster ingericht; niets te controleren.
+  ✓ elke operationele invulling bewaart een onderliggend slottype
+  ✓ geen operationele laag bovenop een dienstdag
+    0 operationele invullingen gecontroleerd
+
+Wijzigingsblad tegen de vastgelegde structuur
+────────────────────────────────────────────────────────────
+    Er is nog geen wijzigingsblad aangemaakt; niets te vergelijken.
+
+Verwijzingen en standplaatsen
+────────────────────────────────────────────────────────────
+  ✓ elke dienstdag verwijst naar een bestaande dienst
+  ✓ geen medewerker rijdt een dienst van een andere standplaats
+  ✓ geen dienst wordt op dezelfde dag door twee mensen gereden
+  ✓ geen ankerdag draagt een dienstnummer
+  ✓ elke medewerker heeft een standplaats
+
+Operationele invulling door de dienstindeling
+────────────────────────────────────────────────────────────
+    Er zijn nu geen operationele invullingen.
+  ✓ elke invulling ligt op een dag die daarvoor bedoeld is
+  ✓ de dienst hoort bij de standplaats van de medewerker
+  ✓ geen dienst is op dezelfde dag twee keer operationeel ingevuld
+    0 operationele invullingen gecontroleerd
+
+Standplaatsen
+────────────────────────────────────────────────────────────
+  ✓ alle 41 standplaatsen staan geregistreerd
+  ✓ alleen Dordrecht is functioneel ingericht
+  ✓ geen andere standplaats heeft diensten of roosters
+  ✓ alleen waar een adres is aangeleverd, staat er een
+  ✓ het Dordrechtse adres is exact het aangeleverde
+  ✓ geen enkele standplaats erft de inrichting van Dordrecht
+    41 standplaatsen, 6 planeenheden
+
+════════════════════════════════════════════════════════════
+19 controles geslaagd, 0 mislukt.

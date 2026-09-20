@@ -1,0 +1,46 @@
+﻿
+> ns-roosterplatform@1.0.3 build:portable
+> tsx --conditions=react-server scripts/build-portable.ts
+
+DRAAGBARE BUNDEL BOUWEN
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+Doel: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\dist\NS-Roosterplatform-Portable
+
+1. De applicatie bouwen
+  ÔÇó productiebuild gemaakt
+
+2. De mapstructuur
+  ÔÇó mappen aangemaakt
+
+3. De applicatie kopi├½ren
+  ÔÇó applicatie gekopieerd (182 MB)
+
+4. De Node-runtime
+  ÔÇó Node v24.17.0 meegenomen (88 MB)
+
+5. De databaseruntime
+  ÔÇó PostgreSQL meegenomen (104 MB)
+
+6. De optimizerruntime (Python met ortools)
+  ÔÇó Python 3.11.1 met ortools meegenomen (346 MB)
+
+6b. De demonstratiegegevens
+  ÔÇó demonstratiegegevens meegenomen (3.5 MB, 24 tabellen, 7468 rijen; 5 tabellen bewust weggelaten: AuditLogEntry, Notification, OutboxEvent, SecurityEvent, Session)
+
+7. De start- en stopbestanden
+  ÔÇó start, stop, instellingen en toelichting geschreven
+
+ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+Bundel klaar: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\dist\NS-Roosterplatform-Portable
+Totale omvang: 727 MB
+8 stappen uitgevoerd, 0 waarschuwing(en).
+
+Controleren met: npm run verify:portable
+
+> ns-roosterplatform@1.0.3 test:battery
+> tsx --conditions=react-server scripts/test-battery.ts --only Draagbare
+
+Draagbare bundel         ÔÇª geslaagd 33.8 s
+
+1 van de 1 suites geslaagd in 34 s.
+Geschreven: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\docs\optimizer-benchmark\test-results.json

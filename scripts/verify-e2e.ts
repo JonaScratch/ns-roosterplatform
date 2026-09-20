@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
+import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 /**
@@ -366,6 +367,13 @@ function main(): void {
     );
     const duurMs = Date.now() - begin;
     const tekst = `${uitvoer.stdout ?? ""}${uitvoer.stderr ?? ""}`;
+    // Op verzoek de volledige uitvoer per meting: de staart hieronder is vier
+    // regels, en een meting die alleen in de volledige doorloop faalt, laat
+    // anders niet zien wélke controle het was.
+    if (process.env.E2E_LOG_DIR) {
+      mkdirSync(process.env.E2E_LOG_DIR, { recursive: true });
+      writeFileSync(path.join(process.env.E2E_LOG_DIR, `${meting.script}.log`), tekst, "utf8");
+    }
     const tellingen = tel(tekst);
     const gelukt = uitvoer.status === 0 && tellingen.mislukt === 0;
 

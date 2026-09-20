@@ -1,0 +1,44 @@
+REGELDEKKING — GEDRAG
+══════════════════════════════════════════════════════════════════════════════
+
+Totaal regels                              71
+  waarvan harde regels                     66
+    bruikbaar (kunnen afgaan)              62
+    geblokkeerd (kunnen niet afgaan)       4
+
+Gedragsdekking van de bruikbare harde regels
+  positief én negatief getoetst            41
+  maar één kant getoetst                   0
+  gedekt via de regel die zij voeden       11
+  blokkade getoetst                        1
+  geen gedragstoets                        0
+
+In de engine terug te vinden               57/71
+Geblokkeerde harde regels met een blokkadetoets  2/4
+
+Wel in het regelbestand, niet in de code:
+  RT_PREFERRED_WINDOW_WEEKS                  Termijn voor het verlenen van een rustdag terug
+  HOLIDAY_ATTACHED_MIN                       Vrije feestdag aansluitend op een dienst
+  HOLIDAY_DETACHED_MIN                       Vrije feestdag niet aansluitend op een dienst
+  RO_DVP_DETACHED_MIN                        Losstaande RO- of DvP-dag
+  RO_DVP_COMBINED_MIN                        RO- of DvP-dag in combinatie met een andere vrijetijdsaanspraak
+  PARTTIME_DASH_DAY_MIN                      Streepjesdag deeltijder
+  WTV_DAY_LATEST_START                       Uiterste aanvang van een hele WTV-dag
+  WTV_DAYS_PER_YEAR_36H                      WTV-dagen per jaar bij een 36-urige werkweek
+  WITHDRAWN_WTV_GRANT_WITHIN_DAYS            Termijn voor het opnieuw verlenen van een ingetrokken WTV-dag
+  REGIO_WEST_WEEKEND_TARGET                  Weekendbalans Regio West
+  DORDRECHT_ROSTER_LINE_DIVISOR              Aantal roosterlijnen deelbaar door
+  REGIO_WEST_WTV_INTERVAL_WEEKS              WTV-dag gemiddeld eens per aantal weken
+  NEW_DRIVER_PROTECTION_YEARS                Beschermde periode nieuwe machinisten
+  PLAN_ROSTER_OVERFLOW_LIMIT                 Diensten die in een planrooster mogen belanden
+  Voor deze regels is geen gedragstoets te schrijven: er is niets dat afgaat. Zij staan als IMPLEMENTATION_GAP in het rapport.
+
+docs\regeldekking-gedrag.md geschreven.
+
+══════════════════════════════════════════════════════════════════════════════
+Elke gebouwde harde regel is op gedrag getoetst: in twee richtingen, via de
+regel die hij voedt, of op de blokkade die hij oplevert.
+
+Formele validatie door NS: 0 van de 71. Een test bewijst dat de code doet wat er staat; niet dat
+wat er staat juridisch klopt. Zolang de Arbeidstijdenwet en het Arbeidstijdenbesluit
+vervoer niet zijn aangeleverd, blijft dat onderscheid staan.

@@ -1,0 +1,34 @@
+Toegangscontrole tegen http://localhost:3300
+
+pad                                       medewerker          rooster-commissie   dienstindeling      admin               
+--------------------------------------------------------------------------------------------------------------------------
+/medewerker                                  toegang (200)       toegang (200)       toegang (200)       toegang (200)    
+/roostercommissie                            geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/roostercommissie/genereren                  geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/dienstindeling                              geweigerd (307)     geweigerd (307)     toegang (200)       toegang (200)    
+/dienstindeling/openstaand                   geweigerd (307)     geweigerd (307)     toegang (200)       toegang (200)    
+/beheer                                      geweigerd (307)     geweigerd (307)     geweigerd (307)     toegang (200)    
+/beheer/gebruikers                           geweigerd (307)     geweigerd (307)     geweigerd (307)     toegang (200)    
+/beheer/auditlog                             geweigerd (307)     geweigerd (307)     geweigerd (307)     toegang (200)    
+/dienstindeling/export?datum=2026-09-19      geweigerd (403)     geweigerd (403)     toegang (200)       toegang (200)    
+/beheer/organisatie                          geweigerd (307)     geweigerd (307)     geweigerd (307)     toegang (200)    
+/beheer/organisatie/DDR                      geweigerd (307)     geweigerd (307)     geweigerd (307)     toegang (200)    
+/roostercommissie/pakketten                  geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/roostercommissie/roosterblad/DDR-V          geweigerd (403)     toegang (200)       geweigerd (403)     toegang (200)    
+/roostercommissie/dienstenbak                geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/roostercommissie/dienstenbak/101?weekdag=4   geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/roostercommissie/genereren/voortgang        geweigerd (403)     toegang (200)       geweigerd (403)     toegang (200)    
+/roostercommissie/simulatie/vergelijken      geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/roostercommissie/simulatie                  geweigerd (307)     toegang (200)       geweigerd (307)     toegang (200)    
+/medewerker/diensten                         toegang (200)       toegang (200)       toegang (200)       toegang (200)    
+
+Standplaatsafbakening
+  ✓ medewerker: /medewerker/rooster?standplaats=RTD → 200
+  ✓ rooster-commissie: /roostercommissie/roosters?standplaats=NIETBESTAAND → 200
+
+Beeldmerk zonder sessie
+  ✓ /brand/ns-logo.svg → 200
+
+Geweigerde toegang vastgelegd in het beveiligingslog: 72
+
+Alle rollen gedragen zich zoals verwacht.

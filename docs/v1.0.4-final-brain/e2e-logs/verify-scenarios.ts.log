@@ -1,0 +1,50 @@
+SCENARIO'S
+══════════════════════════════════════════════════════════════════
+
+Regelbestand 2026.1-cao-2024-2025-transcribed: LEGAL_RULESET_NOT_CURRENTLY_VERIFIED, 10 ontbrekende pakketten.
+
+1. Het scenario is vastgelegd
+      Nieuwste scenario: "Meting BALANCED — herbouw" (d683c326).
+  ✓ het scenario staat in de database
+  ✓ het bevat toewijzingen
+  ✓ er staan dienstdagen in
+  ✓ het scenario is leesbaar over een tweede verbinding (overleeft een herstart)
+
+2. De onafhankelijke validatie
+      Validatie duurde 4.4s; status TECHNICALLY_VALID_UNVERIFIED_RULES.
+  ✓ de validator heeft daadwerkelijk toewijzingen beoordeeld
+
+3. Onzekerheid wordt niet als overtreding geteld
+  ✓ een ontbrekende formele bron levert geen bevestigde overtreding op
+  ✓ en geen verzamelstatus die niet zegt wat er aan de hand is
+  ✓ de status komt overeen met de tellers
+
+4. Simulatie en publicatie staan los van elkaar
+  ✓ simulatiegeschiktheid volgt de status
+  ✓ een scenario zonder bevestigde overtreding is bruikbaar voor simulatie
+  ✓ publicatie is geblokkeerd zolang het regelbestand niet formeel is bevestigd
+  ✓ en dat oordeel volgt de expliciete regel, niet een aanname
+  ✓ de juridische status blijft simulatie
+
+5. Bevindingen zijn per regel gegroepeerd
+  ✓ onzekerheid wordt per regel samengevat, niet per toewijzing opgesomd
+  ✓ elke groep noemt hoeveel toewijzingen hij raakt
+  ✓ elke groep noemt de regel waar het om gaat
+      Grootste groepen:
+        AVG_WEEKLY_HOURS_16W (UNVERIFIED_RULE_SOURCE): 2206
+        AVG_WEEKLY_HOURS_16W_MANY_NIGHTS (UNVERIFIED_RULE_SOURCE): 2206
+        AVG_WEEKLY_HOURS_4W (UNVERIFIED_RULE_SOURCE): 2206
+  ✓ de blokkades zijn gescheiden naar soort
+  ✓ de formele blokkade staat apart van de roosterbeoordeling
+  ✓ een onbevestigde bron staat niet bij de bevestigde overtredingen
+
+6. Meerdere scenario's
+  ✓ de vergelijkbare scenario's rusten op dezelfde bronroosterversie
+  ✓ elk vergelijkbaar scenario heeft een eigen kwaliteitsscore
+
+7. De optimizer krijgt elke dienst apart aangeboden
+  ✓ elke dienst uit het pakket levert precies één dienstinstantie op
+  ✓ geen twee diensten delen dezelfde sleutel standplaats+weekdag+nummer
+
+══════════════════════════════════════════════════════════════════
+23 controles geslaagd, 0 mislukt, 0 geblokkeerd door ontbrekende gegevens.

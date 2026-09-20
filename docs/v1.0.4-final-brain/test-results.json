@@ -1,0 +1,140 @@
+{
+  "schema": "ns-test-battery/1",
+  "ranAt": "2026-09-19T04:57:23.286Z",
+  "full": true,
+  "suites": [
+    {
+      "name": "Typecontrole",
+      "command": "npm run typecheck",
+      "ok": true,
+      "summary": "",
+      "seconds": 2.1
+    },
+    {
+      "name": "Codestijl",
+      "command": "npm run lint",
+      "ok": true,
+      "summary": "28:3  warning  'OVER_TWO_OFF_DAYS_PENALTY' is defined but never used. Allowed unused vars must match /^_/u          @typescript-eslint/no-unused-vars · 29:3  warning  'HUMAN_OVER_ONE_OFF_DAY_PENALTY' is defined but ne…",
+      "seconds": 30.8
+    },
+    {
+      "name": "Eenheidstests",
+      "command": "npm test",
+      "ok": true,
+      "summary": "Test Files  50 passed (50) · Tests  844 passed (844) · Start at  06:38:01 · Duration  13.04s (transform 10.46s, setup 0ms, import 22.20s, tests 30.36s, environment 5ms)",
+      "seconds": 15.7
+    },
+    {
+      "name": "Mutatietests",
+      "command": "npm run verify:mutanten",
+      "ok": true,
+      "summary": "✓ bijschaven: de beste stand wordt niet bewaard, de laatste wel · 2 bewering(en) rood, o.a. tests/domain/bijschaven.test.ts > bijschaven met ruildiensten > vindt de verbetering die er is · ════════════════════════════…",
+      "seconds": 86.3
+    },
+    {
+      "name": "Regels",
+      "command": "npm run verify:rules",
+      "ok": true,
+      "summary": "Gevalideerde regels    2 van 71 · Het regelbestand is structureel in orde. · ──────────────────────────────────────────────────────────── · Production-safe: NO — simulation/development only",
+      "seconds": 0.4
+    },
+    {
+      "name": "Regeldekking",
+      "command": "npm run verify:rule-coverage",
+      "ok": true,
+      "summary": "regel die hij voedt, of op de blokkade die hij oplevert. · Formele validatie door NS: 0 van de 71. Een test bewijst dat de code doet wat er staat; niet dat · wat er staat juridisch klopt. Zolang de Arbeidstijdenwet en…",
+      "seconds": 0.5
+    },
+    {
+      "name": "Roosteruren",
+      "command": "npm run verify:roster-hours",
+      "ok": true,
+      "summary": "Spreiding tussen de roosters: 39:12 tot 39:59 (0:47 verschil). · ✓ geen enkel rooster is structureel lichter of zwaarder dan de andere · ════════════════════════════════════════════════════════════════════════════════…",
+      "seconds": 0.8
+    },
+    {
+      "name": "Kwaliteitsmodel",
+      "command": "npm run verify:quality",
+      "ok": true,
+      "summary": "Meting BALANCED — kandidaat 3: totaal 84.2 robuust 81.6 patroonafstand 24.8 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 42 min (DDR-V) | slechtste regel: DDR-MIX regel 6 (76.8) · ✓ Meting BALANCED — k…",
+      "seconds": 0.8
+    },
+    {
+      "name": "Roosterkwaliteit",
+      "command": "npm run verify:kwaliteit",
+      "ok": true,
+      "summary": "Meting BALANCED — kandidaat 3: totaal 84.2 robuust 81.6 patroonafstand 24.8 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 42 min (DDR-V) | slechtste regel: DDR-MIX regel 6 (76.8) · ✓ Meting BALANCED — k…",
+      "seconds": 0.9
+    },
+    {
+      "name": "Profielen",
+      "command": "npm run verify:profielen",
+      "ok": true,
+      "summary": "✓ de generatie weigert deze kandidaat — 18 dienst(en) buiten het roosterprofiel. Een dienst die het profiel niet toestaat, zoals een vroege dienst in Laat/Nacht, wordt nooit bewaard. · ✓ de weigering noemt het rooster…",
+      "seconds": 5.1
+    },
+    {
+      "name": "Menselijke beoordeling",
+      "command": "npm run verify:beoordeling",
+      "ok": true,
+      "summary": "✓ elk oordeel en elke voorkeur staat in het auditlogboek (6) · ✓ geen model- of zoekmachinebestand is veranderd · ════════════════════════════════════════════════════════════ · 15 geslaagd, 0 gefaald. Eigen oordelen e…",
+      "seconds": 0.8
+    },
+    {
+      "name": "Scenario's",
+      "command": "npm run verify:scenarios",
+      "ok": true,
+      "summary": "✓ elke dienst uit het pakket levert precies één dienstinstantie op · ✓ geen twee diensten delen dezelfde sleutel standplaats+weekdag+nummer · ══════════════════════════════════════════════════════════════════ · 23 con…",
+      "seconds": 15.3
+    },
+    {
+      "name": "Structuurgeneratie",
+      "command": "npm run verify:structuurgeneratie",
+      "ok": true,
+      "summary": "✓ 14 is deelbaar door 2, zoals het lokale kader voor Dordrecht vraagt · ✓ een niet-deelbaar aantal (13) wordt door de regel zelf ook herkend als niet-deelbaar · ════════════════════════════════════════════════════════…",
+      "seconds": 0.6
+    },
+    {
+      "name": "Toegang per rol",
+      "command": "npm run verify:toegang",
+      "ok": true,
+      "summary": "Beeldmerk zonder sessie · ✓ /brand/ns-logo.svg → 200 · Geweigerde toegang vastgelegd in het beveiligingslog: 73 · Alle rollen gedragen zich zoals verwacht.",
+      "seconds": 22.3
+    },
+    {
+      "name": "Schermen",
+      "command": "npm run verify:schermen",
+      "ok": true,
+      "summary": "✓ alle 119 letterlijke interne verwijzingen wijzen naar een route · ✓ /roostercommissie/pakketten/sjabloon (8508 bytes) · ════════════════════════════════════════════════════════════ · 40 schermen in orde, 0 met bevin…",
+      "seconds": 15.7
+    },
+    {
+      "name": "Doorloop (e2e)",
+      "command": "npm run verify:e2e",
+      "ok": false,
+      "summary": "mislukt: crash: draagbare database na vuile stop · ══════════════════════════════════════════════════════════════════════════════ · De doorloop is niet volledig aangetoond. Wat hierboven bij 'Niet aangetoond' · staat,…",
+      "seconds": 775.2
+    },
+    {
+      "name": "Crashherstel",
+      "command": "npm run verify:crash-recovery",
+      "ok": true,
+      "summary": "Wat hiermee niet is aangetoond: dat een defecte schijf geen gegevens kan · kwijtraken. Dat kan geen enkele software garanderen. Wat is aangetoond, is · dat wat bevestigd is een harde stop overleeft, en dat de instelli…",
+      "seconds": 39.1
+    },
+    {
+      "name": "Productiebouw",
+      "command": "npm run build",
+      "ok": true,
+      "summary": "./src/server/optimizer/cpsat-optimizer.ts · ./src/server/generation/generation-job.ts · ./src/server/services/generation-service.ts · ./src/app/(app)/roostercommissie/genereren/voortgang/route.ts",
+      "seconds": 151.6
+    },
+    {
+      "name": "Draagbare bundel",
+      "command": "npm run verify:portable",
+      "ok": true,
+      "summary": "Opruimen · X: losgekoppeld en de proefmap verwijderd. · ════════════════════════════════════════════════════════════════════════ · 51 controles geslaagd, 0 mislukt, 0 geblokkeerd.",
+      "seconds": 33.1
+    }
+  ]
+}

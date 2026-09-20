@@ -19,6 +19,7 @@ import {
   verschil,
 } from "@/server/generation/generation-job";
 import { STRATEGY_WEIGHTS } from "@/server/optimizer/objective-weights";
+import { describeVariant, engineVariant } from "@/server/generation/adaptive/variant";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
 import { createRunCore } from "@/server/services/generation-service";
 import { SCENARIOS, inputDataVersion, scheduleVersion } from "@/server/services/simulation-service";
@@ -320,6 +321,7 @@ async function voerRunUit(opties: {
   const raw: RawRun = {
     schema: "ns-optimizer-benchmark-run/1",
     phase: opties.phase,
+    variant: opties.engine === "adaptive" ? describeVariant(engineVariant()) : null,
     runNumber: opties.runNumber,
     engine: opties.engine,
     mode: opties.mode,
@@ -419,8 +421,11 @@ async function main(): Promise<void> {
   }
 
   if (opdracht === "evaluate") {
+    // Standaard met model v1: dit is de meting van v1.0.4 en die moet met
+    // dezelfde maat na te rekenen blijven. `--model v2` rekent met het nieuwe.
     const { evaluateBenchmark } = await import("./benchmark/evaluate");
-    await evaluateBenchmark();
+    const { QUALITY_MODEL_V1, QUALITY_MODEL_V2 } = await import("@/domain/quality-model");
+    await evaluateBenchmark(argument("model") === "v2" ? QUALITY_MODEL_V2 : QUALITY_MODEL_V1);
     return;
   }
 

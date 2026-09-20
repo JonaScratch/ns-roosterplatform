@@ -1,0 +1,534 @@
+{
+  "schema": "ns-contrastive-check/1",
+  "measuredAt": "2026-09-18T20:33:35.812Z",
+  "adversarial": [
+    {
+      "toets": "versnipperde-nachten",
+      "principe": "Nachten in reeksen van drie tot zes",
+      "ruilen": 4,
+      "quality-model-v1": {
+        "hardValid": true,
+        "onderdeel": "nachten",
+        "onderdeelMens": 100,
+        "onderdeelNegatief": 57.9,
+        "ziet": true,
+        "robuustMens": 64.9,
+        "robuustNegatief": 54.8,
+        "menselijkHoger": true
+      },
+      "quality-model-v2": {
+        "hardValid": true,
+        "onderdeel": "nachten",
+        "onderdeelMens": 98.9,
+        "onderdeelNegatief": 58.2,
+        "ziet": true,
+        "robuustMens": 83.5,
+        "robuustNegatief": 70.5,
+        "menselijkHoger": true
+      }
+    },
+    {
+      "toets": "vroeg-na-nachten",
+      "principe": "Na nachten eerst rust, dan laat",
+      "ruilen": 3,
+      "quality-model-v1": {
+        "hardValid": true,
+        "onderdeel": "nachten",
+        "onderdeelMens": 100,
+        "onderdeelNegatief": 94.7,
+        "ziet": true,
+        "robuustMens": 64.9,
+        "robuustNegatief": 62.3,
+        "menselijkHoger": true
+      },
+      "quality-model-v2": {
+        "hardValid": true,
+        "onderdeel": "nachten",
+        "onderdeelMens": 98.9,
+        "onderdeelNegatief": 74.2,
+        "ziet": true,
+        "robuustMens": 83.5,
+        "robuustNegatief": 76.5,
+        "menselijkHoger": true
+      }
+    },
+    {
+      "toets": "heen-en-weer",
+      "principe": "Geen heen-en-weer van de lichaamsklok",
+      "ruilen": 3,
+      "quality-model-v1": {
+        "hardValid": true,
+        "onderdeel": "regelmaat",
+        "onderdeelMens": 75.7,
+        "onderdeelNegatief": 69.6,
+        "ziet": true,
+        "robuustMens": 64.9,
+        "robuustNegatief": 64.3,
+        "menselijkHoger": true
+      },
+      "quality-model-v2": {
+        "hardValid": true,
+        "onderdeel": "regelmaat",
+        "onderdeelMens": 88.7,
+        "onderdeelNegatief": 75.8,
+        "ziet": true,
+        "robuustMens": 83.5,
+        "robuustNegatief": 73,
+        "menselijkHoger": true
+      }
+    },
+    {
+      "toets": "springende-begintijden",
+      "principe": "Begintijden binnen een blok redelijk bij elkaar",
+      "ruilen": 4,
+      "quality-model-v1": {
+        "hardValid": true,
+        "onderdeel": "regelmaat",
+        "onderdeelMens": 75.7,
+        "onderdeelNegatief": 75.7,
+        "ziet": false,
+        "robuustMens": 64.9,
+        "robuustNegatief": 63.8,
+        "menselijkHoger": true
+      },
+      "quality-model-v2": {
+        "hardValid": true,
+        "onderdeel": "regelmaat",
+        "onderdeelMens": 88.7,
+        "onderdeelNegatief": 87.1,
+        "ziet": true,
+        "robuustMens": 83.5,
+        "robuustNegatief": 82.2,
+        "menselijkHoger": true
+      }
+    },
+    {
+      "toets": "wissels-zonder-rust",
+      "principe": "Dagdeelwissels over rust heen",
+      "ruilen": 4,
+      "quality-model-v1": {
+        "hardValid": true,
+        "onderdeel": "regelmaat",
+        "onderdeelMens": 75.7,
+        "onderdeelNegatief": 64.6,
+        "ziet": true,
+        "robuustMens": 64.9,
+        "robuustNegatief": 59.4,
+        "menselijkHoger": true
+      },
+      "quality-model-v2": {
+        "hardValid": true,
+        "onderdeel": "regelmaat",
+        "onderdeelMens": 88.7,
+        "onderdeelNegatief": 74.9,
+        "ziet": true,
+        "robuustMens": 83.5,
+        "robuustNegatief": 68,
+        "menselijkHoger": true
+      }
+    }
+  ],
+  "historical": [
+    {
+      "run": 3,
+      "strategy": "BALANCED",
+      "candidate": 1,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 84.3,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 3,
+      "strategy": "BALANCED",
+      "candidate": 2,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 85.8,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.2,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 3,
+      "strategy": "BALANCED",
+      "candidate": 3,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 85.8,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.5,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 4,
+      "strategy": "BALANCED",
+      "candidate": 1,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 80,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.6,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 4,
+      "strategy": "BALANCED",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 79.5,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 96,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 5,
+      "strategy": "BALANCED",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 79.9,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 90,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 7,
+      "strategy": "BALANCED",
+      "candidate": 1,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 74.5,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 95.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 9,
+      "strategy": "BALANCED",
+      "candidate": 1,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 91.8,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 92.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 9,
+      "strategy": "BALANCED",
+      "candidate": 2,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 91.8,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.1,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 9,
+      "strategy": "BALANCED",
+      "candidate": 3,
+      "problemen": [
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 100,
+      "nachtenV2": 91.8,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 10,
+      "strategy": "BALANCED",
+      "candidate": 1,
+      "problemen": [
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 72.4,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.3,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 10,
+      "strategy": "BALANCED",
+      "candidate": 2,
+      "problemen": [
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 72.4,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.5,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 10,
+      "strategy": "BALANCED",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 68.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.2,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 12,
+      "strategy": "REST_QUALITY",
+      "candidate": 1,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 87.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 12,
+      "strategy": "REST_QUALITY",
+      "candidate": 2,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 87.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.5,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 12,
+      "strategy": "REST_QUALITY",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 87.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 16,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 1,
+      "problemen": [
+        "3 reeks(en) van twee"
+      ],
+      "nachtenV1": 84.2,
+      "nachtenV2": 74.4,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 90.5,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 16,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 2,
+      "problemen": [
+        "3 reeks(en) van twee"
+      ],
+      "nachtenV1": 84.2,
+      "nachtenV2": 74.4,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 90.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 16,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 3,
+      "problemen": [
+        "3 reeks(en) van twee"
+      ],
+      "nachtenV1": 84.2,
+      "nachtenV2": 74.4,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 89.8,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 17,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 1,
+      "problemen": [
+        "2 losse nacht(en)",
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 84.2,
+      "nachtenV2": 67,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 92.3,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 17,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 2,
+      "problemen": [
+        "2 losse nacht(en)",
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 84.2,
+      "nachtenV2": 67,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 92.9,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 17,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 82,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.7,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 18,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 2,
+      "problemen": [
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 75.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 92.1,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 18,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 78.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 91.5,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 19,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 1,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 83.3,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 94.6,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 19,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 2,
+      "problemen": [
+        "2 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 89.5,
+      "nachtenV2": 75.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 90.8,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 19,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 3,
+      "problemen": [
+        "2 reeks(en) van twee",
+        "1 zware overgang(en)"
+      ],
+      "nachtenV1": 89.5,
+      "nachtenV2": 75.7,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 90.2,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 20,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 1,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 79.5,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.6,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 20,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 2,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 77,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.6,
+      "regelmaatMensV2": 88.7
+    },
+    {
+      "run": 20,
+      "strategy": "FAIR_BURDEN",
+      "candidate": 3,
+      "problemen": [
+        "1 reeks(en) van twee"
+      ],
+      "nachtenV1": 94.7,
+      "nachtenV2": 77,
+      "nachtenMensV2": 98.9,
+      "regelmaatV2": 93.6,
+      "regelmaatMensV2": 88.7
+    }
+  ]
+}

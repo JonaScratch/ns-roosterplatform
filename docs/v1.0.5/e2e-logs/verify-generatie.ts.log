@@ -1,0 +1,109 @@
+GENERATIEPIJPLIJN
+════════════════════════════════════════════════════════════════════════
+Strategie BALANCED · opbouwen 60s · verbeteren 30s · zoekdraden 8
+
+1. Eén opdracht tegelijk
+  ✓ tweede opdracht naast een lopende wordt geweigerd
+  ✓ de weigering wijst naar de lopende opdracht
+
+2. Een opdracht zonder hartslag
+  ✓ verweesde opdracht wordt ONDERBROKEN — INTERRUPTED
+  ✓ een nieuwe opdracht kan daarna starten
+
+3. Volledige generatie
+  [   1s] 2/8 Kandidaat zoeken: start 1 van 4 (zaadwaarde 101).
+  [  62s] 2/8 Kandidaat zoeken: start 2 van 4 (zaadwaarde 102).
+  [ 122s] 2/8 Kandidaat zoeken: start 3 van 4 (zaadwaarde 103).
+  [ 182s] 3/8 Belasting eerlijker verdelen in DDR-BLM, DDR-LN, DDR-MIX (poging 2: eerlijkheid 82.4).
+  [ 212s] 3/8 Rust tussen diensten verbeteren in DDR-MIX, DDR-L, DDR-50MIX (poging 2: rust 83.6).
+  [ 233s] 3/8 Belasting eerlijker verdelen in DDR-BLM, DDR-LN, DDR-MIX (poging 5: eerlijkheid 82.4).
+  [ 267s] 5/8 Eindvalidatie van 3 topkandidaat/kandidaten.
+
+  Status COMPLETED · 3/3 kandidaten · 275s totaal
+  Tijden:
+    zoeken             275s
+  Logboek:
+  ✓ de opdracht is afgerond — COMPLETED
+  ✓ voortgang staat op 100% bij afronden
+  Officieel rooster: Dekking 100 · Urenbalans 78.8 · Rustkwaliteit 89.3 · Overgangskwaliteit 95.9 · Nachtclustering 100 · Eerlijke nachtverdeling 73.3 · Eerlijke rangeerverdeling 48.2 · Eerlijke weekendbelasting 80.3 · Wijzigingsimpact 100
+    nachten 19: 4 reeksen ≥3, 0 paren, 0 los · zware overgangen 2 · gewijzigd 0
+    DDR-50MIX  39:51 V11 L8 N0 R2 nachtreeksen [] zwaar 2
+    DDR-BLM    39:12 V14 L9 N3 R7 nachtreeksen [3] zwaar 0
+    DDR-L      39:59 V0 L37 N0 R5 nachtreeksen [] zwaar 0
+    DDR-LN     39:59 V0 L16 N6 R6 nachtreeksen [6] zwaar 0
+    DDR-MIX    39:51 V15 L19 N10 R11 nachtreeksen [5,5] zwaar 0
+    DDR-V      39:44 V41 L0 N0 R5 nachtreeksen [] zwaar 0
+    DDR-VL     39:55 V19 L15 N0 R3 nachtreeksen [] zwaar 0
+
+  Meting BALANCED — kandidaat 1
+  ✓ alle dienstdagen gevuld — 223/223
+  ✓ geen dienst buiten het roosterprofiel — 0
+  ✓ geen vroege dienst in Laat/Nacht — 0
+  ✓ nul bevestigde harde overtredingen — 0 · TECHNICALLY_VALID_UNVERIFIED_RULES
+  Kwaliteit: Dekking 100 · Urenbalans 86.4 · Rustkwaliteit 100 · Overgangskwaliteit 100 · Nachtclustering 100 · Eerlijke nachtverdeling 71.7 · Eerlijke rangeerverdeling 93.6 · Eerlijke weekendbelasting 85.5 · Wijzigingsimpact 39.5
+    nachten 19: 5 reeksen ≥3, 0 paren, 0 los · zware overgangen 0 · gewijzigd 135
+    DDR-50MIX  40:00 V15 L4 N0 R4 nachtreeksen [] zwaar 0
+    DDR-BLM    40:00 V14 L8 N4 R4 nachtreeksen [4] zwaar 0
+    DDR-L      39:47 V0 L37 N0 R7 nachtreeksen [] zwaar 0
+    DDR-LN     40:00 V0 L15 N7 R4 nachtreeksen [3,4] zwaar 0
+    DDR-MIX    39:32 V25 L11 N8 R7 nachtreeksen [5,3] zwaar 0
+    DDR-V      39:45 V41 L0 N0 R7 nachtreeksen [] zwaar 0
+    DDR-VL     39:59 V5 L29 N0 R6 nachtreeksen [] zwaar 0
+
+  Meting BALANCED — kandidaat 2
+  ✓ alle dienstdagen gevuld — 223/223
+  ✓ geen dienst buiten het roosterprofiel — 0
+  ✓ geen vroege dienst in Laat/Nacht — 0
+  ✓ nul bevestigde harde overtredingen — 0 · TECHNICALLY_VALID_UNVERIFIED_RULES
+  Kwaliteit: Dekking 100 · Urenbalans 86.4 · Rustkwaliteit 100 · Overgangskwaliteit 100 · Nachtclustering 100 · Eerlijke nachtverdeling 71.7 · Eerlijke rangeerverdeling 93.6 · Eerlijke weekendbelasting 86 · Wijzigingsimpact 41.3
+    nachten 19: 5 reeksen ≥3, 0 paren, 0 los · zware overgangen 0 · gewijzigd 131
+    DDR-50MIX  40:00 V15 L4 N0 R4 nachtreeksen [] zwaar 0
+    DDR-BLM    40:00 V14 L8 N4 R4 nachtreeksen [4] zwaar 0
+    DDR-L      39:42 V0 L37 N0 R7 nachtreeksen [] zwaar 0
+    DDR-LN     40:00 V0 L15 N7 R4 nachtreeksen [3,4] zwaar 0
+    DDR-MIX    39:34 V26 L10 N8 R7 nachtreeksen [5,3] zwaar 0
+    DDR-V      39:47 V41 L0 N0 R7 nachtreeksen [] zwaar 0
+    DDR-VL     40:00 V4 L30 N0 R6 nachtreeksen [] zwaar 0
+
+  Meting BALANCED — kandidaat 3
+  ✓ alle dienstdagen gevuld — 223/223
+  ✓ geen dienst buiten het roosterprofiel — 0
+  ✓ geen vroege dienst in Laat/Nacht — 0
+  ✓ nul bevestigde harde overtredingen — 0 · TECHNICALLY_VALID_UNVERIFIED_RULES
+  Kwaliteit: Dekking 100 · Urenbalans 86.2 · Rustkwaliteit 99.2 · Overgangskwaliteit 97.5 · Nachtclustering 100 · Eerlijke nachtverdeling 83.7 · Eerlijke rangeerverdeling 93.6 · Eerlijke weekendbelasting 85.4 · Wijzigingsimpact 39.9
+    nachten 19: 4 reeksen ≥3, 0 paren, 0 los · zware overgangen 0 · gewijzigd 134
+    DDR-50MIX  40:00 V15 L4 N0 R4 nachtreeksen [] zwaar 0
+    DDR-BLM    39:59 V17 L4 N5 R4 nachtreeksen [5] zwaar 0
+    DDR-L      39:49 V0 L37 N0 R7 nachtreeksen [] zwaar 0
+    DDR-LN     40:00 V0 L16 N6 R4 nachtreeksen [6] zwaar 0
+    DDR-MIX    39:45 V21 L15 N8 R7 nachtreeksen [5,3] zwaar 0
+    DDR-V      39:29 V41 L0 N0 R7 nachtreeksen [] zwaar 0
+    DDR-VL     40:00 V6 L28 N0 R6 nachtreeksen [] zwaar 0
+  ✓ kandidaat 1 en 2 verschillen genoeg — 76 dienstdagen (min 23)
+  ✓ kandidaat 1 en 3 verschillen genoeg — 142 dienstdagen (min 23)
+  ✓ kandidaat 2 en 3 verschillen genoeg — 139 dienstdagen (min 23)
+
+4. Stoppen tijdens het rekenen
+  ✓ opdracht staat op GESTOPT — CANCELLED: Op verzoek gestopt. Er is geen kandidaat bewaard.
+  ✓ stopt binnen 15 seconden na het verzoek — 3s
+
+5. Gericht herbouwen
+  COMPLETED · 1/1 · 275s · Klaar: 6 varianten onderzocht, 3 geldige kandidaten, 1 topkandidaat/kandidaten. Gestopt omdat: tijdsbudget voor reparatie op.
+  ✓ herbouw is afgerond met één kandidaat — COMPLETED
+  ✓ de opmerking is bewaard bij de opdracht, niet als regel
+  ✓ herbouw is een kind van de ouder
+  ✓ herbouw verschilt van de ouder — 25 dienstdagen
+  ✓ alle dienstdagen gevuld — 223/223
+  ✓ nul bevestigde harde overtredingen
+    Dekking                         100 →    100
+    Urenbalans                     86.4 →   86.4
+    Rustkwaliteit                   100 →    100
+    Overgangskwaliteit              100 →    100
+    Nachtclustering                 100 →    100
+    Eerlijke nachtverdeling        71.7 →   71.7
+    Eerlijke rangeerverdeling      93.6 →   93.6
+    Eerlijke weekendbelasting      85.5 →   85.7
+    Wijzigingsimpact               39.5 →   37.7
+
+════════════════════════════════════════════════════════════════════════
+29 geslaagd, 0 mislukt

@@ -1,0 +1,261 @@
+{
+  "schema": "ns-machinist-preference-before-after/1",
+  "before": "brain-after",
+  "after": "mp-after",
+  "qualityModelV3Hash": {
+    "before": "4525b9106095c24b",
+    "after": "4525b9106095c24b"
+  },
+  "metrics": [
+    {
+      "key": "preference",
+      "label": "Voorkeur (v3)",
+      "higherIsBetter": true,
+      "official": 81.4,
+      "before": 73.137,
+      "after": 73.892,
+      "delta": 0.755
+    },
+    {
+      "key": "affinity",
+      "label": "Affiniteit",
+      "higherIsBetter": true,
+      "official": 68.6,
+      "before": 65.042,
+      "after": 65.388,
+      "delta": 0.346
+    },
+    {
+      "key": "restDuties",
+      "label": "Geen restbak",
+      "higherIsBetter": true,
+      "official": 81.8,
+      "before": 71.142,
+      "after": 72.545,
+      "delta": 1.403
+    },
+    {
+      "key": "dayDuties",
+      "label": "Dagdiensten volgens verhouding",
+      "higherIsBetter": true,
+      "official": 78.7,
+      "before": 53.08,
+      "after": 55.252,
+      "delta": 2.172
+    },
+    {
+      "key": "popularFairness",
+      "label": "Populair eerlijk",
+      "higherIsBetter": true,
+      "official": 94.3,
+      "before": 92.667,
+      "after": 92.06,
+      "delta": -0.607
+    },
+    {
+      "key": "weekendStart",
+      "label": "Weekendbegin",
+      "higherIsBetter": true,
+      "official": 93.1,
+      "before": 92.025,
+      "after": 92.867,
+      "delta": 0.842
+    },
+    {
+      "key": "robustV3",
+      "label": "Robuust (v3)",
+      "higherIsBetter": true,
+      "official": 82.4,
+      "before": 81.22,
+      "after": 81.367,
+      "delta": 0.147
+    },
+    {
+      "key": "robustV2",
+      "label": "Robuust (v2)",
+      "higherIsBetter": true,
+      "official": 83.5,
+      "before": 84.2,
+      "after": 84.387,
+      "delta": 0.187
+    },
+    {
+      "key": "worstLineV2",
+      "label": "Slechtste regel (v2)",
+      "higherIsBetter": true,
+      "official": 68.16,
+      "before": 80.227,
+      "after": 80.442,
+      "delta": 0.215
+    },
+    {
+      "key": "nightsV2",
+      "label": "Nachten (v2)",
+      "higherIsBetter": true,
+      "official": 98.9,
+      "before": 90.572,
+      "after": 90.042,
+      "delta": -0.53
+    },
+    {
+      "key": "rest",
+      "label": "Rust",
+      "higherIsBetter": true,
+      "official": 79.4,
+      "before": 81.753,
+      "after": 82.74,
+      "delta": 0.987
+    },
+    {
+      "key": "hours",
+      "label": "Uren",
+      "higherIsBetter": true,
+      "official": 83.9,
+      "before": 89.675,
+      "after": 89.647,
+      "delta": -0.028
+    },
+    {
+      "key": "fairness",
+      "label": "Eerlijkheid",
+      "higherIsBetter": true,
+      "official": 66.9,
+      "before": 85.55,
+      "after": 85.005,
+      "delta": -0.545
+    },
+    {
+      "key": "flow",
+      "label": "Regelmaat",
+      "higherIsBetter": true,
+      "official": 88.7,
+      "before": 94.465,
+      "after": 95.453,
+      "delta": 0.988
+    },
+    {
+      "key": "singletons",
+      "label": "Losse nachten",
+      "higherIsBetter": false,
+      "official": 0,
+      "before": 0.133,
+      "after": 0.233,
+      "delta": 0.1
+    },
+    {
+      "key": "pairs",
+      "label": "Reeksen van twee",
+      "higherIsBetter": false,
+      "official": 0,
+      "before": 0.35,
+      "after": 0.367,
+      "delta": 0.017
+    },
+    {
+      "key": "worstNightExit",
+      "label": "Slechtste nachtuitgang",
+      "higherIsBetter": true,
+      "official": 100,
+      "before": 39.167,
+      "after": 45,
+      "delta": 5.833
+    },
+    {
+      "key": "minRecoveryHours",
+      "label": "Kortste herstel na nachten (u)",
+      "higherIsBetter": true,
+      "official": 55.95,
+      "before": 44.971,
+      "after": 48.043,
+      "delta": 3.072
+    },
+    {
+      "key": "rangeerCv",
+      "label": "Rangeer: spreiding per regel (CV)",
+      "higherIsBetter": false,
+      "official": 0.518,
+      "before": 0.072,
+      "after": 0.072,
+      "delta": 0
+    },
+    {
+      "key": "rangeerMaxShare",
+      "label": "Rangeer: grootste aandeel één rooster",
+      "higherIsBetter": false,
+      "official": 0.282,
+      "before": 0.182,
+      "after": 0.181,
+      "delta": -0.001
+    },
+    {
+      "key": "operationalViolations",
+      "label": "Operationele overtredingen",
+      "higherIsBetter": false,
+      "official": 0,
+      "before": 1.533,
+      "after": 0,
+      "delta": -1.533
+    },
+    {
+      "key": "extremeEarlySteps",
+      "label": "Stappen naar extreem vroeg (diagnose)",
+      "higherIsBetter": false,
+      "official": 4,
+      "before": 2.283,
+      "after": 2.183,
+      "delta": -0.1
+    }
+  ],
+  "profileAffinity": {
+    "DDR-50MIX": {
+      "official": 0.811,
+      "before": 0.571,
+      "after": 0.576,
+      "lessShareBefore": 0.213,
+      "lessShareAfter": 0.21
+    },
+    "DDR-BLM": {
+      "official": 0.6,
+      "before": 0.6,
+      "after": 0.6,
+      "lessShareBefore": 0,
+      "lessShareAfter": 0
+    },
+    "DDR-L": {
+      "official": 0.73,
+      "before": 0.653,
+      "after": 0.667,
+      "lessShareBefore": 0.26,
+      "lessShareAfter": 0.249
+    },
+    "DDR-LN": {
+      "official": 0.636,
+      "before": 0.619,
+      "after": 0.63,
+      "lessShareBefore": 0.215,
+      "lessShareAfter": 0.201
+    },
+    "DDR-MIX": {
+      "official": 0.673,
+      "before": 0.735,
+      "after": 0.735,
+      "lessShareBefore": 0,
+      "lessShareAfter": 0
+    },
+    "DDR-V": {
+      "official": 0.659,
+      "before": 0.663,
+      "after": 0.664,
+      "lessShareBefore": 0.072,
+      "lessShareAfter": 0.067
+    },
+    "DDR-VL": {
+      "official": 0.718,
+      "before": 0.626,
+      "after": 0.623,
+      "lessShareBefore": 0,
+      "lessShareAfter": 0
+    }
+  },
+  "gates": "gates.json"
+}

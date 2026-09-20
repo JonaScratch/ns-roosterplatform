@@ -1,0 +1,2552 @@
+{
+  "row": {
+    "phase": "official",
+    "strategy": "OFFICIAL",
+    "run": 0,
+    "candidate": 0,
+    "engine": "human",
+    "mode": null,
+    "runtimeSeconds": null,
+    "overall": 80.7,
+    "overallWithoutContinuity": 78.6,
+    "robust": 64.9,
+    "hours": 70.3,
+    "flow": 75.7,
+    "rest": 76.7,
+    "nights": 100,
+    "fairness": 66.9,
+    "stability": 100,
+    "hoursRosterMAD": 12.714285714285714,
+    "hoursRosterMax": 48,
+    "hoursRosterSD": 15.200698157972742,
+    "hoursLineMAD": 291.125,
+    "hoursLineMax": 737,
+    "hoursLinesOutside30": 56,
+    "singletonNights": 0,
+    "twoNightBlocks": 0,
+    "nightBlocks3plus": 4,
+    "averageNightBlock": 4.75,
+    "longestNightBlock": 6,
+    "heavyTransitions": 2,
+    "nightToEarly": 0,
+    "lateToEarly": 2,
+    "earlyToNight": 0,
+    "transitionPenalty": 13,
+    "switchesPerWorkedDay": 0.02242152466367713,
+    "averageStreak": 2.0841121495327104,
+    "restSurplus": 73,
+    "restRecovery": 82.5,
+    "shortestRestSurplus": 29,
+    "minNightRecoveryHours": 55.95,
+    "nightFairness": 73.3,
+    "shuntingFairness": 48.2,
+    "weekendFairness": 81.8,
+    "nightsPerLineSD": 0.20786985482077452,
+    "shuntingPerLineMaxMin": 0.8666666666666667,
+    "worstLine": 15.625,
+    "medianLine": 75,
+    "patternDistance": 0,
+    "sameDutyShare": 100,
+    "sameDaypartShare": 100,
+    "hardValid": 1,
+    "profileBreaches": 0,
+    "coverageUnassigned": 0,
+    "lnEarlyDuties": 0,
+    "requiredDuties": 223
+  },
+  "perRoster": [
+    {
+      "code": "DDR-50MIX",
+      "averageWeeklyMinutes": 2391,
+      "deviationMinutes": -9,
+      "nights": 0,
+      "nightBlocks": [],
+      "heavyTransitions": 2,
+      "stableShare": 0.5,
+      "worstLine": 15.625,
+      "minRecoveryHours": null
+    },
+    {
+      "code": "DDR-BLM",
+      "averageWeeklyMinutes": 2352,
+      "deviationMinutes": -48,
+      "nights": 3,
+      "nightBlocks": [
+        3
+      ],
+      "heavyTransitions": 0,
+      "stableShare": 0.9444444444444444,
+      "worstLine": 62.08333333333333,
+      "minRecoveryHours": 79.45
+    },
+    {
+      "code": "DDR-L",
+      "averageWeeklyMinutes": 2399,
+      "deviationMinutes": -1,
+      "nights": 0,
+      "nightBlocks": [],
+      "heavyTransitions": 0,
+      "stableShare": 1,
+      "worstLine": 59.375,
+      "minRecoveryHours": null
+    },
+    {
+      "code": "DDR-LN",
+      "averageWeeklyMinutes": 2399,
+      "deviationMinutes": -1,
+      "nights": 6,
+      "nightBlocks": [
+        6
+      ],
+      "heavyTransitions": 0,
+      "stableShare": 1,
+      "worstLine": 63.63636363636363,
+      "minRecoveryHours": 55.95
+    },
+    {
+      "code": "DDR-MIX",
+      "averageWeeklyMinutes": 2391,
+      "deviationMinutes": -9,
+      "nights": 10,
+      "nightBlocks": [
+        5,
+        5
+      ],
+      "heavyTransitions": 0,
+      "stableShare": 1,
+      "worstLine": 66.89393939393939,
+      "minRecoveryHours": 59.31666666666667
+    },
+    {
+      "code": "DDR-V",
+      "averageWeeklyMinutes": 2384,
+      "deviationMinutes": -16,
+      "nights": 0,
+      "nightBlocks": [],
+      "heavyTransitions": 0,
+      "stableShare": 1,
+      "worstLine": 64.0625,
+      "minRecoveryHours": null
+    },
+    {
+      "code": "DDR-VL",
+      "averageWeeklyMinutes": 2395,
+      "deviationMinutes": -5,
+      "nights": 0,
+      "nightBlocks": [],
+      "heavyTransitions": 0,
+      "stableShare": 1,
+      "worstLine": 59.375,
+      "minRecoveryHours": null
+    }
+  ],
+  "report": {
+    "modelVersion": "quality-model-v1",
+    "hardValidity": {
+      "hardValid": true,
+      "coverage": {
+        "required": 223,
+        "assigned": 223,
+        "unassigned": 0,
+        "duplicates": 0,
+        "invalid": 0,
+        "emptyDutyDays": 0
+      },
+      "profileBreaches": [],
+      "reasons": []
+    },
+    "components": {
+      "hours": {
+        "score": 70.3,
+        "parts": {
+          "contract": 78.8,
+          "week": 44.6
+        }
+      },
+      "flow": {
+        "score": 75.7,
+        "parts": {
+          "stable": 95.9,
+          "penalty": 88.3,
+          "streak": 36.1
+        }
+      },
+      "rest": {
+        "score": 76.7,
+        "parts": {
+          "surplus": 73,
+          "recovery": 82.5,
+          "heavy": 82.1
+        }
+      },
+      "nights": {
+        "score": 100,
+        "parts": {
+          "clustering": 100
+        }
+      },
+      "fairness": {
+        "score": 66.9,
+        "parts": {
+          "nights": 73.3,
+          "shunting": 48.2,
+          "weekend": 81.8,
+          "longDuties": null
+        }
+      },
+      "stability": {
+        "score": 100,
+        "parts": {
+          "sameDuty": 100,
+          "sameDaypart": 100
+        }
+      }
+    },
+    "overall": 80.7,
+    "overallWithoutContinuity": 78.6,
+    "robust": 64.9,
+    "lines": {
+      "worst": {
+        "roster": "DDR-50MIX",
+        "lineNumber": 2,
+        "score": 15.625,
+        "parts": {
+          "hours": 0,
+          "flow": 0,
+          "rest": 50,
+          "nights": null
+        },
+        "counts": {
+          "worked": 3,
+          "pairs": 1,
+          "stable": 0,
+          "heavy": 1,
+          "penalty": 4
+        },
+        "facts": [
+          "week 30:14",
+          "1 zware overgang(en)"
+        ]
+      },
+      "best": {
+        "roster": "DDR-L",
+        "lineNumber": 7,
+        "score": 99.46969696969697,
+        "parts": {
+          "hours": 98.54166666666667,
+          "flow": 100,
+          "rest": null,
+          "nights": null
+        },
+        "counts": {
+          "worked": 2,
+          "pairs": 0,
+          "stable": 0,
+          "heavy": 0,
+          "penalty": 0
+        },
+        "facts": []
+      },
+      "median": 75,
+      "all": [
+        {
+          "roster": "DDR-50MIX",
+          "lineNumber": 1,
+          "score": 31.249999999999993,
+          "parts": {
+            "hours": 0,
+            "flow": 16.666666666666664,
+            "rest": 76.66666666666666,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 1,
+            "heavy": 1,
+            "penalty": 5
+          },
+          "facts": [
+            "week 48:05",
+            "1 zware overgang(en)"
+          ]
+        },
+        {
+          "roster": "DDR-50MIX",
+          "lineNumber": 2,
+          "score": 15.625,
+          "parts": {
+            "hours": 0,
+            "flow": 0,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 0,
+            "heavy": 1,
+            "penalty": 4
+          },
+          "facts": [
+            "week 30:14",
+            "1 zware overgang(en)"
+          ]
+        },
+        {
+          "roster": "DDR-50MIX",
+          "lineNumber": 3,
+          "score": 81.51041666666666,
+          "parts": {
+            "hours": 88.54166666666666,
+            "flow": 100,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-50MIX",
+          "lineNumber": 4,
+          "score": 63.802083333333336,
+          "parts": {
+            "hours": 86.45833333333334,
+            "flow": 25,
+            "rest": 100,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 2
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-50MIX",
+          "lineNumber": 5,
+          "score": 63.63636363636363,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 31:37"
+          ]
+        },
+        {
+          "roster": "DDR-50MIX",
+          "lineNumber": 6,
+          "score": 68.75,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 49:25"
+          ]
+        },
+        {
+          "roster": "DDR-BLM",
+          "lineNumber": 1,
+          "score": 94.79166666666666,
+          "parts": {
+            "hours": 97.91666666666666,
+            "flow": 100,
+            "rest": 85.00000000000001,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 4,
+            "stable": 4,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-BLM",
+          "lineNumber": 2,
+          "score": 64.453125,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 66.25000000000001,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 4,
+            "stable": 4,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:19"
+          ]
+        },
+        {
+          "roster": "DDR-BLM",
+          "lineNumber": 3,
+          "score": 71.875,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 90,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 27:43"
+          ]
+        },
+        {
+          "roster": "DDR-BLM",
+          "lineNumber": 4,
+          "score": 62.08333333333333,
+          "parts": {
+            "hours": 0,
+            "flow": 58.33333333333333,
+            "rest": 86.66666666666667,
+            "nights": 100
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 1
+          },
+          "facts": [
+            "week 31:06"
+          ]
+        },
+        {
+          "roster": "DDR-BLM",
+          "lineNumber": 5,
+          "score": 71.40625,
+          "parts": {
+            "hours": 2.2916666666666696,
+            "flow": 100,
+            "rest": 86.66666666666667,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 47:49"
+          ]
+        },
+        {
+          "roster": "DDR-BLM",
+          "lineNumber": 6,
+          "score": 87.76041666666666,
+          "parts": {
+            "hours": 94.79166666666666,
+            "flow": 100,
+            "rest": 65,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 1,
+          "score": 70.41666666666667,
+          "parts": {
+            "hours": 6.666666666666665,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 32:32"
+          ]
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 2,
+          "score": 95.9090909090909,
+          "parts": {
+            "hours": 88.75,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 3,
+          "score": 59.375,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:37"
+          ]
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 4,
+          "score": 75,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 100,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 31:29"
+          ]
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 5,
+          "score": 87.8125,
+          "parts": {
+            "hours": 90.83333333333333,
+            "flow": 100,
+            "rest": 68.33333333333333,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 6,
+          "score": 92.13541666666667,
+          "parts": {
+            "hours": 93.54166666666667,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 7,
+          "score": 99.46969696969697,
+          "parts": {
+            "hours": 98.54166666666667,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 8,
+          "score": 82.5,
+          "parts": {
+            "hours": 80,
+            "flow": 100,
+            "rest": 60,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 9,
+          "score": 68.75,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:37"
+          ]
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 10,
+          "score": 60.260416666666664,
+          "parts": {
+            "hours": 3.541666666666665,
+            "flow": 100,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 32:17"
+          ]
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 11,
+          "score": 93.64583333333333,
+          "parts": {
+            "hours": 99.58333333333333,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-L",
+          "lineNumber": 12,
+          "score": 59.375,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 50:13"
+          ]
+        },
+        {
+          "roster": "DDR-LN",
+          "lineNumber": 1,
+          "score": 63.63636363636363,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 30:01"
+          ]
+        },
+        {
+          "roster": "DDR-LN",
+          "lineNumber": 2,
+          "score": 72.5,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 70,
+            "nights": 100
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:32"
+          ]
+        },
+        {
+          "roster": "DDR-LN",
+          "lineNumber": 3,
+          "score": 89.63541666666667,
+          "parts": {
+            "hours": 83.54166666666667,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 4,
+            "stable": 4,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-LN",
+          "lineNumber": 4,
+          "score": 63.63636363636363,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 30:54"
+          ]
+        },
+        {
+          "roster": "DDR-LN",
+          "lineNumber": 5,
+          "score": 89.01041666666667,
+          "parts": {
+            "hours": 93.54166666666667,
+            "flow": 100,
+            "rest": 70,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-LN",
+          "lineNumber": 6,
+          "score": 67.70833333333333,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 76.66666666666666,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:38"
+          ]
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 1,
+          "score": 81.875,
+          "parts": {
+            "hours": 90,
+            "flow": 100,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 2,
+          "score": 74.70833333333334,
+          "parts": {
+            "hours": 35.20833333333333,
+            "flow": 83.33333333333334,
+            "rest": 74,
+            "nights": 100
+          },
+          "counts": {
+            "worked": 6,
+            "pairs": 5,
+            "stable": 5,
+            "heavy": 0,
+            "penalty": 1
+          },
+          "facts": [
+            "week 45:11"
+          ]
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 3,
+          "score": 84.11458333333333,
+          "parts": {
+            "hours": 86.45833333333334,
+            "flow": 100,
+            "rest": 60,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 4,
+          "score": 66.89393939393939,
+          "parts": {
+            "hours": 8.958333333333336,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 32:43"
+          ]
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 5,
+          "score": 76.35416666666667,
+          "parts": {
+            "hours": 99.16666666666667,
+            "flow": 100,
+            "rest": 25,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 6,
+          "score": 92.96875,
+          "parts": {
+            "hours": 96.875,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 7,
+          "score": 77.55208333333333,
+          "parts": {
+            "hours": 69.58333333333333,
+            "flow": 100,
+            "rest": 52.5,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 8,
+          "score": 92.58333333333334,
+          "parts": {
+            "hours": 87.91666666666667,
+            "flow": 100,
+            "rest": 80,
+            "nights": 100
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 4,
+            "stable": 4,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 9,
+          "score": 88.85416666666667,
+          "parts": {
+            "hours": 80.41666666666667,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 10,
+          "score": 83.75,
+          "parts": {
+            "hours": 64.16666666666666,
+            "flow": 100,
+            "rest": 76.66666666666666,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 11,
+          "score": 94.54545454545453,
+          "parts": {
+            "hours": 85,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-MIX",
+          "lineNumber": 12,
+          "score": 82.91666666666667,
+          "parts": {
+            "hours": 69.16666666666667,
+            "flow": 100,
+            "rest": 70,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 1,
+          "score": 91.77083333333331,
+          "parts": {
+            "hours": 96.25,
+            "flow": 100,
+            "rest": 76.66666666666666,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 2,
+          "score": 66.27604166666667,
+          "parts": {
+            "hours": 16.666666666666664,
+            "flow": 100,
+            "rest": 58.75,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 4,
+            "stable": 4,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 46:40"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 3,
+          "score": 84.375,
+          "parts": {
+            "hours": 77.08333333333334,
+            "flow": 100,
+            "rest": 68.33333333333333,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 4,
+          "score": 64.0625,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 65,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 29:03"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 5,
+          "score": 95.53030303030303,
+          "parts": {
+            "hours": 87.70833333333333,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 6,
+          "score": 68.75,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:35"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 7,
+          "score": null,
+          "parts": {
+            "hours": 0,
+            "flow": null,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 0,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 32:00"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 8,
+          "score": 70.9375,
+          "parts": {
+            "hours": 8.750000000000002,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 47:18"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 9,
+          "score": 70.15151515151516,
+          "parts": {
+            "hours": 17.91666666666667,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 33:26"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 10,
+          "score": 88.33333333333331,
+          "parts": {
+            "hours": 78.33333333333333,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 11,
+          "score": 80.72916666666667,
+          "parts": {
+            "hours": 47.916666666666664,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 5,
+            "pairs": 4,
+            "stable": 4,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 35:50"
+          ]
+        },
+        {
+          "roster": "DDR-V",
+          "lineNumber": 12,
+          "score": 86.77083333333333,
+          "parts": {
+            "hours": 90.83333333333333,
+            "flow": 100,
+            "rest": 65,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 1,
+          "score": 84.58333333333333,
+          "parts": {
+            "hours": 55.00000000000001,
+            "flow": 100,
+            "rest": 86.66666666666667,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 2,
+          "score": 83.85416666666666,
+          "parts": {
+            "hours": 64.58333333333333,
+            "flow": 100,
+            "rest": 76.66666666666666,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 3,
+          "score": 59.375,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 50,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 2,
+            "stable": 2,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 50:37"
+          ]
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 4,
+          "score": 73.80208333333333,
+          "parts": {
+            "hours": 32.70833333333333,
+            "flow": 100,
+            "rest": 70,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 34:37"
+          ]
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 5,
+          "score": 85.15625,
+          "parts": {
+            "hours": 78.125,
+            "flow": 100,
+            "rest": 70,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 3,
+            "stable": 3,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 6,
+          "score": 72.13541666666667,
+          "parts": {
+            "hours": 13.541666666666663,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 46:55"
+          ]
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 7,
+          "score": 71.82291666666667,
+          "parts": {
+            "hours": 12.291666666666668,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 32:59"
+          ]
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 8,
+          "score": 98.95833333333333,
+          "parts": {
+            "hours": 95.83333333333334,
+            "flow": 100,
+            "rest": 100,
+            "nights": null
+          },
+          "counts": {
+            "worked": 4,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": []
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 9,
+          "score": 68.75,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": 80,
+            "nights": null
+          },
+          "counts": {
+            "worked": 3,
+            "pairs": 1,
+            "stable": 1,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 48:56"
+          ]
+        },
+        {
+          "roster": "DDR-VL",
+          "lineNumber": 10,
+          "score": 63.63636363636363,
+          "parts": {
+            "hours": 0,
+            "flow": 100,
+            "rest": null,
+            "nights": null
+          },
+          "counts": {
+            "worked": 2,
+            "pairs": 0,
+            "stable": 0,
+            "heavy": 0,
+            "penalty": 0
+          },
+          "facts": [
+            "week 29:31"
+          ]
+        }
+      ]
+    },
+    "metrics": {
+      "hours": {
+        "rosters": [
+          {
+            "code": "DDR-50MIX",
+            "averageWeeklyMinutes": 2391,
+            "deviationMinutes": -9
+          },
+          {
+            "code": "DDR-BLM",
+            "averageWeeklyMinutes": 2352,
+            "deviationMinutes": -48
+          },
+          {
+            "code": "DDR-L",
+            "averageWeeklyMinutes": 2399,
+            "deviationMinutes": -1
+          },
+          {
+            "code": "DDR-LN",
+            "averageWeeklyMinutes": 2399,
+            "deviationMinutes": -1
+          },
+          {
+            "code": "DDR-MIX",
+            "averageWeeklyMinutes": 2391,
+            "deviationMinutes": -9
+          },
+          {
+            "code": "DDR-V",
+            "averageWeeklyMinutes": 2384,
+            "deviationMinutes": -16
+          },
+          {
+            "code": "DDR-VL",
+            "averageWeeklyMinutes": 2395,
+            "deviationMinutes": -5
+          }
+        ],
+        "rosterStats": {
+          "n": 7,
+          "mean": 12.714285714285714,
+          "sd": 15.200698157972742,
+          "variance": 231.0612244897959,
+          "min": 1,
+          "max": 48,
+          "maxMin": 47,
+          "cv": 1.195560529278755,
+          "gini": 0.5617977528089888
+        },
+        "lines": [
+          {
+            "roster": "DDR-50MIX",
+            "lineNumber": 1,
+            "dutyMinutes": 1925,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2885,
+            "weeklyMinutes": 2885,
+            "deviationMinutes": 485
+          },
+          {
+            "roster": "DDR-50MIX",
+            "lineNumber": 2,
+            "dutyMinutes": 1334,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1814,
+            "weeklyMinutes": 1814,
+            "deviationMinutes": -586
+          },
+          {
+            "roster": "DDR-50MIX",
+            "lineNumber": 3,
+            "dutyMinutes": 1495,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2455,
+            "weeklyMinutes": 2455,
+            "deviationMinutes": 55
+          },
+          {
+            "roster": "DDR-50MIX",
+            "lineNumber": 4,
+            "dutyMinutes": 1855,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2335,
+            "weeklyMinutes": 2335,
+            "deviationMinutes": -65
+          },
+          {
+            "roster": "DDR-50MIX",
+            "lineNumber": 5,
+            "dutyMinutes": 937,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1897,
+            "weeklyMinutes": 1897,
+            "deviationMinutes": -503
+          },
+          {
+            "roster": "DDR-50MIX",
+            "lineNumber": 6,
+            "dutyMinutes": 1525,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 1440,
+            "totalCreditMinutes": 2965,
+            "weeklyMinutes": 2965,
+            "deviationMinutes": 565
+          },
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 1,
+            "dutyMinutes": 2390,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2390,
+            "weeklyMinutes": 2390,
+            "deviationMinutes": -10
+          },
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 2,
+            "dutyMinutes": 2419,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2899,
+            "weeklyMinutes": 2899,
+            "deviationMinutes": 499
+          },
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 3,
+            "dutyMinutes": 1663,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 1663,
+            "weeklyMinutes": 1663,
+            "deviationMinutes": -737
+          },
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 4,
+            "dutyMinutes": 1866,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 1866,
+            "weeklyMinutes": 1866,
+            "deviationMinutes": -534
+          },
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 5,
+            "dutyMinutes": 2389,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2869,
+            "weeklyMinutes": 2869,
+            "deviationMinutes": 469
+          },
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 6,
+            "dutyMinutes": 1465,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2425,
+            "weeklyMinutes": 2425,
+            "deviationMinutes": 25
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 1,
+            "dutyMinutes": 1952,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 1952,
+            "weeklyMinutes": 1952,
+            "deviationMinutes": -448
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 2,
+            "dutyMinutes": 1386,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2346,
+            "weeklyMinutes": 2346,
+            "deviationMinutes": -54
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 3,
+            "dutyMinutes": 1957,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2917,
+            "weeklyMinutes": 2917,
+            "deviationMinutes": 517
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 4,
+            "dutyMinutes": 929,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1889,
+            "weeklyMinutes": 1889,
+            "deviationMinutes": -511
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 5,
+            "dutyMinutes": 1876,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2356,
+            "weeklyMinutes": 2356,
+            "deviationMinutes": -44
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 6,
+            "dutyMinutes": 1409,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2369,
+            "weeklyMinutes": 2369,
+            "deviationMinutes": -31
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 7,
+            "dutyMinutes": 953,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2393,
+            "weeklyMinutes": 2393,
+            "deviationMinutes": -7
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 8,
+            "dutyMinutes": 1824,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2304,
+            "weeklyMinutes": 2304,
+            "deviationMinutes": -96
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 9,
+            "dutyMinutes": 1957,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2917,
+            "weeklyMinutes": 2917,
+            "deviationMinutes": 517
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 10,
+            "dutyMinutes": 977,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1937,
+            "weeklyMinutes": 1937,
+            "deviationMinutes": -463
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 11,
+            "dutyMinutes": 958,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 1440,
+            "totalCreditMinutes": 2398,
+            "weeklyMinutes": 2398,
+            "deviationMinutes": -2
+          },
+          {
+            "roster": "DDR-L",
+            "lineNumber": 12,
+            "dutyMinutes": 1573,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 3013,
+            "weeklyMinutes": 3013,
+            "deviationMinutes": 613
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 1,
+            "dutyMinutes": 841,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 1801,
+            "weeklyMinutes": 1801,
+            "deviationMinutes": -599
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 2,
+            "dutyMinutes": 1952,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2912,
+            "weeklyMinutes": 2912,
+            "deviationMinutes": 512
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 3,
+            "dutyMinutes": 2479,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2479,
+            "weeklyMinutes": 2479,
+            "deviationMinutes": 79
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 4,
+            "dutyMinutes": 894,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1854,
+            "weeklyMinutes": 1854,
+            "deviationMinutes": -546
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 5,
+            "dutyMinutes": 1951,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2431,
+            "weeklyMinutes": 2431,
+            "deviationMinutes": 31
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 6,
+            "dutyMinutes": 2438,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2918,
+            "weeklyMinutes": 2918,
+            "deviationMinutes": 518
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 1,
+            "dutyMinutes": 1488,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2448,
+            "weeklyMinutes": 2448,
+            "deviationMinutes": 48
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 2,
+            "dutyMinutes": 2711,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2711,
+            "weeklyMinutes": 2711,
+            "deviationMinutes": 311
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 3,
+            "dutyMinutes": 2465,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2465,
+            "weeklyMinutes": 2465,
+            "deviationMinutes": 65
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 4,
+            "dutyMinutes": 1003,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1963,
+            "weeklyMinutes": 1963,
+            "deviationMinutes": -437
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 5,
+            "dutyMinutes": 1436,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2396,
+            "weeklyMinutes": 2396,
+            "deviationMinutes": -4
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 6,
+            "dutyMinutes": 1425,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2385,
+            "weeklyMinutes": 2385,
+            "deviationMinutes": -15
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 7,
+            "dutyMinutes": 2066,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2546,
+            "weeklyMinutes": 2546,
+            "deviationMinutes": 146
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 8,
+            "dutyMinutes": 2342,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2342,
+            "weeklyMinutes": 2342,
+            "deviationMinutes": -58
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 9,
+            "dutyMinutes": 1534,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2494,
+            "weeklyMinutes": 2494,
+            "deviationMinutes": 94
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 10,
+            "dutyMinutes": 1748,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2228,
+            "weeklyMinutes": 2228,
+            "deviationMinutes": -172
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 11,
+            "dutyMinutes": 1032,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2472,
+            "weeklyMinutes": 2472,
+            "deviationMinutes": 72
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 12,
+            "dutyMinutes": 1772,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2252,
+            "weeklyMinutes": 2252,
+            "deviationMinutes": -148
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 1,
+            "dutyMinutes": 1938,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2418,
+            "weeklyMinutes": 2418,
+            "deviationMinutes": 18
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 2,
+            "dutyMinutes": 2320,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2800,
+            "weeklyMinutes": 2800,
+            "deviationMinutes": 400
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 3,
+            "dutyMinutes": 2510,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2510,
+            "weeklyMinutes": 2510,
+            "deviationMinutes": 110
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 4,
+            "dutyMinutes": 1263,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 1743,
+            "weeklyMinutes": 1743,
+            "deviationMinutes": -657
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 5,
+            "dutyMinutes": 1499,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2459,
+            "weeklyMinutes": 2459,
+            "deviationMinutes": 59
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 6,
+            "dutyMinutes": 1475,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2915,
+            "weeklyMinutes": 2915,
+            "deviationMinutes": 515
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 7,
+            "dutyMinutes": 0,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 1920,
+            "totalCreditMinutes": 1920,
+            "weeklyMinutes": 1920,
+            "deviationMinutes": -480
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 8,
+            "dutyMinutes": 1878,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2838,
+            "weeklyMinutes": 2838,
+            "deviationMinutes": 438
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 9,
+            "dutyMinutes": 1046,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2006,
+            "weeklyMinutes": 2006,
+            "deviationMinutes": -394
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 10,
+            "dutyMinutes": 1544,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2504,
+            "weeklyMinutes": 2504,
+            "deviationMinutes": 104
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 11,
+            "dutyMinutes": 2150,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2150,
+            "weeklyMinutes": 2150,
+            "deviationMinutes": -250
+          },
+          {
+            "roster": "DDR-V",
+            "lineNumber": 12,
+            "dutyMinutes": 1876,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2356,
+            "weeklyMinutes": 2356,
+            "deviationMinutes": -44
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 1,
+            "dutyMinutes": 1704,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2184,
+            "weeklyMinutes": 2184,
+            "deviationMinutes": -216
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 2,
+            "dutyMinutes": 1750,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2230,
+            "weeklyMinutes": 2230,
+            "deviationMinutes": -170
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 3,
+            "dutyMinutes": 2077,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 3037,
+            "weeklyMinutes": 3037,
+            "deviationMinutes": 637
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 4,
+            "dutyMinutes": 2077,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2077,
+            "weeklyMinutes": 2077,
+            "deviationMinutes": -323
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 5,
+            "dutyMinutes": 2025,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 0,
+            "totalCreditMinutes": 2505,
+            "weeklyMinutes": 2505,
+            "deviationMinutes": 105
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 6,
+            "dutyMinutes": 1375,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 1440,
+            "totalCreditMinutes": 2815,
+            "weeklyMinutes": 2815,
+            "deviationMinutes": 415
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 7,
+            "dutyMinutes": 1019,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 1979,
+            "weeklyMinutes": 1979,
+            "deviationMinutes": -421
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 8,
+            "dutyMinutes": 1940,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 480,
+            "totalCreditMinutes": 2420,
+            "weeklyMinutes": 2420,
+            "deviationMinutes": 20
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 9,
+            "dutyMinutes": 1496,
+            "wtvCreditMinutes": 480,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 2936,
+            "weeklyMinutes": 2936,
+            "deviationMinutes": 536
+          },
+          {
+            "roster": "DDR-VL",
+            "lineNumber": 10,
+            "dutyMinutes": 811,
+            "wtvCreditMinutes": 0,
+            "otherCreditMinutes": 960,
+            "totalCreditMinutes": 1771,
+            "weeklyMinutes": 1771,
+            "deviationMinutes": -629
+          }
+        ],
+        "lineStats": {
+          "n": 64,
+          "mean": 291.125,
+          "sd": 229.39209745542675,
+          "variance": 52620.734375,
+          "min": 2,
+          "max": 737,
+          "maxMin": 735,
+          "cv": 0.7879505279705513,
+          "gini": 0.4427782175826535,
+          "within5": 2,
+          "within10": 4,
+          "within20": 7,
+          "outside30": 56
+        }
+      },
+      "nights": {
+        "total": 19,
+        "blocks": 4,
+        "singletons": 0,
+        "blocks2": 0,
+        "blocks3": 1,
+        "blocks4": 0,
+        "blocks5plus": 3,
+        "averageBlockLength": 4.75,
+        "longestBlock": 6,
+        "outsideNightRosters": 0,
+        "perRoster": [
+          {
+            "code": "DDR-50MIX",
+            "nights": 0,
+            "lines": 6,
+            "perLine": 0,
+            "blocks": []
+          },
+          {
+            "code": "DDR-BLM",
+            "nights": 3,
+            "lines": 6,
+            "perLine": 0.5,
+            "blocks": [
+              3
+            ]
+          },
+          {
+            "code": "DDR-L",
+            "nights": 0,
+            "lines": 12,
+            "perLine": 0,
+            "blocks": []
+          },
+          {
+            "code": "DDR-LN",
+            "nights": 6,
+            "lines": 6,
+            "perLine": 1,
+            "blocks": [
+              6
+            ]
+          },
+          {
+            "code": "DDR-MIX",
+            "nights": 10,
+            "lines": 12,
+            "perLine": 0.8333333333333334,
+            "blocks": [
+              5,
+              5
+            ]
+          },
+          {
+            "code": "DDR-V",
+            "nights": 0,
+            "lines": 12,
+            "perLine": 0,
+            "blocks": []
+          },
+          {
+            "code": "DDR-VL",
+            "nights": 0,
+            "lines": 10,
+            "perLine": 0,
+            "blocks": []
+          }
+        ],
+        "perEligibleLine": {
+          "n": 3,
+          "mean": 0.7777777777777778,
+          "sd": 0.20786985482077452,
+          "variance": 0.04320987654320988,
+          "min": 0.5,
+          "max": 1,
+          "maxMin": 0.5,
+          "cv": 0.2672612419124244,
+          "gini": 0.14285714285714285
+        },
+        "lineCounts": {
+          "n": 24,
+          "mean": 0.7916666666666666,
+          "sd": 1.4994211846205487,
+          "variance": 2.2482638888888897,
+          "min": 0,
+          "max": 5,
+          "maxMin": 5,
+          "cv": 1.8940057068891143,
+          "gini": 0.8004385964912281
+        }
+      },
+      "transitions": {
+        "matrix": {
+          "EARLY": {
+            "EARLY": 53,
+            "LATE": 2,
+            "NIGHT": 0,
+            "OFF": 32,
+            "RES": 13
+          },
+          "LATE": {
+            "EARLY": 2,
+            "LATE": 48,
+            "NIGHT": 1,
+            "OFF": 34,
+            "RES": 19
+          },
+          "NIGHT": {
+            "EARLY": 0,
+            "LATE": 0,
+            "NIGHT": 15,
+            "OFF": 4,
+            "RES": 0
+          },
+          "OFF": {
+            "EARLY": 29,
+            "LATE": 37,
+            "NIGHT": 3,
+            "OFF": 83,
+            "RES": 17
+          },
+          "RES": {
+            "EARLY": 16,
+            "LATE": 17,
+            "NIGHT": 0,
+            "OFF": 16,
+            "RES": 7
+          }
+        },
+        "workedDays": 223,
+        "adjacentWorkedPairs": 121,
+        "stablePairs": 116,
+        "switches": 5,
+        "switchesPerWorkedDay": 0.02242152466367713,
+        "penaltyTotal": 13,
+        "heavy": 2,
+        "nightToEarly": 0,
+        "lateToEarly": 2,
+        "earlyToNight": 0,
+        "averageStreak": 2.0841121495327104,
+        "streakLengths": {
+          "1": 46,
+          "2": 25,
+          "3": 22,
+          "4": 10,
+          "5": 3,
+          "6": 1
+        }
+      },
+      "rest": {
+        "nextDayIntervals": 121,
+        "bands": {
+          "1-3h": 28,
+          "3-6h": 71,
+          ">6h": 16,
+          "0-1h": 6
+        },
+        "shortestSurplusMinutes": 29,
+        "recovery": [
+          {
+            "roster": "DDR-BLM",
+            "lineNumber": 4,
+            "weekday": 4,
+            "blockLength": 3,
+            "minutes": 4767
+          },
+          {
+            "roster": "DDR-LN",
+            "lineNumber": 3,
+            "weekday": 3,
+            "blockLength": 6,
+            "minutes": 3357
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 3,
+            "weekday": 1,
+            "blockLength": 5,
+            "minutes": 3589
+          },
+          {
+            "roster": "DDR-MIX",
+            "lineNumber": 8,
+            "weekday": 5,
+            "blockLength": 5,
+            "minutes": 3559
+          }
+        ]
+      },
+      "fairness": {
+        "shuntingPerLine": {
+          "n": 7,
+          "mean": 0.65,
+          "sd": 0.33641433259390596,
+          "variance": 0.11317460317460318,
+          "min": 0.3,
+          "max": 1.1666666666666667,
+          "maxMin": 0.8666666666666667,
+          "cv": 0.5175605116829323,
+          "gini": 0.27838827838827845
+        },
+        "weekendDaysPerLine": {
+          "n": 7,
+          "mean": 0.819047619047619,
+          "sd": 0.14918523997924324,
+          "variance": 0.022256235827664398,
+          "min": 0.5833333333333334,
+          "max": 1,
+          "maxMin": 0.41666666666666663,
+          "cv": 0.1821447697420993,
+          "gini": 0.10299003322259136
+        },
+        "fullWeekendsPerLine": {
+          "n": 7,
+          "mean": 0.33095238095238094,
+          "sd": 0.13226613726029668,
+          "variance": 0.01749433106575964,
+          "min": 0.16666666666666666,
+          "max": 0.5,
+          "maxMin": 0.33333333333333337,
+          "cv": 0.3996530766138461,
+          "gini": 0.22404933196300106
+        },
+        "weekendNightsPerLine": {
+          "n": 7,
+          "mean": 0.07142857142857142,
+          "sd": 0.12140522651411392,
+          "variance": 0.014739229024943309,
+          "min": 0,
+          "max": 0.3333333333333333,
+          "maxMin": 0.3333333333333333,
+          "cv": 1.699673171197595,
+          "gini": 0.7619047619047619
+        },
+        "longDutiesPerLine": {
+          "n": 7,
+          "mean": 0,
+          "sd": 0,
+          "variance": 0,
+          "min": 0,
+          "max": 0,
+          "maxMin": 0,
+          "cv": null,
+          "gini": null
+        },
+        "averageDutyMinutesPerRoster": [
+          {
+            "code": "DDR-50MIX",
+            "average": 477.42105263157896
+          },
+          {
+            "code": "DDR-BLM",
+            "average": 468.9230769230769
+          },
+          {
+            "code": "DDR-L",
+            "average": 479.7567567567568
+          },
+          {
+            "code": "DDR-LN",
+            "average": 479.77272727272725
+          },
+          {
+            "code": "DDR-MIX",
+            "average": 477.77272727272725
+          },
+          {
+            "code": "DDR-V",
+            "average": 475.5853658536585
+          },
+          {
+            "code": "DDR-VL",
+            "average": 478.6470588235294
+          }
+        ]
+      },
+      "change": {
+        "dutyDays": 223,
+        "sameDuty": 223,
+        "changedDuty": 0,
+        "sameDutyShare": 1,
+        "changedDaypart": 0,
+        "sameDaypartShare": 1
+      }
+    },
+    "patternDistance": {
+      "total": 0,
+      "parts": {
+        "nightBlocks": 0,
+        "transitions": 0,
+        "streaks": 0,
+        "restBands": 0,
+        "weekendBurden": 0,
+        "switches": 0
+      }
+    },
+    "diagnosis": [
+      "223/223 diensten geplaatst",
+      "2 zware overgang(en)",
+      "2× laat → vroeg op de volgende dag",
+      "grootste afwijking van 40:00: 48 min (DDR-BLM)",
+      "slechtste regel: DDR-50MIX regel 2 (15.6) — week 30:14, 1 zware overgang(en)",
+      "rangeer per regel 0.3–1.2"
+    ]
+  }
+}

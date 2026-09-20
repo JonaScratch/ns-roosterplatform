@@ -1,0 +1,78 @@
+CAO-DAGEN
+══════════════════════════════════════════════════════════════════
+
+Medewerker 100021 (DDR); vandaag 2026-09-19, eerste geldige dag 2026-10-31, gekozen werkdag 2026-10-31.
+
+1. De termijn van zes weken
+  ✓ de dag vóór de grens (2026-10-30) wordt geweigerd, ook zonder formulier
+  ✓ van die geweigerde dag staat niets in de database
+  ✓ een datum in het verleden wordt geweigerd
+  ✓ een onherkenbare datum wordt geweigerd
+
+2. Een geldige aanvraag
+  ✓ de werkdag 2026-10-31 wordt aangenomen
+  ✓ de aanvraag is meteen leesbaar over een tweede verbinding
+  ✓ hij staat op REQUESTED
+  ✓ de dienst die vervalt is meegeschreven
+  ✓ de gebeurtenis staat in dezelfde transactie in de outbox
+  ✓ de dienstindeling van deze standplaats heeft bericht gekregen
+  ✓ de aanvraag staat in het auditlog
+
+3. Wat niet twee keer kan
+  ✓ dezelfde dag kan niet twee keer worden aangevraagd
+  ✓ en er staat nog steeds één rij
+
+4. Het tegoed van 2 dagen
+  ✓ de 3e aanvraag wordt geweigerd
+  ✓ en de melding gaat over het tegoed, niet over iets anders
+  ✓ er staan niet meer dan 2 lopende aanvragen
+
+5. Verwerken in het verlofboek
+  ✓ de aanvraag staat in de wachtrij van de dienstindeling
+  ✓ twee gelijktijdige klikken leveren één verwerking op
+  ✓ de aanvraag staat op REGISTERED_IN_LEAVE_BOOK
+  ✓ wie hem verwerkte is vastgelegd
+  ✓ de versie is opgehoogd
+  ✓ de medewerker krijgt precies één melding, niet twee
+
+6. Na verwerking
+  ✓ een verwerkte dag kan de medewerker niet meer intrekken
+  ✓ verwerken kan niet nog een keer
+
+7. Andermans aanvraag
+  ✓ een collega kan uw aanvraag niet intrekken
+  ✓ en ziet uw aanvragen niet in zijn eigen overzicht
+
+8. Twee CAO-dagen achter elkaar
+  ✓ 2026-10-31 wordt aangenomen
+  ✓ de dag erna (2026-11-01) wordt geweigerd — directe serviceaanroep
+  ✓ en de melding zegt in gewone taal waarom
+  ✓ van die geweigerde dag staat niets in de database
+  ✓ de kalender toont de dag ernaast als niet-kiesbaar
+  ✓ met een dag ertussen (2026-11-02) mag het wel
+  ✓ 2026-11-01 wordt op zichzelf aangenomen
+  ✓ de dag ervóór (2026-10-31) wordt óók geweigerd
+  ✓ twee gelijktijdige aanvragen voor aansluitende dagen: hoogstens één slaagt
+  ✓ een aanvraag wacht op de grendel van dezelfde medewerker
+  ✓ en gaat door zodra de grendel los is
+
+9. De jaargrens: 31 december en 1 januari
+  ✓ met 2026-12-31 aangevraagd wordt 2027-01-01 geweigerd
+  ✓ en om de juiste reden: aaneengesloten, niet iets anders
+  ✓ en van 2027-01-01 staat niets in de database
+  ✓ met 2027-01-01 aangevraagd wordt 2026-12-31 óók geweigerd
+  ✓ en ook hier om de reden aaneengesloten
+  ✓ 2026-12-30 wordt niet om aaneengeslotenheid geweigerd
+
+10. Opnieuw aanvragen na intrekken
+  ✓ 2026-10-31 wordt de eerste keer aangenomen
+  ✓ de aanvraag kan worden ingetrokken
+  ✓ 2026-10-31 kan na intrekken opnieuw worden aangevraagd
+  ✓ er staat precies één rij voor deze medewerker en datum, niet twee
+  ✓ die rij staat weer op REQUESTED
+
+Opruimen
+  ✓ alles wat dit script aanmaakte is teruggedraaid
+
+══════════════════════════════════════════════════════════════════
+49 controles geslaagd, 0 mislukt, 0 geblokkeerd door ontbrekende gegevens.

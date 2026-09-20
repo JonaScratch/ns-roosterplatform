@@ -1,0 +1,25 @@
+RUILWORKFLOW
+════════════════════════════════════════════════════════════
+
+Aanvrager 100002: dienst 10 op 2026-08-06
+Ontvanger 100003: dienst 10 op 2026-08-07
+
+1. Afwijzen
+  ✓ afwijzen slaagt
+  ✓ afwijzen verandert geen enkele roosterdag
+  ✓ de status is REJECTED
+  ✓ de aanvrager krijgt een melding
+
+2. Accepteren
+   uitkomst: De ruil is sinds het voorstel ongeldig geworden: | Er worden geen extra grenzen verzonnen. Zolang de regels ontbreken kan een plaatsing in deze profielen niet volledig worden beoordeeld. | De pauze van dienst 10 is niet aangeleverd, terwijl de arbeidstijd boven 5 u 30 m uitkomt. Zonder de pauze is niet vast te stellen of de voorgeschreven onderbreking is gehaald. | In de week van 2026-08-01 tot en met 2026-08-07 staan 0 rustdagen in plaats van 2. Eén rustdag mag binnen de rouleringsperiode naar een andere week worden overgebracht, maar er is geen bron waaruit blijkt of dat hier is gebeurd. Zonder die registratie is niet vast te stellen of dit een overtreding of een correcte overdracht is. | Er worden geen extra grenzen verzonnen. Zolang de regels ontbreken kan een plaatsing in deze profielen niet volledig worden beoordeeld. | De pauze van dienst 10 is niet aangeleverd, terwijl de arbeidstijd boven 5 u 30 m uitkomt. Zonder de pauze is niet vast te stellen of de voorgeschreven onderbreking is gehaald. | In de week van 2026-07-31 tot en met 2026-08-06 staan 0 rustdagen in plaats van 2. Eén rustdag mag binnen de rouleringsperiode naar een andere week worden overgebracht, maar er is geen bron waaruit blijkt of dat hier is gebeurd. Zonder die registratie is niet vast te stellen of dit een overtreding of een correcte overdracht is.
+  ✓ een geweigerde ruil eindigt in INVALIDATED met bewaarde toetsing
+  ✓ een geweigerde ruil laat beide roosters ongemoeid
+
+3. Rooster gewijzigd na de aanvraag
+  ✓ een achterhaald voorstel wordt niet uitgevoerd
+  ✓ de status wordt INVALIDATED of het voorstel wordt geweigerd
+
+════════════════════════════════════════════════════════════
+8 controles geslaagd, 0 mislukt.
+
+Let op: in deze meting is geen ruil daadwerkelijk uitgevoerd, en dat ligt niet aan de ruilworkflow. Het bestaande rooster draagt zelf al bevindingen — te weinig rustdagen in de week, een dienst boven de maximale dienstlengte. De hertoetsing bij accepteren beoordeelt het rooster zoals het ná de ruil zou zijn, en dat rooster erft die bevindingen. Zolang het basisrooster niet schoon door de validator komt, kan geen enkele ruil worden geaccepteerd. Dat is het bedoelde fail-closed gedrag; het toont wel dat een demonstratie van een geslaagde ruil een rooster vergt dat zelf door de regels komt.

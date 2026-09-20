@@ -1,0 +1,108 @@
+[
+  {
+    "phase": "human",
+    "label": "Ontwikkeling 2 (H09, referentie)",
+    "change": "menselijke tabel ×1, geen slechtste geval, geen nachtuitgangreparatie",
+    "strategies": [
+      "BALANCED"
+    ]
+  },
+  {
+    "phase": "ab-frozen",
+    "label": "Bevroren v1.0.4 (reproductie)",
+    "change": "profiel frozen-1.0.4",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "frozen-1.0.4",
+    "variant": null
+  },
+  {
+    "phase": "ab-k5",
+    "label": "Nachtrij × 5",
+    "change": "alleen de nachtrij in CP-SAT × 5",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "rhythm",
+    "variant": {
+      "nightExitScale": 5,
+      "worstCase": false,
+      "nightExitRepair": false,
+      "nightFirst": false
+    }
+  },
+  {
+    "phase": "ab-k5-wc",
+    "label": "+ slechtste geval",
+    "change": "plus het slechtste geval in de rangschikking",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "rhythm",
+    "variant": {
+      "nightExitScale": 5,
+      "nightExitRepair": false,
+      "nightFirst": false
+    }
+  },
+  {
+    "phase": "ab-k5-full",
+    "label": "+ nachtuitgangreparatie, nachten eerst",
+    "change": "plus gerichte reparatie van nachtuitgangen, nachtdoelen eerst",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "rhythm",
+    "variant": {
+      "nightExitScale": 5
+    }
+  },
+  {
+    "phase": "ab-k5-nofirst",
+    "label": "volledig, maar niet nachten eerst",
+    "change": "zonder de volgorde nachten-eerst (alles tegelijk op ernst)",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "rhythm",
+    "variant": {
+      "nightExitScale": 5,
+      "nightFirst": false
+    }
+  },
+  {
+    "phase": "ab-k5-f025",
+    "label": "volledig, eerlijkheidsmarge 0,25",
+    "change": "bewaking eerlijkheid 0,25 in plaats van 0,5",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "rhythm",
+    "variant": {
+      "nightExitScale": 5,
+      "guards": {
+        "fairness": 0.25,
+        "hours": 1,
+        "rest": 1
+      }
+    }
+  },
+  {
+    "phase": "ab-k5-f100",
+    "label": "volledig, eerlijkheidsmarge 1,0",
+    "change": "bewaking eerlijkheid 1,0 in plaats van 0,5",
+    "strategies": [
+      "BALANCED"
+    ],
+    "profile": "rhythm",
+    "variant": {
+      "nightExitScale": 5,
+      "guards": {
+        "fairness": 1,
+        "hours": 1,
+        "rest": 1
+      }
+    }
+  }
+]

@@ -129,13 +129,29 @@ heeft en bewaakt de regelbronnen, maar plant niet zelf.
    roosterlijn en bezetting; onder Regelaantallen voorstellen kan de Rooster
    Commissie voor een nieuwe dienstregelingronde een ander aantal regels
    doorrekenen.
-5. **Genereren & simulatie** *(Rooster Commissie)* — kies een strategietegel
-   en een roosterjaar en druk op *Genereren starten*. Een opdracht met drie
-   kandidaten duurt op een gewone laptop enkele minuten (gemeten op Dordrecht:
-   ruim drie minuten). U ziet welke stap loopt; verversen of wegklikken stopt de
-   opdracht niet, en *Generatie stoppen* wel. Lukt een derde, echt afwijkende
-   kandidaat niet binnen de rekentijd, dan staat er precies dat — er wordt geen
-   slechter rooster bijgezet om het aantal vol te maken.
+5. **Genereren & simulatie** *(Rooster Commissie)* — kies een strategietegel,
+   hoe grondig er gezocht mag worden, en een roosterjaar; druk dan op
+   *Genereren starten*. U ziet welke stap loopt en hoeveel varianten er zijn
+   onderzocht; verversen of wegklikken stopt de opdracht niet, en *Generatie
+   stoppen* wel. Lukt een derde, echt afwijkende kandidaat niet binnen de
+   rekentijd, dan staat er precies dat — er wordt geen slechter rooster
+   bijgezet om het aantal vol te maken.
+
+   De keuze *hoe grondig* bepaalt alleen hoe lang er wordt gezocht, niet wat er
+   mag: de regels, de roosterprofielen en de controle achteraf zijn in alle
+   gevallen dezelfde.
+
+   | Keuze | Duurt ongeveer | Wanneer |
+   | --- | --- | --- |
+   | Snel | 2 minuten | Even kijken wat eruit komt |
+   | Normaal | 5 minuten | De gewone keuze |
+   | Grondig | 15 minuten | Als het rooster echt af moet zijn |
+   | Zeer grondig | 30 minuten | Lastig pakket; laat het rustig draaien |
+
+   Wat u krijgt heet *beste gevonden kandidaat*, niet *perfect rooster*. Het
+   aantal mogelijke roosters is te groot om allemaal te bekijken; wat er ligt is
+   het beste van wat in de gekozen tijd is onderzocht, volledig doorgerekend en
+   onafhankelijk gecontroleerd.
 6. **Scenario's vergelijken** *(Rooster Commissie)* — open een kandidaat om de
    zeven basisroosters te zien, open een basisrooster voor de dagkaarten per
    regel, vink twee of drie kandidaten aan om te vergelijken, of kies *Opnieuw

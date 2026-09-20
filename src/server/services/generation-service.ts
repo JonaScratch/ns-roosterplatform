@@ -7,6 +7,8 @@ import type { Actor } from "@/server/auth/session";
 import { recordAudit } from "@/server/audit/log";
 import { prisma } from "@/server/data/prisma";
 import { isRunningHere, runGenerationJob } from "@/server/generation/generation-job";
+import { defaultOptimizerEngine, defaultSearchMode } from "@/server/generation/engine-flag";
+import { isSearchMode } from "@/server/generation/adaptive/config";
 import { type RebuildGoal, REBUILD_GOAL_LABELS } from "@/server/optimizer/objective-weights";
 import { NotFoundError, requirePermission } from "@/server/security/authorize";
 import { locationScopeFor } from "@/server/security/location-scope";
@@ -68,6 +70,48 @@ export interface GenerationRunView {
     readonly note: string | null;
   } | null;
   readonly cancelRequested: boolean;
+  /** Welke zoekmachine en welke rekentijdmodus; leeg bij de klassieke engine. */
+  readonly engine: string;
+  readonly searchMode: string | null;
+  /** Tellers van de adaptieve zoektocht, zodat het scherm kan laten zien wat er gebeurt. */
+  readonly search: SearchProgress | null;
+}
+
+/** Wat het scherm van de zoektocht laat zien. Alleen tellingen, geen roosters. */
+export interface SearchProgress {
+  readonly attempts: number;
+  readonly starts: number;
+  readonly repairs: number;
+  readonly variants: number;
+  readonly validCandidates: number;
+  readonly rejected: number;
+  readonly polishSwaps: number;
+  readonly bestRobust: number | null;
+  readonly elapsedSeconds: number;
+  readonly budgetSeconds: number;
+  readonly stopReason: string | null;
+}
+
+function zoekVoortgang(waarde: unknown): SearchProgress | null {
+  if (!waarde || typeof waarde !== "object") {
+    return null;
+  }
+  const c = waarde as Record<string, unknown>;
+  const getal = (naam: string) => (typeof c[naam] === "number" ? (c[naam] as number) : 0);
+  return {
+    attempts: getal("attempts"),
+    starts: getal("starts"),
+    repairs: getal("repairs"),
+    // Elke solverpoging is één rooster; het bijschaven beoordeelt er duizenden.
+    variants: getal("attempts") + getal("polishVariants"),
+    validCandidates: getal("validCandidates"),
+    rejected: getal("rejected"),
+    polishSwaps: getal("polishSwaps"),
+    bestRobust: typeof c.bestRobust === "number" ? c.bestRobust : null,
+    elapsedSeconds: getal("elapsedSeconds"),
+    budgetSeconds: getal("budgetSeconds"),
+    stopReason: typeof c.stopReason === "string" ? c.stopReason : null,
+  };
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -124,6 +168,9 @@ export async function createRunCore(input: {
   readonly kind?: "GENERATE" | "REBUILD";
   readonly parentCandidateId?: string | null;
   readonly adjustment?: { goals: readonly RebuildGoal[]; preserveGoodParts: boolean; note: string | null } | null;
+  readonly engine?: string;
+  readonly searchMode?: string | null;
+  readonly ablation?: string | null;
 }): Promise<string> {
   await interruptStaleRunsCore(input.locationCode);
 
@@ -159,6 +206,9 @@ export async function createRunCore(input: {
           periodEnd: toDatabaseDate(jaar.endExclusive),
           dutyPackageId: pakket?.id ?? null,
           requestedCandidates: input.requestedCandidates,
+          engine: input.engine ?? defaultOptimizerEngine(),
+          searchMode: input.searchMode ?? null,
+          ablation: input.ablation ?? null,
           createdByUserId: input.actor.userId,
           parentCandidateId: input.parentCandidateId ?? null,
           adjustmentId: opdracht?.id ?? null,
@@ -223,12 +273,15 @@ async function viewOf(id: string): Promise<GenerationRunView | null> {
       ? { goals: rij.adjustment.goals, preserveGoodParts: rij.adjustment.preserveGoodParts, note: rij.adjustment.note }
       : null,
     cancelRequested: rij.cancelRequested,
+    engine: rij.engine,
+    searchMode: rij.searchMode,
+    search: zoekVoortgang(rij.searchCounters),
   };
 }
 
 // ── Met toegangscheck ────────────────────────────────────────────────────────
 
-export async function startGeneration(input: { strategy: string; rosterYear: number }): Promise<string> {
+export async function startGeneration(input: { strategy: string; rosterYear: number; mode?: string | null }): Promise<string> {
   const actor = await requirePermission(PERMISSIONS.ROSTER_GENERATE);
   const scope = await locationScopeFor(actor, null);
   const scenario = SCENARIOS.find((entry) => entry.key === input.strategy);
@@ -238,6 +291,7 @@ export async function startGeneration(input: { strategy: string; rosterYear: num
   // De nulmeting is het huidige rooster als referentie; daar zijn geen drie
   // varianten van. De rangeervariant is één deterministische bewerking.
   const aantal = scenario.engine === "BASELINE" ? 1 : 3;
+  const engine = defaultOptimizerEngine();
   const runId = await createRunCore({
     actor,
     locationCode: scope.code,
@@ -245,6 +299,10 @@ export async function startGeneration(input: { strategy: string; rosterYear: num
     strategyLabel: scenario.label,
     rosterYear: input.rosterYear,
     requestedCandidates: aantal,
+    engine,
+    // De nulmeting en de rangeervariant rekenen niet; een rekentijdmodus zegt
+    // daar niets en wordt niet vastgelegd.
+    searchMode: engine === "adaptive" && scenario.engine === "SOLVER" ? (isSearchMode(input.mode) ? input.mode : defaultSearchMode()) : null,
   });
   // Bewust niet afgewacht: de opdracht loopt door nadat dit verzoek klaar is.
   void runGenerationJob(runId, actor);
@@ -285,6 +343,8 @@ export async function startRebuild(input: {
     rosterYear: ouder.generationRun?.rosterYear ?? new Date().getFullYear() + 1,
     requestedCandidates: 1,
     kind: "REBUILD",
+    engine: defaultOptimizerEngine(),
+    searchMode: defaultOptimizerEngine() === "adaptive" ? defaultSearchMode() : null,
     parentCandidateId: ouder.id,
     adjustment: { goals, preserveGoodParts: input.preserveGoodParts, note: input.note?.trim() || null },
   });
@@ -435,5 +495,8 @@ export function runJson(view: GenerationRunView): GenerationRunJson {
     candidateIds: view.candidateIds,
     parentCandidateId: view.parentCandidateId,
     cancelRequested: view.cancelRequested,
+    engine: view.engine,
+    searchMode: view.searchMode,
+    search: view.search,
   };
 }

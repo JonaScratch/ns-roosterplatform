@@ -1,0 +1,85 @@
+{
+  "schema": "ns-optimizer-development-log/1",
+  "entries": [
+    {
+      "id": "D01",
+      "date": "2026-09-17",
+      "phase": "voor BEFORE",
+      "component": "cpsat-optimizer.ts — solverstatistiek",
+      "change": "De zaadwaarde in CpSatOutcomeExtras is de werkelijk gebruikte (options.seed) in plaats van die van de strategie.",
+      "reason": "v1.0.3 noteerde seed 1–5 terwijl de generatie per poging profiel.seed × 100 + poging meegaf; een kandidaat was niet naar zijn poging te herleiden.",
+      "observedEffect": "Alleen registratie. Het zoeken zelf is ongewijzigd; commit e2b2091 vóór de eerste BEFORE-run.",
+      "outcome": "behouden"
+    },
+    {
+      "id": "D02",
+      "date": "2026-09-17",
+      "phase": "kalibratie kwaliteitsmodel (vóór BEFORE-evaluatie)",
+      "component": "quality-evaluator.ts — regelscore",
+      "change": "Een regel zonder één gewerkte dienst (alleen rust, reserve, WTV) krijgt geen regelscore.",
+      "reason": "Bij de eerste kalibratie op het officiële rooster was de 'slechtste regel' DDR-V regel 7: vier reservedagen, weekomvang 32:00, score 0. Die regel ligt volledig vast in de structuur en is door geen engine te veranderen.",
+      "observedEffect": "Slechtste regel officieel: DDR-50MIX regel 2 (15,6: week 30:14, één zware overgang). Robuuste score officieel 58,7 → 64,9. Vastgesteld vóór enige AFTER-meting en vóór de BEFORE-evaluatie; beide fases worden met deze versie gemeten.",
+      "outcome": "behouden (onderdeel van quality-model-v1)"
+    },
+    {
+      "id": "D03",
+      "date": "2026-09-16",
+      "phase": "v1.0.3 (historie)",
+      "component": "objective-weights.ts — nightPair",
+      "change": "nightPair 300 → 700 (BALANCED), REST_QUALITY 400 → 900, MINIMAL_CHANGE 140 → 300.",
+      "reason": "Twee-nachtreeksen bleven te goedkoop naast de nachtverdeling.",
+      "observedEffect": "Eén meetrun: nachtclustering 78,9 → 89,5/100/100 en nachtverdeling 89,9 → 95,1; een tweede run met identieke gewichten gaf nachtverdeling 71,7. Les: nooit op één run afstemmen — aanleiding voor de meervoudige BEFORE/AFTER in v1.0.4.",
+      "outcome": "behouden in v1.0.3; startpunt van de BEFORE"
+    },
+    {
+      "id": "D04",
+      "date": "2026-09-17",
+      "phase": "v1.0.4 ontwikkeling",
+      "component": "adaptive/engine.ts — gerichte CP-SAT-reparatie",
+      "change": "Geen wijziging: de gerichte reparatie is gemeten zoals gebouwd (vrije roosters rond de zwakte, ouder als warme start, kostenpost 30 per afwijkende dienstdag, doelgewichten maal 4, 15 s).",
+      "reason": "Eerste NORMAL-rookproef (run 902) om te zien of reparatie iets toevoegt aan de drie starts.",
+      "observedEffect": "5 reparaties, 0 aanvaard: 4x rangschikkingswinst 0 (waarvan 2 met solverstatus OPTIMAL), 1x verslechtering op nachtclustering (-5,3). Het kleine vraagstuk was met de ouder als warme start al optimaal; er viel binnen die vrijheidsgraden niets te winnen. Zoeken stopte op het plateau na 8 pogingen.",
+      "outcome": "reparatie blijft bestaan maar is niet het werkpaard; aanleiding voor D05. Hoort in het hoofdstuk Wat niet werkte."
+    },
+    {
+      "id": "D05",
+      "date": "2026-09-17",
+      "phase": "v1.0.4 ontwikkeling",
+      "component": "roster-polish.ts (nieuw) — bijschaven met ruildiensten",
+      "change": "Nieuwe zoeklaag naast CP-SAT: ruil twee diensten van dezelfde weekdag en beoordeel de uitkomst met de kwaliteitsevaluator (steilste beklimming, daarna herhaald schoppen en opnieuw klimmen). Toets per ruil precies de harde verzameling van het model: weekdag, dagdelen binnen het profiel, geplande dagelijkse rust bij alle vier de buren. Rekentijd per kandidaat: FAST 6 s, NORMAL 10 s, DEEP 15 s, EXTENSIVE 20 s.",
+      "reason": "CP-SAT optimaliseert zijn eigen kostenfunctie, niet de menselijke kwaliteitsmaat; D04 liet zien dat er in dat optimum niets meer te halen valt. Eén beoordeling kost ~2 ms, dus duizenden alternatieven passen in seconden.",
+      "observedEffect": "Op drie BEFORE-kandidaten (BALANCED, 30 s per stuk, ~42.000 beoordeelde alternatieven): robuuste score 78,4 → 79,2 / 78,4 → 79,2 / 75,6 → 76,7; slechtste regel 59,4 → 63,6 / 59,4 → 63,6 / 50,0 → 53,1; hard geldig gebleven, patroonafstand tot het officiële rooster vrijwel gelijk (29,2 → 29,7 / 22,5 → 22,9 / 23,0 → 22,9). De winst zat vooral in rustcomfort en de slechtste regel; uren en nachtclustering bewogen nauwelijks. De eerste beklimming (circa 4 s) leverde vrijwel alle winst; de schoppen daarna zelden meer.",
+      "outcome": "behouden; per kandidaat vóór de eindvalidatie, scoreopbouw en vingerafdruk worden opnieuw berekend."
+    },
+    {
+      "id": "D06",
+      "date": "2026-09-17",
+      "phase": "v1.0.4 ontwikkeling",
+      "component": "adaptive/config.ts — polishSeconds per modus",
+      "change": "Rekentijd voor bijschaven: Snel 8 s, Normaal 15 s, Grondig 25 s, Zeer grondig 30 s (was 6/10/15/20).",
+      "reason": "Het getal mocht geen gok zijn. `npm run measure:polish-budget` schaaft vier BEFORE-kandidaten bij met 5, 10, 20, 40, 80 en 160 s; de uitkomst staat in polish-budget.json.",
+      "observedEffect": "Gemiddelde winst in rangschikking: 5 s +0,71 | 10 s +1,10 | 20 s +1,30 | 40 s +1,49 | 80 s +1,59 | 160 s +1,66. Marge per seconde: 0,079 → 0,020 → 0,009 → 0,003 → 0,001; de knik ligt bij 20 s. De slechtste regel stijgt van 55,7 naar 60,2 en is bij 10 s al uitgewerkt. De patroonafstand tot het officiële rooster loopt bij lange budgetten langzaam op (25,6 → 26,3 bij 10 s → 27,7 bij 160 s): nog meer schaven wijkt verder af van de menselijke structuur voor steeds minder winst.",
+      "outcome": "Normaal op 15 s: onder de knik, boven de verzadiging van de slechtste regel, en er blijft rekentijd over voor genoeg pogingen om drie voldoende verschillende kandidaten te vinden. Niet hoger, juist vanwege die patroonafstand."
+    },
+    {
+      "id": "D07",
+      "date": "2026-09-18",
+      "phase": "v1.0.4 meting",
+      "component": "werkwijze — mutatietests naast lopende metingen",
+      "change": "Geen codewijziging: een ablatierun die tijdens de mutatietests startte, is weggegooid en opnieuw gedraaid.",
+      "reason": "`verify:mutanten` verandert broncode op schijf, draait de tests en zet het terug. Een benchmarkrun die in dat venster start, laadt de gemuteerde code en meet dan iets anders dan de rest.",
+      "observedEffect": "Ablatierun 23 (no-transitions) startte binnen seconden van het mutatievenster. Niet aantoonbaar besmet — een al gestart Node-proces heeft zijn modules al geladen — maar niet uit te sluiten, en een meting die je moet verdedigen met 'waarschijnlijk niet' is geen meting.",
+      "outcome": "run 23 opnieuw gedraaid; werkafspraak: geen mutatietests terwijl er een benchmark loopt."
+    },
+    {
+      "id": "D08",
+      "date": "2026-09-18",
+      "phase": "v1.0.4 analyse",
+      "component": "scripts/benchmark/analyse.ts — harde geldigheid",
+      "change": "De toets op harde geldigheid leest een ja/nee nu ook als 1 of 0, niet alleen als `true`.",
+      "reason": "De kandidatentabel is tevens de bron van de CSV en schrijft booleans als 1 en 0. De vergelijking met `=== true` zei daardoor van alle 122 kandidaten dat ze ongeldig waren.",
+      "observedEffect": "Het rapport concludeerde 'afgekeurd wegens een harde regressie' terwijl alle vier de harde toetsen slaagden en geen enkele kandidaat een bevestigde overtreding had. Na de correctie: beide fasen volledig hard geldig, 61 van de 61 AFTER-kandidaten met stand TECHNICALLY_VALID_UNVERIFIED_RULES.",
+      "outcome": "gecorrigeerd en op beide fasen opnieuw doorgerekend; het besluit in hoofdstuk 22 wordt uit dezelfde toetsen afgeleid."
+    }
+  ]
+}

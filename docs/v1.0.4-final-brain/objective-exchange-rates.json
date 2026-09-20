@@ -1,0 +1,963 @@
+{
+  "schema": "ns-exchange-rates/1",
+  "computedAt": "2026-09-19T03:03:00.954Z",
+  "package": {
+    "rosters": 7,
+    "nights": 19,
+    "nightBlocks": 4,
+    "workedDays": 223
+  },
+  "cpsat": [
+    {
+      "strategy": "BALANCED",
+      "hoursUnitPerMinutePerWeek": 900,
+      "hoursWorstPerMinutePerWeek": 40,
+      "tables": [
+        {
+          "tables": "v1.0.4 bevroren (klassieke tabel)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 700,
+              "minutesPerWeek": 0.7777777777777778,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 40,
+              "minutesPerWeek": 0.044444444444444446,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 120,
+              "minutesPerWeek": 0.13333333333333333,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 160,
+              "minutesPerWeek": 0.17777777777777778,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 200,
+              "minutesPerWeek": 0.2222222222222222,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 160,
+              "minutesPerWeek": 0.17777777777777778,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 360,
+              "minutesPerWeek": 0.4,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 1,
+              "minutesPerWeek": 0.0011111111111111111,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        },
+        {
+          "tables": "menselijk ritme, schaal 1 (H05)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 700,
+              "minutesPerWeek": 0.7777777777777778,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 120,
+              "minutesPerWeek": 0.13333333333333333,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 160,
+              "minutesPerWeek": 0.17777777777777778,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 80,
+              "minutesPerWeek": 0.08888888888888889,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 160,
+              "minutesPerWeek": 0.17777777777777778,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 200,
+              "minutesPerWeek": 0.2222222222222222,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 240,
+              "minutesPerWeek": 0.26666666666666666,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 360,
+              "minutesPerWeek": 0.4,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 1,
+              "minutesPerWeek": 0.0011111111111111111,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        },
+        {
+          "tables": "menselijk ritme, nachtrij × 5 (huidig)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 700,
+              "minutesPerWeek": 0.7777777777777778,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 600,
+              "minutesPerWeek": 0.6666666666666666,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 800,
+              "minutesPerWeek": 0.8888888888888888,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 400,
+              "minutesPerWeek": 0.4444444444444444,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 160,
+              "minutesPerWeek": 0.17777777777777778,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 200,
+              "minutesPerWeek": 0.2222222222222222,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 1040,
+              "minutesPerWeek": 1.1555555555555554,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 1320,
+              "minutesPerWeek": 1.4666666666666666,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 1,
+              "minutesPerWeek": 0.0011111111111111111,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "strategy": "REST_QUALITY",
+      "hoursUnitPerMinutePerWeek": 600,
+      "hoursWorstPerMinutePerWeek": 25,
+      "tables": [
+        {
+          "tables": "v1.0.4 bevroren (klassieke tabel)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 1100,
+              "minutesPerWeek": 1.8333333333333333,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1.5,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 100,
+              "minutesPerWeek": 0.16666666666666666,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 300,
+              "minutesPerWeek": 0.5,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 400,
+              "minutesPerWeek": 0.6666666666666666,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 500,
+              "minutesPerWeek": 0.8333333333333334,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 400,
+              "minutesPerWeek": 0.6666666666666666,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1.5,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 3,
+              "minutesPerWeek": 0.005,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        },
+        {
+          "tables": "menselijk ritme, schaal 1 (H05)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 1100,
+              "minutesPerWeek": 1.8333333333333333,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1.5,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 300,
+              "minutesPerWeek": 0.5,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 400,
+              "minutesPerWeek": 0.6666666666666666,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 200,
+              "minutesPerWeek": 0.3333333333333333,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 400,
+              "minutesPerWeek": 0.6666666666666666,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 500,
+              "minutesPerWeek": 0.8333333333333334,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 600,
+              "minutesPerWeek": 1,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1.5,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 3,
+              "minutesPerWeek": 0.005,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        },
+        {
+          "tables": "menselijk ritme, nachtrij × 5 (huidig)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 1100,
+              "minutesPerWeek": 1.8333333333333333,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1.5,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 1500,
+              "minutesPerWeek": 2.5,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 2000,
+              "minutesPerWeek": 3.3333333333333335,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 1000,
+              "minutesPerWeek": 1.6666666666666667,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 400,
+              "minutesPerWeek": 0.6666666666666666,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 500,
+              "minutesPerWeek": 0.8333333333333334,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 2600,
+              "minutesPerWeek": 4.333333333333333,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 3300,
+              "minutesPerWeek": 5.5,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 3,
+              "minutesPerWeek": 0.005,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "strategy": "FAIR_BURDEN",
+      "hoursUnitPerMinutePerWeek": 900,
+      "hoursWorstPerMinutePerWeek": 40,
+      "tables": [
+        {
+          "tables": "v1.0.4 bevroren (klassieke tabel)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 700,
+              "minutesPerWeek": 0.7777777777777778,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 25,
+              "minutesPerWeek": 0.027777777777777776,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 75,
+              "minutesPerWeek": 0.08333333333333333,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 100,
+              "minutesPerWeek": 0.1111111111111111,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 125,
+              "minutesPerWeek": 0.1388888888888889,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 100,
+              "minutesPerWeek": 0.1111111111111111,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 225,
+              "minutesPerWeek": 0.25,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 1,
+              "minutesPerWeek": 0.0011111111111111111,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        },
+        {
+          "tables": "menselijk ritme, schaal 1 (H05)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 700,
+              "minutesPerWeek": 0.7777777777777778,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 75,
+              "minutesPerWeek": 0.08333333333333333,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 100,
+              "minutesPerWeek": 0.1111111111111111,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 50,
+              "minutesPerWeek": 0.05555555555555555,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 100,
+              "minutesPerWeek": 0.1111111111111111,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 125,
+              "minutesPerWeek": 0.1388888888888889,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 150,
+              "minutesPerWeek": 0.16666666666666666,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 225,
+              "minutesPerWeek": 0.25,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 1,
+              "minutesPerWeek": 0.0011111111111111111,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        },
+        {
+          "tables": "menselijk ritme, nachtrij × 5 (huidig)",
+          "events": [
+            {
+              "key": "singleton",
+              "label": "Losse nacht",
+              "recovery": null,
+              "cost": 900,
+              "minutesPerWeek": 1,
+              "formula": "nightSingleton"
+            },
+            {
+              "key": "pair",
+              "label": "Reeks van twee nachten",
+              "recovery": null,
+              "cost": 700,
+              "minutesPerWeek": 0.7777777777777778,
+              "formula": "nightPair"
+            },
+            {
+              "key": "exitRL",
+              "label": "Nachtreeks → 1 vrije dag → laat",
+              "recovery": "± 32 u",
+              "cost": 375,
+              "minutesPerWeek": 0.4166666666666667,
+              "formula": "overOffDay[N][L] × transitions"
+            },
+            {
+              "key": "exitRE",
+              "label": "Nachtreeks → 1 vrije dag → vroeg",
+              "recovery": "± 24 u",
+              "cost": 500,
+              "minutesPerWeek": 0.5555555555555556,
+              "formula": "overOffDay[N][E] × transitions"
+            },
+            {
+              "key": "exitRRE",
+              "label": "Nachtreeks → 2 vrije dagen → vroeg",
+              "recovery": "± 48 u (boven de regel)",
+              "cost": 250,
+              "minutesPerWeek": 0.2777777777777778,
+              "formula": "overTwoOffDays[N][E] × transitions"
+            },
+            {
+              "key": "exitRRL",
+              "label": "Nachtreeks → 2 vrije dagen → laat (menselijk)",
+              "recovery": "± 56 u",
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "overTwoOffDays[N][L] × transitions"
+            },
+            {
+              "key": "lateEarly",
+              "label": "Laat direct gevolgd door vroeg",
+              "recovery": null,
+              "cost": 100,
+              "minutesPerWeek": 0.1111111111111111,
+              "formula": "adjacent[L][E] × transitions"
+            },
+            {
+              "key": "oscELE",
+              "label": "Heen-en-weer vroeg → laat → vroeg (direct)",
+              "recovery": null,
+              "cost": 125,
+              "minutesPerWeek": 0.1388888888888889,
+              "formula": "(adjacent[E][L] + adjacent[L][E]) × transitions"
+            },
+            {
+              "key": "oscNLN",
+              "label": "Nacht → dag → nacht (direct, laat ertussen)",
+              "recovery": null,
+              "cost": 650,
+              "minutesPerWeek": 0.7222222222222222,
+              "formula": "(adjacent[N][L] + adjacent[L][N]) × transitions"
+            },
+            {
+              "key": "oscENE",
+              "label": "Vroeg → nacht → vroeg (direct)",
+              "recovery": null,
+              "cost": 825,
+              "minutesPerWeek": 0.9166666666666666,
+              "formula": "(adjacent[E][N] + adjacent[N][E]) × transitions"
+            },
+            {
+              "key": "restMinute",
+              "label": "Eén minuut minder dan comfortabele rust",
+              "recovery": null,
+              "cost": 1,
+              "minutesPerWeek": 0.0011111111111111111,
+              "formula": "restComfort"
+            },
+            {
+              "key": "startJitterMinute",
+              "label": "Eén minuut begintijdsprong boven het vrije uur",
+              "recovery": null,
+              "cost": 0,
+              "minutesPerWeek": 0,
+              "formula": "startJitter (adaptief: 0)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evaluator": {
+    "hoursPerMinutePerWeek": 0.03035714285714286,
+    "events": {
+      "singleton": -0.6889473684210523,
+      "pair": -0.9394736842105262,
+      "exitBelowRule": -1.753125,
+      "exitBelowRuleWorst": -3.253125,
+      "lateEarly": -0.2934977578475336,
+      "oscillation": -0.5526905829596414
+    },
+    "formulas": {
+      "hours": "0,85 × w_uren × 0,75 × (100/60) / aantal roosters",
+      "singleton": "0,85 × w_nachten × 0,7 × 100 × (0,9·3 + 0·1 − 0,95·4) / nachten",
+      "pair": "0,85 × w_nachten × 0,7 × 100 × (0,9·3 + 0,4·2 − 1·5) / nachten",
+      "exitBelowRule": "0,85 × (w_nachten × 0,3 × 100 + w_rust × 0,25 × 100 × 0,6) / nachtreeksen",
+      "exitBelowRuleWorst": "idem, plus 1,5 als het de slechtste uitgang van het pakket is (slechtste geval, H10)",
+      "lateEarly": "0,85 × (w_regelmaat × 0,2 × 100 × (4/gewerkte dagen)/0,5 + w_rust × 0,15 × 100 × (100/gewerkte dagen)/5)",
+      "oscillation": "0,85 × w_regelmaat × (0,15 × 100 × (100/gewerkt)/5 + 0,2 × 100 × (5/gewerkt)/0,5) + zware overgang in rust"
+    }
+  },
+  "qualityModel": "quality-model-v2"
+}

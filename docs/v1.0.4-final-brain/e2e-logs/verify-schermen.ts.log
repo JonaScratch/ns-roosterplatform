@@ -1,0 +1,66 @@
+SCHERMCONTROLE tegen http://localhost:3300
+════════════════════════════════════════════════════════════
+
+medewerker
+────────────────────────────────────────────────────────────
+  ✓ /medewerker
+  ✓ /medewerker/meldingen
+  ✓ /medewerker
+  ✓ /medewerker/rooster
+  ✓ /medewerker/diensten
+  ✓ /medewerker/ruilen
+  ✓ /medewerker/wachtlijsten
+  ✓ /medewerker/reservevoorkeur
+  ✓ /medewerker/cao-dagen
+
+rooster-commissie
+────────────────────────────────────────────────────────────
+  ✓ /roostercommissie/dienstenbak
+  ✓ /roostercommissie/dienstenbak/101?weekdag=4
+  ✓ /roostercommissie/roosters/DDR-V
+  ✓ /roostercommissie/bezetting
+  ✓ /roostercommissie/simulatie
+  ✓ /roostercommissie/simulatie/8e0a8ebe-9bc5-4c4e-abae-10083a3fa480
+  ✓ /roostercommissie/simulatie/8e0a8ebe-9bc5-4c4e-abae-10083a3fa480/DDR-LN?regel=1
+  ✓ /roostercommissie/simulatie/8e0a8ebe-9bc5-4c4e-abae-10083a3fa480/DDR-LN?regel=alle
+  ✓ /roostercommissie/simulatie/vergelijken?k=8e0a8ebe-9bc5-4c4e-abae-10083a3fa480&k=53b18ed0-7ed1-45b2-a06a-dbf020028356
+  ✓ /roostercommissie/simulatie/vergelijken?k=00000000-0000-4000-8000-000000000000
+  ✓ /roostercommissie/genereren
+  ✓ /roostercommissie/pakketten
+  ✓ /roostercommissie/analyse
+  ✓ /roostercommissie/feedback
+  ✓ /roostercommissie/profielen
+
+dienstindeling
+────────────────────────────────────────────────────────────
+  ✓ /dienstindeling/openstaand
+  ✓ /dienstindeling/roosters
+  ✓ /dienstindeling/reserve
+  ✓ /dienstindeling/beschikbaar
+  ✓ /dienstindeling/cao-dagen
+
+gedeeld
+────────────────────────────────────────────────────────────
+  ✓ /regels
+
+admin
+────────────────────────────────────────────────────────────
+  ✓ /beheer/organisatie
+  ✓ /beheer/organisatie/DDR
+  ✓ /beheer/systeemstatus
+  ✓ /beheer/regelbronnen
+
+Export
+────────────────────────────────────────────────────────────
+  ✓ /roostercommissie/roosterblad/DDR-V?formaat=pdf (4066 bytes)
+  ✓ roosterblad van een scenario als PDF (DDR-V-SCENARIO-SIMULATIE.pdf, 3991 bytes)
+  ✓ een verdwenen scenario geeft een leesbare 404
+  ✓ alle basisroosters als één PDF (BASISROOSTERS-KANDIDAAT-1-SCENARIO-SIMULATIE.pdf, 7 bladen voor 7 roosters)
+
+Interne verwijzingen
+────────────────────────────────────────────────────────────
+  ✓ alle 119 letterlijke interne verwijzingen wijzen naar een route
+  ✓ /roostercommissie/pakketten/sjabloon (8508 bytes)
+
+════════════════════════════════════════════════════════════
+40 schermen in orde, 0 met bevindingen.

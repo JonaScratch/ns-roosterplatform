@@ -1,0 +1,34 @@
+EXCEL-SJABLOON
+══════════════════════════════════════════════════════════════════
+
+Actief pakket DDR: dienstregeling BDU-05-10-2026, 223 diensten.
+
+1. De route levert een bestand
+  ✓ status 200
+  ✓ content-type is xlsx
+  ✓ content-disposition biedt het bestand als download aan
+  ✓ het bestand is niet leeg
+  ✓ het begint met de ZIP-handtekening (geen HTML-foutpagina)
+
+2. Het bestand is een leesbaar werkboek
+  ✓ het archief kan onafhankelijk worden uitgepakt
+  ✓ het bevat een werkboek met minstens één werkblad
+  ✓ het eerste werkblad bevat rijen
+
+3. De kolommen die de opdracht voorschrijft
+  ✓ kolom "Dag" staat in de kopregel
+  ✓ kolom "Dienstnummer" staat in de kopregel
+  ✓ kolom "Diensttijd" staat in de kopregel
+
+4. De inhoud komt overeen met het actieve pakket
+  ✓ het sjabloon bevat de 223 diensten van het actieve pakket
+  ✓ de eerste gegevensrij heeft een weekdag voluit
+  ✓ de eerste gegevensrij heeft een dienstnummer
+  ✓ de diensttijd staat in de vorm 04:27 / 11:07
+  ✓ geen oud `1 = 4:27-11:07`-formaat in de gegevens
+
+5. Een onbekende standplaats levert geen bestand
+  ✓ een lege standplaats wordt geweigerd met een leesbare melding
+
+══════════════════════════════════════════════════════════════════
+17 controles geslaagd, 0 mislukt.

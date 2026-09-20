@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>NS Roosterplatform — Leren van menselijke roosters</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ns-blue:#003da5;
+    --ns-blue-dark:#00265c;
+    --ns-blue-soft:#eaf1fb;
+    --ink:#13203a;
+    --ink-muted:#57647d;
+    --ink-faint:#8695ac;
+    --line:#dbe3f0;
+    --line-soft:#eef2f9;
+    --paper:#ffffff;
+    --ok:#0c7a53;
+    --ok-soft:#e4f5ee;
+    --warn:#a3620b;
+    --warn-soft:#fbeed9;
+    --bad:#a3231f;
+    --bad-soft:#fbe6e5;
+    --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans:"Source Sans 3", -apple-system, Segoe UI, Arial, sans-serif;
+    --mono:"IBM Plex Mono", "Cascadia Code", Consolas, monospace;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{
+    margin:0; background:#eef1f6; color:var(--ink);
+    font-family:var(--sans); font-size:10.5px; line-height:1.62;
+  }
+  .sheet{
+    max-width:210mm; margin:0 auto; background:var(--paper);
+    padding:16mm 18mm 18mm 18mm; box-shadow:0 1px 6px rgba(19,32,58,.18);
+  }
+  @page{ size:210mm 297mm; margin:16mm 18mm 16mm 18mm; }
+  @media print{
+    body{ background:#fff; }
+    .sheet{ max-width:none; margin:0; padding:0; box-shadow:none; }
+  }
+
+  h1,h2,h3,h4{ margin:0; font-weight:700; text-wrap:balance; }
+  p{ margin:0 0 2.6mm; }
+  a{ color:var(--ns-blue); }
+
+  /* ── Omslag ────────────────────────────────────────────────────────── */
+  .cover{ break-after:page; page-break-after:always; min-height:245mm; display:flex; flex-direction:column; }
+  .cover-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover-tag{ font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); text-align:right; line-height:1.7; }
+  .cover-mid{ margin-top:46mm; }
+  .cover-mid .kicker{ font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ns-blue); margin-bottom:6mm; }
+  .cover-mid h1{ font-size:40px; line-height:1.08; margin-bottom:8mm; }
+  .cover-mid .claim{ font-family:var(--serif); font-size:16px; line-height:1.45; color:var(--ns-blue-dark); font-weight:600; max-width:135mm; }
+  .cover-band{
+    margin-top:auto; background:linear-gradient(120deg, var(--ns-blue) 0%, #0057c7 60%, #2f7fe0 100%);
+    color:#fff; padding:7mm 8mm; display:flex; justify-content:space-between; align-items:flex-end; gap:8mm;
+  }
+  .cover-band .place{ font-family:var(--serif); font-size:15px; font-weight:600; }
+  .cover-band .version{ color:#cfe0fa; font-size:9.5px; text-align:right; line-height:1.6; font-family:var(--mono); }
+
+  /* ── Hoofdstukken ──────────────────────────────────────────────────── */
+  .chapter{ break-before:page; page-break-before:always; }
+  .chapter:first-of-type{ break-before:auto; page-break-before:auto; }
+  .chapter > .head{ border-bottom:2px solid var(--ns-blue); padding-bottom:3mm; margin-bottom:5mm; }
+  .chapter > .head .num{ font-family:var(--mono); font-size:10px; color:var(--ns-blue); letter-spacing:.05em; }
+  .chapter > .head h2{ font-size:21px; line-height:1.15; margin-top:1mm; }
+  .chapter > .head .sub{ font-size:10px; color:var(--ink-muted); margin-top:1.5mm; }
+  h3.sec{ font-size:12.5px; margin:6mm 0 2mm; color:var(--ns-blue-dark); }
+  h3.sec:first-child{ margin-top:0; }
+  h4.sub{ font-size:10.8px; margin:4mm 0 1.5mm; }
+  .lede{ font-family:var(--serif); font-size:13px; line-height:1.6; margin-bottom:4mm; }
+
+  /* ── Inhoudsopgave ─────────────────────────────────────────────────── */
+  .toc{ break-after:page; page-break-after:always; }
+  .toc-row{ display:flex; gap:4mm; align-items:baseline; padding:2.4mm 0; border-bottom:1px solid var(--line-soft); }
+  .toc-row .num{ font-family:var(--mono); font-size:10px; color:var(--ns-blue); width:7mm; flex:none; }
+  .toc-row .name{ font-family:var(--serif); font-size:12px; font-weight:600; }
+  .toc-row .what{ font-size:9.4px; color:var(--ink-muted); margin-left:auto; text-align:right; max-width:95mm; }
+
+  /* ── Tabellen ──────────────────────────────────────────────────────── */
+  table{ width:100%; border-collapse:collapse; font-size:9.3px; margin:2mm 0 3mm; }
+  thead{ display:table-header-group; }
+  tr{ break-inside:avoid; page-break-inside:avoid; }
+  th{
+    text-align:left; font-size:8.2px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--ink-faint); border-bottom:1px solid var(--line); padding:1.8mm 2mm 1.8mm 0; vertical-align:bottom;
+  }
+  td{ padding:1.7mm 2mm 1.7mm 0; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+  td.num, th.num{ text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; padding-right:3mm; }
+  tbody tr:last-child td{ border-bottom:1px solid var(--line); }
+  .wide{ overflow-x:auto; }
+  caption{ caption-side:top; text-align:left; font-size:9.6px; font-weight:700; padding-bottom:1.5mm; }
+
+  .better{ color:var(--ok); font-weight:600; }
+  .worse{ color:var(--bad); font-weight:600; }
+  .same{ color:var(--ink-faint); }
+
+  /* ── Blokken ───────────────────────────────────────────────────────── */
+  .callout{ background:var(--ns-blue-soft); border-left:3px solid var(--ns-blue); padding:4mm 5mm; margin:3mm 0; break-inside:avoid; }
+  .callout p{ font-family:var(--serif); font-size:11.5px; line-height:1.55; color:var(--ns-blue-dark); margin:0; }
+  .callout.warn{ background:var(--warn-soft); border-left-color:var(--warn); }
+  .callout.warn p{ color:#6b4400; }
+  .callout.bad{ background:var(--bad-soft); border-left-color:var(--bad); }
+  .callout.bad p{ color:#7a1a17; }
+  .callout.ok{ background:var(--ok-soft); border-left-color:var(--ok); }
+  .callout.ok p{ color:#08573b; }
+
+  .cards{ display:grid; gap:3mm; margin:3mm 0; }
+  .cards.g2{ grid-template-columns:1fr 1fr; }
+  .cards.g3{ grid-template-columns:repeat(3,1fr); }
+  .cards.g4{ grid-template-columns:repeat(4,1fr); }
+  .card{ border:1px solid var(--line); border-radius:3px; padding:4mm; background:#fbfcff; break-inside:avoid; }
+  .card h4{ font-size:10.4px; margin-bottom:1.4mm; }
+  .card p{ font-size:9.2px; line-height:1.5; color:var(--ink-muted); margin:0; }
+  .stat{ border-left:2.5px solid var(--ns-blue); padding-left:3.5mm; break-inside:avoid; }
+  .stat .n{ font-family:var(--mono); font-size:21px; font-weight:500; color:var(--ns-blue); line-height:1.05; }
+  .stat .l{ font-size:8.8px; color:var(--ink-muted); margin-top:1.2mm; line-height:1.45; }
+
+  figure{ margin:3mm 0 4mm; break-inside:avoid; page-break-inside:avoid; }
+  figure svg{ max-width:100%; height:auto; display:block; }
+  figcaption{ font-size:8.8px; color:var(--ink-muted); margin-top:1.6mm; line-height:1.5; }
+
+  ul,ol{ margin:0 0 3mm; padding-left:5mm; }
+  li{ margin-bottom:1mm; }
+  code{ font-family:var(--mono); font-size:9px; background:var(--line-soft); padding:.4mm 1mm; border-radius:2px; }
+  .note{ font-size:8.8px; color:var(--ink-faint); line-height:1.5; }
+  .mono{ font-family:var(--mono); font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<section class="cover">
+  <div class="cover-top">
+    <svg viewBox="0 0 538.32953 210.2625" style="height:20px;width:auto" 
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="538.32953"
+   height="210.2625"
+   id="svg2"
+   xml:space="preserve"
+   inkscape:version="0.48.1 "
+   sodipodi:docname="AJAX.svg"><sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview12"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="0.42096774"
+     inkscape:cx="269.16475"
+     inkscape:cy="105.13125"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g18" /><metadata
+     id="metadata13"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath20"><path
+         d="m 0,8418.9 5952.75,0 L 5952.75,0 0,0 0,8418.9 z"
+         id="path22"
+         inkscape:connector-curvature="0" /></clipPath></defs><g
+     transform="matrix(1.25,0,0,-1.25,-103.998,631.3225)"
+     id="g12"><g
+       transform="scale(0.1,0.1)"
+       id="g14"><g
+         id="g16"><g
+           clip-path="url(#clipPath20)"
+           id="g18"><path
+             d="m 2666.73,4717.86 c 38.13,0 66.57,-19.06 95.17,-47.37 l 484.79,-484.64 c 95.16,-95.02 199.58,-142.68 342.25,-142.68 l 903.15,0 -332.73,-332.72 -846.25,0 c -47.51,0 -75.81,9.53 -104.4,38.12 l -484.94,484.64 c -95.02,95.31 -199.43,142.68 -342.11,142.68 l -903.15,0 332.73,341.97 855.49,0 z m 332.87,190.04 c -95.02,95.32 -209.26,142.68 -332.87,142.68 l -988.64,0 -846.106,-836.14 846.106,-845.96 475.4,0 -674.98,674.69 903.15,0 c 37.98,0 75.96,-9.53 104.56,-38.12 L 2971,3510.87 c 95.02,-95.02 209.11,-142.39 332.73,-142.39 l 998.17,0 836.72,845.96 -836.72,836.14 -484.79,0 674.98,-674.69 -903.15,0 c -38.12,0 -66.43,19.06 -95.03,37.84"
+             id="path24"
+             style="fill:#333399;fill-opacity:1;fill-rule:evenodd;stroke:none"
+             inkscape:connector-curvature="0" /></g></g></g></g></svg>
+    <div class="cover-tag">Roosterplatform<br>Leerrapport<br>18 september 2026</div>
+  </div>
+  <div class="cover-mid">
+    <div class="kicker">Versie 1.0.5 · menselijke roosters als referentie</div>
+    <h1>Leren van zeven<br>roosters die mensen<br>maakten</h1>
+    <p class="claim">Wat de officiële Dordrechtse basisroosters laten zien, hoe dat in de meting en de
+    zoekmachine terechtkwam, wat het opleverde — en drie kandidaatpakketten die nu op een menselijk oordeel wachten.</p>
+  </div>
+  <div class="cover-band">
+    <div class="place">Standplaats Dordrecht · referentie DDR_BDU_05_10_2026</div>
+    <div class="version">20 BEFORE-runs · 2 AFTER-runs<br>66 kandidaten gemeten<br>quality-model-v2 · adaptive-1.0.5</div>
+  </div>
+</section>
+
+<section class="toc">
+  <div class="head" style="border-bottom:2px solid var(--ns-blue);padding-bottom:3mm;margin-bottom:5mm">
+    <h2 style="font-size:21px">Inhoud</h2>
+  </div>
+  <div class="toc-row"><div class="num">1</div><div class="name">Samenvatting</div><div class="what">Wat er is gedaan, wat het opleverde en wat nog open is</div></div><div class="toc-row"><div class="num">2</div><div class="name">De bron: zeven menselijke roosters</div><div class="what">Wat er is ingelezen, gecontroleerd en gemeten</div></div><div class="toc-row"><div class="num">3</div><div class="name">Wat de roosters laten zien</div><div class="what">Hard tegenover zacht, en twaalf ontwerpprincipes met hun bewijs</div></div><div class="toc-row"><div class="num">4</div><div class="name">Meten zoals mensen roosteren</div><div class="what">Kwaliteitsmodel v2: wat veranderde tegenover v1, en of het de menselijke roosters herkent</div></div><div class="toc-row"><div class="num">5</div><div class="name">Wat er aan de zoekmachine veranderde</div><div class="what">Overgangstabel in de solver, bewaking bij het bijschaven, en wat is afgewezen</div></div><div class="toc-row"><div class="num">6</div><div class="name">Ontwikkellog</div><div class="what">Elke wijziging met reden en gemeten effect, ook wat niet werkte</div></div><div class="toc-row"><div class="num">7</div><div class="name">BEFORE en AFTER</div><div class="what">Dezelfde meting voor en na, met de eerste AFTER-meting ernaast</div></div><div class="toc-row"><div class="num">8</div><div class="name">Per basisrooster</div><div class="what">Waar de uitkomst per profiel ligt, en waar de uitschieters zitten</div></div><div class="toc-row"><div class="num">9</div><div class="name">Regressies en wat open blijft</div><div class="what">Alles wat na de ijking slechter is, of niet is opgelost</div></div><div class="toc-row"><div class="num">10</div><div class="name">De drie kandidaatpakketten</div><div class="what">Ter beoordeling door de Roostercommissie</div></div><div class="toc-row"><div class="num">11</div><div class="name">Hoe de beoordeling werkt</div><div class="what">Oordeel per regel en voorkeur tussen kandidaten; wat ermee gebeurt</div></div><div class="toc-row"><div class="num">12</div><div class="name">Reproduceerbaarheid en controles</div><div class="what">Welke opdracht welk bestand maakt, en wat de tests zeggen</div></div>
+  <p class="note" style="margin-top:6mm">Gegenereerd uit <code>docs/human-roster-benchmark/</code> en
+  <code>configs/</code>. Elk getal komt uit die bestanden. Hoofdstuk 12 noemt per bestand de opdracht die het maakt.</p>
+</section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 1</div><h2>Samenvatting</h2><div class="sub">Wat er is gedaan, wat het opleverde en wat nog open is</div></div>
+<p class="lede">De zeven officiële basisroosters van Dordrecht zijn gelezen als menselijke referentie
+(<code>HUMAN_ACCEPTED_REFERENCE</code>, DDR_BDU_05_10_2026). Daaruit zijn
+zachte ontwerpprincipes afgeleid, is het kwaliteitsmodel herijkt (v2) en is de zoekmachine bijgesteld
+(adaptive-1.0.5). Dezelfde meting van 2 runs voor en na laat zien waar de uitkomst dichter bij de
+menselijke referentie ligt, en waar niet.</p>
+
+<div class="callout warn"><p>AFTER haalt <strong>5 van de 10</strong> acceptatiepunten uit de werkopdracht (§75, §81). Alle 6 AFTER-kandidaten zijn hard geldig, met volledige dekking en zonder profielovertreding. Niet gehaald: minder losse nachten; langere, samenhangender werkblokken; beter herstel na nachten; minder zware slechtste overgang; rust niet noemenswaardig achteruit (marge 1).</p></div>
+
+<table><caption>De kern: officieel rooster, v1.0.4 (BEFORE) en v1.0.5 (AFTER), gemeten met kwaliteitsmodel v2</caption><thead><tr><th>Maat</th><th class="num">Officieel</th><th class="num">BEFORE</th><th class="num">AFTER</th><th class="num">Verschil</th><th>Oordeel</th></tr></thead><tbody><tr><td>Robuuste kwaliteit</td><td class="num">83,5</td><td class="num">84,0</td><td class="num">83,6</td><td class="num">−0,4</td><td><span class="worse">slechter</span></td></tr><tr><td>Slechtste regel</td><td class="num">68,2</td><td class="num">78,5</td><td class="num">81,6</td><td class="num">+3,1</td><td><span class="better">beter</span></td></tr><tr><td>Nachten</td><td class="num">98,9</td><td class="num">85,5</td><td class="num">82,0</td><td class="num">−3,5</td><td><span class="worse">slechter</span></td></tr><tr><td>Regelmaat</td><td class="num">88,7</td><td class="num">93,9</td><td class="num">95,0</td><td class="num">+1,0</td><td><span class="better">beter</span></td></tr><tr><td>Rust</td><td class="num">79,4</td><td class="num">82,8</td><td class="num">79,3</td><td class="num">−3,5</td><td><span class="worse">slechter</span></td></tr><tr><td>Eerlijkheid</td><td class="num">66,9</td><td class="num">85,1</td><td class="num">85,9</td><td class="num">+0,8</td><td><span class="better">beter</span></td></tr><tr><td>Uitgang na nachten (%)</td><td class="num">100,0</td><td class="num">65,8</td><td class="num">61,5</td><td class="num">−4,3</td><td><span class="worse">slechter</span></td></tr><tr><td>Nachtreeks gevolgd door vroeg</td><td class="num">0,00</td><td class="num">1,92</td><td class="num">1,50</td><td class="num">−0,42</td><td><span class="better">beter</span></td></tr><tr><td>Kortste herstel na nachtreeks (u)</td><td class="num">56,0</td><td class="num">43,7</td><td class="num">30,9</td><td class="num">−12,8</td><td><span class="worse">slechter</span></td></tr><tr><td>Begintijdsprong gemiddeld (min)</td><td class="num">73</td><td class="num">84</td><td class="num">71</td><td class="num">−13</td><td><span class="better">beter</span></td></tr><tr><td>Losse nachten</td><td class="num">0,00</td><td class="num">0,15</td><td class="num">0,33</td><td class="num">+0,18</td><td><span class="worse">slechter</span></td></tr><tr><td>Structurele afstand tot officieel</td><td class="num">0,0</td><td class="num">24,5</td><td class="num">24,3</td><td class="num">−0,3</td><td><span class="better">beter</span></td></tr></tbody></table><p class="note">Gemiddelden over 60 (BEFORE) en 6 (AFTER) kandidaten. "Beter" en "slechter" gaan over de richting van de maat, niet over een menselijk oordeel.</p>
+
+<h3 class="sec">Wat dit rapport niet zegt</h3>
+<ul>
+  <li>Dat de nieuwe roosters beter zijn voor de mensen die ze rijden. Niemand heeft ze nog beoordeeld. De drie
+  kandidaatpakketten in hoofdstuk 10 zijn daarvoor gemaakt; na dat oordeel pas volgen verdere wijzigingen aan gewichten of model.</li>
+  <li>Dat de menselijke principes wetten zijn. Het is één steekproef: 7 basisroosters, 64 regels, één roosterperiode.</li>
+  <li>Iets over gezondheid. "Na nachten liever laat dan vroeg" is hier een voorkeur in het roosterontwerp
+  (<em>schedule-flow preference</em>), gemeten aan wat mensen maakten.</li>
+</ul>
+
+<h3 class="sec">De belangrijkste les van deze ronde</h3>
+<p>Twee keer bleek een onderdeel van de meting minder rust te belonen dan meer: eerst in de solver (H04), daarna
+in de beoordeling waarop het bijschaven stuurt (H09). Beide keren vond de zoekmachine het gat binnen één meting.
+De eerste AFTER-meting haalde daardoor maar 5 van de 10 acceptatiepunten. De uitgangswaarde na nachten is nu
+monotoon in de hersteltijd en dat staat in een test vast. Hoofdstuk 6 beschrijft beide gevallen.</p></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 2</div><h2>De bron: zeven menselijke roosters</h2><div class="sub">Wat er is ingelezen, gecontroleerd en gemeten</div></div>
+<p>De zeven PDF's van dienstenpakket DDR-BDU-05-10-2026 zijn cel voor cel ingelezen en op twee manieren
+gecontroleerd: de tijden in de PDF tegen het dienstenpakket (dienst plus weekdag, want een dienstnummer alleen
+is geen identiteit), en elke cel tegen het officiële rooster in de database. Afwijkingen:
+<strong>0</strong>.</p>
+
+<div class="callout warn"><p>Eén roosterperiode van één standplaats (7 basisroosters, 64 regels). Patronen hieronder zijn waarnemingen in deze steekproef, geen algemene wetten.</p></div>
+
+<table><caption>De zeven basisroosters</caption><thead><tr><th>Rooster</th><th class="num">Regels</th><th class="num">Gewerkt</th><th class="num">V / L / N</th><th class="num">Nachtreeksen</th><th class="num">Werkblok (d)</th><th class="num">Eén dagdeel (%)</th><th class="num">Sprong begintijd (min)</th><th class="num">Gem. week incl. pauze</th><th class="num">Regels excl. pauze</th></tr></thead><tbody><tr><td>Vroeg<br><span class="note">DDR-V</span></td><td class="num">12</td><td class="num">41</td><td class="num">41 / 0 / 0</td><td class="num">—</td><td class="num">2,2</td><td class="num">100,0</td><td class="num">81</td><td class="num">39:44</td><td class="num">26:51–46:37</td></tr><tr><td>Vroeg/Laat<br><span class="note">DDR-VL</span></td><td class="num">10</td><td class="num">34</td><td class="num">19 / 15 / 0</td><td class="num">—</td><td class="num">2,1</td><td class="num">100,0</td><td class="num">62</td><td class="num">39:55</td><td class="num">27:18–47:22</td></tr><tr><td>Laat<br><span class="note">DDR-L</span></td><td class="num">12</td><td class="num">37</td><td class="num">0 / 37 / 0</td><td class="num">—</td><td class="num">1,9</td><td class="num">100,0</td><td class="num">92</td><td class="num">39:59</td><td class="num">29:12–48:00</td></tr><tr><td>Laat/Nacht<br><span class="note">DDR-LN</span></td><td class="num">6</td><td class="num">22</td><td class="num">0 / 16 / 6</td><td class="num">6</td><td class="num">2,4</td><td class="num">100,0</td><td class="num">66</td><td class="num">39:59</td><td class="num">28:48–45:56</td></tr><tr><td>Mix<br><span class="note">DDR-MIX</span></td><td class="num">12</td><td class="num">44</td><td class="num">15 / 19 / 10</td><td class="num">5, 5</td><td class="num">2,3</td><td class="num">100,0</td><td class="num">69</td><td class="num">39:51</td><td class="num">31:22–40:15</td></tr><tr><td>BLM<br><span class="note">DDR-BLM</span></td><td class="num">6</td><td class="num">26</td><td class="num">14 / 9 / 3</td><td class="num">3</td><td class="num">3,3</td><td class="num">96,9</td><td class="num">63</td><td class="num">39:12</td><td class="num">23:08–44:02</td></tr><tr><td>50+ Mix<br><span class="note">DDR-50MIX</span></td><td class="num">6</td><td class="num">19</td><td class="num">11 / 8 / 0</td><td class="num">—</td><td class="num">1,7</td><td class="num">90,2</td><td class="num">96</td><td class="num">39:51</td><td class="num">27:48–47:00</td></tr></tbody></table><p class="note">Werkblok: aaneengesloten gewerkte dagen; RES breekt een blok. Sprong begintijd: tussen twee opeenvolgende diensten in hetzelfde dagdeel. Nachtreeksen over de regelgrens heen tellen als één reeks.</p>
+
+<div class="cards g4">
+  <div class="card stat"><div class="n">223</div><div class="l">gewerkte dagen in het pakket</div></div>
+  <div class="card stat"><div class="n">98/102</div><div class="l">werkblokken met één dagdeel</div></div>
+  <div class="card stat"><div class="n">3 · 5 · 5 · 6</div><div class="l">lengtes van de nachtreeksen; geen losse nacht, geen reeks van twee</div></div>
+  <div class="card stat"><div class="n">56 u</div><div class="l">kortste herstel na een nachtreeks (de regel vraagt 46)</div></div>
+</div>
+
+<p class="note">Bronbestanden: <code>official-roster-lines.json</code> (elke dag van elke regel),
+<code>official-features.json</code>, <code>transition-matrix.csv</code>, <code>night-blocks.csv</code>,
+<code>work-blocks.csv</code>, <code>rest-distribution.csv</code>, <code>rotation-boundaries.csv</code>,
+<code>off-blocks.csv</code>, <code>profile-priors.json</code>.</p></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 3</div><h2>Wat de roosters laten zien</h2><div class="sub">Hard tegenover zacht, en twaalf ontwerpprincipes met hun bewijs</div></div>
+<p>Het volledige verslag met tabellen staat in <code>human-roster-design-principles.md</code>. Hier de kern.</p>
+
+<table><caption>Wat hard is en wat zacht</caption><thead><tr><th style="width:50%">Hard: regel of structuur</th><th>Zacht: menselijke voorkeur</th></tr></thead><tbody><tr><td>Dekking: elke dienst precies één keer</td><td>Dagdelen clusteren in blokken</td></tr><tr><td>Profielgrens: geen vroege dienst in Laat/Nacht</td><td>Dagdeelwissels over rust heen</td></tr><tr><td>Geplande dagelijkse rust (12 uur)</td><td>Nachten in reeksen van drie tot zes</td></tr><tr><td>Maximaal 7 aaneengesloten diensten; 7 in een reeks met nachten</td><td>Na nachten eerst rust, dan laat</td></tr><tr><td>Herstelrust na 3+ nachten (46 uur, bronstatus POTENTIAL)</td><td>Ruim herstel na een nachtreeks</td></tr><tr><td>RUST-, WR-, CO- en RES-dagen liggen vast in de structuur</td><td>Begintijden niet ver laten springen; geen regel opofferen voor het gemiddelde</td></tr></tbody></table><p class="note">Niets in de linkerkolom is uit deze roosters afgeleid: dat zijn regels uit de CAO, de Roosterkaders en de roosterstructuur, en die bestonden al in het platform. De rechterkolom komt alleen uit deze roosters.</p>
+
+<table><caption>Twaalf principes</caption><thead><tr><th>Waarneming</th><th>Bewijs in de roosters</th><th>Principe</th></tr></thead><tbody><tr><td>Een werkblok heeft één dagdeel</td><td>98 van de 102 werkblokken</td><td><em>Cluster gelijksoortige diensten</em></td></tr><tr><td>Dagdeelwissels lopen over rust heen</td><td>in V/L, L/N en Mix elke wissel na 1–4 vrije dagen</td><td><em>Gebruik rust als scheiding tussen dagdeelfamilies</em></td></tr><tr><td>Geen heen-en-weer op de klok</td><td>3 keer op het etiket, alleen in 50+ Mix, waar vroeg en laat qua tijd overlappen</td><td><em>Meet een wissel aan de begintijd, niet aan het etiket</em></td></tr><tr><td>Nachten in reeksen van drie tot zes</td><td>reeksen 3, 5, 5, 6; twee lopen over de regelgrens</td><td><em>Bouw nachten als blok; nooit los, liefst niet twee</em></td></tr><tr><td>Na nachten eerst rust, dan laat</td><td>alle vier: 2–3 vrije dagen, dan laat; kortste herstel 56 uur</td><td><em>Eerst herstel, dan richting</em></td></tr><tr><td>Begintijden springen, maar niet ver</td><td>gemiddeld 73 min, mediaan 60, p90 150</td><td><em>Pas sprongen boven een uur tellen</em></td></tr><tr><td>Rust ruimer dan het minimum</td><td>per rooster gemiddeld 3,7–4,8 uur boven de 12 uur</td><td><em>Rust boven het minimum heeft waarde</em></td></tr><tr><td>Blokken kort, vrij in paren</td><td>werkblok gemiddeld 2,2 dagen, vastgelegd door RES en rustdagen</td><td><em>Meet wat binnen een blok gebeurt, niet de lengte</em></td></tr><tr><td>Weekenden liggen vast</td><td>precies de helft van de regels heeft een vrij weekend</td><td><em>Meten, niet optimaliseren</em></td></tr><tr><td>Eén regel hoeft niet op 40:00</td><td>regels binnen een rooster tot 20 uur uit elkaar</td><td><em>Stuur het rooster als geheel; alleen uitschieters tellen</em></td></tr><tr><td>De regelgrens is een gewone dag</td><td>zondag → maandag vooral vrij, gewerkt meestal hetzelfde dagdeel</td><td><em>Beoordeel de rotatie als cirkel</em></td></tr><tr><td>Elk profiel een eigen karakter</td><td>zie profile-priors.json</td><td><em>Profielkenmerken als zachte verwachting, niet als sjabloon</em></td></tr></tbody></table>
+
+<h3 class="sec">Wat deze roosters níet laten zien</h3>
+<ul>
+  <li>Of medewerkers een van deze patronen expliciet waarderen. Daarvoor is de beoordelingsmodus gebouwd (hoofdstuk 11).</li>
+  <li>Of dit op andere standplaatsen of in andere roosterperiodes hetzelfde is.</li>
+  <li>Een fysiologische onderbouwing. Alles hier is voorkeur in roosterontwerp, gemeten aan wat mensen maakten.</li>
+</ul></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 4</div><h2>Meten zoals mensen roosteren</h2><div class="sub">Kwaliteitsmodel v2: wat veranderde tegenover v1, en of het de menselijke roosters herkent</div></div>
+<p>Kwaliteitsmodel v1 blijft bestaan en ongewijzigd, zodat eerdere metingen reproduceerbaar blijven. v2 heeft
+dezelfde onderdelen en gewichten, maar andere definities: klokbewust in plaats van alleen op het etiket, nachten
+als reeks over de regelgrens heen, uren per rooster in plaats van per regel, en de uitgang na nachten.
+Elk v2-bestand draagt <code>learnedFromBenchmark = DDR_BDU_05_10_2026</code>.</p>
+
+<table><caption>Onderdelen van v2</caption><thead><tr><th>Onderdeel</th><th class="num">Gewicht (%)</th><th>Waarom</th><th>Delen</th></tr></thead><tbody><tr><td>hours</td><td class="num">20</td><td>Het basisrooster als geheel hoort op het contractgemiddelde uit te komen; per regel wisselt het mee met de structuur, zoals in de menselijke roosters.</td><td>contract, outliers</td></tr><tr><td>flow</td><td class="num">20</td><td>Dagdelen in blokken, wissels over rust heen, geen heen-en-weer van de klok en begintijden die niet ver springen — zoals in de menselijke roosters.</td><td>coherence, throughRest, oscillation, penalty, startJitter</td></tr><tr><td>rest</td><td class="num">15</td><td>Rust boven het wettelijk minimum is comfort; herstel na nachten en het vermijden van zware overgangen ook.</td><td>surplus, recovery, heavy</td></tr><tr><td>nights</td><td class="num">20</td><td>Nachten in reeksen, liefst van vijf of zes, en daarna eerst rust en dan geen vroege dienst — zoals in alle vier de menselijke nachtreeksen.</td><td>blocks, exit</td></tr><tr><td>fairness</td><td class="num">15</td><td>Wie in het ene rooster zit, hoort niet structureel zwaarder belast te zijn dan wie in het andere zit.</td><td>nights, shunting, weekend, longDuties</td></tr><tr><td>stability</td><td class="num">10</td><td>Continuïteit: wie zijn rooster kent, merkt een verschoven dagdeel meer dan een ander dienstnummer.</td><td>sameDuty, sameDaypart</td></tr></tbody></table>
+
+<h3 class="sec">Herkent v2 wat mensen niet doen?</h3>
+<p>Voor elk principe is het officiële rooster met een paar ruilen zo slecht mogelijk gemaakt op precies dat
+principe (de zoekmachine met omgekeerd teken), terwijl het hard geldig bleef. Een goede meting zet het
+menselijke rooster dan hoger.</p>
+<table><caption>Tegenvoorbeelden, gemeten met de definitieve v2</caption><thead><tr><th>Principe</th><th class="num">Ruilen</th><th>v1 ziet het</th><th>v2 ziet het</th><th class="num">v2 onderdeel: mens → tegenvoorbeeld</th><th class="num">v2 robuust</th></tr></thead><tbody><tr><td>Nachten in reeksen van drie tot zes</td><td class="num">4</td><td>ja</td><td>ja</td><td class="num">nachten 98,9 → 58,2</td><td class="num">83,5 → 70,5</td></tr><tr><td>Na nachten eerst rust, dan laat</td><td class="num">3</td><td>ja</td><td>ja</td><td class="num">nachten 98,9 → 74,2</td><td class="num">83,5 → 76,5</td></tr><tr><td>Geen heen-en-weer van de lichaamsklok</td><td class="num">3</td><td>ja</td><td>ja</td><td class="num">regelmaat 88,7 → 75,8</td><td class="num">83,5 → 73,0</td></tr><tr><td>Begintijden binnen een blok redelijk bij elkaar</td><td class="num">4</td><td><span class="worse">nee</span></td><td>ja</td><td class="num">regelmaat 88,7 → 87,1</td><td class="num">83,5 → 82,2</td></tr><tr><td>Dagdeelwissels over rust heen</td><td class="num">4</td><td>ja</td><td>ja</td><td class="num">regelmaat 88,7 → 74,9</td><td class="num">83,5 → 68,0</td></tr></tbody></table><p class="note">Daarnaast 30 historische kandidaten van v1.0.3 met een bekend probleem: v2 zet er 30 lager dan het menselijke rooster op nachten of regelmaat. De tegenvoorbeelden worden per meting opnieuw gezocht; vóór H09 miste v1 er twee (<code>contrastive-check-pre-h09.json</code>), nu één.</p>
+
+<div class="callout"><p>Het officiële rooster scoort onder v2 robuust <strong>83,5</strong> (onder v1: 64,9). Dat is geen doel op zich: een meting die het menselijke rooster onterecht laag zet, stuurt de zoekmachine weg van wat mensen maken. Na H09 is dat 0,7 punt lager dan in de eerste versie van v2; hoofdstuk 6 legt uit waarom dat is geaccepteerd.</p></div></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 5</div><h2>Wat er aan de zoekmachine veranderde</h2><div class="sub">Overgangstabel in de solver, bewaking bij het bijschaven, en wat is afgewezen</div></div>
+<p>De zoekmachine heeft twee stappen die ertoe doen: de CP-SAT-solver bouwt een startrooster, het bijschaven
+(ruilen en herstarten) verbetert dat op de kwaliteitsmaat. Het bijschaven is de grootste hefboom, en stuurt
+nu op v2. De solver kreeg alleen wat hij goed kan uitdrukken.</p>
+
+<h3 class="sec">De uitgang na nachten in de solver</h3>
+<table><caption>Strafpunten na een nachtdienst, klassiek tegenover menselijk ritme</caption><thead><tr><th>Na nacht</th><th class="num">Klassiek</th><th class="num">Menselijk ritme (1.0.5)</th></tr></thead><tbody><tr><td>direct vroeg</td><td class="num">6</td><td class="num">6</td></tr><tr><td>direct laat</td><td class="num">3</td><td class="num">5</td></tr><tr><td>één vrije dag, vroeg</td><td class="num">3</td><td class="num">4</td></tr><tr><td>één vrije dag, laat</td><td class="num">1</td><td class="num">3</td></tr><tr><td>twee vrije dagen, vroeg</td><td class="num">0</td><td class="num">2</td></tr><tr><td>twee vrije dagen, laat</td><td class="num">0</td><td class="num">0</td></tr></tbody></table><p class="note">Strikt dalend met de rust, en vroeg steeds duurder dan laat bij evenveel vrije dagen (H05). Alle vier de menselijke nachtreeksen eindigen op twee of drie vrije dagen en dan laat. Alleen in de adaptieve zoekmachine; de klassieke is ongewijzigd.</p>
+
+<h3 class="sec">Afgewezen: de begintijdsprong in de solver</h3>
+<p>Een term die sprongen in begintijd binnen een dagdeel in de solver strafte, maakte nachten en eerlijkheid
+slechter. Hij staat erin, maar met gewicht 0: de begintijden worden alleen door het
+bijschaven op v2 bewaakt.</p>
+<table><caption>A/B in de solver, 3 zaadwaarden, 40 s (H03, gemeten met v2 van dat moment)</caption><thead><tr><th>Maat</th><th class="num">Zonder term</th><th class="num">Met term</th><th class="num">Verschil</th></tr></thead><tbody><tr><td>Robuust</td><td class="num">85,6</td><td class="num">81,3</td><td class="num">−4,3</td></tr><tr><td>Nachten</td><td class="num">92,8</td><td class="num">82,6</td><td class="num">−10,2</td></tr><tr><td>Eerlijkheid</td><td class="num">87,1</td><td class="num">79,9</td><td class="num">−7,2</td></tr><tr><td>Vroeg na nachten</td><td class="num">0,7</td><td class="num">1,0</td><td class="num">+0,3</td></tr><tr><td>Kortste herstel (u)</td><td class="num">42,5</td><td class="num">43,5</td><td class="num">+1,0</td></tr><tr><td>Sprong begintijd (min)</td><td class="num">75,0</td><td class="num">49,7</td><td class="num">−25,3</td></tr></tbody></table>
+<table><caption>A/B in de solver: nachtuitgang uit en aan, 3 zaadwaarden, 40 s (H05)</caption><thead><tr><th>Maat</th><th class="num">Klassiek</th><th class="num">Menselijk ritme</th><th class="num">Verschil</th></tr></thead><tbody><tr><td>Robuust</td><td class="num">86,0</td><td class="num">85,5</td><td class="num">−0,5</td></tr><tr><td>Nachten</td><td class="num">91,0</td><td class="num">93,3</td><td class="num">+2,3</td></tr><tr><td>Eerlijkheid</td><td class="num">81,9</td><td class="num">84,8</td><td class="num">+2,9</td></tr><tr><td>Vroeg na nachten</td><td class="num">1,0</td><td class="num">0,0</td><td class="num">−1,0</td></tr><tr><td>Kortste herstel (u)</td><td class="num">50,3</td><td class="num">25,7</td><td class="num">−24,6</td></tr><tr><td>Sprong begintijd (min)</td><td class="num">73,7</td><td class="num">71,3</td><td class="num">−2,3</td></tr></tbody></table><p class="note">Drie runs per opstelling tonen alleen een richting: CP-SAT met 8 zoekdraden is niet deterministisch. Het kortste herstel van 12–13 uur in twee runs komt uit korte reeksen die de solver niet oplost; dat bleef over voor het bijschaven — en dat ging mis tot H09.</p>
+
+<h3 class="sec">Bewaking bij het bijschaven</h3>
+<p>Het bijschaven mag eerlijkheid hooguit 0,5 punt en uren en rust hooguit
+1 punt laten zakken ten opzichte van het startrooster; elk punt daarboven kost
+10 in de rangschikking, en een reparatie die het doet, wordt afgewezen (H07). Dat is een
+bewaking tegenover de start van het bijschaven, niet tegenover v1.0.4: zie hoofdstuk 9.</p>
+
+<h3 class="sec">Versies</h3>
+<table><thead><tr><th>Onderdeel</th><th>Versie</th><th>Bestand</th></tr></thead><tbody><tr><td>Zoekmachine</td><td>adaptive-1.0.5</td><td><code>configs/optimizer-config-v1.0.5.json</code></td></tr><tr><td>Kwaliteitsmodel</td><td>quality-model-v2</td><td><code>configs/quality-model-v2.json</code></td></tr><tr><td>Vorige zoekmachine (bevroren)</td><td>adaptive-1.0.4</td><td><code>configs/optimizer-config-v1.0.4.json</code></td></tr><tr><td>Vorig kwaliteitsmodel (bevroren)</td><td>quality-model-v1</td><td><code>configs/quality-model-v1.json</code></td></tr></tbody></table></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 6</div><h2>Ontwikkellog</h2><div class="sub">Elke wijziging met reden en gemeten effect, ook wat niet werkte</div></div>
+<table><caption>Wijzigingen H01–H09</caption><thead><tr><th style="width:7%">Nr</th><th style="width:30%">Wat</th><th style="width:43%">Gemeten effect</th><th style="width:20%">Uitkomst</th></tr></thead><tbody><tr><td><span class="mono">H01</span></td><td><strong>quality-model.ts / quality-evaluator.ts — kwaliteitsmodel v2</strong><br>Nieuwe versie naast v1 (v1 blijft volledig rekenbaar). Gewichten van de onderdelen ongewijzigd; veranderd is wat vier onderdelen meten: uren per regel alleen buiten de menselijke band (±10:30), regelmaat als samenhang + wissels via rust + heen-en-weer op de klok + overgangsstraf + begintijdsprong (reekslengte eruit), overgangen op de klok (&lt;3 uur verschuiving telt hooguit 1 punt), nachten als reekswaarde naar lengte + uitgang na de reeks.</td><td>Officieel onder v2: robuust 84,2, regelmaat 90,1, uren 83,9. Contrastieve toets (contrastive-check.json): v2 ziet alle vijf de opzettelijk bedorven varianten van het officiële rooster op het aangetaste onderdeel én zet het menselijke rooster steeds hoger; v1 zag springende begintijden niet en verkoos een variant met vroege diensten na nachten boven het menselijke rooster. Alle 29 v1.0.3-kandidaten met losse nachten of zware overgangen scoren onder v2 lager dan het menselijke rooster op nachten of regelmaat.</td><td>behouden; CURRENT_QUALITY_MODEL = v2</td></tr><tr><td><span class="mono">H02</span></td><td><strong>quality-evaluator.ts — stabiliteit per regel op de klok</strong><br>In v2 telt een opeenvolging als stabiel bij hetzelfde dagdeel óf minder dan 3 uur verschuiving in begintijd.</td><td>Slechtste officiële regel 47,4 → 70,8 (nog steeds 50+ Mix regel 2, nu door een week van 30:14 — structureel); robuust officieel 78,4 → 84,2.</td><td>behouden</td></tr><tr><td><span class="mono">H03</span></td><td><strong>cpsat_roster.py — begintijdsterm (startJitter)</strong><br>Nieuwe zachte term: per minuut sprong in begintijd boven 60 minuten, tussen opeenvolgende diensten in hetzelfde dagdeel, gewicht 1 (kleinste gehele waarde).</td><td>A/B op de ruwe solveruitkomst, 3 zaadwaarden × 40 s (solver-ab-uit-aan.json): sprong gemiddeld 75 → 50 en p90 179 → 106 minuten, maar robuust 85,6 → 81,3, nachten 92,8 → 82,6, eerlijkheid 87,1 → 79,9, en in één run een losse nacht. Stijver dan de mensen zelf (p90 150).</td><td>verworpen: gewicht op 0. De term blijft in de code, uit, met deze meting als reden. Begintijden worden alleen via het bijschaven (model v2) verbeterd.</td></tr><tr><td><span class="mono">H04</span></td><td><strong>roster-quality-config.ts — nachtuitgang voor CP-SAT, eerste versie</strong><br>Nacht → laat over één vrije dag 1 → 3 strafpunten, nacht → vroeg over twee vrije dagen 2.</td><td>In één van drie runs een nachtreeks met 13,1 uur herstel: 'nacht, één vrije dag, laat' kostte nu evenveel als 'nacht, direct laat' (beide 3), dus de solver maakte geen onderscheid meer.</td><td><span class="worse">vervangen door H05; de fout staat in solver-ab-nacht.json</span></td></tr><tr><td><span class="mono">H05</span></td><td><strong>roster-quality-config.ts — nachtuitgang, monotone tabel</strong><br>Na nachten: direct vroeg 6, direct laat 3 → 5; één vrije dag vroeg 3 → 4, laat 1 → 3; twee vrije dagen vroeg 2, laat 0. Strikt dalend met de rust, vroeg steeds duurder dan laat. Alleen in de adaptieve zoekmachine (humanRhythm), niet in de klassieke.</td><td>Gelijk-op gemeten in dezelfde sessie, 3 runs met en 3 zonder (solver-ab-uit-nacht.json): robuust 86,0 → 85,5, nachten 91,0 → 93,3, eerlijkheid 81,9 → 84,8, vroeg na nachten 1,0 → 0 per kandidaat. Het slechtste herstel in een run (12–13 uur na een korte reeks) wordt hier niet opgelost. Correctie: een eerder genoemde vergelijking 'zes tegen zes' voegde runs met de tabel van H04 en die van H05 samen en is daarom niet gebruikt.</td><td>behouden. Kanttekening: CP-SAT met 8 zoekdraden is niet deterministisch; dezelfde zaadwaarden gaven tussen twee metingen robuust 83,7/86,0/87,1 tegen 88,5/85,5/83,9. Drie runs tonen alleen een richting; de AFTER-meting met 20 runs is de toets.</td></tr><tr><td><span class="mono">H06</span></td><td><strong>rhythm-metrics.ts — uitgangswaarde na nachten met herstelrust</strong><br>Een late dienst na een nachtreeks telt voluit alleen als de herstelrust uit de regel (NIGHT_SEQUENCE_RECOVERY, 46 uur) is gehaald; sneller telt half.</td><td>Officieel ongewijzigd (alle uitgangen ≥ 56 uur, uitgang 100).</td><td>behouden</td></tr><tr><td><span class="mono">H07</span></td><td><strong>adaptive/config.ts + engine.ts — bewaking van eerlijkheid, uren en rust</strong><br>Bijschaven en reparatie mogen eerlijkheid hooguit 0,5 punt, uren en rust hooguit 1 punt laten zakken ten opzichte van de start; daarboven kost elk punt 10 in de rangschikking van het bijschaven en wordt een reparatie afgewezen.</td><td>Rookproef: een reparatie die de rangschikking 82,3 → 85,4 bracht, werd afgewezen omdat eerlijkheid 0,6 zakte. Dat is de bedoeling, en het kost aantoonbaar kwaliteit elders.</td><td>behouden</td></tr><tr><td><span class="mono">H08</span></td><td><strong>scripts/benchmark/evaluate.ts — modelkeuze</strong><br>De v1.0.4-benchmarkevaluatie rekent standaard met model v1 en schrijft de werkelijk gebruikte versie weg; --model v2 rekent met het nieuwe.</td><td>Geen verschil in de opgeslagen v1.0.4-uitkomsten; de fout is voorkomen voordat hij optrad.</td><td>behouden</td></tr><tr><td><span class="mono">H09</span></td><td><strong>quality-model.ts + rhythm-metrics.ts — uitgang na nachten en de grens tussen etiket en echte wissel</strong><br>Uitgang na een nachtreeks: eerst herstel, dan richting. Onder de herstelrust uit de regel (46 uur) is elke uitgang 0; daarboven laat of nacht 1, vroeg 0,25, vroeg na 72 uur 0,5 (was: laat altijd minstens 0,5, vroeg onder 72 uur 0). Een wissel geldt als alleen een ander etiket als de begintijd hooguit 60 minuten verschuift (was: minder dan 180), voor strafpunten, regelstabiliteit en heen-en-weer.</td><td>Officieel robuust 84,2 → 83,5 en regelmaat 90,1 → 88,7: in 50+MIX regel 4 telt vroeg 10:08 → laat 12:19 → rust → vroeg 08:00 nu als (mild) heen-en-weer, en twee voorwaartse wissels van 126 en 131 minuten niet meer als stabiel. Een richtingsafhankelijke grens (voorwaarts 180, achterwaarts 60) liet het officiële rooster ongemoeid, maar steunde op twee plus twee gevallen uit één steekproef en is daarom niet gekozen. Drie nieuwe tests leggen vast dat de uitgangswaarde nooit daalt met meer herstel en dat het BLM-patroon zwaar telt.</td><td>behouden; de AFTER-meting is met deze definities opnieuw gedraaid (docs/optimizer-benchmark/human). De eerste meting blijft bewaard als ontwikkelmeting en is met de definitieve v2 opnieuw doorgerekend (analysis-dev1-final-v2.json).</td></tr></tbody></table>
+
+<h3 class="sec">H09: de eerste AFTER-meting</h3>
+<p>De eerste volledige AFTER-meting (20 runs, <code>docs/optimizer-benchmark/human-dev1</code>) haalde
+5 van de 10 acceptatiepunten. De diagnose per basisrooster wees naar één plek:</p>
+<table><thead><tr><th></th><th class="num">BEFORE (v1.0.4)</th><th class="num">Eerste AFTER</th></tr></thead><tbody><tr><td>Kandidaten met een nachtuitgang onder 36 uur</td><td class="num">17</td><td class="num">28</td></tr><tr><td>Uitgangen onder de herstelregel in BLM</td><td class="num">9</td><td class="num">26</td></tr><tr><td>BLM-regels met laat direct gevolgd door vroeg</td><td class="num">0</td><td class="num">15</td></tr></tbody></table>
+<p>Twee meetdefinities die ik zelf te ruim had gekozen, verklaarden dat:</p>
+<ul>
+  <li><strong>Etiket of echte wissel.</strong> Een wissel gold als "alleen een ander etiket" bij minder dan drie uur
+  verschuiving. Het bijschaven liet daardoor in BLM een laat van 09:47 gratis volgen door een vroeg van 07:22 (13,2 uur
+  rust). De enige officiële directe etiketwissels verschuiven 19 en 41 minuten. De grens is nu een uur, gelijk aan de vrije begintijdsprong.</li>
+  <li><strong>Uitgang na nachten.</strong> Nacht-vrij-laat (32 uur) scoorde 0,5, nacht-vrij-vrij-vroeg (48 uur) 0. De solver
+  had dat goed (H05); het bijschaven draaide het terug. Nu eerst herstel, dan richting; een test legt vast dat de
+  waarde nooit daalt bij meer herstel.</li>
+</ul>
+<p>Prijs: het officiële rooster verliest 0,7 punt robuust, omdat in 50+ Mix vroeg 10:08 → laat 12:19 → rust → vroeg 08:00
+nu als mild heen-en-weer telt. Een grens per richting (vooruit 180, achteruit 60) had dat voorkomen, maar steunde op
+twee plus twee gevallen uit één steekproef; die is daarom niet gekozen.</p>
+<div class="callout"><p>Alle getallen in dit rapport zijn met de definitieve v2 berekend, ook die van de eerste AFTER-meting en van v1.0.4: de ruwe kandidaatroosters zijn bewaard en opnieuw doorgerekend. De uitkomst van de eerste meting onder de eerste definities staat in <code>analysis-dev1-pre-h09.json</code>.</p></div>
+
+<h3 class="sec">Een correctie op mijn eigen tussenstand</h3>
+<p>Bij H05 noemde ik eerst een vergelijking van "zes tegen zes" runs. Daarin zaten runs met de tabel van H04 en die
+van H05 door elkaar; die vergelijking is niet gebruikt. De cijfers in hoofdstuk 5 komen uit één sessie, drie runs
+met en drie zonder.</p></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 7</div><h2>BEFORE en AFTER</h2><div class="sub">Dezelfde meting voor en na, met de eerste AFTER-meting ernaast</div></div>
+<p><strong>BEFORE</strong> zijn de 20 runs van v1.0.4 (60 kandidaten), gemaakt op
+dezelfde gegevens en dezelfde machine en hier met v2 doorgerekend. Dat is hetzelfde als opnieuw draaien, zonder de
+ruis van een nieuwe CP-SAT-meting. <strong>AFTER</strong> zijn 2 nieuwe runs van v1.0.5 met dezelfde
+verdeling over strategieën (10 Evenwichtig, 5 Rust, 5 Eerlijke lasten), 6 kandidaten.</p>
+
+<figure><svg viewBox="0 0 660 210" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Source Sans 3, Arial, sans-serif"><line x1="36" y1="176" x2="660" y2="176" stroke="#dde3ec"/><text x="32" y="176" font-size="9" text-anchor="end" dominant-baseline="middle" fill="#5b6a82">50</text><line x1="36" y1="144" x2="660" y2="144" stroke="#dde3ec"/><text x="32" y="144" font-size="9" text-anchor="end" dominant-baseline="middle" fill="#5b6a82">60</text><line x1="36" y1="112" x2="660" y2="112" stroke="#dde3ec"/><text x="32" y="112" font-size="9" text-anchor="end" dominant-baseline="middle" fill="#5b6a82">70</text><line x1="36" y1="80" x2="660" y2="80" stroke="#dde3ec"/><text x="32" y="80" font-size="9" text-anchor="end" dominant-baseline="middle" fill="#5b6a82">80</text><line x1="36" y1="48" x2="660" y2="48" stroke="#dde3ec"/><text x="32" y="48" font-size="9" text-anchor="end" dominant-baseline="middle" fill="#5b6a82">90</text><line x1="36" y1="16" x2="660" y2="16" stroke="#dde3ec"/><text x="32" y="16" font-size="9" text-anchor="end" dominant-baseline="middle" fill="#5b6a82">100</text><rect x="50.666666666666664" y="68.8" width="26" height="107.2" fill="#e1a100"/><text x="63.666666666666664" y="65.8" font-size="8.5" text-anchor="middle" fill="#13203a">83,5</text><rect x="78.66666666666666" y="67.21600000000008" width="26" height="108.78399999999992" fill="#8aa3c7"/><text x="91.66666666666666" y="64.21600000000008" font-size="8.5" text-anchor="middle" fill="#13203a">84,0</text><rect x="106.66666666666666" y="68.53333333333336" width="26" height="107.46666666666664" fill="#003082"/><text x="119.66666666666666" y="65.53333333333336" font-size="8.5" text-anchor="middle" fill="#13203a">83,6</text><text x="91.66666666666666" y="190" font-size="9.5" text-anchor="middle" fill="#13203a">Robuust</text><rect x="153.99999999999997" y="117.88888888888891" width="26" height="58.111111111111086" fill="#e1a100"/><text x="166.99999999999997" y="114.88888888888891" font-size="8.5" text-anchor="middle" fill="#13203a">68,2</text><rect x="181.99999999999997" y="84.76416666666672" width="26" height="91.23583333333328" fill="#8aa3c7"/><text x="194.99999999999997" y="81.76416666666672" font-size="8.5" text-anchor="middle" fill="#13203a">78,5</text><rect x="209.99999999999997" y="74.92629629629631" width="26" height="101.07370370370369" fill="#003082"/><text x="222.99999999999997" y="71.92629629629631" font-size="8.5" text-anchor="middle" fill="#13203a">81,6</text><text x="194.99999999999997" y="190" font-size="9.5" text-anchor="middle" fill="#13203a">Slechtste regel</text><rect x="257.3333333333333" y="52.16" width="26" height="123.84" fill="#e1a100"/><text x="270.3333333333333" y="49.16" font-size="8.5" text-anchor="middle" fill="#13203a">88,7</text><rect x="285.3333333333333" y="35.36533333333335" width="26" height="140.63466666666665" fill="#8aa3c7"/><text x="298.3333333333333" y="32.36533333333335" font-size="8.5" text-anchor="middle" fill="#13203a">93,9</text><rect x="313.3333333333333" y="32.10666666666671" width="26" height="143.8933333333333" fill="#003082"/><text x="326.3333333333333" y="29.10666666666671" font-size="8.5" text-anchor="middle" fill="#13203a">95,0</text><text x="298.3333333333333" y="190" font-size="9.5" text-anchor="middle" fill="#13203a">Regelmaat</text><rect x="360.6666666666667" y="19.519999999999982" width="26" height="156.48000000000002" fill="#e1a100"/><text x="373.6666666666667" y="16.519999999999982" font-size="8.5" text-anchor="middle" fill="#13203a">98,9</text><rect x="388.6666666666667" y="62.49599999999987" width="26" height="113.50400000000013" fill="#8aa3c7"/><text x="401.6666666666667" y="59.49599999999987" font-size="8.5" text-anchor="middle" fill="#13203a">85,5</text><rect x="416.6666666666667" y="73.59999999999997" width="26" height="102.40000000000003" fill="#003082"/><text x="429.6666666666667" y="70.59999999999997" font-size="8.5" text-anchor="middle" fill="#13203a">82,0</text><text x="401.6666666666667" y="190" font-size="9.5" text-anchor="middle" fill="#13203a">Nachten</text><rect x="464" y="81.91999999999999" width="26" height="94.08000000000001" fill="#e1a100"/><text x="477" y="78.91999999999999" font-size="8.5" text-anchor="middle" fill="#13203a">79,4</text><rect x="492" y="71.02933333333331" width="26" height="104.97066666666669" fill="#8aa3c7"/><text x="505" y="68.02933333333331" font-size="8.5" text-anchor="middle" fill="#13203a">82,8</text><rect x="520" y="82.18666666666662" width="26" height="93.81333333333338" fill="#003082"/><text x="533" y="79.18666666666662" font-size="8.5" text-anchor="middle" fill="#13203a">79,3</text><text x="505" y="190" font-size="9.5" text-anchor="middle" fill="#13203a">Rust</text><rect x="567.3333333333333" y="121.91999999999999" width="26" height="54.08000000000001" fill="#e1a100"/><text x="580.3333333333333" y="118.91999999999999" font-size="8.5" text-anchor="middle" fill="#13203a">66,9</text><rect x="595.3333333333333" y="63.733333333333434" width="26" height="112.26666666666657" fill="#8aa3c7"/><text x="608.3333333333333" y="60.733333333333434" font-size="8.5" text-anchor="middle" fill="#13203a">85,1</text><rect x="623.3333333333333" y="61.066666666666606" width="26" height="114.9333333333334" fill="#003082"/><text x="636.3333333333333" y="58.066666666666606" font-size="8.5" text-anchor="middle" fill="#13203a">85,9</text><text x="608.3333333333333" y="190" font-size="9.5" text-anchor="middle" fill="#13203a">Eerlijkheid</text></svg><figcaption>Gemiddelden per onderdeel. Goud: het officiële rooster; lichtblauw: v1.0.4; donkerblauw: v1.0.5. Continuïteit ontbreekt: het officiële rooster is daar per definitie 100.</figcaption></figure>
+
+<div class="wide">
+<table><caption>Alle maten, gemeten met kwaliteitsmodel v2</caption><thead><tr><th>Maat</th><th class="num">Officieel</th><th class="num">BEFORE</th><th class="num">Eerste AFTER</th><th class="num">AFTER</th><th class="num">AFTER min–max</th><th class="num">Δ AFTER − BEFORE</th><th>Oordeel</th></tr></thead><tbody><tr><td>Robuuste kwaliteit</td><td class="num">83,5</td><td class="num">84,0</td><td class="num">84,4</td><td class="num">83,6</td><td class="num">80,7–85,7</td><td class="num">−0,4</td><td><span class="worse">slechter</span></td></tr><tr><td>Kwaliteit zonder continuïteit</td><td class="num">84,7</td><td class="num">87,8</td><td class="num">88,4</td><td class="num">86,8</td><td class="num">85,0–87,9</td><td class="num">−1,0</td><td><span class="worse">slechter</span></td></tr><tr><td>Slechtste regel</td><td class="num">68,2</td><td class="num">78,5</td><td class="num">77,4</td><td class="num">81,6</td><td class="num">73,3–88,1</td><td class="num">+3,1</td><td><span class="better">beter</span></td></tr><tr><td>Regelmaat</td><td class="num">88,7</td><td class="num">93,9</td><td class="num">94,4</td><td class="num">95,0</td><td class="num">93,7–96,6</td><td class="num">+1,0</td><td><span class="better">beter</span></td></tr><tr><td>Nachten</td><td class="num">98,9</td><td class="num">85,5</td><td class="num">89,7</td><td class="num">82,0</td><td class="num">73,4–85,8</td><td class="num">−3,5</td><td><span class="worse">slechter</span></td></tr><tr><td>Rust</td><td class="num">79,4</td><td class="num">82,8</td><td class="num">80,1</td><td class="num">79,3</td><td class="num">77,8–81,3</td><td class="num">−3,5</td><td><span class="worse">slechter</span></td></tr><tr><td>Uren</td><td class="num">83,9</td><td class="num">89,7</td><td class="num">89,6</td><td class="num">89,6</td><td class="num">89,1–89,8</td><td class="num">−0,1</td><td><span class="worse">slechter</span></td></tr><tr><td>Eerlijkheid</td><td class="num">66,9</td><td class="num">85,1</td><td class="num">85,6</td><td class="num">85,9</td><td class="num">82,4–86,9</td><td class="num">+0,8</td><td><span class="better">beter</span></td></tr><tr><td>Continuïteit</td><td class="num">100,0</td><td class="num">59,6</td><td class="num">60,3</td><td class="num">58,7</td><td class="num">55,7–61,9</td><td class="num">−0,9</td><td><span class="worse">slechter</span></td></tr><tr><td>Heen-en-weer (op de klok)</td><td class="num">2,00</td><td class="num">0,17</td><td class="num">0,07</td><td class="num">0,00</td><td class="num">0,00–0,00</td><td class="num">−0,17</td><td><span class="better">beter</span></td></tr><tr><td>Losse nachten</td><td class="num">0,00</td><td class="num">0,15</td><td class="num">0,17</td><td class="num">0,33</td><td class="num">0,00–1,00</td><td class="num">+0,18</td><td><span class="worse">slechter</span></td></tr><tr><td>Reeksen van twee nachten</td><td class="num">0,00</td><td class="num">0,20</td><td class="num">0,35</td><td class="num">0,33</td><td class="num">0,00–2,00</td><td class="num">+0,13</td><td><span class="worse">slechter</span></td></tr><tr><td>Waarde nachtreeksen (%)</td><td class="num">98,4</td><td class="num">93,9</td><td class="num">93,2</td><td class="num">90,8</td><td class="num">77,4–94,7</td><td class="num">−3,1</td><td><span class="worse">slechter</span></td></tr><tr><td>Nachtreeks gevolgd door vroeg</td><td class="num">0,00</td><td class="num">1,92</td><td class="num">0,63</td><td class="num">1,50</td><td class="num">1,00–2,00</td><td class="num">−0,42</td><td><span class="better">beter</span></td></tr><tr><td>Kortste herstel na nachtreeks (u)</td><td class="num">56,0</td><td class="num">43,7</td><td class="num">40,2</td><td class="num">30,9</td><td class="num">27,4–33,0</td><td class="num">−12,8</td><td><span class="worse">slechter</span></td></tr><tr><td>Uitgang na nachten (%)</td><td class="num">100,0</td><td class="num">65,8</td><td class="num">81,4</td><td class="num">61,5</td><td class="num">50,0–75,0</td><td class="num">−4,3</td><td><span class="worse">slechter</span></td></tr><tr><td>Samenhang in werkblokken (%)</td><td class="num">97,8</td><td class="num">98,9</td><td class="num">98,6</td><td class="num">98,5</td><td class="num">97,8–99,5</td><td class="num">−0,4</td><td><span class="worse">slechter</span></td></tr><tr><td>Gemiddeld werkblok (dagen)</td><td class="num">2,19</td><td class="num">2,19</td><td class="num">2,19</td><td class="num">2,19</td><td class="num">2,19–2,19</td><td class="num">0,00</td><td><span class="same">gelijk</span></td></tr><tr><td>Dagdeelwissels via rust (%)</td><td class="num">82,8</td><td class="num">94,7</td><td class="num">93,2</td><td class="num">94,3</td><td class="num">90,9–96,7</td><td class="num">−0,4</td><td><span class="worse">slechter</span></td></tr><tr><td>Begintijdsprong gemiddeld (min)</td><td class="num">73</td><td class="num">84</td><td class="num">73</td><td class="num">71</td><td class="num">62–78</td><td class="num">−13</td><td><span class="better">beter</span></td></tr><tr><td>Begintijdsprong p90 (min)</td><td class="num">150</td><td class="num">204</td><td class="num">169</td><td class="num">170</td><td class="num">153–210</td><td class="num">−34</td><td><span class="better">beter</span></td></tr><tr><td>Zwaarste overgang (punten)</td><td class="num">4,00</td><td class="num">0,98</td><td class="num">2,05</td><td class="num">1,00</td><td class="num">1,00–1,00</td><td class="num">+0,02</td><td><span class="worse">slechter</span></td></tr><tr><td>Regels met zware overgang</td><td class="num">2,00</td><td class="num">0,03</td><td class="num">0,47</td><td class="num">0,00</td><td class="num">0,00–0,00</td><td class="num">−0,03</td><td><span class="better">beter</span></td></tr><tr><td>Structurele afstand tot officieel</td><td class="num">0,0</td><td class="num">24,5</td><td class="num">19,1</td><td class="num">24,3</td><td class="num">23,2–26,1</td><td class="num">−0,3</td><td><span class="better">beter</span></td></tr></tbody></table><p class="note">Eerste AFTER: de meting vóór H09, met dezelfde definitieve v2 doorgerekend. Het oordeel vergelijkt AFTER met BEFORE.</p>
+</div>
+
+<table><caption>Acceptatie (§81) en bewaking (§75)</caption><thead><tr><th>Eis</th><th>Gehaald</th></tr></thead><tbody><tr><td>0 harde overtredingen, volledige dekking, 0 profielovertredingen</td><td><span class="better">ja</span></td></tr><tr><td>Minder heen-en-weer</td><td><span class="better">ja</span></td></tr><tr><td>Minder losse nachten</td><td><span class="worse">nee</span></td></tr><tr><td>Langere, samenhangender werkblokken</td><td><span class="worse">nee</span></td></tr><tr><td>Beter herstel na nachten</td><td><span class="worse">nee</span></td></tr><tr><td>Stabielere begintijden</td><td><span class="better">ja</span></td></tr><tr><td>Minder zware slechtste overgang</td><td><span class="worse">nee</span></td></tr><tr><td>Eerlijkheid niet verder achteruit (marge 0,5)</td><td><span class="better">ja</span></td></tr><tr><td>Uren niet noemenswaardig achteruit (marge 1)</td><td><span class="better">ja</span></td></tr><tr><td>Rust niet noemenswaardig achteruit (marge 1)</td><td><span class="worse">nee</span></td></tr></tbody></table><p class="note">Hard: 6 AFTER-kandidaten, allemaal hard geldig: ja; hoogstens 0 niet toegewezen diensten en 0 profielovertredingen per kandidaat. "Minder" en "beter" betekenen: het gemiddelde over de kandidaten verschuift de goede kant op.</p></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 8</div><h2>Per basisrooster</h2><div class="sub">Waar de uitkomst per profiel ligt, en waar de uitschieters zitten</div></div>
+<p>Een gemiddelde over het hele pakket kan één profiel verbergen dat achteruitgaat. In de eerste AFTER-meting was dat
+BLM. Per rooster: officieel · BEFORE · <strong>AFTER</strong> (gemiddelde over de kandidaten).</p>
+<div class="wide">
+<table><thead><tr><th>Rooster</th><th class="num">Nachtreeks (%)</th><th class="num">Kortste herstel (u)</th><th class="num">Vroeg na nachten</th><th class="num">Heen-en-weer</th><th class="num">Sprong (min)</th><th class="num">Zwaarste overgang</th></tr></thead><tbody><tr><td>50+ Mix</td><td class="num">—</td><td class="num">—</td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">2,00 · 0,03 · <strong>0,00</strong></td><td class="num">96 · 110 · <strong>110</strong></td><td class="num">4,0 · 0,0 · <strong>0,0</strong></td></tr><tr><td>BLM</td><td class="num">90 · 94 · <strong>85</strong></td><td class="num">79 · 52 · <strong>43</strong></td><td class="num">0,00 · 0,78 · <strong>1,00</strong></td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">63 · 83 · <strong>73</strong></td><td class="num">1,0 · 0,5 · <strong>0,3</strong></td></tr><tr><td>Laat</td><td class="num">—</td><td class="num">—</td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">92 · 103 · <strong>77</strong></td><td class="num">0,0 · 0,0 · <strong>0,0</strong></td></tr><tr><td>Laat/Nacht</td><td class="num">100 · 95 · <strong>84</strong></td><td class="num">56 · 62 · <strong>62</strong></td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">66 · 78 · <strong>79</strong></td><td class="num">0,0 · 0,4 · <strong>0,3</strong></td></tr><tr><td>Mix</td><td class="num">100 · 93 · <strong>96</strong></td><td class="num">59 · 50 · <strong>46</strong></td><td class="num">0,00 · 1,13 · <strong>0,50</strong></td><td class="num">0,00 · 0,10 · <strong>0,00</strong></td><td class="num">69 · 63 · <strong>46</strong></td><td class="num">1,0 · 0,7 · <strong>0,8</strong></td></tr><tr><td>Vroeg</td><td class="num">—</td><td class="num">—</td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">81 · 67 · <strong>59</strong></td><td class="num">0,0 · 0,0 · <strong>0,0</strong></td></tr><tr><td>Vroeg/Laat</td><td class="num">—</td><td class="num">—</td><td class="num">0,00 · 0,00 · <strong>0,00</strong></td><td class="num">0,00 · 0,03 · <strong>0,00</strong></td><td class="num">62 · 111 · <strong>91</strong></td><td class="num">0,0 · 0,2 · <strong>0,5</strong></td></tr></tbody></table>
+</div>
+
+<table><caption>Uitschieters, geteld over alle kandidaten</caption><thead><tr><th></th><th>Officieel</th><th>BEFORE</th><th>AFTER</th></tr></thead><tbody><tr><td>Kortste herstel na nachten, per kandidaat</td><td>&lt;36: 0<br>36-45: 0<br>46-55: 1<br>&gt;=56: 0</td><td>&lt;36: 17<br>36-45: 0<br>46-55: 37<br>&gt;=56: 6</td><td>&lt;36: 6<br>36-45: 0<br>46-55: 0<br>&gt;=56: 0</td></tr><tr><td>Nachtuitgangen onder de herstelregel (46 u)</td><td>—</td><td>DDR-BLM: 9<br>DDR-LN: 8</td><td>DDR-MIX: 2<br>DDR-BLM: 2<br>DDR-LN: 2</td></tr><tr><td>Regels met een zware overgang (op etiket)</td><td>DDR-50MIX · LE: 2</td><td>DDR-BLM · NRE: 2</td><td>—</td></tr><tr><td>Nachtreeksen van één of twee</td><td>—</td><td>DDR-MIX · 2: 10<br>DDR-MIX · 1: 7<br>DDR-BLM · 2: 2<br>DDR-LN · 1: 1<br>DDR-BLM · 1: 1</td><td>DDR-BLM · 2: 2<br>DDR-LN · 1: 2</td></tr></tbody></table><p class="note">Zware overgang hier op het etiket (strafpunten ≥ 3), zonder klokcorrectie; daardoor telt het officiële 50+ Mix twee keer mee met laat → vroeg van 19 en 41 minuten. LE = laat direct gevolgd door vroeg; NRE = nacht, één vrije dag, vroeg.</p></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 9</div><h2>Regressies en wat open blijft</h2><div class="sub">Alles wat na de ijking slechter is, of niet is opgelost</div></div>
+<table><caption>Gemiddeld slechter dan v1.0.4</caption><thead><tr><th>Maat</th><th class="num">BEFORE</th><th class="num">AFTER</th><th class="num">Verschil</th><th class="num">Officieel</th></tr></thead><tbody><tr><td>Robuuste kwaliteit</td><td class="num">84,0</td><td class="num">83,6</td><td class="num">−0,4</td><td class="num">83,5</td></tr><tr><td>Kwaliteit zonder continuïteit</td><td class="num">87,8</td><td class="num">86,8</td><td class="num">−1,0</td><td class="num">84,7</td></tr><tr><td>Nachten</td><td class="num">85,5</td><td class="num">82,0</td><td class="num">−3,5</td><td class="num">98,9</td></tr><tr><td>Rust</td><td class="num">82,8</td><td class="num">79,3</td><td class="num">−3,5</td><td class="num">79,4</td></tr><tr><td>Uren</td><td class="num">89,7</td><td class="num">89,6</td><td class="num">−0,1</td><td class="num">83,9</td></tr><tr><td>Continuïteit</td><td class="num">59,6</td><td class="num">58,7</td><td class="num">−0,9</td><td class="num">100,0</td></tr><tr><td>Losse nachten</td><td class="num">0,15</td><td class="num">0,33</td><td class="num">+0,18</td><td class="num">0,00</td></tr><tr><td>Reeksen van twee nachten</td><td class="num">0,20</td><td class="num">0,33</td><td class="num">+0,13</td><td class="num">0,00</td></tr><tr><td>Waarde nachtreeksen (%)</td><td class="num">93,9</td><td class="num">90,8</td><td class="num">−3,1</td><td class="num">98,4</td></tr><tr><td>Kortste herstel na nachtreeks (u)</td><td class="num">43,7</td><td class="num">30,9</td><td class="num">−12,8</td><td class="num">56,0</td></tr><tr><td>Uitgang na nachten (%)</td><td class="num">65,8</td><td class="num">61,5</td><td class="num">−4,3</td><td class="num">100,0</td></tr><tr><td>Samenhang in werkblokken (%)</td><td class="num">98,9</td><td class="num">98,5</td><td class="num">−0,4</td><td class="num">97,8</td></tr><tr><td>Dagdeelwissels via rust (%)</td><td class="num">94,7</td><td class="num">94,3</td><td class="num">−0,4</td><td class="num">82,8</td></tr><tr><td>Zwaarste overgang (punten)</td><td class="num">0,98</td><td class="num">1,00</td><td class="num">+0,02</td><td class="num">4,00</td></tr></tbody></table><p class="note">Elke regel hier is een echte achteruitgang op die maat, ook als hij klein is. Een maat waarop v1.0.4 al beter scoorde dan het officiële rooster (bijvoorbeeld samenhang in werkblokken), kan iets zakken zonder van de referentie weg te bewegen; dat staat erbij, niet in plaats van.</p>
+
+<h3 class="sec">Bekende beperkingen</h3>
+<ul>
+  <li><strong>Eén steekproef.</strong> Alle zachte principes komen uit één roosterperiode van één standplaats.</li>
+  <li><strong>Ruis.</strong> CP-SAT met 8 zoekdraden is niet deterministisch; dezelfde zaadwaarden gaven tussen twee metingen
+  robuust ±2–3. Twintig runs per meting dempen dat, maar een verschil van een paar tienden is geen bewijs.</li>
+  <li><strong>De bewaking is relatief.</strong> Eerlijkheid, uren en rust worden bewaakt tegenover de start van het bijschaven,
+  niet tegenover v1.0.4. Een solver die een ander startpunt kiest, kan een onderdeel dus meer laten zakken dan de marge.</li>
+  <li><strong>Het officiële rooster is geen plafond.</strong> Op regelmaat en uren scoren de gegenereerde kandidaten al hoger dan
+  het officiële rooster; op nachten en uitgang na nachten lager. Dat hoger is niet "menselijker": het is hoe de maat telt.</li>
+  <li><strong>Geen menselijk oordeel.</strong> Alles in dit rapport is meting. Het oordeel komt uit hoofdstuk 10 en 11.</li>
+</ul></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 10</div><h2>De drie kandidaatpakketten</h2><div class="sub">Ter beoordeling door de Roostercommissie</div></div><div class="callout bad"><p>NOG NIET GEGENEREERD — draai <code>npm run human-benchmark:final -- generate</code>.</p></div></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 11</div><h2>Hoe de beoordeling werkt</h2><div class="sub">Oordeel per regel en voorkeur tussen kandidaten; wat ermee gebeurt</div></div>
+<p>Onder elke roosterregel in de simulatie staat <em>Regel beoordelen</em>: Goed, Twijfel of Slecht, met redenen die
+aansluiten op wat het model meet (goede flow, goede nachtreeks, goed herstel, goede uren; heen-en-weer, losse nacht,
+reeks van twee nachten, slecht herstel, grote sprong in begintijd, uitschieter in uren, oneerlijk, zware weekenden)
+en een vrije toelichting. Op de vergelijkingspagina staat per paar kandidaten <em>Welke rijdt menselijker?</em> met
+redenen als betere flow, betere nachtreeksen, beter herstel, eerlijker, minder vreemde overgangen.</p>
+
+<table><caption>Wat er per oordeel wordt bewaard</caption><thead><tr><th>Veld</th><th>Waarom</th></tr></thead><tbody><tr><td>kandidaat, basisrooster, regel</td><td>waar het oordeel over gaat; de regel moet echt in de kandidaat bestaan</td></tr><tr><td>oordeel, redenen, toelichting</td><td>de redenen zijn een vaste lijst; een onbekende reden wordt geweigerd</td></tr><tr><td>kwaliteitsmodel- en zoekmachineversie</td><td>zonder versies is later niet te zeggen waarover het oordeel ging</td></tr><tr><td>wie en wanneer</td><td>personeelsnummer en tijdstip; namen staan achter een aparte permissie</td></tr><tr><td>auditregel</td><td>kandidaat.menselijk-oordeel en kandidaat.menselijke-voorkeur</td></tr></tbody></table>
+
+<div class="callout ok"><p>Een oordeel verandert niets automatisch: geen gewicht, geen model, geen productie-instelling. Het is grondstof voor de volgende ijking, die pas begint na jullie feedback.</p></div></section>
+<section class="chapter"><div class="head"><div class="num">Hoofdstuk 12</div><h2>Reproduceerbaarheid en controles</h2><div class="sub">Welke opdracht welk bestand maakt, en wat de tests zeggen</div></div>
+<table><thead><tr><th>Opdracht</th><th>Maakt</th></tr></thead><tbody><tr><td><code>npm run human-benchmark:extract</code></td><td>officiële kenmerken, CSV's, profielverwachtingen</td></tr><tr><td><code>npm run human-benchmark:contrastive</code></td><td><code>contrastive-check.json</code></td></tr><tr><td><code>npm run human-benchmark:solver-ab</code></td><td><code>solver-ab-*.json</code></td></tr><tr><td><code>npm run verify:optimizer-benchmark -- run --phase human …</code></td><td><code>docs/optimizer-benchmark/human/run-*.json</code> (ruwe kandidaatroosters)</td></tr><tr><td><code>npm run human-benchmark:analyse</code></td><td><code>analysis-before-after.json</code></td></tr><tr><td><code>npm run human-benchmark:analyse -- --after human-dev1 --out analysis-dev1-final-v2.json</code></td><td>de eerste AFTER-meting met de definitieve v2</td></tr><tr><td><code>npm run human-benchmark:final -- generate | export</code></td><td>de drie kandidaten, <code>final-candidates/</code></td></tr><tr><td><code>npm run config:write</code></td><td><code>configs/quality-model-v2.json</code>, <code>configs/optimizer-config-v1.0.5.json</code></td></tr><tr><td><code>npm run report:human</code> en <code>report:human-pdf</code></td><td>dit rapport</td></tr></tbody></table>
+
+<div class="callout bad"><p>Controles nog niet vastgelegd (<code>checks.json</code> ontbreekt).</p></div></section>
+</div>
+</body>
+</html>

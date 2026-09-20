@@ -1,0 +1,863 @@
+{
+  "schema": "ns-polish-budget/1",
+  "measuredAt": "2026-09-17T19:35:27.201Z",
+  "qualityModelVersion": "quality-model-v1",
+  "budgets": [
+    5,
+    10,
+    20,
+    40,
+    80,
+    160
+  ],
+  "results": [
+    {
+      "candidate": "BEFORE BALANCED run 1 kandidaat 1",
+      "start": {
+        "ranking": 78.42,
+        "robust": 78.4,
+        "overall": 81.8,
+        "worstLine": 59.375,
+        "components": {
+          "hours": 76.2,
+          "flow": 81.6,
+          "rest": 80.7,
+          "nights": 100,
+          "fairness": 82.4,
+          "stability": 57.5
+        },
+        "singletonNights": 0,
+        "twoNightBlocks": 0,
+        "heavyTransitions": 0,
+        "hoursOutside30": 56,
+        "hoursWithin10": 4,
+        "patternDistance": 29.2,
+        "hardValid": true
+      },
+      "budgets": [
+        {
+          "seconds": 5,
+          "wallSeconds": 5,
+          "variants": 6767,
+          "swaps": 4,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 0.8,
+          "after": {
+            "ranking": 79.21,
+            "robust": 79.2,
+            "overall": 81.9,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 76.4,
+              "flow": 81.6,
+              "rest": 82,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 57
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 55,
+            "hoursWithin10": 4,
+            "patternDistance": 29.8,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 10,
+          "wallSeconds": 10,
+          "variants": 14183,
+          "swaps": 9,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 0.92,
+          "after": {
+            "ranking": 79.33,
+            "robust": 79.3,
+            "overall": 82.1,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 76.5,
+              "flow": 81.6,
+              "rest": 82.6,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 57.3
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 53,
+            "hoursWithin10": 4,
+            "patternDistance": 30.2,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 20,
+          "wallSeconds": 20,
+          "variants": 28274,
+          "swaps": 19,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.14,
+          "after": {
+            "ranking": 79.55,
+            "robust": 79.5,
+            "overall": 82.4,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 76.8,
+              "flow": 81.6,
+              "rest": 83.8,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 57.5
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 52,
+            "hoursWithin10": 3,
+            "patternDistance": 30.8,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 40,
+          "wallSeconds": 40,
+          "variants": 56708,
+          "swaps": 36,
+          "climbs": 4,
+          "kicks": 3,
+          "stopReason": "tijd op",
+          "gain": 1.25,
+          "after": {
+            "ranking": 79.66,
+            "robust": 79.7,
+            "overall": 82.5,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 76.9,
+              "flow": 81.6,
+              "rest": 84.2,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 58
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 53,
+            "hoursWithin10": 4,
+            "patternDistance": 31,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 80,
+          "wallSeconds": 80,
+          "variants": 111994,
+          "swaps": 68,
+          "climbs": 9,
+          "kicks": 8,
+          "stopReason": "tijd op",
+          "gain": 1.36,
+          "after": {
+            "ranking": 79.78,
+            "robust": 79.8,
+            "overall": 82.6,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 77.2,
+              "flow": 81.6,
+              "rest": 84.9,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 57.7
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 50,
+            "hoursWithin10": 4,
+            "patternDistance": 31.7,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 160,
+          "wallSeconds": 160,
+          "variants": 223349,
+          "swaps": 96,
+          "climbs": 23,
+          "kicks": 22,
+          "stopReason": "tijd op",
+          "gain": 1.37,
+          "after": {
+            "ranking": 79.79,
+            "robust": 79.8,
+            "overall": 82.6,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 77.2,
+              "flow": 81.6,
+              "rest": 85,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 57.7
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 49,
+            "hoursWithin10": 4,
+            "patternDistance": 31.6,
+            "hardValid": true
+          }
+        }
+      ]
+    },
+    {
+      "candidate": "BEFORE BALANCED run 2 kandidaat 1",
+      "start": {
+        "ranking": 78.44,
+        "robust": 78.4,
+        "overall": 81.8,
+        "worstLine": 59.375,
+        "components": {
+          "hours": 76.3,
+          "flow": 80.2,
+          "rest": 81.2,
+          "nights": 100,
+          "fairness": 82.4,
+          "stability": 59.6
+        },
+        "singletonNights": 0,
+        "twoNightBlocks": 0,
+        "heavyTransitions": 0,
+        "hoursOutside30": 54,
+        "hoursWithin10": 2,
+        "patternDistance": 22.5,
+        "hardValid": true
+      },
+      "budgets": [
+        {
+          "seconds": 5,
+          "wallSeconds": 5,
+          "variants": 7029,
+          "swaps": 4,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 0.26,
+          "after": {
+            "ranking": 78.7,
+            "robust": 78.7,
+            "overall": 82.1,
+            "worstLine": 59.375,
+            "components": {
+              "hours": 76.1,
+              "flow": 80.2,
+              "rest": 83.1,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 60.2
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 54,
+            "hoursWithin10": 2,
+            "patternDistance": 23.3,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 10,
+          "wallSeconds": 10,
+          "variants": 14037,
+          "swaps": 9,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.05,
+          "after": {
+            "ranking": 79.48,
+            "robust": 79.5,
+            "overall": 82.3,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 76.2,
+              "flow": 80.2,
+              "rest": 84.4,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 59.8
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 55,
+            "hoursWithin10": 1,
+            "patternDistance": 24,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 20,
+          "wallSeconds": 20,
+          "variants": 28179,
+          "swaps": 16,
+          "climbs": 2,
+          "kicks": 1,
+          "stopReason": "tijd op",
+          "gain": 1.2,
+          "after": {
+            "ranking": 79.64,
+            "robust": 79.6,
+            "overall": 82.5,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 76.6,
+              "flow": 80.2,
+              "rest": 84.7,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 60.4
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 54,
+            "hoursWithin10": 2,
+            "patternDistance": 24,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 40,
+          "wallSeconds": 40,
+          "variants": 56640,
+          "swaps": 36,
+          "climbs": 3,
+          "kicks": 2,
+          "stopReason": "tijd op",
+          "gain": 1.32,
+          "after": {
+            "ranking": 79.76,
+            "robust": 79.8,
+            "overall": 82.6,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 77.1,
+              "flow": 80.2,
+              "rest": 85.1,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 60.2
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 50,
+            "hoursWithin10": 4,
+            "patternDistance": 24,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 80,
+          "wallSeconds": 80,
+          "variants": 112642,
+          "swaps": 62,
+          "climbs": 8,
+          "kicks": 7,
+          "stopReason": "tijd op",
+          "gain": 1.49,
+          "after": {
+            "ranking": 79.93,
+            "robust": 79.9,
+            "overall": 82.8,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 77.4,
+              "flow": 80.2,
+              "rest": 86.6,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 59.3
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 47,
+            "hoursWithin10": 3,
+            "patternDistance": 24.7,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 160,
+          "wallSeconds": 160,
+          "variants": 224778,
+          "swaps": 116,
+          "climbs": 23,
+          "kicks": 22,
+          "stopReason": "tijd op",
+          "gain": 1.6,
+          "after": {
+            "ranking": 80.04,
+            "robust": 80,
+            "overall": 82.9,
+            "worstLine": 63.63636363636363,
+            "components": {
+              "hours": 77.6,
+              "flow": 80.2,
+              "rest": 87.1,
+              "nights": 100,
+              "fairness": 82.4,
+              "stability": 59.5
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 0,
+            "hoursOutside30": 46,
+            "hoursWithin10": 5,
+            "patternDistance": 25,
+            "hardValid": true
+          }
+        }
+      ]
+    },
+    {
+      "candidate": "BEFORE BALANCED run 3 kandidaat 1",
+      "start": {
+        "ranking": 75.65,
+        "robust": 75.6,
+        "overall": 80.2,
+        "worstLine": 50,
+        "components": {
+          "hours": 76.5,
+          "flow": 79.2,
+          "rest": 72.4,
+          "nights": 100,
+          "fairness": 82.9,
+          "stability": 57.4
+        },
+        "singletonNights": 0,
+        "twoNightBlocks": 0,
+        "heavyTransitions": 1,
+        "hoursOutside30": 53,
+        "hoursWithin10": 4,
+        "patternDistance": 23,
+        "hardValid": true
+      },
+      "budgets": [
+        {
+          "seconds": 5,
+          "wallSeconds": 5,
+          "variants": 7052,
+          "swaps": 4,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.01,
+          "after": {
+            "ranking": 76.66,
+            "robust": 76.7,
+            "overall": 80.8,
+            "worstLine": 53.125,
+            "components": {
+              "hours": 75.9,
+              "flow": 79.2,
+              "rest": 77.7,
+              "nights": 100,
+              "fairness": 82.9,
+              "stability": 57
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 53,
+            "hoursWithin10": 4,
+            "patternDistance": 22.9,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 10,
+          "wallSeconds": 10,
+          "variants": 14004,
+          "swaps": 9,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.24,
+          "after": {
+            "ranking": 76.89,
+            "robust": 76.9,
+            "overall": 81.1,
+            "worstLine": 53.125,
+            "components": {
+              "hours": 76.5,
+              "flow": 79.2,
+              "rest": 78.7,
+              "nights": 100,
+              "fairness": 82.9,
+              "stability": 57
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 52,
+            "hoursWithin10": 4,
+            "patternDistance": 23.4,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 20,
+          "wallSeconds": 20,
+          "variants": 28299,
+          "swaps": 19,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.43,
+          "after": {
+            "ranking": 77.08,
+            "robust": 77.1,
+            "overall": 81.3,
+            "worstLine": 53.125,
+            "components": {
+              "hours": 77.1,
+              "flow": 79.2,
+              "rest": 79.5,
+              "nights": 100,
+              "fairness": 82.9,
+              "stability": 56.9
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 47,
+            "hoursWithin10": 5,
+            "patternDistance": 23.8,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 40,
+          "wallSeconds": 40,
+          "variants": 56049,
+          "swaps": 36,
+          "climbs": 3,
+          "kicks": 2,
+          "stopReason": "tijd op",
+          "gain": 1.71,
+          "after": {
+            "ranking": 77.36,
+            "robust": 77.3,
+            "overall": 81.6,
+            "worstLine": 53.125,
+            "components": {
+              "hours": 77.4,
+              "flow": 79.2,
+              "rest": 80.2,
+              "nights": 100,
+              "fairness": 82.9,
+              "stability": 58.5
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 46,
+            "hoursWithin10": 8,
+            "patternDistance": 24.3,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 80,
+          "wallSeconds": 80,
+          "variants": 112994,
+          "swaps": 70,
+          "climbs": 9,
+          "kicks": 8,
+          "stopReason": "tijd op",
+          "gain": 1.77,
+          "after": {
+            "ranking": 77.42,
+            "robust": 77.4,
+            "overall": 81.7,
+            "worstLine": 53.125,
+            "components": {
+              "hours": 77.6,
+              "flow": 79.2,
+              "rest": 80.9,
+              "nights": 100,
+              "fairness": 82.9,
+              "stability": 57.8
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 47,
+            "hoursWithin10": 8,
+            "patternDistance": 25,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 160,
+          "wallSeconds": 160,
+          "variants": 222779,
+          "swaps": 134,
+          "climbs": 20,
+          "kicks": 19,
+          "stopReason": "tijd op",
+          "gain": 1.91,
+          "after": {
+            "ranking": 77.55,
+            "robust": 77.6,
+            "overall": 81.9,
+            "worstLine": 53.125,
+            "components": {
+              "hours": 77.9,
+              "flow": 79.2,
+              "rest": 81.1,
+              "nights": 100,
+              "fairness": 83,
+              "stability": 58.3
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 45,
+            "hoursWithin10": 7,
+            "patternDistance": 25.1,
+            "hardValid": true
+          }
+        }
+      ]
+    },
+    {
+      "candidate": "BEFORE BALANCED run 4 kandidaat 1",
+      "start": {
+        "ranking": 76.2,
+        "robust": 76.2,
+        "overall": 80.1,
+        "worstLine": 54.208333333333336,
+        "components": {
+          "hours": 76.3,
+          "flow": 79.7,
+          "rest": 72.4,
+          "nights": 100,
+          "fairness": 83,
+          "stability": 55.7
+        },
+        "singletonNights": 0,
+        "twoNightBlocks": 0,
+        "heavyTransitions": 1,
+        "hoursOutside30": 57,
+        "hoursWithin10": 4,
+        "patternDistance": 27.7,
+        "hardValid": true
+      },
+      "budgets": [
+        {
+          "seconds": 5,
+          "wallSeconds": 5,
+          "variants": 6996,
+          "swaps": 5,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 0.77,
+          "after": {
+            "ranking": 76.96,
+            "robust": 77,
+            "overall": 79.9,
+            "worstLine": 60.104166666666664,
+            "components": {
+              "hours": 75.9,
+              "flow": 79.7,
+              "rest": 73.1,
+              "nights": 100,
+              "fairness": 81.9,
+              "stability": 55.7
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 56,
+            "hoursWithin10": 4,
+            "patternDistance": 27.7,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 10,
+          "wallSeconds": 10,
+          "variants": 14017,
+          "swaps": 10,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.21,
+          "after": {
+            "ranking": 77.41,
+            "robust": 77.4,
+            "overall": 80.4,
+            "worstLine": 60.5,
+            "components": {
+              "hours": 77,
+              "flow": 79.7,
+              "rest": 73.4,
+              "nights": 100,
+              "fairness": 83,
+              "stability": 55.9
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 54,
+            "hoursWithin10": 4,
+            "patternDistance": 27.7,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 20,
+          "wallSeconds": 20,
+          "variants": 27884,
+          "swaps": 19,
+          "climbs": 1,
+          "kicks": 0,
+          "stopReason": "tijd op",
+          "gain": 1.45,
+          "after": {
+            "ranking": 77.65,
+            "robust": 77.6,
+            "overall": 80.7,
+            "worstLine": 60.5,
+            "components": {
+              "hours": 77.5,
+              "flow": 79.7,
+              "rest": 75.1,
+              "nights": 100,
+              "fairness": 83,
+              "stability": 55.2
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 52,
+            "hoursWithin10": 5,
+            "patternDistance": 28.5,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 40,
+          "wallSeconds": 40,
+          "variants": 56038,
+          "swaps": 33,
+          "climbs": 3,
+          "kicks": 2,
+          "stopReason": "tijd op",
+          "gain": 1.66,
+          "after": {
+            "ranking": 77.86,
+            "robust": 77.8,
+            "overall": 80.9,
+            "worstLine": 60.5,
+            "components": {
+              "hours": 77.6,
+              "flow": 79.7,
+              "rest": 76.6,
+              "nights": 100,
+              "fairness": 83,
+              "stability": 55.2
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 51,
+            "hoursWithin10": 4,
+            "patternDistance": 29.1,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 80,
+          "wallSeconds": 80,
+          "variants": 113177,
+          "swaps": 61,
+          "climbs": 9,
+          "kicks": 8,
+          "stopReason": "tijd op",
+          "gain": 1.74,
+          "after": {
+            "ranking": 77.94,
+            "robust": 77.9,
+            "overall": 81,
+            "worstLine": 60.5,
+            "components": {
+              "hours": 77.8,
+              "flow": 79.7,
+              "rest": 77,
+              "nights": 100,
+              "fairness": 83,
+              "stability": 55.2
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 51,
+            "hoursWithin10": 3,
+            "patternDistance": 29.1,
+            "hardValid": true
+          }
+        },
+        {
+          "seconds": 160,
+          "wallSeconds": 160,
+          "variants": 224533,
+          "swaps": 111,
+          "climbs": 24,
+          "kicks": 23,
+          "stopReason": "tijd op",
+          "gain": 1.76,
+          "after": {
+            "ranking": 77.96,
+            "robust": 77.9,
+            "overall": 81,
+            "worstLine": 60.5,
+            "components": {
+              "hours": 78,
+              "flow": 79.7,
+              "rest": 77,
+              "nights": 100,
+              "fairness": 83,
+              "stability": 55
+            },
+            "singletonNights": 0,
+            "twoNightBlocks": 0,
+            "heavyTransitions": 1,
+            "hoursOutside30": 51,
+            "hoursWithin10": 4,
+            "patternDistance": 29.1,
+            "hardValid": true
+          }
+        }
+      ]
+    }
+  ]
+}

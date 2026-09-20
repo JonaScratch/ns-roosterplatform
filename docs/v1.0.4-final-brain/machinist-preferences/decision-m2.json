@@ -1,0 +1,286 @@
+{
+  "schema": "ns-machinist-decision/1",
+  "decidedAt": "2026-09-19T09:42:05.136Z",
+  "rule": "M2",
+  "question": "Schaal van de CP-SAT-voorkeurstermen",
+  "perScale": [
+    {
+      "scale": 0,
+      "means": {
+        "preference": 78.16,
+        "singletons": 0,
+        "pairs": 0.2,
+        "rest": 80.76,
+        "hours": 89.68,
+        "fairness": 85.48,
+        "worstNightExit": 85,
+        "worstLineV2": 75.66,
+        "affinity": 65.94,
+        "dayDuties": 66.5,
+        "restDuties": 77.06
+      },
+      "margins": [
+        {
+          "key": "singletons",
+          "label": "losse nachten",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0,
+          "after": 0,
+          "delta": 0,
+          "ok": true
+        },
+        {
+          "key": "pairs",
+          "label": "reeksen van twee",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0.2,
+          "after": 0.2,
+          "delta": 0,
+          "ok": true
+        },
+        {
+          "key": "rest",
+          "label": "rust",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 80.76,
+          "after": 80.76,
+          "delta": 0,
+          "ok": true
+        },
+        {
+          "key": "fairness",
+          "label": "eerlijkheid",
+          "maxWorse": 0.5,
+          "higherIsBetter": true,
+          "before": 85.48,
+          "after": 85.48,
+          "delta": 0,
+          "ok": true
+        },
+        {
+          "key": "hours",
+          "label": "uren",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 89.68,
+          "after": 89.68,
+          "delta": 0,
+          "ok": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "scale": 0.333,
+      "means": {
+        "preference": 84.04,
+        "singletons": 0.6,
+        "pairs": 1,
+        "rest": 77.66,
+        "hours": 89.18,
+        "fairness": 86.44,
+        "worstNightExit": 40,
+        "worstLineV2": 70.29,
+        "affinity": 77.72,
+        "dayDuties": 96.24,
+        "restDuties": 90.62
+      },
+      "margins": [
+        {
+          "key": "singletons",
+          "label": "losse nachten",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0,
+          "after": 0.6,
+          "delta": 0.6,
+          "ok": false
+        },
+        {
+          "key": "pairs",
+          "label": "reeksen van twee",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0.2,
+          "after": 1,
+          "delta": 0.8,
+          "ok": false
+        },
+        {
+          "key": "rest",
+          "label": "rust",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 80.76,
+          "after": 77.66,
+          "delta": -3.1,
+          "ok": false
+        },
+        {
+          "key": "fairness",
+          "label": "eerlijkheid",
+          "maxWorse": 0.5,
+          "higherIsBetter": true,
+          "before": 85.48,
+          "after": 86.44,
+          "delta": 0.96,
+          "ok": true
+        },
+        {
+          "key": "hours",
+          "label": "uren",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 89.68,
+          "after": 89.18,
+          "delta": -0.5,
+          "ok": true
+        }
+      ],
+      "eligible": false
+    },
+    {
+      "scale": 1,
+      "means": {
+        "preference": 82.94,
+        "singletons": 0.4,
+        "pairs": 0.4,
+        "rest": 80.82,
+        "hours": 89.42,
+        "fairness": 79.24,
+        "worstNightExit": 65,
+        "worstLineV2": 77.62,
+        "affinity": 79.2,
+        "dayDuties": 96,
+        "restDuties": 90
+      },
+      "margins": [
+        {
+          "key": "singletons",
+          "label": "losse nachten",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0,
+          "after": 0.4,
+          "delta": 0.4,
+          "ok": false
+        },
+        {
+          "key": "pairs",
+          "label": "reeksen van twee",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0.2,
+          "after": 0.4,
+          "delta": 0.2,
+          "ok": true
+        },
+        {
+          "key": "rest",
+          "label": "rust",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 80.76,
+          "after": 80.82,
+          "delta": 0.06,
+          "ok": true
+        },
+        {
+          "key": "fairness",
+          "label": "eerlijkheid",
+          "maxWorse": 0.5,
+          "higherIsBetter": true,
+          "before": 85.48,
+          "after": 79.24,
+          "delta": -6.24,
+          "ok": false
+        },
+        {
+          "key": "hours",
+          "label": "uren",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 89.68,
+          "after": 89.42,
+          "delta": -0.26,
+          "ok": true
+        }
+      ],
+      "eligible": false
+    },
+    {
+      "scale": 3,
+      "means": {
+        "preference": 81.76,
+        "singletons": 0,
+        "pairs": 1.4,
+        "rest": 81.06,
+        "hours": 89.26,
+        "fairness": 75.7,
+        "worstNightExit": 55,
+        "worstLineV2": 66.85,
+        "affinity": 80.98,
+        "dayDuties": 96.48,
+        "restDuties": 90.9
+      },
+      "margins": [
+        {
+          "key": "singletons",
+          "label": "losse nachten",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0,
+          "after": 0,
+          "delta": 0,
+          "ok": true
+        },
+        {
+          "key": "pairs",
+          "label": "reeksen van twee",
+          "maxWorse": 0.34,
+          "higherIsBetter": false,
+          "before": 0.2,
+          "after": 1.4,
+          "delta": 1.2,
+          "ok": false
+        },
+        {
+          "key": "rest",
+          "label": "rust",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 80.76,
+          "after": 81.06,
+          "delta": 0.3,
+          "ok": true
+        },
+        {
+          "key": "fairness",
+          "label": "eerlijkheid",
+          "maxWorse": 0.5,
+          "higherIsBetter": true,
+          "before": 85.48,
+          "after": 75.7,
+          "delta": -9.78,
+          "ok": false
+        },
+        {
+          "key": "hours",
+          "label": "uren",
+          "maxWorse": 1,
+          "higherIsBetter": true,
+          "before": 89.68,
+          "after": 89.26,
+          "delta": -0.42,
+          "ok": true
+        }
+      ],
+      "eligible": false
+    }
+  ],
+  "decision": 0,
+  "reason": "kleinste schaal binnen 0,5 punt van de beste geschikte voorkeur (78.16)"
+}

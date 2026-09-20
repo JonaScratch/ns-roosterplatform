@@ -148,6 +148,35 @@ def solve_once(request: dict[str, Any], require_full_coverage: bool) -> dict[str
                 cycle.append(positie)
         cycles[code] = cycle
 
+    # ── Operationele ontwerpeisen (USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT) ─
+    # Geen wet of CAO: eisen van de gebruiker, hard gemaakt omdat ze dat moeten
+    # zijn (operational-requirements.ts). Alleen als de aanroeper ze meegeeft.
+    operationeel = options.get("operationalRequirements") or None
+    vrijdag_voor_vrij_weekend: set[int] = set()
+    if operationeel:
+        vrije_typen = set(operationeel.get("freeWeekendTypes", []))
+        for cycle in cycles.values():
+            lengte = len(cycle)
+            for i in range(lengte):
+                za, zo, vr = cycle[i], cycle[(i + 1) % lengte], cycle[(i - 1) % lengte]
+                if (
+                    za["day"]["weekday"] == 6
+                    and zo["day"]["weekday"] == 7
+                    and za["positionType"] in vrije_typen
+                    and zo["positionType"] in vrije_typen
+                    and vr["day"]["weekday"] == 5
+                    and vr["slot"] is not None
+                ):
+                    vrijdag_voor_vrij_weekend.add(vr["slot"])
+
+    def vrijdag_toegestaan(s: int, duty: dict[str, Any]) -> bool:
+        """Vóór een vrij weekend: een dag- of late dienst uiterlijk 23:59 klaar; een nacht mag."""
+        if s not in vrijdag_voor_vrij_weekend:
+            return True
+        if set(duty["timeOfDayKinds"]) & set(operationeel.get("fridayExemptKinds", [])):
+            return True
+        return int(duty["endMinute"]) <= int(operationeel["fridayLatestEndMinute"])
+
     # ── Variabelen ───────────────────────────────────────────────────────────
     x: dict[tuple[int, int], cp_model.IntVar] = {}
     allowed_for_slot: dict[int, list[int]] = {s: [] for s in range(len(slots))}
@@ -158,6 +187,9 @@ def solve_once(request: dict[str, Any], require_full_coverage: bool) -> dict[str
                 continue
             # Profielgrens: harde eis, geen kostenpost.
             if not set(duty["timeOfDayKinds"]).issubset(set(slot["allowedKinds"])):
+                continue
+            # Vrijdag vóór een vrij weekend: net zo hard als het profiel.
+            if not vrijdag_toegestaan(s, duty):
                 continue
             x[(s, d)] = model.NewBoolVar(f"x_{s}_{d}")
             allowed_for_slot[s].append(d)
@@ -226,6 +258,26 @@ def solve_once(request: dict[str, Any], require_full_coverage: bool) -> dict[str
             for begin in range(lengte):
                 model.Add(sum(bezet[(begin + k) % lengte] for k in range(venster)) <= max_consecutive)
 
+    # 4b. Roostergemiddelde hoogstens het maximum (40:00), naar beneden
+    #     afgerond zoals het roosterblad: totaal < (max + 1) × weken. Een losse
+    #     regel mag erboven; het rooster als geheel niet. Roostercredit zoals in
+    #     de urenbalans hieronder: dienstduur plus de vaste creditdagen.
+    if operationeel and require_full_coverage:
+        max_week = int(operationeel["maxAverageWeeklyMinutes"])
+        credit_ops = options.get("anchorCreditMinutes", {}) or {}
+        weken_per_rooster: dict[str, int] = {}
+        for line in lines:
+            weken_per_rooster[line["baseRosterCode"]] = weken_per_rooster.get(line["baseRosterCode"], 0) + int(line["cycleWeeks"])
+        for code, cycle in cycles.items():
+            weken = max(1, weken_per_rooster.get(code, 1))
+            vast = sum(int(credit_ops.get(p["positionType"], 0)) for p in cycle if p["slot"] is None)
+            totaal = vast + sum(
+                som(p["slot"], lambda duty: int(duty["endMinute"]) - int(duty["startMinute"]))
+                for p in cycle
+                if p["slot"] is not None and allowed_for_slot[p["slot"]]
+            )
+            model.Add(totaal <= (max_week + 1) * weken - 1)
+
     # 5. Verschillend van eerdere kandidaten: een nieuwe kandidaat moet op ten
     #    minste zoveel dienstdagen een ander dienstnummer hebben. Zonder deze
     #    eis levert een tweede run met iets andere gewichten vaak exact hetzelfde
@@ -242,6 +294,24 @@ def solve_once(request: dict[str, Any], require_full_coverage: bool) -> dict[str
                 gelijk.append(x[(s, d)])
         if gelijk and min_different > 0:
             model.Add(sum(gelijk) <= max(0, len(gelijk) - min_different))
+
+    # 6. Vastgezette plaatsingen bij een gerichte reparatie.
+    #
+    #    Geen regel maar een zoekbeperking: de roosters die niets met de zwakte
+    #    te maken hebben houden hun diensten, zodat de oplosser alleen het
+    #    kleine deel opnieuw indeelt waar het om gaat. Een vastzetting die het
+    #    model niet kent (verkeerde weekdag, buiten het profiel) maakt het
+    #    vraagstuk onoplosbaar in plaats van stilzwijgend te verdwijnen: anders
+    #    zou een reparatie iets anders oplossen dan gevraagd.
+    for vast in options.get("fixedAssignments", []) or []:
+        s = key_to_slot.get(vast["slotKey"])
+        d = duty_index.get(vast["dutyKey"])
+        if s is None or d is None or (s, d) not in x:
+            onmogelijk = model.NewBoolVar("vastzetting_onbekend")
+            model.Add(onmogelijk == 1)
+            model.Add(onmogelijk == 0)
+            continue
+        model.Add(x[(s, d)] == 1)
 
     # ── Zachte doelen ────────────────────────────────────────────────────────
     # Alles hieronder is een kostenpost. Alleen bij volledige dekking: met lege
@@ -274,6 +344,12 @@ def solve_once(request: dict[str, Any], require_full_coverage: bool) -> dict[str
     # Eén zoekdraad levert herhaalbare uitkomsten (voor de tests); meer draden
     # vinden binnen dezelfde rekentijd betere roosters. De aanroeper kiest.
     solver.parameters.num_search_workers = workers
+    # De zoekopzet mag per start verschillen: met een sterkere lineaire
+    # ontspanning vindt de oplosser andere goede roosters dan met de standaard.
+    # Dat is variatie in het zoeken, niet in wat is toegestaan.
+    linearisatie = options.get("linearizationLevel")
+    if linearisatie is not None:
+        solver.parameters.linearization_level = int(linearisatie)
     status = solver.Solve(model)
 
     status_name = solver.StatusName(status)
@@ -386,6 +462,10 @@ def zachte_doelen(model, options, objective, lines, duties, slots, cycles, x, al
     matrix = options.get("transitionPenalties", {}) or {}
     direct = matrix.get("adjacent", {})
     over_vrij = matrix.get("overOffDay", {})
+    # Over twee vrije dagen: in de menselijke Dordrechtse roosters gaat elke
+    # nachtreeks via twee of drie vrije dagen naar een late dienst, nooit naar
+    # een vroege. Alleen die ene overgang kost hier iets.
+    over_twee_vrij = matrix.get("overTwoOffDays", {})
     vrije_dagen = set(options.get("offPositionTypes", ["RUST", "WR", "CO"]))
     if w_overgang > 0:
         categorie = {}
@@ -419,9 +499,54 @@ def zachte_doelen(model, options, objective, lines, duties, slots, cycles, x, al
                 if u is not None and allowed_for_slot[u]:
                     strafpaar(s, u, direct, "ov")
                 elif lengte > 2 and volgend["positionType"] in vrije_dagen:
-                    daarna = cycle[(t + 2) % lengte]["slot"]
+                    tweede = cycle[(t + 2) % lengte]
+                    daarna = tweede["slot"]
                     if daarna is not None and allowed_for_slot[daarna]:
                         strafpaar(s, daarna, over_vrij, "ovv")
+                    elif over_twee_vrij and lengte > 3 and tweede["positionType"] in vrije_dagen:
+                        derde = cycle[(t + 3) % lengte]["slot"]
+                        if derde is not None and allowed_for_slot[derde]:
+                            strafpaar(s, derde, over_twee_vrij, "ovvv")
+
+    # h. Sprong in begintijd tussen opeenvolgende diensten in hetzelfde dagdeel.
+    #    Tot `vrij` minuten kost niets (de mediaan in de menselijke roosters);
+    #    daarboven per minuut, tot `vol`. Een wissel van dagdeel valt hier
+    #    buiten: die kost al via de overgangstabel.
+    w_sprong = gewicht("startJitter")
+    vrij_min = int(options.get("startJitterFreeMinutes", 60))
+    vol_min = int(options.get("startJitterFullMinutes", 240))
+    if w_sprong > 0 and vol_min > vrij_min:
+        marge = vol_min - vrij_min
+        plafond = model.NewConstant(vol_min)
+        cat = {}
+        for s in range(len(slots)):
+            cat[s] = {k: som(s, lambda duty, k=k: 1 if duty.get("category") == k else 0) for k in CATEGORIES}
+        for code, cycle in cycles.items():
+            lengte = len(cycle)
+            if lengte < 2:
+                continue
+            for t in range(lengte):
+                s = cycle[t]["slot"]
+                u = cycle[(t + 1) % lengte]["slot"]
+                if s is None or u is None or not allowed_for_slot[s] or not allowed_for_slot[u]:
+                    continue
+                gelijk = []
+                for k in CATEGORIES:
+                    if kan(s, lambda duty, k=k: duty.get("category") == k) and kan(u, lambda duty, k=k: duty.get("category") == k):
+                        z = model.NewBoolVar(f"zelfde_{s}_{u}_{k}")
+                        model.Add(z >= cat[s][k] + cat[u][k] - 1)
+                        gelijk.append(z)
+                if not gelijk:
+                    continue
+                verschil = model.NewIntVar(0, MINUTES_PER_DAY, f"dstart_{s}_{u}")
+                model.AddAbsEquality(verschil, start[u] - start[s])
+                begrensd = model.NewIntVar(0, vol_min, f"dstartmax_{s}_{u}")
+                model.AddMinEquality(begrensd, [verschil, plafond])
+                overschot = model.NewIntVar(0, marge, f"sprong_{s}_{u}")
+                model.Add(overschot >= begrensd - vrij_min)
+                telt = model.NewIntVar(0, marge, f"sprongtelt_{s}_{u}")
+                model.Add(telt >= overschot - marge * (1 - sum(gelijk)))
+                straffen.append(telt * w_sprong)
 
     # d. Nachtreeksen: losse nachten en reeksen van twee kosten; drie of meer
     #    niet. Langs de rotatievolgorde, rond.
@@ -492,6 +617,38 @@ def zachte_doelen(model, options, objective, lines, duties, slots, cycles, x, al
         )
     eerlijk("shuntingFairness", alle, rangeer)
     eerlijk("weekendFairness", alle, weekend)
+
+    # e2. Machinistenvoorkeur (MACHINIST_PREFERENCE; profile-affinity.ts en
+    #     machinist-preference.ts). Beide standaard uit: alleen met een gewicht.
+    #     Affiniteit per plaatsing: (1 − affiniteit) × 10 eenheden (voorkeur 0,
+    #     neutraal 4, minder passend 8) × gewicht. Dagdienstdoel: afwijking van het
+    #     verwachte aantal dagachtige diensten per basisrooster, in tienden van een
+    #     dienst × gewicht. Gewichten via de wisselkoersen (exchange-rates.json).
+    w_aff = gewicht("profileAffinity")
+    tabel = options.get("profileAffinityTable") or {}
+    if w_aff > 0 and tabel:
+        for s, slot in enumerate(slots):
+            rij = tabel.get(lines[slot["lineIndex"]]["profile"], {})
+            for d in allowed_for_slot[s]:
+                eenheden = int(round((1 - float(rij.get(duties[d].get("preferenceClass"), 0.6))) * 10))
+                if eenheden > 0:
+                    straffen.append(x[(s, d)] * (eenheden * w_aff))
+    w_dag = gewicht("dayDutyTarget")
+    doelen = options.get("dayDutyTargets") or {}
+    if w_dag > 0 and doelen:
+        for code, cycle in cycles.items():
+            if code not in doelen:
+                continue
+            telling = sum(
+                som(p["slot"], lambda duty: 1 if duty.get("isDayDuty") else 0)
+                for p in cycle
+                if p["slot"] is not None and allowed_for_slot[p["slot"]]
+            )
+            doel = int(round(float(doelen[code]) * 10))
+            afwijking = model.NewIntVar(0, 10**6, f"dagdienst_{code}")
+            model.Add(afwijking >= telling * 10 - doel)
+            model.Add(afwijking >= doel - telling * 10)
+            straffen.append(afwijking * w_dag)
 
     # f. Behoud: van het huidige rooster (minste wijziging) en van een eerdere
     #    kandidaat (herbouw die goede delen laat staan).

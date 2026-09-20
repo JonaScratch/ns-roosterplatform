@@ -1,0 +1,40 @@
+ROOSTERPROFIELEN
+════════════════════════════════════════════════════════════════════════
+
+0. De profielen zoals ze zijn ingesteld
+  DDR-50MIX  50+ Mix                  VROEG, LAAT, NACHT
+  DDR-BLM    BLM                      VROEG, LAAT, NACHT
+  DDR-L      Laat                     LAAT
+  DDR-LN     Laat/Nacht               LAAT, NACHT
+  DDR-MIX    Mix (Vroeg-Laat-Nacht)   VROEG, LAAT, NACHT
+  DDR-V      Vroeg                    VROEG
+  DDR-VL     Vroeg/Laat               VROEG, LAAT
+
+1. Dagdeel in de database gelijk aan de afleiding in de code
+  ✓ elke dienst heeft in de database het afgeleide dagdeel — 223 diensten, 0 afwijkend
+  ✓ geen dienst zonder eenduidig dagdeel — 0
+  ✓ elke dienst heeft een dagdeel (geen dienst mag 'overal') — 0
+    701: VROEG
+    702: VROEG
+    703: VROEG
+    601: VROEG
+    730: LAAT
+    731: LAAT
+    732: LAAT
+
+2. Het huidige rooster
+  ✓ elke plaatsing in het huidige rooster past bij het profiel — 223 plaatsingen, 0 buiten profiel
+
+3. Gegenereerde kandidaten
+  ✓ geen dienst buiten het profiel in 26 kandidaten — 0
+  ✓ geen vroege dienst in Laat/Nacht — 0
+
+4. Een vroege dienst in Laat/Nacht: de eindvalidatie ziet hem, de generatie weigert hem
+    DDR-LN regel 1 dag 3: 732 → 13
+  ✓ de profielgrens slaat aan — 18 bevindingen, POTENTIAL
+    eindvalidatie: TECHNICALLY_VALID_UNVERIFIED_RULES, 0 bevestigd
+  ✓ de generatie weigert deze kandidaat — 18 dienst(en) buiten het roosterprofiel. Een dienst die het profiel niet toestaat, zoals een vroege dienst in Laat/Nacht, wordt nooit bewaard.
+  ✓ de weigering noemt het roosterprofiel
+
+════════════════════════════════════════════════════════════════════════
+9 geslaagd, 0 mislukt

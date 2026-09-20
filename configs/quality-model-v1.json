@@ -1,0 +1,173 @@
+{
+  "version": "quality-model-v1",
+  "components": {
+    "hours": {
+      "weight": 0.2,
+      "rationale": "Veertig uur per week over de cyclus is de afspraak in het contract; per week wisselt het mee met de structuur.",
+      "parts": {
+        "contract": {
+          "weight": 0.75,
+          "zeroAtMinutes": 60,
+          "meaning": "|gemiddelde weekomvang van het basisrooster − 40:00|; 0 min = 100, 60 min of meer = 0"
+        },
+        "week": {
+          "weight": 0.25,
+          "zeroAtMinutes": 480,
+          "meaning": "|weekomvang van één regel − 40:00|, gemiddeld over de regels; 8 uur of meer afwijking = 0"
+        }
+      }
+    },
+    "flow": {
+      "weight": 0.2,
+      "rationale": "Een rooster rijdt prettiger in reeksen van hetzelfde dagdeel, met de klok mee en zonder heen-en-weer.",
+      "parts": {
+        "stable": {
+          "weight": 0.4,
+          "meaning": "aandeel opeenvolgende gewerkte dagen in hetzelfde dagdeel"
+        },
+        "penalty": {
+          "weight": 0.3,
+          "zeroAtPointsPerWorkedDay": 0.5,
+          "meaning": "overgangsstrafpunten (centrale matrix) per gewerkte dag; 0,5 of meer = 0"
+        },
+        "streak": {
+          "weight": 0.3,
+          "fullAtAverageStreak": 4,
+          "meaning": "gemiddelde lengte van een reeks in hetzelfde dagdeel; 1 = 0, 4 of meer = 100"
+        }
+      }
+    },
+    "rest": {
+      "weight": 0.15,
+      "rationale": "Rust boven het wettelijk minimum is comfort; herstel na nachten en het vermijden van zware overgangen ook.",
+      "parts": {
+        "surplus": {
+          "weight": 0.6,
+          "meaning": "rust tussen diensten op opeenvolgende dagen, boven de geplande dagelijkse rust (regel RP_DAILY_REST_PLANNED)",
+          "bands": [
+            {
+              "upToMinutes": 0,
+              "value": 0
+            },
+            {
+              "upToMinutes": 60,
+              "value": 0.25
+            },
+            {
+              "upToMinutes": 180,
+              "value": 0.5
+            },
+            {
+              "upToMinutes": 360,
+              "value": 0.8
+            },
+            {
+              "upToMinutes": null,
+              "value": 1
+            }
+          ]
+        },
+        "recovery": {
+          "weight": 0.25,
+          "meaning": "tijd van het einde van een nachtreeks tot de volgende dienst, ten opzichte van de herstelrust na nachten (regel NIGHT_SEQUENCE_RECOVERY)",
+          "bands": [
+            {
+              "upToMinutesAboveRule": 0,
+              "value": 0
+            },
+            {
+              "upToMinutesAboveRule": 720,
+              "value": 0.6
+            },
+            {
+              "upToMinutesAboveRule": 1560,
+              "value": 0.85
+            },
+            {
+              "upToMinutesAboveRule": null,
+              "value": 1
+            }
+          ]
+        },
+        "heavy": {
+          "weight": 0.15,
+          "zeroAtPer100WorkedDays": 5,
+          "meaning": "zware overgangen (strafpunten ≥ 3) per 100 gewerkte dagen; 5 of meer = 0"
+        }
+      }
+    },
+    "nights": {
+      "weight": 0.2,
+      "rationale": "Nachten in reeksen van drie of meer zijn voor de medewerker beter te dragen dan losse nachten.",
+      "parts": {
+        "clustering": {
+          "weight": 1,
+          "meaning": "(nachten in reeksen ≥ 3 + ½ × nachten in reeksen van 2) ÷ alle nachten; een losse nacht telt 0"
+        }
+      }
+    },
+    "fairness": {
+      "weight": 0.15,
+      "rationale": "Wie in het ene rooster zit, hoort niet structureel zwaarder belast te zijn dan wie in het andere zit.",
+      "parts": {
+        "nights": {
+          "weight": 0.3,
+          "meaning": "variatiecoëfficiënt van nachten per regel tussen de nachtroosters; 100 × (1 − CV)"
+        },
+        "shunting": {
+          "weight": 0.3,
+          "meaning": "variatiecoëfficiënt van rangeerdiensten per regel tussen alle roosters"
+        },
+        "weekend": {
+          "weight": 0.25,
+          "meaning": "variatiecoëfficiënt van gewerkte weekenddagen per regel tussen alle roosters"
+        },
+        "longDuties": {
+          "weight": 0.15,
+          "meaning": "variatiecoëfficiënt van lange diensten per regel (drempel uit regel RP_LONG_DUTY_THRESHOLD)"
+        }
+      }
+    },
+    "stability": {
+      "weight": 0.1,
+      "rationale": "Continuïteit: wie zijn rooster kent, merkt een verschoven dagdeel meer dan een ander dienstnummer.",
+      "parts": {
+        "sameDuty": {
+          "weight": 0.4,
+          "meaning": "aandeel dienstdagen met hetzelfde dienstnummer als het huidige rooster"
+        },
+        "sameDaypart": {
+          "weight": 0.6,
+          "meaning": "aandeel dienstdagen met hetzelfde dagdeel als het huidige rooster"
+        }
+      }
+    }
+  },
+  "lineScore": {
+    "rationale": "Eén slechte regel mag niet verdwijnen achter een goed gemiddelde; elke regel krijgt daarom een eigen score.",
+    "weights": {
+      "hours": 0.2,
+      "flow": 0.35,
+      "rest": 0.25,
+      "nights": 0.2
+    }
+  },
+  "robust": {
+    "rationale": "De rangschikking kijkt naar het pakket én naar de slechtste regel, met een extra straf voor een uitschieter.",
+    "overallWeight": 0.85,
+    "worstLineWeight": 0.15,
+    "outlierGapPoints": 35,
+    "outlierPenaltyPerPoint": 0.25
+  },
+  "patternDistance": {
+    "rationale": "Hoe ver het patroon afwijkt van de officiële roosters: nachtreeksen, overgangen, reekslengtes, rust, weekendbelasting en wisselingen. Geen deel van de totaalscore en geen oordeel; een meting van gelijkenis met het menselijke referentierooster.",
+    "parts": [
+      "nightBlocks",
+      "transitions",
+      "streaks",
+      "restBands",
+      "weekendBurden",
+      "switches"
+    ]
+  }
+}

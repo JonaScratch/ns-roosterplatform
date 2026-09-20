@@ -1,0 +1,85 @@
+{
+  "schema": "ns-manual-review/1",
+  "reviewedAt": "2026-09-18T06:03:39.061Z",
+  "phase": "after",
+  "candidate": {
+    "run": 18,
+    "strategy": "FAIR_BURDEN",
+    "candidate": 1,
+    "robust": 81.6
+  },
+  "rosters": [
+    {
+      "roster": "DDR-LN",
+      "nights": 6,
+      "nightBlocks": [
+        6
+      ],
+      "worstLine": 66.59090909090908,
+      "bestLine": 92.60416666666667,
+      "minRecoveryHours": 58.5,
+      "earlyDuties": 0
+    },
+    {
+      "roster": "DDR-MIX",
+      "nights": 9,
+      "nightBlocks": [
+        4,
+        5
+      ],
+      "worstLine": 69.39393939393939,
+      "bestLine": 95.60606060606061,
+      "minRecoveryHours": 58.5,
+      "earlyDuties": 21
+    },
+    {
+      "roster": "DDR-V",
+      "nights": 0,
+      "nightBlocks": [],
+      "worstLine": 68.75,
+      "bestLine": 95.78125,
+      "minRecoveryHours": null,
+      "earlyDuties": 41
+    }
+  ],
+  "checklist": [
+    {
+      "punt": "Laat/Nacht: geen vroege diensten",
+      "bevinding": "0 vroege diensten in DDR-LN; alle diensten zijn laat of nacht.",
+      "oordeel": "akkoord"
+    },
+    {
+      "punt": "Nachten staan in blokken, niet los",
+      "bevinding": "DDR-LN: regel 2 heeft N761 op vrijdag, zaterdag en zondag; regel 3 vervolgt met N201, N201, N760 op maandag tot woensdag. Langs de rotatie is dat één reeks van zes. DDR-MIX heeft blokken van vier (regel 3, donderdag tot zondag) en vijf (regel 8, maandag tot vrijdag). Geen enkele losse nacht.",
+      "oordeel": "akkoord",
+      "opmerking": "De reeks van zes ontstaat over de regelgrens: wie alleen regel 2 leest ziet drie nachten. Het officiële rooster kent dezelfde vorm (langste reeks zes, gemiddeld 4,75), dus dit wijkt niet af van wat mensen maken."
+    },
+    {
+      "punt": "Herstel na een nachtreeks",
+      "bevinding": "Kortste herstel na nachten 58,5 uur in zowel DDR-LN als DDR-MIX; de regel eist 46 uur.",
+      "oordeel": "akkoord"
+    },
+    {
+      "punt": "Geen zware overgangen rond de regelgrens",
+      "bevinding": "Na elke nachtreeks volgen rustdagen: DDR-MIX regel 3 eindigt zondag op N760 en regel 4 begint maandag met een WTV-dag; regel 8 eindigt vrijdag en heeft zaterdag en zondag rust. Nergens nacht gevolgd door vroeg.",
+      "oordeel": "akkoord"
+    },
+    {
+      "punt": "Regelmaat binnen een regel",
+      "bevinding": "Dagdelen wisselen binnen een regel niet heen en weer. DDR-V regel 3 rijdt V7 op drie achtereenvolgende dagen, regel 4 rijdt V701 op drie dagen; DDR-MIX regel 7 heeft vier late diensten op rij.",
+      "oordeel": "akkoord"
+    },
+    {
+      "punt": "Ziet het eruit als een rooster dat je iemand kunt geven",
+      "bevinding": "Ja. Weken bestaan uit aaneengesloten blokken werk met rust ertussen, dezelfde dienst komt meerdere dagen terug en de weekenden zijn per regel heel of vrij.",
+      "oordeel": "akkoord"
+    },
+    {
+      "punt": "Regels zonder gewerkte dienst",
+      "bevinding": "DDR-V regel 7 bestaat uit reserve-, WTV- en rustdagen en heeft geen enkele gewerkte dienst. Dat komt uit de roosterstructuur, niet uit de zoekmachine; zo'n regel krijgt geen kwaliteitscijfer.",
+      "oordeel": "akkoord, structureel"
+    }
+  ],
+  "reviewer": "Handmatige controle op de uitdraai van review:candidate, tegen de bovenstaande punten.",
+  "conclusion": "Geen bevindingen die de meting in twijfel trekken. De beste AFTER-kandidaat leest als een normaal rooster: nachten in blokken met ruim herstel, geen vroege diensten in Laat/Nacht, rustige opeenvolging binnen elke regel."
+}

@@ -44,6 +44,7 @@ import {
   scheduleVersion,
   validationSummaryJson,
 } from "@/server/services/simulation-service";
+import { runAdaptivePipeline } from "./adaptive/pipeline";
 
 /**
  * De generatieopdracht, van start tot opgeslagen kandidaten.
@@ -184,7 +185,8 @@ export async function runGenerationJob(runId: string, actor: Actor): Promise<voi
   }, HEARTBEAT_MS);
 
   const baseline = run.strategy === "REPRODUCE" || run.strategy === "BALANCE_SHUNTING";
-  const kind: PipelineKind = run.kind === "REBUILD" ? "REBUILD" : baseline ? "BASELINE" : "SOLVER";
+  const adaptief = run.engine === "adaptive" && !baseline;
+  const kind: PipelineKind = adaptief ? "ADAPTIVE" : run.kind === "REBUILD" ? "REBUILD" : baseline ? "BASELINE" : "SOLVER";
   progress = planProgress(kind, run.requestedCandidates);
 
   const bewaar = async (data: {
@@ -236,6 +238,19 @@ export async function runGenerationJob(runId: string, actor: Actor): Promise<voi
       result: "SUCCESS",
       reason: `${run.strategyLabel}, roosterjaar ${run.rosterYear}`,
     });
+
+    // De adaptieve zoekmachine doet het zoeken zelf; de hartslag, het stoppen
+    // en het afhandelen van fouten hieromheen blijven gelijk.
+    if (run.engine === "adaptive" && !baseline) {
+      await runAdaptivePipeline({
+        run,
+        actor,
+        signal: controller.signal,
+        workers: solverWorkers(),
+        feedbackPenalties: feedbackStraffen(await buildOptimizerInput(run.locationCode)),
+      });
+      return;
+    }
 
     // ── Invoer ───────────────────────────────────────────────────────────────
     await stap("INPUT", "Het dienstenpakket wordt gecontroleerd.");
@@ -790,7 +805,7 @@ async function verbeter(input: {
  * aandeel dat "te veel nachtdiensten" aangeeft, hoe zwaarder een nacht in
  * roosters van dat profiel weegt.
  */
-function feedbackStraffen(input: OptimizerInput) {
+export function feedbackStraffen(input: OptimizerInput) {
   const soort: Record<string, "NIGHT" | "EARLY" | "SHUNTING" | "WEEKEND"> = {
     NACHTDIENSTEN: "NIGHT",
     VROEGE_DIENSTEN: "EARLY",

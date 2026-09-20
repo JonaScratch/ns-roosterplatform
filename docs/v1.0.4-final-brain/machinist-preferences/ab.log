@@ -1,0 +1,24 @@
+﻿START 2026-09-19T10:59:59.3527535+02:00
+== mp-m1 2026-09-19T10:59:59.3577589+02:00
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase mp-m1 --engine adaptive --mode NORMAL --strategy BALANCED --runs 3 --first 1
+
+run 1: adaptive NORMAL BALANCED ÔÇª
+run 1: COMPLETED 3/3 in 279.5 s
+run 2: adaptive NORMAL BALANCED ÔÇª
+run 2: COMPLETED 3/3 in 276.5 s
+run 3: adaptive NORMAL BALANCED ÔÇª
+run 3: COMPLETED 3/3 in 264.5 s
+== mp-m2 2026-09-19T11:13:41.6575220+02:00
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase mp-m2 --engine adaptive --mode NORMAL --strategy BALANCED --runs 3 --first 1
+
+run 1: adaptive NORMAL BALANCED ÔÇª
+run 1: COMPLETED 3/3 in 281.9 s
+run 2: adaptive NORMAL BALANCED ÔÇª
+run 2: COMPLETED 3/3 in 273.8 s
+run 3: adaptive NORMAL BALANCED ÔÇª
+run 3: COMPLETED 3/3 in 289.8 s
+KLAAR 2026-09-19T11:27:48.4165311+02:00

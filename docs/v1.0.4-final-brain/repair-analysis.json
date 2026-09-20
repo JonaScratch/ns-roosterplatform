@@ -1,0 +1,254 @@
+{
+  "schema": "ns-final-brain-repair-analysis/1",
+  "measuredAt": "2026-09-19T04:36:34.328Z",
+  "phases": [
+    {
+      "phase": "after",
+      "runs": 20,
+      "attemptsByKind": {
+        "START": 60,
+        "REPAIR": 61
+      },
+      "repairsPerRun": 3.05,
+      "repairsByTarget": {
+        "HOURS": {
+          "attempts": 34,
+          "accepted": 13,
+          "rejected": 21,
+          "failed": 0,
+          "other": 0
+        },
+        "TRANSITIONS": {
+          "attempts": 19,
+          "accepted": 8,
+          "rejected": 11,
+          "failed": 0,
+          "other": 0
+        },
+        "FAIRNESS": {
+          "attempts": 3,
+          "accepted": 0,
+          "rejected": 3,
+          "failed": 0,
+          "other": 0
+        },
+        "REST": {
+          "attempts": 3,
+          "accepted": 0,
+          "rejected": 3,
+          "failed": 0,
+          "other": 0
+        },
+        "NIGHTS": {
+          "attempts": 2,
+          "accepted": 0,
+          "rejected": 2,
+          "failed": 0,
+          "other": 0
+        }
+      },
+      "polishMeanGain": 0.8069421487603305,
+      "finalCandidateLineage": {
+        "START": 43,
+        "REPAIR:HOURS → START": 9,
+        "REPAIR:TRANSITIONS → REPAIR:HOURS → START": 5,
+        "REPAIR:TRANSITIONS → START": 2,
+        "REPAIR:HOURS → REPAIR:TRANSITIONS → START": 1
+      },
+      "stopReasons": {
+        "tijdsbudget voor reparatie op": 20
+      }
+    },
+    {
+      "phase": "human",
+      "runs": 20,
+      "attemptsByKind": {
+        "START": 60,
+        "REPAIR": 52,
+        "DIVERSIFY": 1
+      },
+      "repairsPerRun": 2.6,
+      "repairsByTarget": {
+        "REST": {
+          "attempts": 25,
+          "accepted": 12,
+          "rejected": 13,
+          "failed": 0,
+          "other": 0
+        },
+        "HOURS": {
+          "attempts": 4,
+          "accepted": 1,
+          "rejected": 3,
+          "failed": 0,
+          "other": 0
+        },
+        "FAIRNESS": {
+          "attempts": 13,
+          "accepted": 4,
+          "rejected": 9,
+          "failed": 0,
+          "other": 0
+        },
+        "NIGHTS": {
+          "attempts": 10,
+          "accepted": 0,
+          "rejected": 10,
+          "failed": 0,
+          "other": 0
+        }
+      },
+      "polishMeanGain": 0.8776991150442478,
+      "finalCandidateLineage": {
+        "START": 45,
+        "REPAIR:REST → START": 8,
+        "REPAIR:REST → REPAIR:REST → START": 2,
+        "REPAIR:FAIRNESS → START": 2,
+        "REPAIR:FAIRNESS → REPAIR:FAIRNESS → START": 1,
+        "REPAIR:HOURS → REPAIR:REST → START": 1,
+        "DIVERSIFY": 1
+      },
+      "stopReasons": {
+        "tijdsbudget voor reparatie op": 20
+      }
+    },
+    {
+      "phase": "ab-k5-wc",
+      "runs": 3,
+      "attemptsByKind": {
+        "START": 9,
+        "REPAIR": 10
+      },
+      "repairsPerRun": 3.3333333333333335,
+      "repairsByTarget": {
+        "REST": {
+          "attempts": 5,
+          "accepted": 3,
+          "rejected": 2,
+          "failed": 0,
+          "other": 0
+        },
+        "FAIRNESS": {
+          "attempts": 5,
+          "accepted": 2,
+          "rejected": 3,
+          "failed": 0,
+          "other": 0
+        }
+      },
+      "polishMeanGain": 0.9442105263157894,
+      "finalCandidateLineage": {
+        "START": 5,
+        "REPAIR:REST → START": 2,
+        "REPAIR:REST → REPAIR:FAIRNESS → REPAIR:REST → START": 1,
+        "REPAIR:FAIRNESS → START": 1
+      },
+      "stopReasons": {
+        "tijdsbudget voor reparatie op": 3
+      }
+    },
+    {
+      "phase": "ab-k5-full",
+      "runs": 3,
+      "attemptsByKind": {
+        "START": 9,
+        "REPAIR": 9
+      },
+      "repairsPerRun": 3,
+      "repairsByTarget": {
+        "NIGHT_EXIT": {
+          "attempts": 3,
+          "accepted": 1,
+          "rejected": 2,
+          "failed": 0,
+          "other": 0
+        },
+        "REST": {
+          "attempts": 3,
+          "accepted": 2,
+          "rejected": 1,
+          "failed": 0,
+          "other": 0
+        },
+        "FAIRNESS": {
+          "attempts": 3,
+          "accepted": 1,
+          "rejected": 2,
+          "failed": 0,
+          "other": 0
+        }
+      },
+      "polishMeanGain": 1.2011111111111112,
+      "finalCandidateLineage": {
+        "START": 6,
+        "REPAIR:NIGHT_EXIT → START": 1,
+        "REPAIR:REST → START": 1,
+        "REPAIR:REST → REPAIR:FAIRNESS → START": 1
+      },
+      "stopReasons": {
+        "tijdsbudget voor reparatie op": 3
+      }
+    },
+    {
+      "phase": "brain-after",
+      "runs": 20,
+      "attemptsByKind": {
+        "START": 60,
+        "REPAIR": 57,
+        "DIVERSIFY": 1
+      },
+      "repairsPerRun": 2.85,
+      "repairsByTarget": {
+        "FAIRNESS": {
+          "attempts": 26,
+          "accepted": 10,
+          "rejected": 16,
+          "failed": 0,
+          "other": 0
+        },
+        "NIGHTS": {
+          "attempts": 3,
+          "accepted": 0,
+          "rejected": 3,
+          "failed": 0,
+          "other": 0
+        },
+        "REST": {
+          "attempts": 19,
+          "accepted": 9,
+          "rejected": 10,
+          "failed": 0,
+          "other": 0
+        },
+        "HOURS": {
+          "attempts": 6,
+          "accepted": 2,
+          "rejected": 4,
+          "failed": 0,
+          "other": 0
+        },
+        "TRANSITIONS": {
+          "attempts": 3,
+          "accepted": 1,
+          "rejected": 2,
+          "failed": 0,
+          "other": 0
+        }
+      },
+      "polishMeanGain": 1.1489830508474574,
+      "finalCandidateLineage": {
+        "START": 41,
+        "REPAIR:REST → START": 7,
+        "REPAIR:FAIRNESS → REPAIR:FAIRNESS → START": 3,
+        "REPAIR:FAIRNESS → START": 3,
+        "REPAIR:HOURS → START": 2,
+        "REPAIR:REST → REPAIR:FAIRNESS → START": 2,
+        "REPAIR:TRANSITIONS → START": 1,
+        "DIVERSIFY": 1
+      },
+      "stopReasons": {
+        "tijdsbudget voor reparatie op": 20
+      }
+    }
+  ]
+}

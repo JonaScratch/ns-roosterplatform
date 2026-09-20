@@ -1,0 +1,31 @@
+WEEKROTATIE — TWEE ONAFHANKELIJKE BEREKENINGEN
+════════════════════════════════════════════════════════════
+
+64 permanente plaatsingen gevonden.
+
+1. Vergelijking over 52 weken
+  ✓ 3328 weekposities komen exact overeen
+
+2. Over de jaargrens en week 53
+  ✓ de jaarwisseling levert dezelfde reeks
+  ✓ week 53 van 2026 zit in de reeks
+
+3. Wikkeling na de laatste regel
+  ✓ 100055: na 10 weken weer op regel 1
+  ✓ 100001: na 6 weken weer op regel 1
+  ✓ 100043: na 12 weken weer op regel 1
+  ✓ 100025: na 6 weken weer op regel 1
+  ✓ 100031: na 12 weken weer op regel 1
+
+4. Volledige cyclus
+  ✓ 100055: alle 10 regels precies één keer
+  ✓ 100001: alle 6 regels precies één keer
+  ✓ 100043: alle 12 regels precies één keer
+  ✓ 100025: alle 6 regels precies één keer
+  ✓ 100031: alle 12 regels precies één keer
+
+5. De service en de telling
+  ✓ 120 servicebepalingen komen overeen met de telling
+
+════════════════════════════════════════════════════════════
+14 controles geslaagd, 0 mislukt.

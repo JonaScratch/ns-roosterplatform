@@ -1,0 +1,133 @@
+{
+  "schema": "ns-test-battery/1",
+  "ranAt": "2026-09-18T09:15:56.044Z",
+  "full": true,
+  "suites": [
+    {
+      "name": "Typecontrole",
+      "command": "npm run typecheck",
+      "ok": true,
+      "summary": "",
+      "seconds": 1.9
+    },
+    {
+      "name": "Codestijl",
+      "command": "npm run lint",
+      "ok": true,
+      "summary": "688:24  warning  'g' is defined but never used. Allowed unused args must match /^_/u                 @typescript-eslint/no-unused-vars · 1661:22  warning  'g' is defined but never used. Allowed unused args must match …",
+      "seconds": 6.9
+    },
+    {
+      "name": "Eenheidstests",
+      "command": "npm test",
+      "ok": true,
+      "summary": "Test Files  46 passed (46) · Tests  790 passed (790) · Start at  10:58:39 · Duration  12.62s (transform 9.79s, setup 0ms, import 15.67s, tests 29.27s, environment 5ms)",
+      "seconds": 13.2
+    },
+    {
+      "name": "Mutatietests",
+      "command": "npm run verify:mutanten",
+      "ok": true,
+      "summary": "✓ bijschaven: de beste stand wordt niet bewaard, de laatste wel · 1 bewering(en) rood, o.a. tests/domain/bijschaven.test.ts > bijschaven met ruildiensten > houdt de beste stand vast, ook als een schop in een slechtere…",
+      "seconds": 83.8
+    },
+    {
+      "name": "Regels",
+      "command": "npm run verify:rules",
+      "ok": true,
+      "summary": "Gevalideerde regels    2 van 71 · Het regelbestand is structureel in orde. · ──────────────────────────────────────────────────────────── · Production-safe: NO — simulation/development only",
+      "seconds": 0.4
+    },
+    {
+      "name": "Regeldekking",
+      "command": "npm run verify:rule-coverage",
+      "ok": true,
+      "summary": "regel die hij voedt, of op de blokkade die hij oplevert. · Formele validatie door NS: 0 van de 71. Een test bewijst dat de code doet wat er staat; niet dat · wat er staat juridisch klopt. Zolang de Arbeidstijdenwet en…",
+      "seconds": 0.5
+    },
+    {
+      "name": "Roosteruren",
+      "command": "npm run verify:roster-hours",
+      "ok": true,
+      "summary": "Spreiding tussen de roosters: 39:12 tot 39:59 (0:47 verschil). · ✓ geen enkel rooster is structureel lichter of zwaarder dan de andere · ════════════════════════════════════════════════════════════════════════════════…",
+      "seconds": 0.7
+    },
+    {
+      "name": "Kwaliteitsmodel",
+      "command": "npm run verify:quality",
+      "ok": true,
+      "summary": "Optimale totaalbalans — kandidaat 3: totaal 82 robuust 78.6 patroonafstand 29.9 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 19 min (DDR-L) | slechtste regel: DDR-50MIX regel 6 (59.4) — week 48:29 · ✓ …",
+      "seconds": 0.8
+    },
+    {
+      "name": "Roosterkwaliteit",
+      "command": "npm run verify:kwaliteit",
+      "ok": true,
+      "summary": "Optimale totaalbalans — kandidaat 3: totaal 82 robuust 78.6 patroonafstand 29.9 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 19 min (DDR-L) | slechtste regel: DDR-50MIX regel 6 (59.4) — week 48:29 · ✓ …",
+      "seconds": 0.8
+    },
+    {
+      "name": "Profielen",
+      "command": "npm run verify:profielen",
+      "ok": true,
+      "summary": "✓ de generatie weigert deze kandidaat — 18 dienst(en) buiten het roosterprofiel. Een dienst die het profiel niet toestaat, zoals een vroege dienst in Laat/Nacht, wordt nooit bewaard. · ✓ de weigering noemt het rooster…",
+      "seconds": 5.1
+    },
+    {
+      "name": "Scenario's",
+      "command": "npm run verify:scenarios",
+      "ok": true,
+      "summary": "✓ elke dienst uit het pakket levert precies één dienstinstantie op · ✓ geen twee diensten delen dezelfde sleutel standplaats+weekdag+nummer · ══════════════════════════════════════════════════════════════════ · 23 con…",
+      "seconds": 15
+    },
+    {
+      "name": "Structuurgeneratie",
+      "command": "npm run verify:structuurgeneratie",
+      "ok": true,
+      "summary": "✓ 14 is deelbaar door 2, zoals het lokale kader voor Dordrecht vraagt · ✓ een niet-deelbaar aantal (13) wordt door de regel zelf ook herkend als niet-deelbaar · ════════════════════════════════════════════════════════…",
+      "seconds": 0.6
+    },
+    {
+      "name": "Toegang per rol",
+      "command": "npm run verify:toegang",
+      "ok": true,
+      "summary": "Beeldmerk zonder sessie · ✓ /brand/ns-logo.svg → 200 · Geweigerde toegang vastgelegd in het beveiligingslog: 72 · Alle rollen gedragen zich zoals verwacht.",
+      "seconds": 17.1
+    },
+    {
+      "name": "Schermen",
+      "command": "npm run verify:schermen",
+      "ok": true,
+      "summary": "✓ alle 119 letterlijke interne verwijzingen wijzen naar een route · ✓ /roostercommissie/pakketten/sjabloon (8508 bytes) · ════════════════════════════════════════════════════════════ · 40 schermen in orde, 0 met bevin…",
+      "seconds": 11.3
+    },
+    {
+      "name": "Doorloop (e2e)",
+      "command": "npm run verify:e2e",
+      "ok": true,
+      "summary": "Dekking van de gevraagde doorloop · afgedekt en geslaagd   71/71 · ══════════════════════════════════════════════════════════════════════════════ · De hele doorloop is aangetoond op echte gegevens.",
+      "seconds": 741.9
+    },
+    {
+      "name": "Crashherstel",
+      "command": "npm run verify:crash-recovery",
+      "ok": true,
+      "summary": "Wat hiermee niet is aangetoond: dat een defecte schijf geen gegevens kan · kwijtraken. Dat kan geen enkele software garanderen. Wat is aangetoond, is · dat wat bevestigd is een harde stop overleeft, en dat de instelli…",
+      "seconds": 37.8
+    },
+    {
+      "name": "Productiebouw",
+      "command": "npm run build",
+      "ok": true,
+      "summary": "./src/server/optimizer/cpsat-optimizer.ts · ./src/server/generation/generation-job.ts · ./src/server/services/generation-service.ts · ./src/app/(app)/roostercommissie/genereren/voortgang/route.ts",
+      "seconds": 77.1
+    },
+    {
+      "name": "Draagbare bundel",
+      "command": "npm run verify:portable",
+      "ok": true,
+      "summary": "Opruimen · X: losgekoppeld en de proefmap verwijderd. · ════════════════════════════════════════════════════════════════════════ · 51 controles geslaagd, 0 mislukt, 0 geblokkeerd.",
+      "seconds": 31.4
+    }
+  ]
+}

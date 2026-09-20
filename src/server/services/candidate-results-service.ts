@@ -543,6 +543,155 @@ export interface CandidatePackageView {
     readonly children: readonly { readonly id: string; readonly label: string; readonly generatedAt: Date; readonly statusLabel: string }[];
   };
   readonly changedFromOfficial: number | null;
+  /**
+   * Hoe de adaptieve zoekmachine aan deze kandidaat kwam, en waarom hij het
+   * haalde. Leeg bij kandidaten uit de klassieke zoekmachine: die bewaren geen
+   * herkomst, en er wordt er geen voor verzonnen.
+   */
+  readonly search: SearchOrigin | null;
+}
+
+export interface SearchOrigin {
+  readonly mode: string | null;
+  readonly modeLabel: string | null;
+  readonly attempt: number | null;
+  readonly seed: number | null;
+  readonly ranking: number | null;
+  readonly paretoFront: boolean;
+  readonly qualityModelVersion: string | null;
+  readonly optimizerModelVersion: string | null;
+  /** Waarom deze kandidaat overbleef: drempels gehaald, concurrenten verslagen. */
+  readonly whySurvived: readonly string[];
+  /** Per zwak punt een uitleg met de maat en het getal erbij. */
+  readonly explanations: readonly { readonly title: string; readonly detail: string }[];
+  /** De weg ernaartoe: welke poging volgde op welke. */
+  readonly lineage: readonly { readonly attempt: number; readonly kind: string; readonly target: string | null }[];
+  /** De onderdelen van het kwaliteitsoordeel, zoals de evaluator ze berekende. */
+  readonly components: readonly { readonly key: string; readonly label: string; readonly score: number | null }[];
+  readonly worstLine: { readonly roster: string; readonly lineNumber: number; readonly score: number | null } | null;
+  readonly robust: number | null;
+}
+
+const MODUS_LABELS: Record<string, string> = {
+  FAST: "Snel",
+  NORMAL: "Normaal",
+  DEEP: "Grondig",
+  EXTENSIVE: "Zeer grondig",
+};
+
+const COMPONENT_LABELS: Record<string, string> = {
+  hours: "Uren",
+  flow: "Regelmaat",
+  rest: "Rust",
+  nights: "Nachten",
+  fairness: "Eerlijke verdeling",
+  stability: "Aansluiting op het huidige rooster",
+};
+
+const tekstLijst = (waarde: unknown): readonly string[] =>
+  Array.isArray(waarde) ? waarde.filter((item): item is string => typeof item === "string") : [];
+
+const ZWAKTE_TITELS: Record<string, string> = {
+  HEAVY_TRANSITION: "Zware overgang tussen dagdelen",
+  SINGLETON_NIGHT: "Losse nachtdienst",
+  TWO_NIGHT_BLOCK: "Nachtreeks van twee",
+  HOURS_DEVIATION: "Afwijking van 40:00",
+};
+
+/**
+ * Eén zwak punt in gewone taal.
+ *
+ * De zoekmachine legt een zwakte vast als feiten: welk rooster, welke regel,
+ * wat er is gemeten en welke kostenpost er in de solver bij hoort. Hier wordt
+ * daar een zin van. Er wordt niets bij bedacht: staat er geen feit, dan staat
+ * er ook geen uitleg — een ruwe JSON-regel op het scherm is net zo onbruikbaar
+ * als een verzonnen verklaring.
+ */
+function uitlegVan(item: Record<string, unknown>): { title: string; detail: string } {
+  const soort = typeof item.kind === "string" ? item.kind : "";
+  const plek = [
+    typeof item.roster === "string" ? item.roster : null,
+    typeof item.lineNumber === "number" ? `regel ${item.lineNumber}` : null,
+  ]
+    .filter((deel): deel is string => deel !== null)
+    .join(" ");
+  const feiten = tekstLijst(item.facts);
+  const kosten = tekstLijst(item.activeSoftTerms);
+  const zin = [plek, feiten.join("; ")].filter((deel) => deel.length > 0).join(" — ");
+  return {
+    title: ZWAKTE_TITELS[soort] ?? (soort.length > 0 ? soort.toLowerCase().replace(/_/g, " ") : "Toelichting"),
+    detail:
+      zin.length > 0
+        ? `${zin}${kosten.length > 0 ? `. Meegewogen als: ${kosten.join(", ")}.` : "."}`
+        : "Geen nadere gegevens vastgelegd.",
+  };
+}
+
+const getalOfNull = (waarde: unknown): number | null =>
+  typeof waarde === "number" && Number.isFinite(waarde) ? waarde : null;
+
+/**
+ * De herkomst zoals het scherm hem laat zien.
+ *
+ * Alles komt uit wat bij de kandidaat is opgeslagen. Ontbreekt een veld, dan
+ * blijft het leeg: een uitleg verzinnen bij een kandidaat die er geen heeft, is
+ * precies de schijnzekerheid die dit scherm moet vermijden.
+ */
+function zoekHerkomst(provenance: unknown, kwaliteit: unknown): SearchOrigin | null {
+  if (!provenance || typeof provenance !== "object") {
+    return null;
+  }
+  const p = provenance as Record<string, unknown>;
+  // Het menselijke kwaliteitsrapport staat onder `human`; daarnaast bewaart
+  // hetzelfde veld de oudere pakketmeting, die hier niet wordt getoond.
+  const bron =
+    kwaliteit && typeof kwaliteit === "object" && "human" in (kwaliteit as Record<string, unknown>)
+      ? ((kwaliteit as Record<string, unknown>).human as unknown)
+      : null;
+  const rapport = (bron && typeof bron === "object" ? (bron as Record<string, unknown>) : {}) as {
+    components?: Record<string, { score?: number | null }>;
+    robust?: number | null;
+    lines?: { worst?: { roster?: string; lineNumber?: number; score?: number | null } | null };
+  };
+  const mode = typeof p.mode === "string" ? p.mode : null;
+  return {
+    mode,
+    modeLabel: mode ? (MODUS_LABELS[mode] ?? mode) : null,
+    attempt: getalOfNull(p.attempt),
+    seed: getalOfNull(p.seed),
+    ranking: getalOfNull(p.ranking),
+    paretoFront: p.paretoFront === true,
+    qualityModelVersion: typeof p.qualityModelVersion === "string" ? p.qualityModelVersion : null,
+    optimizerModelVersion: typeof p.optimizerModelVersion === "string" ? p.optimizerModelVersion : null,
+    whySurvived: tekstLijst(p.whySurvived),
+    explanations: Array.isArray(p.explanations)
+      ? p.explanations
+          .filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null)
+          .map(uitlegVan)
+      : [],
+    lineage: Array.isArray(p.lineage)
+      ? p.lineage
+          .filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null)
+          .map((item) => ({
+            attempt: Number(item.attempt ?? 0),
+            kind: String(item.kind ?? ""),
+            target: typeof item.target === "string" ? item.target : null,
+          }))
+      : [],
+    components: Object.entries(rapport.components ?? {}).map(([key, waarde]) => ({
+      key,
+      label: COMPONENT_LABELS[key] ?? key,
+      score: getalOfNull(waarde?.score),
+    })),
+    worstLine: rapport.lines?.worst
+      ? {
+          roster: String(rapport.lines.worst.roster ?? ""),
+          lineNumber: Number(rapport.lines.worst.lineNumber ?? 0),
+          score: getalOfNull(rapport.lines.worst.score),
+        }
+      : null,
+    robust: getalOfNull(rapport.robust),
+  };
 }
 
 async function kandidaatInScope(candidateId: string) {
@@ -561,7 +710,10 @@ export async function candidatePackage(candidateId: string): Promise<CandidatePa
   const [context, versies, volledig, kinderen, run] = await Promise.all([
     loadQualityContextCore(locationCode),
     versiesVoor(locationCode),
-    prisma.candidateRoster.findUniqueOrThrow({ where: { id: candidateId }, select: { validatedAt: true } }),
+    prisma.candidateRoster.findUniqueOrThrow({
+      where: { id: candidateId },
+      select: { validatedAt: true, provenance: true, qualityMetrics: true },
+    }),
     prisma.candidateRoster.findMany({
       where: { parentCandidateId: candidateId },
       orderBy: { generatedAt: "desc" },
@@ -606,6 +758,7 @@ export async function candidatePackage(candidateId: string): Promise<CandidatePa
       })),
     },
     changedFromOfficial: kwaliteit.changedDutyDays,
+    search: zoekHerkomst(volledig.provenance, volledig.qualityMetrics),
   };
 }
 

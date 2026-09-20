@@ -8,6 +8,7 @@ import {
   rotationCycle,
 } from "@/domain/roster-quality";
 import { prisma } from "@/server/data/prisma";
+import { evaluateAssignmentsCore, evaluateOfficialCore, loadEvaluationContextCore } from "@/server/services/quality-evaluation-service";
 import {
   type QualityContext,
   candidateRosterInputs,
@@ -196,6 +197,30 @@ async function main(): Promise<void> {
     for (const kandidaat of lnKandidaten) {
       toon(kandidaat.naam, kandidaat.rooster);
     }
+  }
+
+  console.log("\n5. Het menselijke kwaliteitsmodel op het officiële rooster");
+  const evaluatie = await loadEvaluationContextCore(LOCATIE);
+  const menselijk = evaluateOfficialCore(evaluatie);
+  console.log(`  model ${menselijk.modelVersion} · totaal ${menselijk.overall} · zonder continuïteit ${menselijk.overallWithoutContinuity} · robuust ${menselijk.robust}`);
+  console.log(
+    `  ${Object.entries(menselijk.components)
+      .map(([sleutel, waarde]) => `${sleutel} ${waarde.score ?? "—"}`)
+      .join(" · ")}`,
+  );
+  console.log(`  slechtste regel ${menselijk.lines.worst?.roster} ${menselijk.lines.worst?.lineNumber} (${menselijk.lines.worst?.score}) · mediaan ${menselijk.lines.median}`);
+  // Het officiële rooster is door roostermakers gemaakt. Scoort het model dat
+  // ineens zeer laag, dan is het model verdacht — niet het rooster.
+  toets("het officiële rooster is hard geldig volgens de evaluator", menselijk.hardValidity.hardValid, menselijk.hardValidity.reasons.join("; "));
+  toets("geen enkele component van het officiële rooster onder de 40", Object.values(menselijk.components).every((c) => (c.score ?? 100) >= 40));
+  toets("het officiële rooster heeft patroonafstand 0 tot zichzelf", menselijk.patternDistance?.total === 0, String(menselijk.patternDistance?.total));
+  toets("continuïteit van het officiële rooster is 100", menselijk.components.stability.score === 100);
+  for (const kandidaat of alleKandidaten.slice(0, 3)) {
+    const rapport = evaluateAssignmentsCore(kandidaat.assignments as unknown as CandidateAssignment[], evaluatie);
+    console.log(
+      `  ${kandidaat.scenarioLabel}: totaal ${rapport.overall} robuust ${rapport.robust} patroonafstand ${rapport.patternDistance?.total} · ${rapport.diagnosis.slice(0, 3).join(" | ")}`,
+    );
+    toets(`${kandidaat.scenarioLabel}: hard geldig volgens de evaluator`, rapport.hardValidity.hardValid, rapport.hardValidity.reasons.join("; "));
   }
 
   console.log("\n" + "═".repeat(78));

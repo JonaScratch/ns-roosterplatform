@@ -1,0 +1,20 @@
+{
+  "schema": "ns-v105-progress/1",
+  "updatedAt": "2026-09-20",
+  "legend": ["NOT_STARTED", "IN_PROGRESS", "BLOCKED", "IMPLEMENTED", "TESTED", "ACCEPTED"],
+  "rule": "ACCEPTED pas als de acceptatiecriteria van die fase daadwerkelijk zijn gehaald en de bijbehorende tests slagen.",
+  "phases": [
+    { "id": 0, "name": "Baseline en architectuuronderzoek", "status": "IN_PROGRESS", "deliverables": ["architecture-current-state.md", "architecture-target-state.md", "migration-plan.md", "risk-register.md", "baseline-manifest.json", "test-baseline.md"], "tests": "testbatterij opnieuw gemeten" },
+    { "id": 1, "name": "Agentfundament (niveau A)", "status": "NOT_STARTED", "tests": ["T1", "T5", "T6", "T19"] },
+    { "id": 2, "name": "Activiteitenpaneel", "status": "NOT_STARTED", "tests": ["T17", "T18", "T20"] },
+    { "id": 3, "name": "Niveau B", "status": "NOT_STARTED", "tests": ["T2", "T7", "T23"] },
+    { "id": 4, "name": "Leergeheugen", "status": "NOT_STARTED", "tests": ["T8", "T13", "T21", "T25"] },
+    { "id": 5, "name": "Menselijke feedbacklus", "status": "NOT_STARTED", "tests": ["T8", "T12"] },
+    { "id": 6, "name": "Niveau C", "status": "NOT_STARTED", "tests": ["T3", "T4", "T14", "T15", "T20"] },
+    { "id": 7, "name": "Lokaal en NS-breed leren", "status": "NOT_STARTED", "tests": ["T9", "T10", "T11", "T12"] },
+    { "id": 8, "name": "Technische ontwikkelagent", "status": "NOT_STARTED", "tests": ["T16", "T24"] },
+    { "id": 9, "name": "Geïntegreerde praktijktest", "status": "NOT_STARTED", "tests": ["vijftien stappen uit §42"] },
+    { "id": 10, "name": "Acceptatie en oplevering", "status": "NOT_STARTED", "tests": ["volledige batterij", "§53"] }
+  ],
+  "openDecisions": ["AI-provider en gegevensstroom", "formele bronstatus regels", "NS-rollen en bevoegdheden", "bewaartermijnen"]
+}

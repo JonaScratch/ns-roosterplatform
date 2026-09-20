@@ -1,0 +1,41 @@
+{
+  "schema": "ns-machinist-decision-rules/1",
+  "recordedAt": "2026-09-19T11:00:00+02:00",
+  "recordedBefore": "elke A/B van de machinistenronde",
+  "baseline": "docs/optimizer-benchmark/brain-after (20 runs, profiel rhythm), opnieuw gemeten onder model v3",
+  "noise": "Drie runs van dezelfde configuratie halen 13/16 poorten tegen zichzelf (ablations.json, frozen). Een verschil binnen de ruis is geen effect.",
+  "rules": [
+    {
+      "id": "M0",
+      "about": "Harde laag (40:00, vrijdag)",
+      "rule": "Geen keuze: eis van de gebruiker. Kosten gemeten met M1 tegen baseline (3 Evenwichtig-runs) en gerapporteerd; niet teruggedraaid als ze iets kosten."
+    },
+    {
+      "id": "M1",
+      "about": "Model v3 in rangschikking en bijschaven (M2 tegen M1, 3 Evenwichtig-runs elk)",
+      "rule": "Aan als het voorkeursonderdeel (v3) gemiddeld ≥ 2 punten stijgt én: losse nachten en reeksen van twee elk hooguit 0,34 per kandidaat hoger, slechtste nachtuitgang hooguit 10 punten lager, rust hooguit 1 punt lager, slechtste regel (v2) hooguit 1 punt lager, eerlijkheid hooguit 0,5 lager, uren hooguit 1 lager. Anders uit, en zo in het rapport."
+    },
+    {
+      "id": "M2",
+      "about": "Schaal van de CP-SAT-voorkeurstermen (affiniteit per plaatsing en dagdienstdoel per rooster), solver-A/B, zaden 101–105, zelfde duur",
+      "rule": "Kandidaten: schaal {0, 1/3, 1, 3} × pariteit (exchange-rates.json: affiniteit 51 per stap van 0,1, dagdienstdoel 1145 per dienst afwijking). Kies de kleinste schaal met de hoogste gemiddelde voorkeursscore (v3), mits nachten (losse + paren), rust, uren en eerlijkheid binnen de marges van M1 blijven ten opzichte van schaal 0. Gelijk (binnen 0,5 punt): de kleinere. Haalt geen schaal dat: 0.",
+      "amended": "2026-09-19, vóór de eerste uitslag: schaal 1/3 toegevoegd en het dagdienstdoel meegenomen, nadat de wisselkoersen lieten zien dat CP-SAT een losse nacht ~27× lichter weegt dan het model (900 tegen 24139 op pariteit). Op volle pariteit zou de oplosser nachten ruilen voor voorkeur."
+    },
+    {
+      "id": "M3",
+      "about": "CP-SAT-termen in de zoekmachine (M3 tegen M2, 3 Evenwichtig-runs elk)",
+      "rule": "Aan als de voorkeursscore verder ≥ 1 punt stijgt binnen de marges van M1. Anders uit.",
+      "interpretation": "Vastgelegd 2026-09-19 na de uitslag van M1 (uit), vóór enige M3-run: de regel ging ervan uit dat M2 zou worden aangenomen. Met M1 uit wordt M3 vergeleken met de tot dan toe aangenomen configuratie (mp-m1: harde laag, model v2 in de rangschikking) plus de CP-SAT-termen op de schaal uit M2. Drempel (+1 punt voorkeur) en marges ongewijzigd."
+    },
+    {
+      "id": "M4",
+      "about": "Poorten voor de AFTER (20 runs tegen de baseline)",
+      "rule": "Alle groen, anders geen reviewpakketten: (1) hard: 0 overtredingen, volledige dekking, 0 profielbreuken, per kandidaat; (2) operationeel: elk rooster ≤ 40:00 en elke vrije-weekendvrijdag conform, per kandidaat; (3) nachten niet significant slechter (losse, paren, slechtste uitgang, minimale herstelrust); (4) rust niet significant slechter; (5) slechtste regel (v2) niet significant slechter; (6) eerlijkheid gemiddeld hooguit 0,5 lager; (7) voorkeur significant hoger (affiniteit én restdiensten niet slechter); (8) populair eerlijk niet significant slechter; (9) rangeer: variatiecoëfficiënt en grootste aandeel niet significant slechter; (10) geen schijnvooruitgang: de adversariële toetsen groen en de verbetering zichtbaar in ruwe aantallen, niet alleen in de score. Significant = bootstrap-95%-interval van het verschil ligt geheel aan de slechte kant (zaad 20260918, zoals gate.ts)."
+    },
+    {
+      "id": "M5",
+      "about": "Reviewpakketten",
+      "rule": "Alleen als M4 volledig groen is: A beste robuust (v3) uit Evenwichtig; B beste gemiddelde van nachten, regelmaat, rust en voorkeur uit Rust & regelmaat; C beste eerlijkheid uit Eerlijke lasten binnen de vloer (geen losse nacht, geen uitgang onder 46 u, voorkeur ≥ gemiddelde van de AFTER). Daarna stoppen."
+    }
+  ]
+}

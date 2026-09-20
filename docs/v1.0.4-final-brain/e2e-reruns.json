@@ -1,0 +1,53 @@
+{
+  "schema": "ns-final-brain-e2e-reruns/1",
+  "why": "De doorloop (e2e) faalde in de testbatterij; herhaald om te zien of het reproduceerbaar is en wat er faalt.",
+  "runs": [
+    {
+      "run": 1,
+      "at": "2026-09-19T06:42–06:55",
+      "source": "test-battery.log",
+      "covered": "66/71",
+      "failed": [
+        "crash: bevestigde wijziging overleeft",
+        "crash: halve transactie verdwijnt",
+        "crash: uitgaande wachtrij hervat",
+        "crash: import blijft consistent",
+        "crash: draagbare database na vuile stop"
+      ],
+      "detail": "crashmeting 2 van 18 controles mislukt; welke is niet vastgelegd (de doorloop bewaarde vier regels)"
+    },
+    {
+      "run": 2,
+      "at": "2026-09-19T07:00–07:13",
+      "source": "e2e-herhaling.log",
+      "covered": "66/71",
+      "failed": [
+        "crash (zelfde vijf punten)"
+      ],
+      "detail": "crashmeting 16 geslaagd, 2 mislukt; welke is niet vastgelegd"
+    },
+    {
+      "run": 3,
+      "at": "2026-09-19T07:14–07:26",
+      "source": "e2e-herhaling-2.log + e2e-logs/",
+      "covered": "68/71",
+      "failed": [
+        "v1.0.3: nachten in reeksen, geen losse nachten",
+        "v1.0.3: niet meer zware overgangen dan officieel",
+        "v1.0.3: kwaliteitsmeting onderscheidt roosters"
+      ],
+      "detail": "crashmeting 19/19 geslaagd. verify-kwaliteit: in de generatie die de doorloop zelf maakt had kandidaat 1 en 2 elk één losse nacht (de controle eist nul per kandidaat; AFTER heeft gemiddeld 0,13 losse nachten per kandidaat, v1.0.4 0,15)"
+    }
+  ],
+  "isolated": [
+    {
+      "what": "alleen de crashmeting",
+      "result": "19/19"
+    },
+    {
+      "what": "draagbaar gevolgd door crash",
+      "result": "51/51 en 19/19"
+    }
+  ],
+  "conclusion": "Twee verschillende oorzaken. De crashmeting faalt alleen in de volledige doorloop en niet reproduceerbaar; de oorzaak is niet vastgesteld. De testbatterij bewaart vanaf nu de volledige uitvoer per meting (e2e-logs). De losse nachten zijn echte uitvoer van de zoekmachine en passen bij de gemeten frequentie."
+}

@@ -1,0 +1,120 @@
+{
+  "official": {
+    "rest": 79.4,
+    "surplus": 73,
+    "recovery": 82.5,
+    "heavy": 100,
+    "bands": {
+      "1-3h": 28,
+      "3-6h": 71,
+      ">6h": 16,
+      "0-1h": 6
+    },
+    "adjacentByTransition": {
+      "L→L": {
+        "count": 48,
+        "meanSurplusHours": 3.663888888888889
+      },
+      "L→E": {
+        "count": 2,
+        "meanSurplusHours": 3.3333333333333335
+      },
+      "E→L": {
+        "count": 2,
+        "meanSurplusHours": 6.883333333333334
+      },
+      "E→E": {
+        "count": 53,
+        "meanSurplusHours": 4.204088050314465
+      },
+      "L→N": {
+        "count": 1,
+        "meanSurplusHours": 10.533333333333333
+      },
+      "N→N": {
+        "count": 15,
+        "meanSurplusHours": 3.9455555555555555
+      }
+    }
+  },
+  "after": {
+    "rest": 82.80333333333334,
+    "surplus": 82.55999999999999,
+    "recovery": 73.21,
+    "heavy": 99.70000000000006,
+    "bands": {
+      ">6h": 33.70000000000001,
+      "1-3h": 11.883333333333336,
+      "3-6h": 75.28333333333332,
+      "0-1h": 0.13333333333333333
+    },
+    "adjacentByTransition": {
+      "E→E": {
+        "count": 54.94999999999816,
+        "meanSurplusHours": 5.122717622080874
+      },
+      "N→N": {
+        "count": 14.10000000000028,
+        "meanSurplusHours": 4.131245074862013
+      },
+      "E→L": {
+        "count": 0.8333333333333343,
+        "meanSurplusHours": 10.769666666666657
+      },
+      "L→L": {
+        "count": 50.383333333331755,
+        "meanSurplusHours": 5.103638769434473
+      },
+      "L→N": {
+        "count": 0.733333333333334,
+        "meanSurplusHours": 11.172727272727267
+      }
+    }
+  },
+  "brain-after": {
+    "rest": 81.75333333333333,
+    "surplus": 80.38166666666665,
+    "recovery": 75.05,
+    "heavy": 98.35000000000004,
+    "bands": {
+      ">6h": 24.516666666666662,
+      "1-3h": 14.733333333333329,
+      "3-6h": 81.71666666666668,
+      "0-1h": 0.03333333333333333
+    },
+    "adjacentByTransition": {
+      "E→E": {
+        "count": 54.73333333333151,
+        "meanSurplusHours": 4.827811611855636
+      },
+      "N→N": {
+        "count": 14.216666666666953,
+        "meanSurplusHours": 4.1650449394293805
+      },
+      "L→L": {
+        "count": 49.71666666666513,
+        "meanSurplusHours": 4.770628003128973
+      },
+      "E→L": {
+        "count": 1.1666666666666674,
+        "meanSurplusHours": 11.070714285714276
+      },
+      "L→N": {
+        "count": 1.0500000000000012,
+        "meanSurplusHours": 11.504761904761892
+      },
+      "N→L": {
+        "count": 0.05,
+        "meanSurplusHours": 0.7555555555555554
+      },
+      "E→N": {
+        "count": 0.03333333333333333,
+        "meanSurplusHours": 20.258333333333333
+      },
+      "L→E": {
+        "count": 0.03333333333333333,
+        "meanSurplusHours": 4.033333333333333
+      }
+    }
+  }
+}

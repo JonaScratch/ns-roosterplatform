@@ -85,6 +85,8 @@ model UserAccount {
   sessions       Session[]
   auditEntries   AuditLogEntry[]
   securityEvents SecurityEvent[]
+  humanLineReviews        HumanLineReview[]
+  humanPairwisePreferences HumanPairwisePreference[]
 
   // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
   // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
@@ -1143,12 +1145,87 @@ model CandidateRoster {
   archivedAt      DateTime?
   /// De roosterkwaliteit bij het opslaan: deelscores, nachtreeksen, overgangen.
   qualityMetrics  Json?
+  /// Hoe deze kandidaat tot stand kwam: poging, zaadwaarde, gewichten, herkomst, uitleg.
+  provenance            Json?
+  qualityModelVersion   String?
+  optimizerModelVersion String?
+
+  humanReviews     HumanLineReview[]
+  pairwiseAsFirst  HumanPairwisePreference[] @relation("PairFirst")
+  pairwiseAsSecond HumanPairwisePreference[] @relation("PairSecond")
 
   createdAt DateTime @default(now())
 
   @@index([validationState])
   @@index([generatedAt])
   @@index([generationRunId])
+}
+
+/// Hoe een mens één roosterregel (of een heel basisrooster) van een kandidaat
+/// beoordeelt: goed, twijfel of slecht, met redenen.
+///
+/// Alleen voor training en foutopsporing. Een oordeel verandert nooit
+/// automatisch een gewicht of een model: eerst verzamelen, analyseren, een
+/// voorstel doen, BEFORE/AFTER meten, en dan pas besluiten.
+model HumanLineReview {
+  id          String             @id @default(uuid())
+  candidateId String
+  candidate   CandidateRoster    @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  rosterCode  String
+  /// Null: het oordeel geldt voor het hele basisrooster.
+  lineNumber  Int?
+  verdict     HumanReviewVerdict
+  /// Redencodes uit HUMAN_REVIEW_REASONS (bijvoorbeeld BAD_SINGLE_NIGHT).
+  reasons     String[]
+  note        String?
+  /// Waarmee de kandidaat werd beoordeeld en gemaakt, op het moment van het oordeel.
+  qualityModelVersion   String?
+  optimizerModelVersion String?
+  reviewerId  String
+  reviewer    UserAccount        @relation(fields: [reviewerId], references: [id])
+  createdAt   DateTime           @default(now())
+
+  @@index([candidateId])
+  @@index([createdAt])
+}
+
+enum HumanReviewVerdict {
+  GOOD
+  DOUBT
+  BAD
+}
+
+/// Twee kandidaten naast elkaar: welke vindt een mens beter, en waarom.
+///
+/// De grondstof voor een latere voorkeursmaat. Net als HumanLineReview: nooit
+/// automatisch doorgevoerd.
+model HumanPairwisePreference {
+  id                     String          @id @default(uuid())
+  firstCandidateId       String
+  firstCandidate         CandidateRoster @relation("PairFirst", fields: [firstCandidateId], references: [id], onDelete: Cascade)
+  secondCandidateId      String
+  secondCandidate        CandidateRoster @relation("PairSecond", fields: [secondCandidateId], references: [id], onDelete: Cascade)
+  /// Optioneel: de vergelijking gaat over één basisrooster.
+  rosterCode             String?
+  choice                 PairwiseChoice
+  reasons                String[]
+  note                   String?
+  firstQualityModelVersion    String?
+  secondQualityModelVersion   String?
+  firstOptimizerModelVersion  String?
+  secondOptimizerModelVersion String?
+  reviewerId             String
+  reviewer               UserAccount     @relation(fields: [reviewerId], references: [id])
+  createdAt              DateTime        @default(now())
+
+  @@index([firstCandidateId])
+  @@index([secondCandidateId])
+}
+
+enum PairwiseChoice {
+  FIRST
+  SECOND
+  EQUAL
 }
 
 /// Eén generatieopdracht: een strategie, een roosterjaar, tot drie kandidaten.
@@ -1162,6 +1239,12 @@ model GenerationRun {
   kind            GenerationRunKind   @default(GENERATE)
   strategy        String
   strategyLabel   String
+  /// Welke zoekmachine deze opdracht uitvoerde: legacy (v1.0.3) of adaptive (v1.0.4).
+  engine          String              @default("legacy")
+  /// Rekentijdmodus van de adaptieve engine: FAST, NORMAL, DEEP of EXTENSIVE.
+  searchMode      String?
+  /// Alleen voor metingen: welk onderdeel van de engine is uitgezet.
+  ablation        String?
   rosterYear      Int
   periodStart     DateTime            @db.Date
   periodEnd       DateTime            @db.Date
@@ -1179,6 +1262,10 @@ model GenerationRun {
   failureReason   String?
   /// Per poging: geaccepteerd of verworpen, en waarom. Plus rekentijden.
   log             Json?
+  /// Elke zoekpoging met zaadwaarde, gewichten, uitkomst en reden. Voor later terugzoeken.
+  searchJournal   Json?
+  /// Tellingen van de zoektocht: pogingen, geldig, afgewezen, elite, reparaties.
+  searchCounters  Json?
   cancelRequested Boolean             @default(false)
   /// Een lopende opdracht meldt zich regelmatig. Stopt dat, dan is het proces
   /// weg en wordt de opdracht als onderbroken gemarkeerd.

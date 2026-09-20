@@ -1,0 +1,24 @@
+{
+  "schema": "ns-final-brain-decision-rules/1",
+  "recordedAt": "2026-09-18T22:12:03.942Z",
+  "rules": [
+    {
+      "id": "R1",
+      "about": "Schaal van de nachtrij in CP-SAT (solver-ab-nightrow.json)",
+      "recordedBefore": "uitslag van zaad 103–105 van de A/B",
+      "rule": "Kies de kleinste schaal uit {1,3,5,8} met het laagste gemiddelde aantal nachtuitgangen onder 46 uur (gelijk: de kleinere), mits eerlijkheid niet meer dan 2 punten en uren niet meer dan 0,5 punt zakken ten opzichte van schaal 1. Haalt geen schaal dat: schaal 1."
+    },
+    {
+      "id": "R2",
+      "about": "Welke ablatie de standaard wordt",
+      "recordedBefore": "de ablatieruns",
+      "rule": "Een onderdeel blijft aan als het in zijn ablatie (drie Evenwichtig-runs tegen de variant zonder dat onderdeel) de nachtpoorten niet slechter maakt en de bewakingspoorten (eerlijkheid −0,5, uren −1, rust, slechtste regel) niet verder schendt dan de variant zonder. Twijfel: uit, en zo in het rapport."
+    },
+    {
+      "id": "R3",
+      "about": "Eindkandidaten A/B/C",
+      "recordedBefore": "de generatie van de eindkandidaten",
+      "rule": "Zie scripts/final-brain/final-candidates.ts: A beste robuust uit Evenwichtig; B beste gemiddelde van nachten, regelmaat en rust uit Rust & regelmaat; C beste eerlijkheid uit Eerlijke lasten binnen de vloer (geen losse nacht, geen uitgang onder 46 u, robuust ≥ gemiddelde v1.0.4)."
+    }
+  ]
+}

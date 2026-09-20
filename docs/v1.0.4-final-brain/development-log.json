@@ -1,0 +1,133 @@
+{
+  "schema": "ns-optimizer-development-log/1",
+  "phase": "human roster calibration (engine adaptive-1.0.5, quality-model-v2)",
+  "learnedFromBenchmark": "DDR_BDU_05_10_2026",
+  "entries": [
+    {
+      "id": "H01",
+      "date": "2026-09-18",
+      "component": "quality-model.ts / quality-evaluator.ts — kwaliteitsmodel v2",
+      "change": "Nieuwe versie naast v1 (v1 blijft volledig rekenbaar). Gewichten van de onderdelen ongewijzigd; veranderd is wat vier onderdelen meten: uren per regel alleen buiten de menselijke band (±10:30), regelmaat als samenhang + wissels via rust + heen-en-weer op de klok + overgangsstraf + begintijdsprong (reekslengte eruit), overgangen op de klok (<3 uur verschuiving telt hooguit 1 punt), nachten als reekswaarde naar lengte + uitgang na de reeks.",
+      "reason": "Model v1 noemde duidelijke menselijke patronen slecht: officieel robuust 64,9, regelmaat 75,7 (door structurele reekslengte), uren 70,3 (door structurele regelspreiding), en twee 50+ Mix-overgangen 'zwaar' terwijl de begintijd 19 en 41 minuten verschoof.",
+      "observedEffect": "Officieel onder v2: robuust 84,2, regelmaat 90,1, uren 83,9. Contrastieve toets (contrastive-check.json): v2 ziet alle vijf de opzettelijk bedorven varianten van het officiële rooster op het aangetaste onderdeel én zet het menselijke rooster steeds hoger; v1 zag springende begintijden niet en verkoos een variant met vroege diensten na nachten boven het menselijke rooster. Alle 29 v1.0.3-kandidaten met losse nachten of zware overgangen scoren onder v2 lager dan het menselijke rooster op nachten of regelmaat.",
+      "outcome": "behouden; CURRENT_QUALITY_MODEL = v2"
+    },
+    {
+      "id": "H02",
+      "date": "2026-09-18",
+      "component": "quality-evaluator.ts — stabiliteit per regel op de klok",
+      "change": "In v2 telt een opeenvolging als stabiel bij hetzelfde dagdeel óf minder dan 3 uur verschuiving in begintijd.",
+      "reason": "De slechtste regel van het officiële pakket onder v2 was 50+ Mix regel 2 (47,4), puur omdat laat 11:47 → vroeg 11:06 als wissel telde.",
+      "observedEffect": "Slechtste officiële regel 47,4 → 70,8 (nog steeds 50+ Mix regel 2, nu door een week van 30:14 — structureel); robuust officieel 78,4 → 84,2.",
+      "outcome": "behouden"
+    },
+    {
+      "id": "H03",
+      "date": "2026-09-18",
+      "component": "cpsat_roster.py — begintijdsterm (startJitter)",
+      "change": "Nieuwe zachte term: per minuut sprong in begintijd boven 60 minuten, tussen opeenvolgende diensten in hetzelfde dagdeel, gewicht 1 (kleinste gehele waarde).",
+      "reason": "Gegenereerde kandidaten (v1.0.4) springen meer dan mensen: p90 204 tegen 150 minuten.",
+      "observedEffect": "A/B op de ruwe solveruitkomst, 3 zaadwaarden × 40 s (solver-ab-uit-aan.json): sprong gemiddeld 75 → 50 en p90 179 → 106 minuten, maar robuust 85,6 → 81,3, nachten 92,8 → 82,6, eerlijkheid 87,1 → 79,9, en in één run een losse nacht. Stijver dan de mensen zelf (p90 150).",
+      "outcome": "verworpen: gewicht op 0. De term blijft in de code, uit, met deze meting als reden. Begintijden worden alleen via het bijschaven (model v2) verbeterd."
+    },
+    {
+      "id": "H04",
+      "date": "2026-09-18",
+      "component": "roster-quality-config.ts — nachtuitgang voor CP-SAT, eerste versie",
+      "change": "Nacht → laat over één vrije dag 1 → 3 strafpunten, nacht → vroeg over twee vrije dagen 2.",
+      "reason": "Alle vier de menselijke nachtreeksen gaan via twee of drie vrije dagen naar laat; nacht-vrij-laat geeft ongeveer 33 uur herstel, onder de 46 uur van de regel.",
+      "observedEffect": "In één van drie runs een nachtreeks met 13,1 uur herstel: 'nacht, één vrije dag, laat' kostte nu evenveel als 'nacht, direct laat' (beide 3), dus de solver maakte geen onderscheid meer.",
+      "outcome": "vervangen door H05; de fout staat in solver-ab-nacht.json"
+    },
+    {
+      "id": "H05",
+      "date": "2026-09-18",
+      "component": "roster-quality-config.ts — nachtuitgang, monotone tabel",
+      "change": "Na nachten: direct vroeg 6, direct laat 3 → 5; één vrije dag vroeg 3 → 4, laat 1 → 3; twee vrije dagen vroeg 2, laat 0. Strikt dalend met de rust, vroeg steeds duurder dan laat. Alleen in de adaptieve zoekmachine (humanRhythm), niet in de klassieke.",
+      "reason": "H04: een tabel die niet strikt daalt met de rust laat de solver een kortere uitgang kiezen.",
+      "observedEffect": "Gelijk-op gemeten in dezelfde sessie, 3 runs met en 3 zonder (solver-ab-uit-nacht.json): robuust 86,0 → 85,5, nachten 91,0 → 93,3, eerlijkheid 81,9 → 84,8, vroeg na nachten 1,0 → 0 per kandidaat. Het slechtste herstel in een run (12–13 uur na een korte reeks) wordt hier niet opgelost. Correctie: een eerder genoemde vergelijking 'zes tegen zes' voegde runs met de tabel van H04 en die van H05 samen en is daarom niet gebruikt.",
+      "outcome": "behouden. Kanttekening: CP-SAT met 8 zoekdraden is niet deterministisch; dezelfde zaadwaarden gaven tussen twee metingen robuust 83,7/86,0/87,1 tegen 88,5/85,5/83,9. Drie runs tonen alleen een richting; de AFTER-meting met 20 runs is de toets."
+    },
+    {
+      "id": "H06",
+      "date": "2026-09-18",
+      "component": "rhythm-metrics.ts — uitgangswaarde na nachten met herstelrust",
+      "change": "Een late dienst na een nachtreeks telt voluit alleen als de herstelrust uit de regel (NIGHT_SEQUENCE_RECOVERY, 46 uur) is gehaald; sneller telt half.",
+      "reason": "Het kortste menselijke herstel na een reeks is 56 uur; een uitgang van 13 uur is geen menselijke uitgang, ook al is het laat.",
+      "observedEffect": "Officieel ongewijzigd (alle uitgangen ≥ 56 uur, uitgang 100).",
+      "outcome": "behouden"
+    },
+    {
+      "id": "H07",
+      "date": "2026-09-18",
+      "component": "adaptive/config.ts + engine.ts — bewaking van eerlijkheid, uren en rust",
+      "change": "Bijschaven en reparatie mogen eerlijkheid hooguit 0,5 punt, uren en rust hooguit 1 punt laten zakken ten opzichte van de start; daarboven kost elk punt 10 in de rangschikking van het bijschaven en wordt een reparatie afgewezen.",
+      "reason": "v1.0.4 leverde op eerlijkheid 1,4 punt in; de werkopdracht vraagt dat winst op ritme dat niet verder mag verslechteren.",
+      "observedEffect": "Rookproef: een reparatie die de rangschikking 82,3 → 85,4 bracht, werd afgewezen omdat eerlijkheid 0,6 zakte. Dat is de bedoeling, en het kost aantoonbaar kwaliteit elders.",
+      "outcome": "behouden"
+    },
+    {
+      "id": "H08",
+      "date": "2026-09-18",
+      "component": "scripts/benchmark/evaluate.ts — modelkeuze",
+      "change": "De v1.0.4-benchmarkevaluatie rekent standaard met model v1 en schrijft de werkelijk gebruikte versie weg; --model v2 rekent met het nieuwe.",
+      "reason": "Na het wisselen van het standaardmodel zou een herberekening van de v1.0.4-meting met v2 rekenen maar 'v1' als label dragen.",
+      "observedEffect": "Geen verschil in de opgeslagen v1.0.4-uitkomsten; de fout is voorkomen voordat hij optrad.",
+      "outcome": "behouden"
+    },
+    {
+      "id": "H09",
+      "date": "2026-09-18",
+      "component": "quality-model.ts + rhythm-metrics.ts — uitgang na nachten en de grens tussen etiket en echte wissel",
+      "change": "Uitgang na een nachtreeks: eerst herstel, dan richting. Onder de herstelrust uit de regel (46 uur) is elke uitgang 0; daarboven laat of nacht 1, vroeg 0,25, vroeg na 72 uur 0,5 (was: laat altijd minstens 0,5, vroeg onder 72 uur 0). Een wissel geldt als alleen een ander etiket als de begintijd hooguit 60 minuten verschuift (was: minder dan 180), voor strafpunten, regelstabiliteit en heen-en-weer.",
+      "reason": "De eerste AFTER-meting (20 runs, docs/optimizer-benchmark/human-dev1) haalde 5 van de 10 acceptatiepunten niet. In DDR-BLM volgde 15 keer een laat van 09:47 direct door een vroeg van 07:22 (13,2 uur rust, 145 minuten eerder): met de grens van 180 minuten telde dat als etiketwissel en kostte het niets. En 28 van 60 kandidaten hadden een nachtuitgang onder 36 uur (v1.0.4: 17): nacht-vrij-laat (32 uur) scoorde 0,5, nacht-vrij-vrij-vroeg (48 uur) 0. Minder rust scoorde beter — dezelfde fout als H04, nu in de meting in plaats van in de solver. De solver (H05) had het goed; het bijschaven, dat op deze meting stuurt, draaide het terug. De officiële roosters onderbouwen 60: hun enige directe etiketwissels zonder echte verschuiving zijn 19 en 41 minuten.",
+      "observedEffect": "Officieel robuust 84,2 → 83,5 en regelmaat 90,1 → 88,7: in 50+MIX regel 4 telt vroeg 10:08 → laat 12:19 → rust → vroeg 08:00 nu als (mild) heen-en-weer, en twee voorwaartse wissels van 126 en 131 minuten niet meer als stabiel. Een richtingsafhankelijke grens (voorwaarts 180, achterwaarts 60) liet het officiële rooster ongemoeid, maar steunde op twee plus twee gevallen uit één steekproef en is daarom niet gekozen. Drie nieuwe tests leggen vast dat de uitgangswaarde nooit daalt met meer herstel en dat het BLM-patroon zwaar telt.",
+      "outcome": "Het etiketgat is dicht (0 keer laat 09:47 → vroeg 07:22 in de tweede AFTER-meting). Het herstel na nachten is NIET opgelost: in de eerste 10 Evenwichtig-runs van die meting stegen de nachtuitgangen onder 46 uur van 0,23 naar 0,83 per kandidaat (v1.0.4 tegenover H09), 18 van 30 kandidaten hadden er één onder 36 uur. De oorzaak ligt niet in de meting maar in de solver (H11)."
+    },
+    {
+      "id": "H10",
+      "date": "2026-09-18",
+      "component": "worst-case.ts + quality-model.ts + adaptive-search.ts — het slechtste geval in de robuuste score en de rangschikking",
+      "change": "Robuust (model v2) trekt het slechtste geval af: 1,5 × (1 − laagste nachtuitgangswaarde), 0,5 per strafpunt van de zwaarste overgang boven 2 (op de klok), 0,5 per echte wissel in het rommeligste werkblok boven 1. De rangschikking van de zoekmachine trekt hetzelfde af.",
+      "reason": "Werkopdracht §12/§13: een sterk gemiddelde mag één extreme fout niet verbergen. Het minimum verdunt niet: een extra goede reeks erbij maakt het niet beter, dus opknippen levert niets op. Eén extreem geval kost ongeveer wat tien punten op de slechtste regel kost (0,15 × 10). De vrije drempels liggen op wat het officiële rooster zelf doet, zodat de menselijke referentie niets verliest.",
+      "observedEffect": "Officieel: slechtste uitgang 1, zwaarste overgang 1 (laat → vroeg van 41 minuten), één echte wissel in het rommeligste blok: strafpunten 0. v1.0.4: 17 van 60 kandidaten met een slechtste uitgang 0 en 36 met 0,25; de tweede AFTER-meting: 18 van 30 met 0.",
+      "outcome": "in ablatie (zie ablations.json)"
+    },
+    {
+      "id": "H11",
+      "date": "2026-09-18",
+      "component": "objective-exchange-rates.md — wat de solver feitelijk ruilt",
+      "change": "Geen wijziging: een meting. De CP-SAT-doelfunctie is lineair; de koers van elke gebeurtenis is zijn coëfficiënt, uitgedrukt in minuten per week urenbalans in één rooster (hoursBalance × 60 = 900 in Evenwichtig).",
+      "reason": "Werkopdracht §16: weten wat het brein belangrijk vindt, niet alleen welke score eruit komt.",
+      "observedEffect": "Evenwichtig: een losse nacht = 1,0 min/week, een reeks van twee = 47 s/week, nacht → vrij → laat (32 uur) = 3 s/week in v1.0.4 en 8 s/week met de menselijke tabel, laat → vroeg = 11 s/week. Het kwaliteitsmodel waarop het bijschaven stuurt, rekent voor dezelfde nachtuitgang ongeveer 58 min/week: een factor ~1300. De solver legt de nachtreeksen, en het bijschaven kan ze niet verplaatsen. De Goodhart-jacht bevestigt het: het bijschaven dreef de score op zonder één nachtpatroon slechter te maken.",
+      "outcome": "basis voor de A/B van de nachtrij (solver-ab-nightrow.json) en de gerichte nachtreparatie"
+    },
+    {
+      "id": "H12",
+      "date": "2026-09-18",
+      "component": "variant.ts — bevroren v1.0.4 als profiel, versienaam",
+      "change": "De zoekmachine heet adaptive-1.0.4-rhythm (eerder adaptive-1.0.5; de werkopdracht houdt alles in v1.0.4). Alles wat na v1.0.4 kwam is schakelbaar; profiel frozen-1.0.4 zet het uit en rangschikt op model v1. Ablaties zetten één onderdeel via NS_ENGINE_VARIANT; de variant staat in de herkomst en de confighash.",
+      "reason": "v1.0.4 is nooit gecommit; \"exact v1.0.4\" moet toch te draaien zijn, en een ablatie moet precies één ding veranderen.",
+      "observedEffect": "freeze.json: model v1 in deze code reproduceert elke v1.0.4-kandidaat exact (61 kandidaten, verschil 0).",
+      "outcome": "behouden"
+    },
+    {
+      "id": "H13",
+      "date": "2026-09-19",
+      "component": "config.ts — nachtrij in CP-SAT × 5",
+      "change": "De nachtrij van de menselijke overgangstabel (na een nacht: direct, over één, over twee vrije dagen) × 5. Nacht → vrij → laat kost de solver daarmee 600 (was 120), nacht → vrij → vroeg 800.",
+      "reason": "H11: de solver ruilde een nachtuitgang onder de herstelregel voor 8 seconden per week urenbalans; het kwaliteitsmodel rekent ongeveer een uur. De hele rij met één factor houdt de volgorde (H05).",
+      "observedEffect": "A/B op de ruwe solveruitkomst, 5 zaden × 40 s: uitgangen onder 46 u per oplossing ×1 1,20 · ×3 0,40 · ×5 0,20 · ×8 1,00 (klassiek 1,00); kortste herstel 28,2 · 43,0 · 50,0 · 35,7 u; eerlijkheid 85,8 · 84,7 · 85,2 · 83,1; uren gelijk. Beslisregel R1, vastgelegd vóór de uitslag van zaad 103–105, kiest × 5. × 8 valt af op eerlijkheid.",
+      "outcome": "behouden als standaard; het effect in de hele zoekmachine staat in de ablaties"
+    },
+    {
+      "id": "H14",
+      "date": "2026-09-19",
+      "component": "ablaties — welke onderdelen blijven aan (beslisregel R2)",
+      "change": "Eindstand: nachtrij × 5 (R1) en het slechtste geval in de rangschikking aan; de gerichte nachtuitgangreparatie en nachten-eerst uit; eerlijkheidsmarge 0,5.",
+      "reason": "Zeven ablaties van drie Evenwichtig-runs, elk met één onderdeel anders, uit een bevroren kopie van de code (vingerafdruk 551aca67512aac1f). R2 was vastgelegd vóór de runs.",
+      "observedEffect": "Nachtpoorten/bewakingspoorten gehaald tegen v1.0.4: slechtste geval aan 5/3 tegen uit 1/3; reparatie+nachten-eerst 4/3 tegen 5/3 zonder (een losse nacht meer), maar slechtste uitgang 41,7 tegen 27,8; eerlijkheidsmarge 0,25: 13 poorten, 0,5: 14, 1,0: 12 (1,0 gaf de beste uitgangen, slechtste uitgang 72,2 en kortste herstel 50,6 u, maar 0,56 reeksen van twee en eerlijkheid −0,8). Ruis: de bevroren v1.0.4 zelf haalde in drie runs 13 van de 16 poorten tegen zijn eigen twintig-runmeting.",
+      "outcome": "eindconfiguratie = de geteste variant ab-k5-wc"
+    }
+  ]
+}

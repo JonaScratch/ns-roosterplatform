@@ -36,9 +36,16 @@ const scenarioKeys = SCENARIOS.map((scenario) => scenario.key) as [string, ...st
 const opdrachtSchema = z.object({
   strategy: z.enum(scenarioKeys),
   rosterYear: z.coerce.number().int().min(2000).max(2100),
+  // De rekentijdmodus is een keuze van de gebruiker, geen regel: valt hij weg,
+  // dan beslist de server met zijn eigen standaard.
+  mode: z.enum(["FAST", "NORMAL", "DEEP", "EXTENSIVE"]).nullish(),
 });
 
-export async function startGeneratieAction(input: { strategy: string; rosterYear: number }): Promise<StartState> {
+export async function startGeneratieAction(input: {
+  strategy: string;
+  rosterYear: number;
+  mode?: string | null;
+}): Promise<StartState> {
   const parsed = opdrachtSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "Kies een strategie en een roosterjaar." };

@@ -1,0 +1,23 @@
+MELDINGEN EN UITGAANDE WACHTRIJ
+════════════════════════════════════════════════════════════
+
+1. Dezelfde gebeurtenis twee keer
+  ✓ de gebeurtenis levert een melding op
+  ✓ opnieuw verwerken maakt geen tweede melding
+
+2. De teller
+  ✓ de ongelezen telling is niet hoger dan het totaal
+
+3. Verwijzingen
+  ✓ elke melding heeft een bestaande ontvanger
+  ✓ elke melding wijst ergens heen
+  ✓ geen ontvanger heeft dezelfde melding twee keer
+
+4. Een gebeurtenis die niet te verwerken is
+  ✓ een onbekende gebeurtenis wordt als mislukt bewaard, niet weggegooid
+  ✓ de fout houdt de andere gebeurtenissen niet tegen
+
+Wachtrij: 0 gebeurtenissen wachten nog.
+
+════════════════════════════════════════════════════════════
+8 controles geslaagd, 0 mislukt.

@@ -1,0 +1,73 @@
+{
+  "schema": "ns-machinist-ab-plan/1",
+  "recordedAt": "2026-09-19T11:10:00+02:00",
+  "codeCopy": "C:/Users/Jonathan Schram/ClaudeCode/ns-roosterplatform-mp",
+  "codeFingerprint": "3b0bc8e6d3f22ac7 (SHA-256 over src, python, scripts, configs; eerste 16 tekens)",
+  "why": "CP-SAT leest python/cpsat_roster.py bij elke oplossing opnieuw; ontwikkelen in de hoofdboom zou een lopende meetreeks veranderen. De A/B draait daarom uit een bevroren kopie.",
+  "baseline": "brain-after (20 runs, profiel rhythm, model v2 in de rangschikking)",
+  "steps": [
+    {
+      "phase": "mp-m1",
+      "rule": "M0",
+      "label": "Harde laag",
+      "profile": "rhythm",
+      "variant": {
+        "operational": true
+      },
+      "strategies": [
+        "BALANCED"
+      ],
+      "runs": 3,
+      "mode": "NORMAL",
+      "compareTo": "brain-after (BALANCED-runs 1–3)"
+    },
+    {
+      "phase": "mp-m2",
+      "rule": "M1",
+      "label": "Harde laag + model v3 in rangschikking en bijschaven",
+      "profile": "rhythm",
+      "variant": {
+        "operational": true,
+        "qualityModel": "quality-model-v3"
+      },
+      "strategies": [
+        "BALANCED"
+      ],
+      "runs": 3,
+      "mode": "NORMAL",
+      "compareTo": "mp-m1"
+    },
+    {
+      "phase": "mp-after",
+      "rule": "M4",
+      "label": "AFTER: aangenomen configuratie (profiel machinist = rhythm + operationele eisen; M1 uit, M2 schaal 0, M3 vervallen)",
+      "profile": "machinist",
+      "variant": null,
+      "strategies": {
+        "BALANCED": "runs 1–10",
+        "REST_QUALITY": "runs 11–15",
+        "FAIR_BURDEN": "runs 16–20"
+      },
+      "mode": "NORMAL",
+      "compareTo": "brain-after (20 runs, zelfde verdeling)",
+      "codeCopy": "C:/Users/Jonathan Schram/ClaudeCode/ns-roosterplatform-mp2",
+      "codeFingerprint": "1d9d5f1febd6093d"
+    },
+    {
+      "phase": "mp-x13",
+      "rule": "geen — verkennend, niet beslissend",
+      "label": "CP-SAT-voorkeur op schaal 1/3 in de volledige zoekmachine: repareert het bijschaven de nachtkosten uit de solver-A/B?",
+      "profile": "machinist",
+      "variant": {
+        "preferenceScale": 0.333
+      },
+      "strategies": [
+        "BALANCED"
+      ],
+      "runs": 3,
+      "mode": "NORMAL",
+      "note": "Verandert geen besluit. Regel M2 koos schaal 0; deze run bestaat om de mens een onderbouwde vervolgvraag te kunnen voorleggen."
+    }
+  ],
+  "m3": "Vervallen: regel M2 koos schaal 0, dus er zijn geen CP-SAT-voorkeurstermen om in de zoekmachine te toetsen."
+}

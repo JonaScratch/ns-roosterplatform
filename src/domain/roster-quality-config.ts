@@ -62,6 +62,55 @@ export const OVER_ONE_OFF_DAY_PENALTY: Readonly<
   NIGHT: { EARLY: 3, LATE: 1, NIGHT: 2 },
 };
 
+/**
+ * Strafpunten per overgang over precies twee vrije dagen heen.
+ *
+ * Alleen nacht → vroeg. In de menselijke Dordrechtse roosters gaat elke
+ * nachtreeks via twee of drie vrije dagen naar een late dienst, nooit naar een
+ * vroege (`docs/human-roster-benchmark/`). Alle andere overgangen zijn na twee
+ * vrije dagen gewoon.
+ */
+export const OVER_TWO_OFF_DAYS_PENALTY: Readonly<
+  Record<TransitionCategory, Readonly<Record<TransitionCategory, number>>>
+> = {
+  EARLY: { EARLY: 0, LATE: 0, NIGHT: 0 },
+  LATE: { EARLY: 0, LATE: 0, NIGHT: 0 },
+  NIGHT: { EARLY: 2, LATE: 0, NIGHT: 0 },
+};
+
+/**
+ * De uitgang van een nachtreeks zoals in de menselijke roosters.
+ *
+ * Alle vier de menselijke nachtreeksen gaan via twee of drie vrije dagen naar
+ * een late dienst (56–80 uur herstel). Nacht, één vrije dag, laat geeft
+ * ongeveer 33 uur, nacht direct gevolgd door laat ongeveer 13 — allebei minder
+ * dan de 46 uur die de regel na drie of meer nachten vraagt.
+ *
+ * De strafpunten dalen strikt met de rust ertussen, voor laat én voor vroeg:
+ *
+ *   na nachten   direct   1 vrij   2 vrij
+ *   → vroeg        6        4        2
+ *   → laat         5        3        0
+ *
+ * Die volgorde is belangrijk. Een eerdere versie zette alleen "1 vrij → laat"
+ * op 3, gelijk aan "direct → laat"; de solver koos daarop in een meting een
+ * nachtreeks met 13 uur herstel (`docs/human-roster-benchmark/solver-ab-nacht.json`).
+ * Alleen nachten zijn aangepast; de andere overgangen blijven zoals in v1.0.4.
+ */
+export const HUMAN_ADJACENT_TRANSITION_PENALTY: Readonly<
+  Record<TransitionCategory, Readonly<Record<TransitionCategory, number>>>
+> = {
+  ...ADJACENT_TRANSITION_PENALTY,
+  NIGHT: { ...ADJACENT_TRANSITION_PENALTY.NIGHT, LATE: 5 },
+};
+
+export const HUMAN_OVER_ONE_OFF_DAY_PENALTY: Readonly<
+  Record<TransitionCategory, Readonly<Record<TransitionCategory, number>>>
+> = {
+  ...OVER_ONE_OFF_DAY_PENALTY,
+  NIGHT: { ...OVER_ONE_OFF_DAY_PENALTY.NIGHT, EARLY: 4, LATE: 3 },
+};
+
 /** Vanaf dit aantal strafpunten heet een overgang zwaar. */
 export const HEAVY_TRANSITION_PENALTY = 3;
 

@@ -1,0 +1,59 @@
+﻿START 2026-09-18T00:27:49.8257991+02:00
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase after --engine adaptive --mode NORMAL --strategy BALANCED --runs 10 --first 1
+
+run 1: bestaat al, overgeslagen (C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\docs\optimizer-benchmark\after\run-001.json)
+run 2: adaptive NORMAL BALANCED ÔÇª
+run 2: COMPLETED 3/3 in 274.6 s
+run 3: adaptive NORMAL BALANCED ÔÇª
+run 3: COMPLETED 3/3 in 277.8 s
+run 4: adaptive NORMAL BALANCED ÔÇª
+run 4: COMPLETED 3/3 in 282.5 s
+run 5: adaptive NORMAL BALANCED ÔÇª
+run 5: COMPLETED 3/3 in 274.1 s
+run 6: adaptive NORMAL BALANCED ÔÇª
+run 6: COMPLETED 3/3 in 282 s
+run 7: adaptive NORMAL BALANCED ÔÇª
+run 7: COMPLETED 3/3 in 285.6 s
+run 8: adaptive NORMAL BALANCED ÔÇª
+run 8: COMPLETED 3/3 in 289.3 s
+run 9: adaptive NORMAL BALANCED ÔÇª
+run 9: COMPLETED 3/3 in 271.9 s
+run 10: adaptive NORMAL BALANCED ÔÇª
+run 10: COMPLETED 3/3 in 272.1 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase after --engine adaptive --mode NORMAL --strategy REST_QUALITY --runs 5 --first 11
+
+run 11: adaptive NORMAL REST_QUALITY ÔÇª
+run 11: COMPLETED 3/3 in 276.8 s
+run 12: adaptive NORMAL REST_QUALITY ÔÇª
+run 12: COMPLETED 3/3 in 264.3 s
+run 13: adaptive NORMAL REST_QUALITY ÔÇª
+run 13: COMPLETED 3/3 in 276.6 s
+run 14: adaptive NORMAL REST_QUALITY ÔÇª
+run 14: COMPLETED 3/3 in 271.9 s
+run 15: adaptive NORMAL REST_QUALITY ÔÇª
+run 15: COMPLETED 3/3 in 286.9 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase after --engine adaptive --mode NORMAL --strategy FAIR_BURDEN --runs 5 --first 16
+
+run 16: adaptive NORMAL FAIR_BURDEN ÔÇª
+run 16: COMPLETED 3/3 in 271.1 s
+run 17: adaptive NORMAL FAIR_BURDEN ÔÇª
+run 17: COMPLETED 3/3 in 271.3 s
+run 18: adaptive NORMAL FAIR_BURDEN ÔÇª
+run 18: COMPLETED 3/3 in 271.8 s
+run 19: adaptive NORMAL FAIR_BURDEN ÔÇª
+run 19: COMPLETED 3/3 in 273.1 s
+run 20: adaptive NORMAL FAIR_BURDEN ÔÇª
+run 20: COMPLETED 3/3 in 285.6 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase after --engine legacy --strategy REPRODUCE --runs 1 --first 21
+
+run 21: legacy REPRODUCE ÔÇª
+run 21: COMPLETED 1/1 in 4.1 s
+KLAAR 2026-09-18T01:55:40.6876711+02:00

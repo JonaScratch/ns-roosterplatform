@@ -47,6 +47,13 @@ export interface ObjectiveWeights {
   readonly preserveReference: number;
   /** Per dienstdag die afwijkt van de kandidaat die wordt verbeterd. */
   readonly preserveHint: number;
+  /**
+   * Per minuut sprong in begintijd boven het vrije uur, tussen opeenvolgende
+   * diensten in hetzelfde dagdeel. Standaard uit: de klassieke zoekmachine
+   * (v1.0.3) moet ongewijzigd terug te zetten zijn. De adaptieve zoekmachine
+   * zet hem aan (zie ADAPTIVE_CONFIG.humanRhythm).
+   */
+  readonly startJitter: number;
 }
 
 /** De evenwichtige basis waar de andere strategieën van afwijken. */
@@ -70,6 +77,7 @@ export const BALANCED_WEIGHTS: ObjectiveWeights = {
   // kleiner zonder dat er kwaliteit voor wordt ingeleverd.
   preserveReference: 1,
   preserveHint: 0,
+  startJitter: 0,
 };
 
 export type SolverStrategyKey =

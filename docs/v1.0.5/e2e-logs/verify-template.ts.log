@@ -1,0 +1,14 @@
+EXCEL-SJABLOON
+══════════════════════════════════════════════════════════════════
+
+Actief pakket DDR: dienstregeling BDU-05-10-2026, 223 diensten.
+
+1. De route levert een bestand
+[TypeError: fetch failed] {
+  [cause]: AggregateError [ECONNREFUSED]: 
+      at internalConnectMultiple (node:net:1194:18)
+      at afterConnectMultiple (node:net:1784:7) {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}

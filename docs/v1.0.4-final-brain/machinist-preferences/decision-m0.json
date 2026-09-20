@@ -1,0 +1,128 @@
+{
+  "schema": "ns-machinist-decision/1",
+  "decidedAt": "2026-09-19T09:13:53.995Z",
+  "rule": "M0",
+  "question": "Wat kost de harde laag (40:00, vrijdag)? Geen keuze: eis van de gebruiker.",
+  "baseline": {
+    "phase": "brain-after",
+    "candidates": 30
+  },
+  "m1": {
+    "phase": "mp-m1",
+    "candidates": 9,
+    "operationalCompliant": 9
+  },
+  "differences": {
+    "preference": {
+      "before": 73.293,
+      "after": 73.089,
+      "delta": -0.2
+    },
+    "affinity": {
+      "before": 65.12,
+      "after": 65.044,
+      "delta": -0.08
+    },
+    "restDuties": {
+      "before": 71.773,
+      "after": 73.367,
+      "delta": 1.59
+    },
+    "dayDuties": {
+      "before": 54.273,
+      "after": 56.489,
+      "delta": 2.22
+    },
+    "popularFairness": {
+      "before": 91.823,
+      "after": 86.844,
+      "delta": -4.98
+    },
+    "weekendStart": {
+      "before": 91.863,
+      "after": 92.711,
+      "delta": 0.85
+    },
+    "robustV3": {
+      "before": 80.993,
+      "after": 80.756,
+      "delta": -0.24
+    },
+    "robustV2": {
+      "before": 83.913,
+      "after": 84.111,
+      "delta": 0.2
+    },
+    "worstLineV2": {
+      "before": 78.962,
+      "after": 82.681,
+      "delta": 3.72
+    },
+    "nightsV2": {
+      "before": 89.767,
+      "after": 89.578,
+      "delta": -0.19
+    },
+    "rest": {
+      "before": 81.827,
+      "after": 81.467,
+      "delta": -0.36
+    },
+    "hours": {
+      "before": 89.703,
+      "after": 89.711,
+      "delta": 0.01
+    },
+    "fairness": {
+      "before": 84.523,
+      "after": 84.344,
+      "delta": -0.18
+    },
+    "flow": {
+      "before": 94.57,
+      "after": 95.689,
+      "delta": 1.12
+    },
+    "singletons": {
+      "before": 0.2,
+      "after": 0,
+      "delta": -0.2
+    },
+    "pairs": {
+      "before": 0.367,
+      "after": 0.333,
+      "delta": -0.03
+    },
+    "worstNightExit": {
+      "before": 41.667,
+      "after": 22.222,
+      "delta": -19.44
+    },
+    "minRecoveryHours": {
+      "before": 44.921,
+      "after": 41.665,
+      "delta": -3.26
+    },
+    "rangeerCv": {
+      "before": 0.077,
+      "after": 0.067,
+      "delta": -0.01
+    },
+    "rangeerMaxShare": {
+      "before": 0.183,
+      "after": 0.182,
+      "delta": 0
+    },
+    "operationalViolations": {
+      "before": 1.567,
+      "after": 0,
+      "delta": -1.57
+    },
+    "extremeEarlySteps": {
+      "before": 2.333,
+      "after": 1.889,
+      "delta": -0.44
+    }
+  },
+  "decision": "aan (eis)"
+}

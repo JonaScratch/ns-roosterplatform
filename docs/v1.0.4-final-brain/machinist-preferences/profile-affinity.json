@@ -1,0 +1,382 @@
+{
+  "schema": "ns-machinist-profile-affinity/1",
+  "layers": {
+    "eligibility": "roster-profiles.ts — hard; mag deze dienst in dit profiel?",
+    "affinity": "profile-affinity.ts — zacht; hoe goed past een toegestane dienst? (deze tabel)",
+    "fairness": "machinist-preference.ts — pakketeerlijkheid van populaire diensten"
+  },
+  "sourceStatus": "MACHINIST_PREFERENCE / HUMAN_DOMAIN_INPUT — geen CAO, ATW, ATB of wet",
+  "levels": {
+    "PREFERRED": 1,
+    "NEUTRAL": 0.6,
+    "LESS": 0.2
+  },
+  "levelNote": "Alleen de volgorde heeft een bron; de afstand tussen de niveaus is een aanname. Hoe zwaar het weegt, bepalen de wisselkoersen en de A/B.",
+  "classes": {
+    "EXTREME_EARLY": "extreem vroeg",
+    "EARLY": "gematigd vroeg",
+    "DAYLIKE_EARLY": "daglijk vroeg",
+    "EARLY_LATE": "vroege late",
+    "LATE": "late",
+    "PREMIUM_LATE": "echte afloper",
+    "NIGHT": "nacht"
+  },
+  "classBoundsMinutes": {
+    "extremeEarlyBefore": 330,
+    "daylikeEarlyFrom": 540,
+    "earlyLateEndBefore": 1260,
+    "premiumLateEndAfter": 1440
+  },
+  "classBoundsNote": "Op de klok van de concrete dienst per weekdag, nooit op het dienstnummer.",
+  "dayDutyWeights": {
+    "LAAT": {
+      "weight": 10,
+      "source": "HUMAN_DOMAIN_INPUT"
+    },
+    "MIX": {
+      "weight": 20,
+      "source": "HUMAN_DOMAIN_INPUT (Vroeg/Laat/Nacht)"
+    },
+    "VROEG_LAAT": {
+      "weight": 20,
+      "source": "HUMAN_DOMAIN_INPUT"
+    },
+    "BLM": {
+      "weight": 20,
+      "source": "HUMAN_DOMAIN_INPUT"
+    },
+    "LAAT_NACHT": {
+      "weight": 10,
+      "source": "HUMAN_DOMAIN_INPUT"
+    },
+    "MIX_50PLUS": {
+      "weight": 40,
+      "source": "HUMAN_DOMAIN_INPUT"
+    },
+    "VROEG": {
+      "weight": 10,
+      "source": "AANNAME: niet opgegeven; gelijk aan Laat (spiegelbeeld)"
+    },
+    "RESERVE": {
+      "weight": 20,
+      "source": "AANNAME: niet opgegeven; midden van de opgave"
+    }
+  },
+  "dayDutyNormalisation": "per concrete dienst over de profielen die hem mogen rijden (per profiel, niet per regel; zie design.md en assumption-sensitivity.json)",
+  "table": {
+    "VROEG": {
+      "EXTREME_EARLY": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "§3–4: vroeg beginnen is vroeg klaar; Vroeg krijgt voorrang op extreem vroeg"
+      },
+      "EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "§30: Vroeg krijgt ook gematigd vroeg, maar niet als hoogste voorkeur"
+      },
+      "DAYLIKE_EARLY": {
+        "level": "LESS",
+        "value": 0.2,
+        "source": "dagdienstgewicht 10 (AANNAME: niet opgegeven; gelijk aan Laat (spiegelbeeld))"
+      },
+      "EARLY_LATE": {
+        "eligible": false
+      },
+      "LATE": {
+        "eligible": false
+      },
+      "PREMIUM_LATE": {
+        "eligible": false
+      },
+      "NIGHT": {
+        "eligible": false
+      }
+    },
+    "VROEG_LAAT": {
+      "EXTREME_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "§5, §7: mag zeker voorkomen, ook voor verdeling en toeslagen"
+      },
+      "EARLY": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "§6–7: vroeg vanaf ongeveer 05:30 heeft hier de voorkeur"
+      },
+      "DAYLIKE_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "dagdienstgewicht 20 (HUMAN_DOMAIN_INPUT)"
+      },
+      "EARLY_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "dagdienstgewicht 20 (HUMAN_DOMAIN_INPUT)"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "NIGHT": {
+        "eligible": false
+      }
+    },
+    "LAAT": {
+      "EXTREME_EARLY": {
+        "eligible": false
+      },
+      "EARLY": {
+        "eligible": false
+      },
+      "DAYLIKE_EARLY": {
+        "eligible": false
+      },
+      "EARLY_LATE": {
+        "level": "LESS",
+        "value": 0.2,
+        "source": "§14: vroeg beginnen en vroeg eindigen past minder bij Laat; dagdienstgewicht 10"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "§12–13, §31: de echte aflopers, lichte structurele voorkeur"
+      },
+      "NIGHT": {
+        "eligible": false
+      }
+    },
+    "LAAT_NACHT": {
+      "EXTREME_EARLY": {
+        "eligible": false
+      },
+      "EARLY": {
+        "eligible": false
+      },
+      "DAYLIKE_EARLY": {
+        "eligible": false
+      },
+      "EARLY_LATE": {
+        "level": "LESS",
+        "value": 0.2,
+        "source": "dagdienstgewicht 10 (HUMAN_DOMAIN_INPUT)"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "§31: houdt genoeg aantrekkelijke late diensten, maar heeft ook nachten"
+      },
+      "NIGHT": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "profielkarakter: laat plus duidelijke nachtreeksen"
+      }
+    },
+    "MIX": {
+      "EXTREME_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "§8: extreem vroeg hoeft hier niet de grootste concentratie te hebben"
+      },
+      "EARLY": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "§7–8, §30: gematigd vroeg relatief aantrekkelijker voor Vroeg/Laat en Vroeg/Laat/Nacht"
+      },
+      "DAYLIKE_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "dagdienstgewicht 20 (HUMAN_DOMAIN_INPUT (Vroeg/Laat/Nacht))"
+      },
+      "EARLY_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "dagdienstgewicht 20 (HUMAN_DOMAIN_INPUT (Vroeg/Laat/Nacht))"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "NIGHT": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      }
+    },
+    "MIX_50PLUS": {
+      "EXTREME_EARLY": {
+        "level": "LESS",
+        "value": 0.2,
+        "source": "menselijk rooster: 0 van 26 extreem vroege diensten in 50+ Mix"
+      },
+      "EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "DAYLIKE_EARLY": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "dagdienstgewicht 40 (HUMAN_DOMAIN_INPUT); menselijk rooster: lift 4,9"
+      },
+      "EARLY_LATE": {
+        "level": "PREFERRED",
+        "value": 1,
+        "source": "dagdienstgewicht 40 (HUMAN_DOMAIN_INPUT); menselijk rooster: lift 2,2"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "LESS",
+        "value": 0.2,
+        "source": "menselijk rooster: 0 van 36 aflopers in 50+ Mix"
+      },
+      "NIGHT": {
+        "level": "LESS",
+        "value": 0.2,
+        "source": "menselijk rooster: geen nachten in 50+ Mix"
+      }
+    },
+    "BLM": {
+      "EXTREME_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "DAYLIKE_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "dagdienstgewicht 20 (HUMAN_DOMAIN_INPUT)"
+      },
+      "EARLY_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "dagdienstgewicht 20 (HUMAN_DOMAIN_INPUT)"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "NIGHT": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      }
+    },
+    "RESERVE": {
+      "EXTREME_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "DAYLIKE_EARLY": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "EARLY_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "PREMIUM_LATE": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      },
+      "NIGHT": {
+        "level": "NEUTRAL",
+        "value": 0.6,
+        "source": "geen specifieke voorkeur"
+      }
+    }
+  },
+  "popularFairness": {
+    "classes": [
+      "PREMIUM_LATE",
+      "EXTREME_EARLY"
+    ],
+    "floorShare": 0.5,
+    "suitable": "profiel mag de dienst rijden én de affiniteit is niet LESS"
+  },
+  "weekendStart": {
+    "fullUntilMinute": 1020,
+    "spanMinutes": 360,
+    "drop": 0.3,
+    "exponent": 1.5
+  },
+  "operationalRequirements": {
+    "version": "operational-requirements-v1",
+    "sourceStatus": "USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT",
+    "providedOn": "2026-09-19",
+    "rosterAverageHours": {
+      "maxAverageWeeklyMinutes": 2400,
+      "semantics": "floor(roostercredit / cyclusweken) ≤ max; roostercredit = dienstduur + 8:00 per RES/WR/CO, R = 0 (roosterblad, rosterHours)"
+    },
+    "freeWeekendFriday": {
+      "latestEndMinute": 1439,
+      "exemptKinds": [
+        "NACHT"
+      ],
+      "meaning": "zaterdag en zondag zonder dienst en zonder reserve: een dag- of late dienst op vrijdag is uiterlijk 23:59 klaar; een nachtdienst mag"
+    },
+    "freeWeekend": {
+      "freeTypes": [
+        "RUST",
+        "WR",
+        "CO"
+      ],
+      "requiredTypes": [
+        "RUST",
+        "RUST"
+      ],
+      "structural": true
+    }
+  }
+}

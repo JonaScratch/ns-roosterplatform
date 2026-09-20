@@ -1,0 +1,1436 @@
+{
+  "schema": "ns-human-roster-benchmark/1",
+  "learnedFromBenchmark": "DDR_BDU_05_10_2026",
+  "label": "HUMAN_ACCEPTED_REFERENCE",
+  "meaning": "Door mensen gemaakte, in de praktijk geaccepteerde roosters. Een goede referentie, geen mathematisch optimum en geen regelboek.",
+  "sampleSizeWarning": "Eén roosterperiode van één standplaats (7 basisroosters, 64 regels). Patronen hieronder zijn waarnemingen in deze steekproef, geen algemene wetten.",
+  "extractedAt": "2026-09-18T15:36:26.979Z",
+  "reconciliation": {
+    "checks": "PDF-tijden tegen het dienstenpakket (dienst + weekdag); PDF-cellen tegen het officiële rooster in de database.",
+    "deviations": []
+  },
+  "rules": {
+    "minDailyRestMinutes": 720,
+    "nightRecoveryMinutes": 2760,
+    "longDutyMinutes": 540
+  },
+  "overall": {
+    "workedDays": 223,
+    "adjacentWorkedPairs": 121,
+    "adjacentSameDaypart": 116,
+    "adjacentChanges": {
+      "L→N": 1,
+      "L→E": 2,
+      "E→L": 2
+    },
+    "heavyAdjacent": 2,
+    "heavyAfterOneOff": 3,
+    "bigChangesByGap": {
+      "L→E gap 3": 4,
+      "L→E gap 1": 2,
+      "L→N gap 3": 1,
+      "N→L gap 2": 3,
+      "E→N gap 1": 1,
+      "L→N gap 2": 1,
+      "L→E gap 2": 2,
+      "L→E gap 4": 1,
+      "L→N gap 0": 1,
+      "N→L gap 3": 1,
+      "L→E gap 0": 2
+    },
+    "oscillations": 3,
+    "oscillationPatterns": {
+      "DDR-50MIX:LEL": 2,
+      "DDR-50MIX:ELE": 1
+    },
+    "workBlocks": {
+      "count": 102,
+      "lengthDistribution": {
+        "1": 40,
+        "2": 24,
+        "3": 22,
+        "4": 12,
+        "5": 3,
+        "6": 1
+      },
+      "fullyCoherent": 98,
+      "meanDominantShare": 98.7,
+      "reversals": 1
+    },
+    "nightBlocks": {
+      "lengths": {
+        "3": 1,
+        "5": 2,
+        "6": 1
+      },
+      "singletons": 0,
+      "pairs": 0,
+      "crossLine": 2,
+      "minRecoveryHours": 56,
+      "exitsNextState": {
+        "L": 4
+      }
+    },
+    "startTimeJitter": {
+      "n": 116,
+      "mean": 73.4,
+      "median": 60,
+      "p90": 150,
+      "max": 229,
+      "within30": 33,
+      "within60": 61,
+      "over120": 26
+    },
+    "minAdjacentRestMinutes": 749,
+    "boundaryTransitions": {
+      "OFF→E": 8,
+      "E→E": 6,
+      "E→OFF": 4,
+      "RES→RES": 2,
+      "OFF→RES": 3,
+      "OFF→L": 10,
+      "L→OFF": 4,
+      "RES→OFF": 3,
+      "OFF→OFF": 10,
+      "L→RES": 4,
+      "L→L": 4,
+      "N→N": 2,
+      "OFF→N": 1,
+      "E→L": 1,
+      "RES→L": 2
+    }
+  },
+  "rosters": [
+    {
+      "code": "DDR-V",
+      "profile": "VROEG",
+      "lines": 12,
+      "workedDays": 41,
+      "dayparts": {
+        "E": 41
+      },
+      "resDays": 12,
+      "offDays": 31,
+      "workBlocks": {
+        "count": 19,
+        "lengthDistribution": {
+          "1": 8,
+          "2": 2,
+          "3": 7,
+          "4": 2
+        },
+        "meanLength": 2.2,
+        "meanDominantShare": 100,
+        "fullyCoherentShare": 100,
+        "switches": 0,
+        "reversalsInBlocks": 0,
+        "crossLineBlocks": 2
+      },
+      "offBlocks": {
+        "count": 16,
+        "lengthDistribution": {
+          "1": 2,
+          "2": 13,
+          "3": 1
+        },
+        "meanLength": 1.9
+      },
+      "oscillations": {
+        "count": 0,
+        "patterns": {}
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 22,
+          "mean": 80.7,
+          "median": 67.5,
+          "max": 210,
+          "over60": 11,
+          "over120": 8
+        },
+        "endDeltas": {
+          "mean": 88,
+          "max": 259
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 41,
+            "mean": 398.5,
+            "sd": 84.7,
+            "min": 263,
+            "max": 567
+          },
+          "L": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          },
+          "N": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 0,
+        "lengths": [],
+        "crossLine": 0,
+        "recoveryHours": [],
+        "exits": [],
+        "entries": []
+      },
+      "rest": {
+        "adjacent": 22,
+        "minRestAdjacentMinutes": 767,
+        "meanSurplusAdjacentMinutes": 237.5,
+        "surplusBands": {
+          ">=6u": 2,
+          "1-3u": 4,
+          "3-6u": 14,
+          "<1u": 2
+        }
+      },
+      "daypartChanges": {},
+      "boundaries": {
+        "count": 12,
+        "workedBoth": 2,
+        "transitions": {
+          "OFF→E": 5,
+          "E→E": 2,
+          "E→OFF": 3,
+          "RES→RES": 1,
+          "OFF→RES": 1
+        },
+        "minRestMinutes": 1047
+      },
+      "weekends": {
+        "linesFullyOff": 6,
+        "workedDaysPerLine": [
+          0,
+          2,
+          2,
+          0,
+          1,
+          2,
+          0,
+          1,
+          0,
+          0,
+          2,
+          0
+        ],
+        "mean": 0.8
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "36:56",
+        "averageWeekIncludingBreak": "39:44",
+        "lineMinutesExcludingBreak": [
+          2195,
+          2541,
+          2267,
+          1611,
+          2292,
+          2797,
+          1920,
+          2634,
+          1911,
+          2348,
+          1926,
+          2161
+        ],
+        "lineMin": 1611,
+        "lineMax": 2797,
+        "lineSpreadMinutes": 1186,
+        "lineSdMinutes": 340.8
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 22,
+          "L": 0,
+          "N": 0,
+          "RES": 5,
+          "OFF": 14
+        },
+        "L": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "RES": {
+          "E": 6,
+          "L": 0,
+          "N": 0,
+          "RES": 4,
+          "OFF": 2
+        },
+        "OFF": {
+          "E": 13,
+          "L": 0,
+          "N": 0,
+          "RES": 3,
+          "OFF": 15
+        }
+      }
+    },
+    {
+      "code": "DDR-VL",
+      "profile": "VROEG_LAAT",
+      "lines": 10,
+      "workedDays": 34,
+      "dayparts": {
+        "E": 19,
+        "L": 15
+      },
+      "resDays": 10,
+      "offDays": 26,
+      "workBlocks": {
+        "count": 16,
+        "lengthDistribution": {
+          "1": 5,
+          "2": 7,
+          "3": 1,
+          "4": 3
+        },
+        "meanLength": 2.1,
+        "meanDominantShare": 100,
+        "fullyCoherentShare": 100,
+        "switches": 0,
+        "reversalsInBlocks": 0,
+        "crossLineBlocks": 1
+      },
+      "offBlocks": {
+        "count": 13,
+        "lengthDistribution": {
+          "1": 3,
+          "2": 7,
+          "3": 3
+        },
+        "meanLength": 2
+      },
+      "oscillations": {
+        "count": 0,
+        "patterns": {}
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 18,
+          "mean": 62.4,
+          "median": 45,
+          "max": 229,
+          "over60": 8,
+          "over120": 4
+        },
+        "endDeltas": {
+          "mean": 74.7,
+          "max": 223
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 19,
+            "mean": 352.9,
+            "sd": 70.5,
+            "min": 267,
+            "max": 488
+          },
+          "L": {
+            "n": 15,
+            "mean": 820.3,
+            "sd": 133,
+            "min": 587,
+            "max": 987
+          },
+          "N": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 0,
+        "lengths": [],
+        "crossLine": 0,
+        "recoveryHours": [],
+        "exits": [],
+        "entries": []
+      },
+      "rest": {
+        "adjacent": 18,
+        "minRestAdjacentMinutes": 791,
+        "meanSurplusAdjacentMinutes": 238.4,
+        "surplusBands": {
+          "3-6u": 10,
+          ">=6u": 3,
+          "1-3u": 5
+        }
+      },
+      "daypartChanges": {
+        "E→L na 2 vrij": 1,
+        "L→E na 3 vrij": 2,
+        "E→L na 4 vrij": 1,
+        "E→L na 1 vrij": 1,
+        "L→E na 1 vrij": 1
+      },
+      "boundaries": {
+        "count": 10,
+        "workedBoth": 1,
+        "transitions": {
+          "OFF→RES": 1,
+          "OFF→L": 2,
+          "L→OFF": 1,
+          "E→E": 1,
+          "RES→OFF": 1,
+          "OFF→OFF": 1,
+          "L→RES": 1,
+          "E→OFF": 1,
+          "OFF→E": 1
+        },
+        "minRestMinutes": 942
+      },
+      "weekends": {
+        "linesFullyOff": 5,
+        "workedDaysPerLine": [
+          0,
+          0,
+          2,
+          0,
+          2,
+          1,
+          0,
+          2,
+          2,
+          0
+        ],
+        "mean": 0.9
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "37:20",
+        "averageWeekIncludingBreak": "39:55",
+        "lineMinutesExcludingBreak": [
+          2019,
+          2060,
+          2842,
+          1899,
+          2324,
+          2675,
+          1893,
+          2240,
+          2817,
+          1638
+        ],
+        "lineMin": 1638,
+        "lineMax": 2842,
+        "lineSpreadMinutes": 1204,
+        "lineSdMinutes": 417.9
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 10,
+          "L": 0,
+          "N": 0,
+          "RES": 4,
+          "OFF": 5
+        },
+        "L": {
+          "E": 0,
+          "L": 8,
+          "N": 0,
+          "RES": 2,
+          "OFF": 5
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "RES": {
+          "E": 5,
+          "L": 2,
+          "N": 0,
+          "RES": 0,
+          "OFF": 3
+        },
+        "OFF": {
+          "E": 4,
+          "L": 5,
+          "N": 0,
+          "RES": 4,
+          "OFF": 13
+        }
+      }
+    },
+    {
+      "code": "DDR-L",
+      "profile": "LAAT",
+      "lines": 12,
+      "workedDays": 37,
+      "dayparts": {
+        "L": 37
+      },
+      "resDays": 15,
+      "offDays": 32,
+      "workBlocks": {
+        "count": 20,
+        "lengthDistribution": {
+          "1": 9,
+          "2": 6,
+          "3": 4,
+          "4": 1
+        },
+        "meanLength": 1.9,
+        "meanDominantShare": 100,
+        "fullyCoherentShare": 100,
+        "switches": 0,
+        "reversalsInBlocks": 0,
+        "crossLineBlocks": 2
+      },
+      "offBlocks": {
+        "count": 16,
+        "lengthDistribution": {
+          "1": 7,
+          "2": 4,
+          "3": 3,
+          "4": 2
+        },
+        "meanLength": 2
+      },
+      "oscillations": {
+        "count": 0,
+        "patterns": {}
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 17,
+          "mean": 92.3,
+          "median": 93,
+          "max": 210,
+          "over60": 12,
+          "over120": 4
+        },
+        "endDeltas": {
+          "mean": 94.1,
+          "max": 227
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          },
+          "L": {
+            "n": 37,
+            "mean": 907.8,
+            "sd": 128.2,
+            "min": 669,
+            "max": 1088
+          },
+          "N": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 0,
+        "lengths": [],
+        "crossLine": 0,
+        "recoveryHours": [],
+        "exits": [],
+        "entries": []
+      },
+      "rest": {
+        "adjacent": 17,
+        "minRestAdjacentMinutes": 775,
+        "meanSurplusAdjacentMinutes": 223.1,
+        "surplusBands": {
+          "3-6u": 8,
+          "1-3u": 6,
+          ">=6u": 2,
+          "<1u": 1
+        }
+      },
+      "daypartChanges": {},
+      "boundaries": {
+        "count": 12,
+        "workedBoth": 2,
+        "transitions": {
+          "OFF→OFF": 4,
+          "L→RES": 2,
+          "OFF→L": 2,
+          "RES→RES": 1,
+          "L→L": 2,
+          "L→OFF": 1
+        },
+        "minRestMinutes": 804
+      },
+      "weekends": {
+        "linesFullyOff": 6,
+        "workedDaysPerLine": [
+          0,
+          1,
+          2,
+          0,
+          0,
+          0,
+          0,
+          2,
+          1,
+          0,
+          0,
+          1
+        ],
+        "mean": 0.6
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "37:34",
+        "averageWeekIncludingBreak": "39:59",
+        "lineMinutesExcludingBreak": [
+          1752,
+          2206,
+          2731,
+          1775,
+          2164,
+          2240,
+          2311,
+          2117,
+          2696,
+          1851,
+          2325,
+          2880
+        ],
+        "lineMin": 1752,
+        "lineMax": 2880,
+        "lineSpreadMinutes": 1128,
+        "lineSdMinutes": 368.8
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "L": {
+          "E": 0,
+          "L": 17,
+          "N": 0,
+          "RES": 9,
+          "OFF": 11
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "RES": {
+          "E": 0,
+          "L": 8,
+          "N": 0,
+          "RES": 2,
+          "OFF": 5
+        },
+        "OFF": {
+          "E": 0,
+          "L": 12,
+          "N": 0,
+          "RES": 4,
+          "OFF": 16
+        }
+      }
+    },
+    {
+      "code": "DDR-LN",
+      "profile": "LAAT_NACHT",
+      "lines": 6,
+      "workedDays": 22,
+      "dayparts": {
+        "L": 16,
+        "N": 6
+      },
+      "resDays": 4,
+      "offDays": 16,
+      "workBlocks": {
+        "count": 9,
+        "lengthDistribution": {
+          "1": 4,
+          "2": 1,
+          "3": 2,
+          "4": 1,
+          "6": 1
+        },
+        "meanLength": 2.4,
+        "meanDominantShare": 100,
+        "fullyCoherentShare": 100,
+        "switches": 0,
+        "reversalsInBlocks": 0,
+        "crossLineBlocks": 2
+      },
+      "offBlocks": {
+        "count": 8,
+        "lengthDistribution": {
+          "1": 2,
+          "2": 4,
+          "3": 2
+        },
+        "meanLength": 2
+      },
+      "oscillations": {
+        "count": 0,
+        "patterns": {}
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 13,
+          "mean": 66.1,
+          "median": 60,
+          "max": 150,
+          "over60": 6,
+          "over120": 3
+        },
+        "endDeltas": {
+          "mean": 87.5,
+          "max": 244
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          },
+          "L": {
+            "n": 16,
+            "mean": 867.4,
+            "sd": 118,
+            "min": 703,
+            "max": 1080
+          },
+          "N": {
+            "n": 6,
+            "mean": 1328,
+            "sd": 43.4,
+            "min": 1284,
+            "max": 1380
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 1,
+        "lengths": [
+          6
+        ],
+        "crossLine": 1,
+        "recoveryHours": [
+          56
+        ],
+        "exits": [
+          "RRL"
+        ],
+        "entries": [
+          "RRRES"
+        ]
+      },
+      "rest": {
+        "adjacent": 13,
+        "minRestAdjacentMinutes": 807,
+        "meanSurplusAdjacentMinutes": 249.4,
+        "surplusBands": {
+          "3-6u": 10,
+          "1-3u": 2,
+          ">=6u": 1
+        }
+      },
+      "daypartChanges": {
+        "L→N na 3 vrij": 1,
+        "N→L na 2 vrij": 1
+      },
+      "boundaries": {
+        "count": 6,
+        "workedBoth": 2,
+        "transitions": {
+          "OFF→L": 1,
+          "N→N": 1,
+          "L→L": 1,
+          "OFF→OFF": 2,
+          "L→RES": 1
+        },
+        "minRestMinutes": 924
+      },
+      "weekends": {
+        "linesFullyOff": 3,
+        "workedDaysPerLine": [
+          0,
+          2,
+          2,
+          0,
+          0,
+          2
+        ],
+        "mean": 1
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "36:59",
+        "averageWeekIncludingBreak": "39:59",
+        "lineMinutesExcludingBreak": [
+          1728,
+          2756,
+          2203,
+          1753,
+          2229,
+          2650
+        ],
+        "lineMin": 1728,
+        "lineMax": 2756,
+        "lineSpreadMinutes": 1028,
+        "lineSdMinutes": 431.9
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "L": {
+          "E": 0,
+          "L": 8,
+          "N": 0,
+          "RES": 3,
+          "OFF": 5
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 5,
+          "RES": 0,
+          "OFF": 1
+        },
+        "RES": {
+          "E": 0,
+          "L": 2,
+          "N": 0,
+          "RES": 0,
+          "OFF": 2
+        },
+        "OFF": {
+          "E": 0,
+          "L": 6,
+          "N": 1,
+          "RES": 1,
+          "OFF": 8
+        }
+      }
+    },
+    {
+      "code": "DDR-MIX",
+      "profile": "MIX",
+      "lines": 12,
+      "workedDays": 44,
+      "dayparts": {
+        "E": 15,
+        "N": 10,
+        "L": 19
+      },
+      "resDays": 8,
+      "offDays": 32,
+      "workBlocks": {
+        "count": 19,
+        "lengthDistribution": {
+          "1": 8,
+          "2": 3,
+          "3": 4,
+          "4": 2,
+          "5": 2
+        },
+        "meanLength": 2.3,
+        "meanDominantShare": 100,
+        "fullyCoherentShare": 100,
+        "switches": 0,
+        "reversalsInBlocks": 0,
+        "crossLineBlocks": 3
+      },
+      "offBlocks": {
+        "count": 16,
+        "lengthDistribution": {
+          "1": 5,
+          "2": 7,
+          "3": 3,
+          "4": 1
+        },
+        "meanLength": 2
+      },
+      "oscillations": {
+        "count": 0,
+        "patterns": {}
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 25,
+          "mean": 69.2,
+          "median": 45,
+          "max": 147,
+          "over60": 9,
+          "over120": 3
+        },
+        "endDeltas": {
+          "mean": 76.5,
+          "max": 240
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 15,
+            "mean": 360.7,
+            "sd": 85.6,
+            "min": 267,
+            "max": 597
+          },
+          "L": {
+            "n": 19,
+            "mean": 873.5,
+            "sd": 119,
+            "min": 597,
+            "max": 1069
+          },
+          "N": {
+            "n": 10,
+            "mean": 1350.3,
+            "sd": 44.2,
+            "min": 1260,
+            "max": 1407
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 2,
+        "lengths": [
+          5,
+          5
+        ],
+        "crossLine": 1,
+        "recoveryHours": [
+          59.8,
+          59.3
+        ],
+        "exits": [
+          "RRL",
+          "RRL"
+        ],
+        "entries": [
+          "REE",
+          "RRL"
+        ]
+      },
+      "rest": {
+        "adjacent": 25,
+        "minRestAdjacentMinutes": 769,
+        "meanSurplusAdjacentMinutes": 222.1,
+        "surplusBands": {
+          "1-3u": 6,
+          "3-6u": 15,
+          ">=6u": 2,
+          "<1u": 2
+        }
+      },
+      "daypartChanges": {
+        "E→N na 1 vrij": 1,
+        "N→L na 2 vrij": 2,
+        "L→E na 3 vrij": 1,
+        "E→L na 2 vrij": 2,
+        "L→N na 2 vrij": 1,
+        "L→E na 2 vrij": 1,
+        "L→E na 4 vrij": 1
+      },
+      "boundaries": {
+        "count": 12,
+        "workedBoth": 3,
+        "transitions": {
+          "OFF→E": 1,
+          "N→N": 1,
+          "L→OFF": 1,
+          "OFF→L": 3,
+          "RES→OFF": 2,
+          "L→L": 1,
+          "OFF→N": 1,
+          "OFF→OFF": 1,
+          "E→E": 1
+        },
+        "minRestMinutes": 859
+      },
+      "weekends": {
+        "linesFullyOff": 6,
+        "workedDaysPerLine": [
+          0,
+          2,
+          2,
+          0,
+          1,
+          2,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1
+        ],
+        "mean": 0.8
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "37:06",
+        "averageWeekIncludingBreak": "39:51",
+        "lineMinutesExcludingBreak": [
+          2335,
+          2415,
+          2208,
+          1882,
+          2274,
+          2280,
+          2306,
+          2170,
+          2336,
+          2048,
+          2382,
+          2078
+        ],
+        "lineMin": 1882,
+        "lineMax": 2415,
+        "lineSpreadMinutes": 533,
+        "lineSdMinutes": 157
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 8,
+          "L": 0,
+          "N": 0,
+          "RES": 2,
+          "OFF": 5
+        },
+        "L": {
+          "E": 0,
+          "L": 9,
+          "N": 0,
+          "RES": 3,
+          "OFF": 7
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 8,
+          "RES": 0,
+          "OFF": 2
+        },
+        "RES": {
+          "E": 3,
+          "L": 2,
+          "N": 0,
+          "RES": 1,
+          "OFF": 2
+        },
+        "OFF": {
+          "E": 4,
+          "L": 8,
+          "N": 2,
+          "RES": 2,
+          "OFF": 16
+        }
+      }
+    },
+    {
+      "code": "DDR-BLM",
+      "profile": "BLM",
+      "lines": 6,
+      "workedDays": 26,
+      "dayparts": {
+        "E": 14,
+        "L": 9,
+        "N": 3
+      },
+      "resDays": 0,
+      "offDays": 16,
+      "workBlocks": {
+        "count": 8,
+        "lengthDistribution": {
+          "2": 2,
+          "3": 3,
+          "4": 2,
+          "5": 1
+        },
+        "meanLength": 3.3,
+        "meanDominantShare": 96.9,
+        "fullyCoherentShare": 87.5,
+        "switches": 1,
+        "reversalsInBlocks": 0,
+        "crossLineBlocks": 2
+      },
+      "offBlocks": {
+        "count": 8,
+        "lengthDistribution": {
+          "1": 2,
+          "2": 4,
+          "3": 2
+        },
+        "meanLength": 2
+      },
+      "oscillations": {
+        "count": 0,
+        "patterns": {}
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 17,
+          "mean": 63.3,
+          "median": 50,
+          "max": 167,
+          "over60": 6,
+          "over120": 3
+        },
+        "endDeltas": {
+          "mean": 88.4,
+          "max": 330
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 14,
+            "mean": 370.4,
+            "sd": 65,
+            "min": 297,
+            "max": 497
+          },
+          "L": {
+            "n": 9,
+            "mean": 825.6,
+            "sd": 115,
+            "min": 622,
+            "max": 1012
+          },
+          "N": {
+            "n": 3,
+            "mean": 1360,
+            "sd": 34.6,
+            "min": 1320,
+            "max": 1380
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 1,
+        "lengths": [
+          3
+        ],
+        "crossLine": 0,
+        "recoveryHours": [
+          79.5
+        ],
+        "exits": [
+          "RRRL"
+        ],
+        "entries": [
+          "LRR"
+        ]
+      },
+      "rest": {
+        "adjacent": 18,
+        "minRestAdjacentMinutes": 749,
+        "meanSurplusAdjacentMinutes": 272.6,
+        "surplusBands": {
+          ">=6u": 4,
+          "3-6u": 12,
+          "<1u": 1,
+          "1-3u": 1
+        }
+      },
+      "daypartChanges": {
+        "E→L na 2 vrij": 1,
+        "L→N na 0 vrij": 1,
+        "N→L na 3 vrij": 1,
+        "L→E na 3 vrij": 1
+      },
+      "boundaries": {
+        "count": 6,
+        "workedBoth": 2,
+        "transitions": {
+          "E→E": 2,
+          "OFF→L": 2,
+          "L→OFF": 1,
+          "OFF→E": 1
+        },
+        "minRestMinutes": 749
+      },
+      "weekends": {
+        "linesFullyOff": 3,
+        "workedDaysPerLine": [
+          2,
+          2,
+          0,
+          0,
+          2,
+          0
+        ],
+        "mean": 1
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "35:41",
+        "averageWeekIncludingBreak": "39:12",
+        "lineMinutesExcludingBreak": [
+          2194,
+          2616,
+          1388,
+          1704,
+          2642,
+          2302
+        ],
+        "lineMin": 1388,
+        "lineMax": 2642,
+        "lineSpreadMinutes": 1254,
+        "lineSdMinutes": 502.7
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 10,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 4
+        },
+        "L": {
+          "E": 0,
+          "L": 5,
+          "N": 1,
+          "RES": 0,
+          "OFF": 3
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 2,
+          "RES": 0,
+          "OFF": 1
+        },
+        "RES": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "OFF": {
+          "E": 4,
+          "L": 4,
+          "N": 0,
+          "RES": 0,
+          "OFF": 8
+        }
+      }
+    },
+    {
+      "code": "DDR-50MIX",
+      "profile": "MIX_50PLUS",
+      "lines": 6,
+      "workedDays": 19,
+      "dayparts": {
+        "L": 8,
+        "E": 11
+      },
+      "resDays": 7,
+      "offDays": 16,
+      "workBlocks": {
+        "count": 11,
+        "lengthDistribution": {
+          "1": 6,
+          "2": 3,
+          "3": 1,
+          "4": 1
+        },
+        "meanLength": 1.7,
+        "meanDominantShare": 90.2,
+        "fullyCoherentShare": 72.7,
+        "switches": 4,
+        "reversalsInBlocks": 1,
+        "crossLineBlocks": 1
+      },
+      "offBlocks": {
+        "count": 9,
+        "lengthDistribution": {
+          "1": 5,
+          "2": 2,
+          "3": 1,
+          "4": 1
+        },
+        "meanLength": 1.8
+      },
+      "oscillations": {
+        "count": 3,
+        "patterns": {
+          "LEL": 2,
+          "ELE": 1
+        }
+      },
+      "startTime": {
+        "sameDaypartAdjacentDeltas": {
+          "n": 4,
+          "mean": 95.8,
+          "median": 74,
+          "max": 188,
+          "over60": 3,
+          "over120": 1
+        },
+        "endDeltas": {
+          "mean": 87.3,
+          "max": 174
+        },
+        "dispersionPerDaypart": {
+          "E": {
+            "n": 11,
+            "mean": 529.6,
+            "sd": 75,
+            "min": 420,
+            "max": 666
+          },
+          "L": {
+            "n": 8,
+            "mean": 710.8,
+            "sd": 59.9,
+            "min": 594,
+            "max": 788
+          },
+          "N": {
+            "n": 0,
+            "mean": null,
+            "sd": null,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "nightBlocks": {
+        "count": 0,
+        "lengths": [],
+        "crossLine": 0,
+        "recoveryHours": [],
+        "exits": [],
+        "entries": []
+      },
+      "rest": {
+        "adjacent": 8,
+        "minRestAdjacentMinutes": 878,
+        "meanSurplusAdjacentMinutes": 290,
+        "surplusBands": {
+          "1-3u": 3,
+          "3-6u": 2,
+          ">=6u": 3
+        }
+      },
+      "daypartChanges": {
+        "L→E na 0 vrij": 2,
+        "E→L na 0 vrij": 2,
+        "L→E na 1 vrij": 1,
+        "E→L na 1 vrij": 1,
+        "L→E na 2 vrij": 1,
+        "E→L na 2 vrij": 1
+      },
+      "boundaries": {
+        "count": 6,
+        "workedBoth": 1,
+        "transitions": {
+          "E→L": 1,
+          "OFF→RES": 1,
+          "OFF→OFF": 2,
+          "RES→L": 2
+        },
+        "minRestMinutes": 1131
+      },
+      "weekends": {
+        "linesFullyOff": 3,
+        "workedDaysPerLine": [
+          2,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        "mean": 0.7
+      },
+      "hours": {
+        "averageWeekExcludingBreak": "37:23",
+        "averageWeekIncludingBreak": "39:51",
+        "lineMinutesExcludingBreak": [
+          2671,
+          1668,
+          2330,
+          2186,
+          1788,
+          2820
+        ],
+        "lineMin": 1668,
+        "lineMax": 2820,
+        "lineSpreadMinutes": 1152,
+        "lineSdMinutes": 461.4
+      },
+      "transitionMatrix": {
+        "E": {
+          "E": 3,
+          "L": 2,
+          "N": 0,
+          "RES": 2,
+          "OFF": 4
+        },
+        "L": {
+          "E": 2,
+          "L": 1,
+          "N": 0,
+          "RES": 2,
+          "OFF": 3
+        },
+        "N": {
+          "E": 0,
+          "L": 0,
+          "N": 0,
+          "RES": 0,
+          "OFF": 0
+        },
+        "RES": {
+          "E": 2,
+          "L": 3,
+          "N": 0,
+          "RES": 0,
+          "OFF": 2
+        },
+        "OFF": {
+          "E": 4,
+          "L": 2,
+          "N": 0,
+          "RES": 3,
+          "OFF": 7
+        }
+      }
+    }
+  ]
+}

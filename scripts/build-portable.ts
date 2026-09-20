@@ -259,6 +259,13 @@ function main(): void {
   if (existsSync(handleidingPdfBron)) {
     cpSync(handleidingPdfBron, path.join(DOEL, "NS Roosterplatform - Handleiding.pdf"));
   }
+  // Het ontwikkelrapport van de zoekmachine gaat mee omdat de bundel ook los van
+  // deze werkplek moet uitleggen waarop de roosters zijn gebaseerd: welke
+  // meting, welke keuzes, en wat er niet werkte.
+  const optimizerRapport = path.join(WORTEL, "docs", "NS-Roosterplatform-v1.0.4-Optimizer-Development-Report.pdf");
+  if (existsSync(optimizerRapport)) {
+    cpSync(optimizerRapport, path.join(DOEL, "NS Roosterplatform - Ontwikkelrapport optimizer v1.0.4.pdf"));
+  }
   for (const map of ["logs", "exports", "backups", "database"]) {
     writeFileSync(path.join(DOEL, map, "LEESMIJ.txt"), MAP_UITLEG[map], "utf8");
   }

@@ -1,0 +1,59 @@
+{
+  "measuredAt": "2026-09-18T16:10:38.272Z",
+  "seconds": 40,
+  "seeds": [
+    101,
+    102,
+    103
+  ],
+  "rows": [
+    {
+      "opstelling": "nacht",
+      "seed": 101,
+      "seconds": 41,
+      "solver": "FEASIBLE",
+      "robust": 86.5,
+      "nights": 96.7,
+      "flow": 95,
+      "fairness": 85.5,
+      "singletons": 0,
+      "pairs": 0,
+      "exitsToEarly": 0,
+      "minRecoveryHours": 13.1,
+      "jitterMean": 72,
+      "jitterP90": 186
+    },
+    {
+      "opstelling": "nacht",
+      "seed": 102,
+      "seconds": 41,
+      "solver": "FEASIBLE",
+      "robust": 84,
+      "nights": 87.7,
+      "flow": 94.3,
+      "fairness": 88.8,
+      "singletons": 0,
+      "pairs": 1,
+      "exitsToEarly": 1,
+      "minRecoveryHours": 49.5,
+      "jitterMean": 80,
+      "jitterP90": 189
+    },
+    {
+      "opstelling": "nacht",
+      "seed": 103,
+      "seconds": 41,
+      "solver": "FEASIBLE",
+      "robust": 87.9,
+      "nights": 98.5,
+      "flow": 96.3,
+      "fairness": 85.1,
+      "singletons": 0,
+      "pairs": 0,
+      "exitsToEarly": 0,
+      "minRecoveryHours": 51.2,
+      "jitterMean": 82,
+      "jitterP90": 188
+    }
+  ]
+}

@@ -17,6 +17,12 @@ import {
   promoteCandidateToVersions,
   validateStoredCandidate,
 } from "@/server/services/simulation-service";
+import { HUMAN_REVIEW_VERDICTS, PAIRWISE_CHOICES } from "@/domain/human-review";
+import {
+  ReviewInputError,
+  recordLineReview,
+  recordPairwisePreference,
+} from "@/server/services/human-review-service";
 
 /**
  * De handelingen op de resultaten van een generatie.
@@ -164,5 +170,73 @@ export async function legVastAction(_previous: ActionState, formData: FormData):
     };
   } catch (error) {
     return { error: error instanceof Error ? error.message : melding(error, "Vastleggen is niet gelukt.") };
+  }
+}
+
+// ── Menselijke beoordeling ───────────────────────────────────────────────────
+//
+// Alleen voor training en foutopsporing. Een oordeel wordt bewaard met de
+// versies van het kwaliteitsmodel en de zoekmachine; het verandert geen gewicht
+// en geen model. Zie src/domain/human-review.ts.
+
+const oordeelSchema = z.object({
+  candidateId: z.uuid(),
+  rosterCode: z.string().min(1).max(40),
+  lineNumber: z.coerce.number().int().min(1).max(200).nullable(),
+  verdict: z.enum(HUMAN_REVIEW_VERDICTS),
+  reasons: z.array(z.string().max(60)).max(20),
+  note: z.string().max(1000).nullable(),
+});
+
+export async function beoordeelRegelAction(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  const regel = formData.get("lineNumber");
+  const parsed = oordeelSchema.safeParse({
+    candidateId: formData.get("candidateId"),
+    rosterCode: formData.get("rosterCode"),
+    lineNumber: regel === null || regel === "" ? null : regel,
+    verdict: formData.get("verdict"),
+    reasons: formData.getAll("reasons").map(String),
+    note: (formData.get("note") as string | null) || null,
+  });
+  if (!parsed.success) {
+    return { error: "Kies goed, twijfel of slecht." };
+  }
+  try {
+    await recordLineReview(parsed.data);
+    revalidatePath(`/roostercommissie/simulatie/${parsed.data.candidateId}`, "layout");
+    return { notice: "Oordeel bewaard. Het wordt gebruikt voor de volgende ijking, niet automatisch." };
+  } catch (error) {
+    if (error instanceof ReviewInputError) return { error: error.message };
+    return { error: melding(error, "Het oordeel is niet bewaard.") };
+  }
+}
+
+const voorkeurSchema = z.object({
+  firstCandidateId: z.uuid(),
+  secondCandidateId: z.uuid(),
+  rosterCode: z.string().min(1).max(40).nullable(),
+  choice: z.enum(PAIRWISE_CHOICES),
+  reasons: z.array(z.string().max(60)).max(20),
+  note: z.string().max(1000).nullable(),
+});
+
+export async function kiesVoorkeurAction(_previous: ActionState, formData: FormData): Promise<ActionState> {
+  const parsed = voorkeurSchema.safeParse({
+    firstCandidateId: formData.get("firstCandidateId"),
+    secondCandidateId: formData.get("secondCandidateId"),
+    rosterCode: (formData.get("rosterCode") as string | null) || null,
+    choice: formData.get("choice"),
+    reasons: formData.getAll("reasons").map(String),
+    note: (formData.get("note") as string | null) || null,
+  });
+  if (!parsed.success) {
+    return { error: "Kies welke kandidaat u beter vindt, of dat ze gelijk zijn." };
+  }
+  try {
+    await recordPairwisePreference(parsed.data);
+    return { notice: "Voorkeur bewaard. Het wordt gebruikt voor de volgende ijking, niet automatisch." };
+  } catch (error) {
+    if (error instanceof ReviewInputError) return { error: error.message };
+    return { error: melding(error, "De voorkeur is niet bewaard.") };
   }
 }

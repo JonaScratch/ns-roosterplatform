@@ -1,0 +1,52 @@
+{
+  "rule": "R1",
+  "classic": {
+    "exitsBelowRule": 1,
+    "minRecoveryHours": 27.919999999999998,
+    "fairness": 86.96,
+    "hours": 89.62
+  },
+  "rows": [
+    {
+      "scale": 1,
+      "exitsBelowRule": 1.2,
+      "minRecoveryHours": 28.246666666666663,
+      "fairness": 85.78,
+      "hours": 89.66,
+      "fairnessDrop": 0,
+      "hoursDrop": 0,
+      "eligible": true
+    },
+    {
+      "scale": 3,
+      "exitsBelowRule": 0.4,
+      "minRecoveryHours": 42.986666666666665,
+      "fairness": 84.7,
+      "hours": 89.62,
+      "fairnessDrop": 1.0799999999999983,
+      "hoursDrop": 0.03999999999999204,
+      "eligible": true
+    },
+    {
+      "scale": 5,
+      "exitsBelowRule": 0.2,
+      "minRecoveryHours": 49.95666666666666,
+      "fairness": 85.16000000000001,
+      "hours": 89.64000000000001,
+      "fairnessDrop": 0.6199999999999903,
+      "hoursDrop": 0.01999999999998181,
+      "eligible": true
+    },
+    {
+      "scale": 8,
+      "exitsBelowRule": 1,
+      "minRecoveryHours": 35.67,
+      "fairness": 83.10000000000001,
+      "hours": 89.74000000000001,
+      "fairnessDrop": 2.6799999999999926,
+      "hoursDrop": -0.0800000000000125,
+      "eligible": false
+    }
+  ],
+  "chosenScale": 5
+}

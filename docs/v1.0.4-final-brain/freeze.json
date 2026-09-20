@@ -1,0 +1,62 @@
+{
+  "schema": "ns-final-brain-freeze/1",
+  "frozenAt": "2026-09-18T21:08:31.650Z",
+  "version": "1.0.4",
+  "engine": "adaptive-1.0.4",
+  "qualityModel": "quality-model-v1",
+  "data": {
+    "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+    "location": "DDR",
+    "dutyPackage": {
+      "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+      "label": "DDR-BDU-05-10-2026-V1",
+      "timetableId": "BDU-05-10-2026",
+      "sourceChecksum": "425b37902bf70752fd9f9ca7f5326f823516ce212c3024bbe7afcec883fe3d83",
+      "duties": 223
+    },
+    "rosterStructureVersion": "e2611821d375c42d",
+    "inputDataVersion": "7ff588d3e53e4f87",
+    "ruleset": {
+      "version": "2026.1-cao-2024-2025-transcribed",
+      "legalStatus": "LEGAL_RULESET_NOT_CURRENTLY_VERIFIED",
+      "rules": 71
+    }
+  },
+  "git": {
+    "head": "e2b20918d703322b0a19c9d4ee02195669c97935",
+    "uncommittedFiles": 67,
+    "note": "v1.0.4 is nooit gecommit; HEAD is v1.0.3 plus benchmarkharnas."
+  },
+  "files": {
+    "configs/optimizer-config-v1.0.4.json": "e3df4465f6ca9475d056fa200619ed55c78d0a2aa2a8ff071d95f0b2d209d012",
+    "configs/quality-model-v1.json": "96dbd67fa6315e1b4ce7fae027e7cc2c7f0c5c51382271a752f25ac38391f240",
+    "docs/optimizer-benchmark/manifest-after.json": "1140274263fe57e7c5f08c08e01a0664d99c66feec908f64773be29af9c53aab",
+    "docs/optimizer-benchmark/after/run-001.json": "b1f5aea4a99664919c0c60130e006efa300994090e55a6a75ca307776b44f4f0",
+    "docs/optimizer-benchmark/after/run-002.json": "ac35861928ae1765a8c83f9f8e5532097598dfdf419b53c347d6ffc2602eac7a",
+    "docs/optimizer-benchmark/after/run-003.json": "9538cd20da734255ef485cab7cafc54146dcea10ff9fc82749186d7c302ee4df",
+    "docs/optimizer-benchmark/after/run-004.json": "54696779cd30927b500288082e3f20ac2fc42a96d202404bd1ef6375ceb8a3e1",
+    "docs/optimizer-benchmark/after/run-005.json": "6b9b2d93dde01eb57f9aa344ef56cf5141a04eca8c1c5ccf248de25eed57d97e",
+    "docs/optimizer-benchmark/after/run-006.json": "206c99f2010c86fd0f8b8f4cf423308f4ad83d71bbc2de830059b383eec52066",
+    "docs/optimizer-benchmark/after/run-007.json": "4630f2bff2d93b950d87d251a49dc54dd9d69868f684b2a31cff095f1ce344c6",
+    "docs/optimizer-benchmark/after/run-008.json": "c43e839b47af7baeea02509fcea23c331c6af65421e3c811df410533ccd090b0",
+    "docs/optimizer-benchmark/after/run-009.json": "98e8c6ea3fa9a7d25c0084d63bfa121ec7db6b11ab710fcbf538eefae4879ad6",
+    "docs/optimizer-benchmark/after/run-010.json": "4440f728fc3a77c545eec2e6fe8a8a554746a766d1f760a190d7bc65113a458e",
+    "docs/optimizer-benchmark/after/run-011.json": "021e3d4bc0c2b7c93b8a2facd4272895198825a378b0df91302a3be90f32fde5",
+    "docs/optimizer-benchmark/after/run-012.json": "e5d65de666430701110842806fb4cbafef82cb81c51c913d6812e2a87cc516f7",
+    "docs/optimizer-benchmark/after/run-013.json": "5990ed54874b6fa5640c57feac5b79fee01275d8608d1205f2d218b4f8bf9de4",
+    "docs/optimizer-benchmark/after/run-014.json": "4af00ed6379b253e5ebbe332104d170b33bde4d7ff9df07b7c8ff058e08d0620",
+    "docs/optimizer-benchmark/after/run-015.json": "370bb2ff6293ddf9b4d242c39a3c5abb8ac855171507d659881df79cbadf3de9",
+    "docs/optimizer-benchmark/after/run-016.json": "cefcbcfc5ebcbe60ef23b02c2ea5b10bc53971318ef02837a3827368900ad530",
+    "docs/optimizer-benchmark/after/run-017.json": "0d4e8dc83808d978b1bcbcdf5ea493186102cb75b92ef58870ce1834d7f61a93",
+    "docs/optimizer-benchmark/after/run-018.json": "6b85b2f1a7bea429cab403efe2f4bfb4189adcc4aa63ae2a750ce41ca36475fd",
+    "docs/optimizer-benchmark/after/run-019.json": "cded4d522c8f27432ac019fbf78ce98445b20ff3efa9436c9aa1b8a1ce8344c0",
+    "docs/optimizer-benchmark/after/run-020.json": "ddf2de0fbbc040bf2c3061e3ddae938f883f6e3aeadb9a1fabfadab4f6434950",
+    "docs/optimizer-benchmark/after/run-021.json": "49822d51da85c021dff28a6653dee518b14eea0711efcd625914733c92c889f2"
+  },
+  "reproduction": {
+    "what": "Elke v1.0.4-kandidaat opnieuw beoordeeld met model v1 in de huidige code, tegen docs/optimizer-benchmark/tables/candidates.json",
+    "candidatesCompared": 61,
+    "maxAbsoluteDifference": 0,
+    "identical": true
+  }
+}

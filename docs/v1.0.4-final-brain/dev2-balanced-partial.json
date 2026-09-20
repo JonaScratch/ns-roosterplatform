@@ -1,0 +1,3535 @@
+{
+  "schema": "ns-final-brain-measurement/1",
+  "label": "ontwikkelmeting 2 (H09), BALANCED 1-10",
+  "phase": "human",
+  "measuredAt": "2026-09-18T21:17:09.618Z",
+  "qualityModel": "quality-model-v2",
+  "runs": [
+    {
+      "run": 1,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 274.4,
+      "startedAt": "2026-09-18T20:29:12.414Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "a990ac3d24653390251ea96e036b53b7803fd2fec08e96889944136b94aa93d5",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1003,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 84,
+              "overall": 83.9,
+              "overallWithoutContinuity": 86.7,
+              "components": {
+                "hours": 89.6,
+                "flow": 94.9,
+                "rest": 79.1,
+                "nights": 81.3,
+                "fairness": 86.9,
+                "stability": 58.7
+              },
+              "worstLine": {
+                "score": 84.42708333333331,
+                "roster": "DDR-VL",
+                "line": 2
+              },
+              "patternDistance": 23.9,
+              "robustV1": 79.2,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 50,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 31.15,
+              "worstExit": {
+                "roster": "DDR-MIX",
+                "lines": "6+7",
+                "pattern": "NNNRL",
+                "hours": 31.2
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 97.81420765027322,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 94.11764705882352,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 19,
+              "backwardChanges": 15,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 69.60504201680672,
+              "median": 57,
+              "p90": 158,
+              "over120": 19
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEELL"
+            },
+            "hours": {
+              "maxRosterDeviation": 34,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 2
+            },
+            "rest": {
+              "shortestSurplusMinutes": 61
+            },
+            "structureFamily": "5f2b0de057b5"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 80.7,
+              "overall": 82,
+              "overallWithoutContinuity": 85,
+              "components": {
+                "hours": 89.1,
+                "flow": 94.2,
+                "rest": 80.7,
+                "nights": 73.4,
+                "fairness": 86.9,
+                "stability": 55.7
+              },
+              "worstLine": {
+                "score": 73.33333333333333,
+                "roster": "DDR-LN",
+                "line": 4
+              },
+              "patternDistance": 26.1,
+              "robustV1": 73.8,
+              "worstLineV1": 46.666666666666664
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "2": 2,
+                "3": 3,
+                "5+": 1
+              },
+              "singletons": 1,
+              "pairs": 2,
+              "blockValue": 77.36842105263158,
+              "exitValue": 64.28571428571429,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 29.816666666666666,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "5",
+                "pattern": "NNRL",
+                "hours": 29.8
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 93.10344827586206,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 15,
+              "backwardChanges": 14,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 77.52941176470588,
+              "median": 54,
+              "p90": 210,
+              "over120": 25
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "ELLL"
+            },
+            "hours": {
+              "maxRosterDeviation": 25,
+              "meanRosterDeviation": 8.571428571428571,
+              "lineOutliers": 2
+            },
+            "rest": {
+              "shortestSurplusMinutes": 54
+            },
+            "structureFamily": "528d36228f28"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 103,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 83.6,
+              "overall": 83.6,
+              "overallWithoutContinuity": 86.4,
+              "components": {
+                "hours": 89.5,
+                "flow": 94.4,
+                "rest": 78.3,
+                "nights": 81.3,
+                "fairness": 86.9,
+                "stability": 57.6
+              },
+              "worstLine": {
+                "score": 84.09288194444444,
+                "roster": "DDR-VL",
+                "line": 2
+              },
+              "patternDistance": 23.2,
+              "robustV1": 79,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 50,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 31.15,
+              "worstExit": {
+                "roster": "DDR-MIX",
+                "lines": "6+7",
+                "pattern": "NNNRL",
+                "hours": 31.2
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 97.81420765027322,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 94.5945945945946,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 19,
+              "backwardChanges": 18,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 77.29411764705883,
+              "median": 60,
+              "p90": 173,
+              "over120": 23
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEELL"
+            },
+            "hours": {
+              "maxRosterDeviation": 30,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 2
+            },
+            "rest": {
+              "shortestSurplusMinutes": 61
+            },
+            "structureFamily": "5f2b0de057b5"
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 272.4,
+      "startedAt": "2026-09-18T20:33:47.036Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "0ac4ab0a956039bb11028373f4d2c00c918edf4a6db5c2159cc141c2cee0fef4",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1004,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 85.7,
+              "overall": 85.3,
+              "overallWithoutContinuity": 87.9,
+              "components": {
+                "hours": 89.5,
+                "flow": 96.6,
+                "rest": 78.7,
+                "nights": 85.8,
+                "fairness": 86.2,
+                "stability": 61.9
+              },
+              "worstLine": {
+                "score": 88.05989583333331,
+                "roster": "DDR-L",
+                "line": 3
+              },
+              "patternDistance": 24.7,
+              "robustV1": 79.5,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 65,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 32.95,
+              "worstExit": {
+                "roster": "DDR-LN",
+                "lines": "6",
+                "pattern": "NNNRL",
+                "hours": 33
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 99.4535519125683,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 96.66666666666667,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 14,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 62.3,
+              "median": 47,
+              "p90": 153,
+              "over120": 12
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 29,
+              "meanRosterDeviation": 8.428571428571429,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 122
+            },
+            "structureFamily": "e6f0f6eddf1d"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 82.2,
+              "overall": 83.8,
+              "overallWithoutContinuity": 86.8,
+              "components": {
+                "hours": 89.8,
+                "flow": 93.7,
+                "rest": 81.3,
+                "nights": 84.4,
+                "fairness": 82.4,
+                "stability": 56.5
+              },
+              "worstLine": {
+                "score": 73.33333333333333,
+                "roster": "DDR-LN",
+                "line": 4
+              },
+              "patternDistance": 23.6,
+              "robustV1": 75.3,
+              "worstLineV1": 46.666666666666664
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "3": 2,
+                "4": 3
+              },
+              "singletons": 1,
+              "pairs": 0,
+              "blockValue": 88.42105263157896,
+              "exitValue": 75,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 32.95,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2+3",
+                "pattern": "NNNRL",
+                "hours": 33
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 97.81420765027322,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 3,
+              "changesThroughRest": 90.9090909090909,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 17,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 72.14406779661017,
+              "median": 60,
+              "p90": 161,
+              "over120": 18
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LLNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 27,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 122
+            },
+            "structureFamily": "7fc1be208b41"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 103,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 85.3,
+              "overall": 85.1,
+              "overallWithoutContinuity": 87.7,
+              "components": {
+                "hours": 89.8,
+                "flow": 96,
+                "rest": 77.8,
+                "nights": 85.8,
+                "fairness": 86.2,
+                "stability": 61.9
+              },
+              "worstLine": {
+                "score": 86.26666666666667,
+                "roster": "DDR-LN",
+                "line": 6
+              },
+              "patternDistance": 24,
+              "robustV1": 79.4,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 65,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 27.4,
+              "worstExit": {
+                "roster": "DDR-LN",
+                "lines": "6",
+                "pattern": "NNNRL",
+                "hours": 27.4
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 99.4535519125683,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 96.66666666666667,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 15,
+              "backwardChanges": 15,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 68.5,
+              "median": 57,
+              "p90": 167,
+              "over120": 15
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 35,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 122
+            },
+            "structureFamily": "e6f0f6eddf1d"
+          }
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 285.2,
+      "startedAt": "2026-09-18T20:38:19.612Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "d78ebf74af63d1e721a8862b14325fe8b373fb5001d787c00ffae4d55432b5af",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1003,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 86.1,
+              "overall": 86.2,
+              "overallWithoutContinuity": 89.3,
+              "components": {
+                "hours": 89.8,
+                "flow": 95.2,
+                "rest": 76.2,
+                "nights": 91.8,
+                "fairness": 90.7,
+                "stability": 58.2
+              },
+              "worstLine": {
+                "score": 85.63136574074073,
+                "roster": "DDR-BLM",
+                "line": 1
+              },
+              "patternDistance": 14.3,
+              "robustV1": 79,
+              "worstLineV1": 61.458333333333336
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "4": 1,
+                "5+": 3
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 98.94736842105264,
+              "exitValue": 75,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 0,
+              "minRecoveryHours": 31.216666666666665,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2+3",
+                "pattern": "NNNNNRL",
+                "hours": 31.2
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 92.85714285714286,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 12,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 65.97478991596638,
+              "median": 52,
+              "p90": 142,
+              "over120": 18
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LNNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 29,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 117
+            },
+            "structureFamily": "d5b22a9fbb34"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 84.2,
+              "overall": 84.4,
+              "overallWithoutContinuity": 87.1,
+              "components": {
+                "hours": 89.6,
+                "flow": 95.3,
+                "rest": 76.3,
+                "nights": 85.8,
+                "fairness": 85.5,
+                "stability": 60
+              },
+              "worstLine": {
+                "score": 83.03819444444443,
+                "roster": "DDR-50MIX",
+                "line": 3
+              },
+              "patternDistance": 16.6,
+              "robustV1": 78.9,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 1,
+                "5+": 3
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 98.42105263157895,
+              "exitValue": 56.25,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 30.1,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2+3",
+                "pattern": "NNNNNRL",
+                "hours": 30.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 97.05882352941177,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 15,
+              "backwardChanges": 19,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 79.975,
+              "median": 60,
+              "p90": 175,
+              "over120": 21
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EELL"
+            },
+            "hours": {
+              "maxRosterDeviation": 22,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 84
+            },
+            "structureFamily": "8b2a006058c5"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 81.1,
+              "overall": 82.6,
+              "overallWithoutContinuity": 85.5,
+              "components": {
+                "hours": 89.8,
+                "flow": 95.2,
+                "rest": 76.2,
+                "nights": 82.3,
+                "fairness": 80.3,
+                "stability": 56.7
+              },
+              "worstLine": {
+                "score": 72.83564814814815,
+                "roster": "DDR-BLM",
+                "line": 2
+              },
+              "patternDistance": 23.7,
+              "robustV1": 75.3,
+              "worstLineV1": 52.333333333333336
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "3": 3,
+                "4": 1,
+                "5+": 1
+              },
+              "singletons": 1,
+              "pairs": 0,
+              "blockValue": 88.94736842105262,
+              "exitValue": 66.66666666666666,
+              "worstExitValue": 0,
+              "exitsBelowRule": 2,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 13.133333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2",
+                "pattern": "NNNL",
+                "hours": 13.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 96.42857142857143,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 11,
+              "backwardChanges": 17,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 77.84166666666667,
+              "median": 60,
+              "p90": 172,
+              "over120": 21
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "NNNLL"
+            },
+            "hours": {
+              "maxRosterDeviation": 27,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 62
+            },
+            "structureFamily": "52f8fd507032"
+          }
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 293.7,
+      "startedAt": "2026-09-18T20:43:04.940Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "47ea1b087574777fa26bcdea74c671cfc10858b9611c3d175747a6abae85ae81",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1003,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 87.1,
+              "overall": 88.1,
+              "overallWithoutContinuity": 90.8,
+              "components": {
+                "hours": 89.8,
+                "flow": 94.9,
+                "rest": 86.2,
+                "nights": 94.8,
+                "fairness": 86.2,
+                "stability": 63.5
+              },
+              "worstLine": {
+                "score": 81.22395833333331,
+                "roster": "DDR-BLM",
+                "line": 3
+              },
+              "patternDistance": 20.1,
+              "robustV1": 79,
+              "worstLineV1": 53.125
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "4": 2,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 97.89473684210527,
+              "exitValue": 87.5,
+              "worstExitValue": 50,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 58.45,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "4",
+                "pattern": "NNNNRRRE",
+                "hours": 72.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 93.33333333333333,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 15,
+              "backwardChanges": 15,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 74.52941176470588,
+              "median": 57,
+              "p90": 172,
+              "over120": 20
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 20,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 107
+            },
+            "structureFamily": "b4018a2c7439"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 85.9,
+              "overall": 85.8,
+              "overallWithoutContinuity": 88.9,
+              "components": {
+                "hours": 89.8,
+                "flow": 95.1,
+                "rest": 84.1,
+                "nights": 91.8,
+                "fairness": 80.3,
+                "stability": 58.3
+              },
+              "worstLine": {
+                "score": 86.28981481481482,
+                "roster": "DDR-BLM",
+                "line": 1
+              },
+              "patternDistance": 21.8,
+              "robustV1": 79.2,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 85,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 49.63333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1+2",
+                "pattern": "NNNRRE",
+                "hours": 49.6
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 93.10344827586206,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 16,
+              "backwardChanges": 13,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 69.47899159663865,
+              "median": 47,
+              "p90": 169,
+              "over120": 18
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 20,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 113
+            },
+            "structureFamily": "587558cb2cd4"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 83.3,
+              "overall": 83.7,
+              "overallWithoutContinuity": 86.9,
+              "components": {
+                "hours": 89.8,
+                "flow": 96.5,
+                "rest": 74,
+                "nights": 79.8,
+                "fairness": 92.4,
+                "stability": 55.4
+              },
+              "worstLine": {
+                "score": 81.25868055555554,
+                "roster": "DDR-MIX",
+                "line": 7
+              },
+              "patternDistance": 29,
+              "robustV1": 79.1,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 45,
+              "worstExitValue": 0,
+              "exitsBelowRule": 2,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 24.133333333333333,
+              "worstExit": {
+                "roster": "DDR-MIX",
+                "lines": "6+7",
+                "pattern": "NNNRE",
+                "hours": 24.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 102,
+              "coherentShare": 100,
+              "dayWeighted": 100,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 0,
+              "changesThroughRest": 100,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 11,
+              "backwardChanges": 15,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 73.54545454545455,
+              "median": 59,
+              "p90": 142,
+              "over120": 17
+            },
+            "worstWorkBlock": {
+              "switches": 0,
+              "states": "LLLLLL"
+            },
+            "hours": {
+              "maxRosterDeviation": 25,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 123
+            },
+            "structureFamily": "02b4f52042ec"
+          }
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 288.4,
+      "startedAt": "2026-09-18T20:47:58.714Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "2e7f296eb813576ddf153aef29cea5ccae9a614aea06f6107f7aaa0abcfc2282",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1004,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 89.2,
+              "overall": 89.2,
+              "overallWithoutContinuity": 91.9,
+              "components": {
+                "hours": 89.8,
+                "flow": 97.3,
+                "rest": 84.2,
+                "nights": 98.5,
+                "fairness": 86.2,
+                "stability": 65.6
+              },
+              "worstLine": {
+                "score": 89.0625,
+                "roster": "DDR-L",
+                "line": 4
+              },
+              "patternDistance": 22.8,
+              "robustV1": 80.7,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "4": 2,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 97.89473684210527,
+              "exitValue": 100,
+              "worstExitValue": 100,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 0,
+              "minRecoveryHours": 55.95,
+              "worstExit": {
+                "roster": "DDR-LN",
+                "lines": "2+3",
+                "pattern": "NNNNNNRRL",
+                "hours": 56
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 102,
+              "coherentShare": 100,
+              "dayWeighted": 100,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 0,
+              "changesThroughRest": 100,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 12,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 68.89256198347107,
+              "median": 51,
+              "p90": 133,
+              "over120": 15
+            },
+            "worstWorkBlock": {
+              "switches": 0,
+              "states": "NNNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 24,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 109
+            },
+            "structureFamily": "b4018a2c7439"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 87.8,
+              "overall": 88.7,
+              "overallWithoutContinuity": 91.3,
+              "components": {
+                "hours": 89.5,
+                "flow": 96.4,
+                "rest": 82.7,
+                "nights": 98.5,
+                "fairness": 86.2,
+                "stability": 64.7
+              },
+              "worstLine": {
+                "score": 83.03819444444443,
+                "roster": "DDR-50MIX",
+                "line": 3
+              },
+              "patternDistance": 20.2,
+              "robustV1": 80.2,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "4": 2,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 97.89473684210527,
+              "exitValue": 100,
+              "worstExitValue": 100,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 0,
+              "minRecoveryHours": 55,
+              "worstExit": {
+                "roster": "DDR-MIX",
+                "lines": "8",
+                "pattern": "NNNNNRRL",
+                "hours": 55
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 99.4535519125683,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 96.55172413793103,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 13,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 62.13333333333333,
+              "median": 46,
+              "p90": 153,
+              "over120": 17
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 26,
+              "meanRosterDeviation": 8.428571428571429,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 130
+            },
+            "structureFamily": "b4018a2c7439"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 81.1,
+              "overall": 82.9,
+              "overallWithoutContinuity": 85.2,
+              "components": {
+                "hours": 89.6,
+                "flow": 93.5,
+                "rest": 73,
+                "nights": 81.3,
+                "fairness": 85.8,
+                "stability": 62.3
+              },
+              "worstLine": {
+                "score": 71.08333333333333,
+                "roster": "DDR-MIX",
+                "line": 3
+              },
+              "patternDistance": 20.7,
+              "robustV1": 77.8,
+              "worstLineV1": 59.375
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 50,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 13.133333333333333,
+              "worstExit": {
+                "roster": "DDR-MIX",
+                "lines": "3",
+                "pattern": "NNNL",
+                "hours": 13.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 97.81420765027322,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 3,
+              "changesThroughRest": 91.42857142857143,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 18,
+              "backwardChanges": 17,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 78.51694915254237,
+              "median": 60,
+              "p90": 188,
+              "over120": 22
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LLNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 20,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 68
+            },
+            "structureFamily": "0a599f6ee33a"
+          }
+        }
+      ]
+    },
+    {
+      "run": 6,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 309.2,
+      "startedAt": "2026-09-18T20:52:47.218Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "be6cb46acfe9e0d455d886c57c95bc004b7c260fa8fbce27eb70211868d6a553",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 103,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 82.4,
+              "overall": 83.4,
+              "overallWithoutContinuity": 86.2,
+              "components": {
+                "hours": 89.6,
+                "flow": 90.4,
+                "rest": 83.5,
+                "nights": 84.5,
+                "fairness": 81.1,
+                "stability": 57.5
+              },
+              "worstLine": {
+                "score": 77.11851851851851,
+                "roster": "DDR-MIX",
+                "line": 8
+              },
+              "patternDistance": 22.6,
+              "robustV1": 75.9,
+              "worstLineV1": 52.60416666666666
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 3,
+                "4": 2
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 86.8421052631579,
+              "exitValue": 79.16666666666666,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 49.95,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1+2",
+                "pattern": "NNNNRRE",
+                "hours": 50
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 96,
+              "coherentShare": 94.11764705882352,
+              "dayWeighted": 94.53551912568307,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 6,
+              "changesThroughRest": 80.64516129032258,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 2,
+              "boundaryHeavy": 0,
+              "forwardChanges": 18,
+              "backwardChanges": 13,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 75.66956521739131,
+              "median": 56,
+              "p90": 179,
+              "over120": 20
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LLLNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 33,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 123
+            },
+            "structureFamily": "723047c0c6d8"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 82.1,
+              "overall": 83,
+              "overallWithoutContinuity": 86.1,
+              "components": {
+                "hours": 89.7,
+                "flow": 90.4,
+                "rest": 82.5,
+                "nights": 84.5,
+                "fairness": 81.1,
+                "stability": 55.3
+              },
+              "worstLine": {
+                "score": 76.84074074074074,
+                "roster": "DDR-MIX",
+                "line": 8
+              },
+              "patternDistance": 22.6,
+              "robustV1": 75.6,
+              "worstLineV1": 52.60416666666666
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 3,
+                "4": 2
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 86.8421052631579,
+              "exitValue": 79.16666666666666,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 49.95,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1+2",
+                "pattern": "NNNNRRE",
+                "hours": 50
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 96,
+              "coherentShare": 94.11764705882352,
+              "dayWeighted": 94.53551912568307,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 6,
+              "changesThroughRest": 80.64516129032258,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 2,
+              "boundaryHeavy": 0,
+              "forwardChanges": 18,
+              "backwardChanges": 13,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 77.65217391304348,
+              "median": 56,
+              "p90": 173,
+              "over120": 20
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LLLNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 32,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 2
+            },
+            "rest": {
+              "shortestSurplusMinutes": 130
+            },
+            "structureFamily": "723047c0c6d8"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 80.9,
+              "overall": 83.1,
+              "overallWithoutContinuity": 85.6,
+              "components": {
+                "hours": 89.5,
+                "flow": 92.3,
+                "rest": 78.9,
+                "nights": 88.5,
+                "fairness": 74.3,
+                "stability": 60.2
+              },
+              "worstLine": {
+                "score": 68.4230324074074,
+                "roster": "DDR-MIX",
+                "line": 8
+              },
+              "patternDistance": 18.4,
+              "robustV1": 75.9,
+              "worstLineV1": 58.90625
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 1,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 90,
+              "exitValue": 85,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 49.13333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1+2",
+                "pattern": "NNNRRE",
+                "hours": 49.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 98.36065573770492,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 3,
+              "changesThroughRest": 89.65517241379311,
+              "worstLabel": 4,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 14,
+              "backwardChanges": 15,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 86.89830508474576,
+              "median": 57,
+              "p90": 240,
+              "over120": 24
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LEEEE"
+            },
+            "hours": {
+              "maxRosterDeviation": 34,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 75
+            },
+            "structureFamily": "4b2af36971d4"
+          }
+        }
+      ]
+    },
+    {
+      "run": 7,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 267.6,
+      "startedAt": "2026-09-18T20:57:56.695Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "99aa6cbd590dc2993014b77a2ed39f1b16719441365e707e59bd08cc0e8f0a6c",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1004,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 84.1,
+              "overall": 84.6,
+              "overallWithoutContinuity": 87.1,
+              "components": {
+                "hours": 89.8,
+                "flow": 95,
+                "rest": 75.4,
+                "nights": 85.8,
+                "fairness": 86.6,
+                "stability": 62.2
+              },
+              "worstLine": {
+                "score": 81.25868055555554,
+                "roster": "DDR-BLM",
+                "line": 3
+              },
+              "patternDistance": 21,
+              "robustV1": 77.2,
+              "worstLineV1": 51.04166666666666
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 1,
+                "5+": 3
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 98.42105263157895,
+              "exitValue": 56.25,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 24.633333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2+3",
+                "pattern": "NNNNNRE",
+                "hours": 24.6
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 99.4535519125683,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 95.83333333333334,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 16,
+              "backwardChanges": 8,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 76.1,
+              "median": 60,
+              "p90": 199,
+              "over120": 20
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 22,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 120
+            },
+            "structureFamily": "8b2a006058c5"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 83.8,
+              "overall": 84.2,
+              "overallWithoutContinuity": 86.7,
+              "components": {
+                "hours": 89.8,
+                "flow": 95.4,
+                "rest": 72.4,
+                "nights": 85.8,
+                "fairness": 86.6,
+                "stability": 62
+              },
+              "worstLine": {
+                "score": 81.5625,
+                "roster": "DDR-BLM",
+                "line": 3
+              },
+              "patternDistance": 20.7,
+              "robustV1": 76.7,
+              "worstLineV1": 50
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 1,
+                "5+": 3
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 98.42105263157895,
+              "exitValue": 56.25,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 24.033333333333335,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2+3",
+                "pattern": "NNNNNRE",
+                "hours": 24
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 99.4535519125683,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 95.83333333333334,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 16,
+              "backwardChanges": 8,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 71.05833333333334,
+              "median": 49,
+              "p90": 172,
+              "over120": 17
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "EEEL"
+            },
+            "hours": {
+              "maxRosterDeviation": 19,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 120
+            },
+            "structureFamily": "8b2a006058c5"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 81,
+              "overall": 82.4,
+              "overallWithoutContinuity": 85.3,
+              "components": {
+                "hours": 89.6,
+                "flow": 95.8,
+                "rest": 74.6,
+                "nights": 82.3,
+                "fairness": 80.3,
+                "stability": 56
+              },
+              "worstLine": {
+                "score": 72.83564814814815,
+                "roster": "DDR-BLM",
+                "line": 2
+              },
+              "patternDistance": 24,
+              "robustV1": 75.3,
+              "worstLineV1": 53.583333333333336
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "3": 3,
+                "4": 1,
+                "5+": 1
+              },
+              "singletons": 1,
+              "pairs": 0,
+              "blockValue": 88.94736842105262,
+              "exitValue": 66.66666666666666,
+              "worstExitValue": 0,
+              "exitsBelowRule": 2,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 13.133333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2",
+                "pattern": "NNNL",
+                "hours": 13.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 96.42857142857143,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 12,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 70.71666666666667,
+              "median": 57,
+              "p90": 167,
+              "over120": 15
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "NNNLL"
+            },
+            "hours": {
+              "maxRosterDeviation": 22,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 68
+            },
+            "structureFamily": "52f8fd507032"
+          }
+        }
+      ]
+    },
+    {
+      "run": 8,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 277.3,
+      "startedAt": "2026-09-18T21:02:24.424Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "c2c2863d595284ee64b54a49a6789317b9804e23f4cd6dbdacfa59a130663143",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 103,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 83.8,
+              "overall": 84,
+              "overallWithoutContinuity": 86,
+              "components": {
+                "hours": 89.7,
+                "flow": 94.3,
+                "rest": 76,
+                "nights": 81.3,
+                "fairness": 86.2,
+                "stability": 66.4
+              },
+              "worstLine": {
+                "score": 82.60416666666666,
+                "roster": "DDR-LN",
+                "line": 2
+              },
+              "patternDistance": 24,
+              "robustV1": 78.3,
+              "worstLineV1": 56.19791666666666
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "3": 2,
+                "4": 2,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 0,
+              "blockValue": 94.73684210526315,
+              "exitValue": 50,
+              "worstExitValue": 0,
+              "exitsBelowRule": 1,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 27.75,
+              "worstExit": {
+                "roster": "DDR-LN",
+                "lines": "6",
+                "pattern": "NNNRL",
+                "hours": 27.8
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 97.81420765027322,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 92.85714285714286,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 16,
+              "backwardChanges": 12,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 73.3109243697479,
+              "median": 56,
+              "p90": 150,
+              "over120": 17
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LLLNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 23,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 119
+            },
+            "structureFamily": "383f43c3801f"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 81.1,
+              "overall": 82.5,
+              "overallWithoutContinuity": 85.4,
+              "components": {
+                "hours": 89.7,
+                "flow": 95.7,
+                "rest": 75,
+                "nights": 82.3,
+                "fairness": 80.3,
+                "stability": 56.9
+              },
+              "worstLine": {
+                "score": 72.83564814814815,
+                "roster": "DDR-BLM",
+                "line": 2
+              },
+              "patternDistance": 24.1,
+              "robustV1": 75.3,
+              "worstLineV1": 52.333333333333336
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "3": 3,
+                "4": 1,
+                "5+": 1
+              },
+              "singletons": 1,
+              "pairs": 0,
+              "blockValue": 88.94736842105262,
+              "exitValue": 66.66666666666666,
+              "worstExitValue": 0,
+              "exitsBelowRule": 2,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 13.133333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "2",
+                "pattern": "NNNL",
+                "hours": 13.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 101,
+              "coherentShare": 99.01960784313727,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 1,
+              "changesThroughRest": 96.42857142857143,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 10,
+              "backwardChanges": 18,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 67.01666666666667,
+              "median": 47,
+              "p90": 144,
+              "over120": 16
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "NNNLL"
+            },
+            "hours": {
+              "maxRosterDeviation": 25,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 68
+            },
+            "structureFamily": "52f8fd507032"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 78.3,
+              "overall": 81.2,
+              "overallWithoutContinuity": 83.9,
+              "components": {
+                "hours": 89.6,
+                "flow": 91.5,
+                "rest": 73.7,
+                "nights": 74.5,
+                "fairness": 88.8,
+                "stability": 57
+              },
+              "worstLine": {
+                "score": 61.93055555555556,
+                "roster": "DDR-BLM",
+                "line": 1
+              },
+              "patternDistance": 18.5,
+              "robustV1": 73,
+              "worstLineV1": 41.354166666666664
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 2,
+                "3": 2,
+                "4": 1,
+                "5+": 1
+              },
+              "singletons": 0,
+              "pairs": 2,
+              "blockValue": 83.15789473684211,
+              "exitValue": 54.166666666666664,
+              "worstExitValue": 0,
+              "exitsBelowRule": 2,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 13.133333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1",
+                "pattern": "NNL",
+                "hours": 13.1
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 98,
+              "coherentShare": 96.07843137254902,
+              "dayWeighted": 96.17486338797814,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 4,
+              "changesThroughRest": 88.57142857142857,
+              "worstLabel": 3,
+              "heavyClockAware": 2,
+              "linesWithHeavyLabel": 2,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 16,
+              "backwardChanges": 19,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 76.52991452991454,
+              "median": 52,
+              "p90": 192,
+              "over120": 22
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LLNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 27,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 2
+            },
+            "rest": {
+              "shortestSurplusMinutes": 49
+            },
+            "structureFamily": "3460ea77292f"
+          }
+        }
+      ]
+    },
+    {
+      "run": 9,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 285,
+      "startedAt": "2026-09-18T21:07:01.861Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "f3c6298b84d68920532ef8df105b2c3c20d6ea7acf8ac3957bb4882338543fe5",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 1004,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 86,
+              "overall": 86.5,
+              "overallWithoutContinuity": 89.3,
+              "components": {
+                "hours": 89.6,
+                "flow": 93.9,
+                "rest": 81.4,
+                "nights": 89.2,
+                "fairness": 90.7,
+                "stability": 60.9
+              },
+              "worstLine": {
+                "score": 83.60677083333331,
+                "roster": "DDR-50MIX",
+                "line": 1
+              },
+              "patternDistance": 18.1,
+              "robustV1": 77.9,
+              "worstLineV1": 54.6875
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 91.05263157894737,
+              "exitValue": 85,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 46.63333333333333,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1",
+                "pattern": "NNRRE",
+                "hours": 46.6
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 92.85714285714286,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 11,
+              "backwardChanges": 17,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 81.14285714285714,
+              "median": 60,
+              "p90": 188,
+              "over120": 25
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LNNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 31,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 107
+            },
+            "structureFamily": "eaf5b701ca32"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 82,
+              "overall": 83.8,
+              "overallWithoutContinuity": 86.5,
+              "components": {
+                "hours": 89.8,
+                "flow": 93.1,
+                "rest": 82.3,
+                "nights": 82.7,
+                "fairness": 82.8,
+                "stability": 58.9
+              },
+              "worstLine": {
+                "score": 72.11111111111111,
+                "roster": "DDR-50MIX",
+                "line": 1
+              },
+              "patternDistance": 19.7,
+              "robustV1": 75.5,
+              "worstLineV1": 52.5
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "2": 1,
+                "3": 2,
+                "4": 1,
+                "5+": 1
+              },
+              "singletons": 1,
+              "pairs": 1,
+              "blockValue": 84.21052631578947,
+              "exitValue": 79.16666666666666,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 48.93333333333333,
+              "worstExit": {
+                "roster": "DDR-MIX",
+                "lines": "12",
+                "pattern": "NNNRRESE",
+                "hours": 48.9
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 98.36065573770492,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 3,
+              "changesThroughRest": 89.28571428571429,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 17,
+              "backwardChanges": 11,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 81.8135593220339,
+              "median": 53,
+              "p90": 226,
+              "over120": 22
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 25,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 78
+            },
+            "structureFamily": "70f1492fec06"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 83,
+              "overall": 86,
+              "overallWithoutContinuity": 88.8,
+              "components": {
+                "hours": 89.6,
+                "flow": 93,
+                "rest": 79.7,
+                "nights": 89.2,
+                "fairness": 90.7,
+                "stability": 60.8
+              },
+              "worstLine": {
+                "score": 66.25,
+                "roster": "DDR-BLM",
+                "line": 3
+              },
+              "patternDistance": 15.2,
+              "robustV1": 74,
+              "worstLineV1": 41.25
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 91.05263157894737,
+              "exitValue": 85,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 1,
+              "minRecoveryHours": 46.266666666666666,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "5",
+                "pattern": "NNNRRE",
+                "hours": 46.3
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 98.36065573770492,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 3,
+              "changesThroughRest": 89.28571428571429,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 14,
+              "backwardChanges": 14,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 79.28813559322033,
+              "median": 60,
+              "p90": 188,
+              "over120": 21
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LNNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 22,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 121
+            },
+            "structureFamily": "8f446e1a1325"
+          }
+        }
+      ]
+    },
+    {
+      "run": 10,
+      "strategy": "BALANCED",
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "runtimeSeconds": 289.7,
+      "startedAt": "2026-09-18T21:11:47.112Z",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "fileSha256": "56cd5d421b41043ee73fbb3f9b0512508235aced9a822ada436bccdeee8c4c48",
+      "candidates": [
+        {
+          "number": 1,
+          "seed": 103,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 83.5,
+              "overall": 85.4,
+              "overallWithoutContinuity": 88,
+              "components": {
+                "hours": 89.7,
+                "flow": 94.1,
+                "rest": 81.4,
+                "nights": 84.7,
+                "fairness": 88.8,
+                "stability": 62
+              },
+              "worstLine": {
+                "score": 72.375,
+                "roster": "DDR-MIX",
+                "line": 7
+              },
+              "patternDistance": 22.8,
+              "robustV1": 79.3,
+              "worstLineV1": 63.63636363636363
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 91.05263157894737,
+              "exitValue": 70,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 49.95,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1+2",
+                "pattern": "NNNNRRE",
+                "hours": 50
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 100,
+              "coherentShare": 98.0392156862745,
+              "dayWeighted": 98.90710382513662,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 2,
+              "changesThroughRest": 92.3076923076923,
+              "worstLabel": 1,
+              "heavyClockAware": 0,
+              "linesWithHeavyLabel": 0,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 16,
+              "backwardChanges": 10,
+              "backwardDirectOver60": 0
+            },
+            "startJitter": {
+              "mean": 82.16806722689076,
+              "median": 60,
+              "p90": 180,
+              "over120": 26
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LNNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 42,
+              "meanRosterDeviation": 8.142857142857142,
+              "lineOutliers": 2
+            },
+            "rest": {
+              "shortestSurplusMinutes": 90
+            },
+            "structureFamily": "4323c66cb44c"
+          }
+        },
+        {
+          "number": 2,
+          "seed": 101,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 82.3,
+              "overall": 84.6,
+              "overallWithoutContinuity": 87.4,
+              "components": {
+                "hours": 89.6,
+                "flow": 93,
+                "rest": 79.5,
+                "nights": 84.7,
+                "fairness": 88.8,
+                "stability": 59.2
+              },
+              "worstLine": {
+                "score": 69.41666666666666,
+                "roster": "DDR-MIX",
+                "line": 10
+              },
+              "patternDistance": 18.6,
+              "robustV1": 77.2,
+              "worstLineV1": 55.041666666666664
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5+": 2
+              },
+              "singletons": 0,
+              "pairs": 1,
+              "blockValue": 91.05263157894737,
+              "exitValue": 70,
+              "worstExitValue": 25,
+              "exitsBelowRule": 0,
+              "exitsToEarly": 2,
+              "minRecoveryHours": 49.95,
+              "worstExit": {
+                "roster": "DDR-BLM",
+                "lines": "1+2",
+                "pattern": "NNNNRRE",
+                "hours": 50
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 97.26775956284153,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 3,
+              "changesThroughRest": 90,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 0,
+              "boundaryHeavy": 0,
+              "forwardChanges": 17,
+              "backwardChanges": 13,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 80.17796610169492,
+              "median": 60,
+              "p90": 188,
+              "over120": 19
+            },
+            "worstWorkBlock": {
+              "switches": 1,
+              "states": "LNNNNN"
+            },
+            "hours": {
+              "maxRosterDeviation": 24,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 1
+            },
+            "rest": {
+              "shortestSurplusMinutes": 120
+            },
+            "structureFamily": "78fa6987c372"
+          }
+        },
+        {
+          "number": 3,
+          "seed": 102,
+          "optimizerModelVersion": "adaptive-1.0.5/cp-sat@2.1.0+BALANCED",
+          "qualityModelVersionAtGeneration": "quality-model-v2",
+          "configHash": "10cc3d7735327b5160c0eb46c8cddb8650d073e6b7b977e56e9a1e1cdfdc0b38",
+          "validationState": "TECHNICALLY_VALID_UNVERIFIED_RULES",
+          "confirmedHardViolations": 0,
+          "metrics": {
+            "hard": {
+              "valid": true,
+              "unassigned": 0,
+              "profileBreaches": 0
+            },
+            "quality": {
+              "robust": 78.5,
+              "overall": 81.3,
+              "overallWithoutContinuity": 83.6,
+              "components": {
+                "hours": 89.6,
+                "flow": 92.5,
+                "rest": 70.6,
+                "nights": 77.3,
+                "fairness": 85.3,
+                "stability": 60.1
+              },
+              "worstLine": {
+                "score": 62.708333333333336,
+                "roster": "DDR-LN",
+                "line": 3
+              },
+              "patternDistance": 18.5,
+              "robustV1": 75.6,
+              "worstLineV1": 55.963541666666664
+            },
+            "nights": {
+              "total": 19,
+              "blocks": {
+                "1": 1,
+                "3": 3,
+                "4": 1,
+                "5+": 1
+              },
+              "singletons": 1,
+              "pairs": 0,
+              "blockValue": 88.94736842105262,
+              "exitValue": 50,
+              "worstExitValue": 0,
+              "exitsBelowRule": 3,
+              "exitsToEarly": 0,
+              "minRecoveryHours": 12.316666666666666,
+              "worstExit": {
+                "roster": "DDR-LN",
+                "lines": "2+3",
+                "pattern": "NNNNL",
+                "hours": 12.3
+              }
+            },
+            "coherence": {
+              "blocks": 102,
+              "fullyCoherent": 99,
+              "coherentShare": 97.05882352941177,
+              "dayWeighted": 97.26775956284153,
+              "meanBlockLength": 2.1862745098039214
+            },
+            "transitions": {
+              "oscillations": 0,
+              "labelOnlyOscillations": 0,
+              "directDaypartChanges": 4,
+              "changesThroughRest": 87.09677419354838,
+              "worstLabel": 3,
+              "heavyClockAware": 1,
+              "linesWithHeavyLabel": 1,
+              "boundaryDaypartChanges": 1,
+              "boundaryHeavy": 0,
+              "forwardChanges": 15,
+              "backwardChanges": 16,
+              "backwardDirectOver60": 1
+            },
+            "startJitter": {
+              "mean": 70.44444444444444,
+              "median": 51,
+              "p90": 176,
+              "over120": 18
+            },
+            "worstWorkBlock": {
+              "switches": 2,
+              "states": "LNNNNL"
+            },
+            "hours": {
+              "maxRosterDeviation": 29,
+              "meanRosterDeviation": 8.285714285714286,
+              "lineOutliers": 0
+            },
+            "rest": {
+              "shortestSurplusMinutes": 19
+            },
+            "structureFamily": "4f4a98ab2d18"
+          }
+        }
+      ]
+    }
+  ],
+  "official": {
+    "hard": {
+      "valid": true,
+      "unassigned": 0,
+      "profileBreaches": 0
+    },
+    "quality": {
+      "robust": 83.5,
+      "overall": 86.3,
+      "overallWithoutContinuity": 84.7,
+      "components": {
+        "hours": 83.9,
+        "flow": 88.7,
+        "rest": 79.4,
+        "nights": 98.9,
+        "fairness": 66.9,
+        "stability": 100
+      },
+      "worstLine": {
+        "score": 68.15972222222221,
+        "roster": "DDR-50MIX",
+        "line": 4
+      },
+      "patternDistance": 0,
+      "robustV1": 64.9,
+      "worstLineV1": 15.625
+    },
+    "nights": {
+      "total": 19,
+      "blocks": {
+        "3": 1,
+        "5+": 3
+      },
+      "singletons": 0,
+      "pairs": 0,
+      "blockValue": 98.42105263157895,
+      "exitValue": 100,
+      "worstExitValue": 100,
+      "exitsBelowRule": 0,
+      "exitsToEarly": 0,
+      "minRecoveryHours": 55.95,
+      "worstExit": {
+        "roster": "DDR-LN",
+        "lines": "2+3",
+        "pattern": "NNNNNNRRL",
+        "hours": 56
+      }
+    },
+    "coherence": {
+      "blocks": 102,
+      "fullyCoherent": 98,
+      "coherentShare": 96.07843137254902,
+      "dayWeighted": 97.81420765027322,
+      "meanBlockLength": 2.1862745098039214
+    },
+    "transitions": {
+      "oscillations": 2,
+      "labelOnlyOscillations": 1,
+      "directDaypartChanges": 5,
+      "changesThroughRest": 82.75862068965517,
+      "worstLabel": 4,
+      "heavyClockAware": 0,
+      "linesWithHeavyLabel": 2,
+      "boundaryDaypartChanges": 1,
+      "boundaryHeavy": 0,
+      "forwardChanges": 14,
+      "backwardChanges": 15,
+      "backwardDirectOver60": 0
+    },
+    "startJitter": {
+      "mean": 73.39655172413794,
+      "median": 60,
+      "p90": 150,
+      "over120": 26
+    },
+    "worstWorkBlock": {
+      "switches": 2,
+      "states": "LLEL"
+    },
+    "hours": {
+      "maxRosterDeviation": 48,
+      "meanRosterDeviation": 12.714285714285714,
+      "lineOutliers": 3
+    },
+    "rest": {
+      "shortestSurplusMinutes": 29
+    },
+    "structureFamily": "6237943e6032"
+  },
+  "summary": {
+    "robust": {
+      "n": 30,
+      "mean": 83.33666666666666,
+      "median": 83.4,
+      "min": 78.3,
+      "max": 89.2,
+      "p10": 80.9,
+      "p90": 87.1,
+      "sd": 2.561584010661794
+    },
+    "overallWithoutContinuity": {
+      "n": 30,
+      "mean": 87.11,
+      "median": 86.75,
+      "min": 83.6,
+      "max": 91.9,
+      "p10": 85.2,
+      "p90": 90.8,
+      "sd": 2.015859532599535
+    },
+    "worstLine": {
+      "n": 30,
+      "mean": 77.49507523148148,
+      "median": 79.1712384259259,
+      "min": 61.93055555555556,
+      "max": 89.0625,
+      "p10": 68.4230324074074,
+      "p90": 86.28981481481482,
+      "sd": 7.594798435015698
+    },
+    "flow": {
+      "n": 30,
+      "mean": 94.32,
+      "median": 94.65,
+      "min": 90.4,
+      "max": 97.3,
+      "p10": 92.3,
+      "p90": 96.5,
+      "sd": 1.7404715968122955
+    },
+    "nights": {
+      "n": 30,
+      "mean": 85.12999999999995,
+      "median": 84.6,
+      "min": 73.4,
+      "max": 98.5,
+      "p10": 79.8,
+      "p90": 94.8,
+      "sd": 5.922904110607251
+    },
+    "rest": {
+      "n": 30,
+      "mean": 78.52333333333334,
+      "median": 78.80000000000001,
+      "min": 70.6,
+      "max": 86.2,
+      "p10": 73.7,
+      "p90": 84.1,
+      "sd": 3.987625975381873
+    },
+    "hours": {
+      "n": 30,
+      "mean": 89.65666666666662,
+      "median": 89.65,
+      "min": 89.1,
+      "max": 89.8,
+      "p10": 89.5,
+      "p90": 89.8,
+      "sd": 0.1524135330522569
+    },
+    "fairness": {
+      "n": 30,
+      "mean": 85.38333333333334,
+      "median": 86.2,
+      "min": 74.3,
+      "max": 92.4,
+      "p10": 80.3,
+      "p90": 90.7,
+      "sd": 3.9895625318325707
+    },
+    "stability": {
+      "n": 30,
+      "mean": 59.74666666666667,
+      "median": 59.6,
+      "min": 55.3,
+      "max": 66.4,
+      "p10": 56,
+      "p90": 64.7,
+      "sd": 3.0668115907784967
+    },
+    "singletons": {
+      "n": 30,
+      "mean": 0.23333333333333334,
+      "median": 0,
+      "min": 0,
+      "max": 1,
+      "p10": 0,
+      "p90": 1,
+      "sd": 0.43018306715207627
+    },
+    "pairs": {
+      "n": 30,
+      "mean": 0.4,
+      "median": 0,
+      "min": 0,
+      "max": 2,
+      "p10": 0,
+      "p90": 1,
+      "sd": 0.6214554662658655
+    },
+    "nightBlockValue": {
+      "n": 30,
+      "mean": 92.08771929824563,
+      "median": 92.89473684210526,
+      "min": 77.36842105263158,
+      "max": 98.94736842105264,
+      "p10": 86.8421052631579,
+      "p90": 98.42105263157895,
+      "sd": 5.2513175951847435
+    },
+    "nightExitValue": {
+      "n": 30,
+      "mean": 68.90674603174605,
+      "median": 66.66666666666666,
+      "min": 45,
+      "max": 100,
+      "p10": 50,
+      "p90": 87.5,
+      "sd": 15.348082599737412
+    },
+    "worstNightExit": {
+      "n": 30,
+      "mean": 15.833333333333334,
+      "median": 0,
+      "min": 0,
+      "max": 100,
+      "p10": 0,
+      "p90": 50,
+      "sd": 26.654990259745485
+    },
+    "minRecoveryHours": {
+      "n": 30,
+      "mean": 34.50222222222222,
+      "median": 31.18333333333333,
+      "min": 12.316666666666666,
+      "max": 58.45,
+      "p10": 13.133333333333333,
+      "p90": 55,
+      "sd": 15.097783916278274
+    },
+    "exitsBelowRule": {
+      "n": 30,
+      "mean": 0.8333333333333334,
+      "median": 1,
+      "min": 0,
+      "max": 3,
+      "p10": 0,
+      "p90": 2,
+      "sd": 0.8339078479367938
+    },
+    "exitsToEarly": {
+      "n": 30,
+      "mean": 1.3333333333333333,
+      "median": 1,
+      "min": 0,
+      "max": 2,
+      "p10": 0,
+      "p90": 2,
+      "sd": 0.7111590022187596
+    },
+    "coherence": {
+      "n": 30,
+      "mean": 98.34244080145722,
+      "median": 98.90710382513662,
+      "min": 94.53551912568307,
+      "max": 100,
+      "p10": 97.26775956284153,
+      "p90": 99.4535519125683,
+      "sd": 1.3422319436750842
+    },
+    "coherentShare": {
+      "n": 30,
+      "mean": 97.90849673202612,
+      "median": 98.0392156862745,
+      "min": 94.11764705882352,
+      "max": 100,
+      "p10": 97.05882352941177,
+      "p90": 99.01960784313727,
+      "sd": 1.4039046966903297
+    },
+    "oscillations": {
+      "n": 30,
+      "mean": 0,
+      "median": 0,
+      "min": 0,
+      "max": 0,
+      "p10": 0,
+      "p90": 0,
+      "sd": 0
+    },
+    "changesThroughRest": {
+      "n": 30,
+      "mean": 92.81835476797195,
+      "median": 93.10344827586206,
+      "min": 80.64516129032258,
+      "max": 100,
+      "p10": 88.57142857142857,
+      "p90": 97.05882352941177,
+      "sd": 4.63546666533156
+    },
+    "heavyClockAware": {
+      "n": 30,
+      "mean": 0.43333333333333335,
+      "median": 0,
+      "min": 0,
+      "max": 2,
+      "p10": 0,
+      "p90": 1,
+      "sd": 0.5683207771559354
+    },
+    "worstTransition": {
+      "n": 30,
+      "mean": 1.8333333333333333,
+      "median": 1,
+      "min": 1,
+      "max": 4,
+      "p10": 1,
+      "p90": 3,
+      "sd": 1.053183460893139
+    },
+    "backwardDirectOver60": {
+      "n": 30,
+      "mean": 0.3,
+      "median": 0,
+      "min": 0,
+      "max": 1,
+      "p10": 0,
+      "p90": 1,
+      "sd": 0.466091599699399
+    },
+    "boundaryHeavy": {
+      "n": 30,
+      "mean": 0,
+      "median": 0,
+      "min": 0,
+      "max": 0,
+      "p10": 0,
+      "p90": 0,
+      "sd": 0
+    },
+    "worstWorkBlock": {
+      "n": 30,
+      "mean": 0.9666666666666667,
+      "median": 1,
+      "min": 0,
+      "max": 2,
+      "p10": 1,
+      "p90": 1,
+      "sd": 0.31984191497474596
+    },
+    "startJitterMean": {
+      "n": 30,
+      "mean": 74.27494592655371,
+      "median": 75.09948849104859,
+      "min": 62.13333333333333,
+      "max": 86.89830508474576,
+      "p10": 67.01666666666667,
+      "p90": 81.8135593220339,
+      "sd": 6.027458071981308
+    },
+    "startJitterP90": {
+      "n": 30,
+      "mean": 174.33333333333334,
+      "median": 172.5,
+      "min": 133,
+      "max": 240,
+      "p10": 144,
+      "p90": 210,
+      "sd": 24.069344264714257
+    },
+    "maxRosterHoursDeviation": {
+      "n": 30,
+      "mean": 26.766666666666666,
+      "median": 25.5,
+      "min": 19,
+      "max": 42,
+      "p10": 20,
+      "p90": 34,
+      "sd": 5.399127217675434
+    },
+    "patternDistance": {
+      "n": 30,
+      "mean": 21.450000000000003,
+      "median": 22.200000000000003,
+      "min": 14.3,
+      "max": 29,
+      "p10": 18.1,
+      "p90": 24.7,
+      "sd": 3.2611347718240653
+    },
+    "robustV1": {
+      "n": 30,
+      "mean": 77.27,
+      "median": 77.5,
+      "min": 73,
+      "max": 80.7,
+      "p10": 75.3,
+      "p90": 79.5,
+      "sd": 2.096326836849769
+    }
+  },
+  "minRecoveryBuckets": {
+    "<36": 18,
+    "36-45": 0,
+    "46-55": 11,
+    ">=56": 1,
+    "geen": 0
+  },
+  "structureFamilies": {
+    "total": 30,
+    "unique": 21,
+    "perRunMean": 2.5
+  },
+  "runtime": {
+    "n": 10,
+    "mean": 284.29,
+    "median": 285.1,
+    "min": 267.6,
+    "max": 309.2,
+    "p10": 272.4,
+    "p90": 309.2,
+    "sd": 12.125038373364243
+  },
+  "hard": {
+    "candidates": 30,
+    "allValid": true,
+    "maxUnassigned": 0,
+    "maxProfileBreaches": 0,
+    "maxConfirmedHardViolations": 0
+  }
+}

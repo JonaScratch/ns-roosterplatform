@@ -1,0 +1,37 @@
+DIENSTENPAKKET — AANLEVERROUTES
+══════════════════════════════════════════════════════════════════
+
+223 dienstinstanties op DDR.
+
+1. Het sjabloon met de echte diensten
+  ✓ het sjabloon wordt gemaakt
+  ✓ het is een leesbare werkmap
+  ✓ met een blad Diensten en een blad Toelichting
+  ✓ er staat één rij per dienst per weekdag (223 instanties, 46 nummers)
+
+2. Heen en terug zonder verlies
+  ✓ het sjabloon leest zonder bevindingen terug
+  ✓ alle 223 dienstinstanties komen terug
+  ✓ elke dienst komt terug op dezelfde weekdag met dezelfde tijden
+  ✓ er is geen dienst weggevallen
+
+3. De lastige gevallen uit de echte bron
+  ✓ dienst 1 heeft per weekdag eigen tijden en houdt die (39 nummers zo)
+  ✓ dienst 101 loopt over middernacht en blijft dat (55 diensten)
+  ⊘ een dienstnummer met voorloopnul — BLOCKED_BY_MISSING_DATA. Die staan er niet in.
+
+4. De importstraat over het sjabloon
+  ✓ het pakket komt door de controle
+  ✓ de telling klopt met de bron (223 diensten)
+  ✓ diensten over middernacht worden geteld en gemeld
+
+5. Wat er niet doorheen komt
+  ✓ een hernoemde PDF gaat niet door als werkmap
+  ✓ dezelfde dienst op dezelfde dag, twee keer aangeleverd, blokkeert het pakket
+  ✓ iets wat geen PDF is wordt geweigerd
+
+6. De PDF-route
+  ⊘ een echt PDF-dienstenpakket inlezen — BLOCKED_BY_MISSING_SOURCE. Er is geen PDF-dienstenpakket aangeleverd. Zet VERIFY_PAKKET_PDF op het pad van zo'n document om deze route te meten.
+
+══════════════════════════════════════════════════════════════════
+16 controles geslaagd, 0 mislukt, 2 geblokkeerd door ontbrekende gegevens of bronnen.

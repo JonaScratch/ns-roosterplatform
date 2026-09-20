@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { NotFoundError } from "@/server/security/authorize";
+import { AuthorizationError, NotFoundError } from "@/server/security/authorize";
 import {
   type ViewerCell,
   type ViewerLine,
@@ -12,6 +12,8 @@ import { RosterCommitteeShell } from "@/components/layout/area-shell";
 import { Badge, WidgetCard } from "@/components/ui/primitives";
 import { DownloadIcon, FileTextIcon } from "@/components/ui/icons";
 import { Nachtreeksen, StatusBadge, UrenStip, afwijkingTekst, naamVan } from "../../onderdelen";
+import { type BestaandOordeel, RegelBeoordeling } from "../../beoordeling";
+import { lineReviewsFor } from "@/server/services/human-review-service";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +66,26 @@ export default async function KandidaatRooster({
   const volgende = positie >= 0 ? lines[(positie + 1) % lines.length] : null;
   const basis = `/roostercommissie/simulatie/${candidate.id}/${roster.code}`;
   const bruikbaar = candidate.status === "GEREED" || candidate.status === "VEROUDERD";
+  // Beoordelen mag wie ook genereert; wie alleen mag vergelijken, ziet het
+  // formulier niet in plaats van een foutmelding.
+  const oordelen: BestaandOordeel[] | null = await lineReviewsFor(candidate.id)
+    .then((rijen) =>
+      rijen
+        .filter((rij) => rij.rosterCode === roster.code)
+        .map((rij) => ({
+          id: rij.id,
+          lineNumber: rij.lineNumber,
+          verdict: rij.verdict,
+          reasons: rij.reasons,
+          note: rij.note,
+          createdAt: rij.createdAt,
+          reviewer: rij.reviewer.employee?.employeeNumber ? `personeelsnummer ${rij.reviewer.employee.employeeNumber}` : null,
+        })),
+    )
+    .catch((error: unknown) => {
+      if (error instanceof AuthorizationError) return null;
+      throw error;
+    });
 
   return (
     <RosterCommitteeShell
@@ -204,6 +226,14 @@ export default async function KandidaatRooster({
             Na zondag gaat wie deze regel rijdt door naar regel {volgende?.lineNumber ?? gekozen.lineNumber}. Een
             nachtreeks of overgang over de zondag heen loopt dus door in die regel.
           </p>
+          {oordelen ? (
+            <RegelBeoordeling
+              candidateId={candidate.id}
+              rosterCode={rosterCode}
+              lineNumber={gekozen.lineNumber}
+              eerder={oordelen.filter((o) => o.lineNumber === gekozen.lineNumber)}
+            />
+          ) : null}
         </WidgetCard>
       ) : (
         <WidgetCard

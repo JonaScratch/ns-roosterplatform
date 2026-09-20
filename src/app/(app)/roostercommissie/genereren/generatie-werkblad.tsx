@@ -39,22 +39,36 @@ export interface YearOption {
   readonly period: string;
 }
 
+export interface ModeOption {
+  readonly key: string;
+  readonly label: string;
+  readonly duration: string;
+  readonly description: string;
+}
+
 const PEILING_MS = 2000;
 
 export function GeneratieWerkblad({
   strategies,
   years,
+  modes,
+  defaultMode,
   defaultYear,
   initialRun,
 }: {
   strategies: readonly StrategyTile[];
   years: readonly YearOption[];
+  modes: readonly ModeOption[];
+  defaultMode: string;
   defaultYear: number;
   initialRun: GenerationRunJson | null;
 }) {
   const router = useRouter();
   const [strategie, setStrategie] = useState<string>(
     strategies.find((entry) => entry.key === "BALANCED")?.key ?? strategies[0]?.key ?? "",
+  );
+  const [modus, setModus] = useState<string>(
+    modes.find((entry) => entry.key === defaultMode)?.key ?? modes[0]?.key ?? "",
   );
   const [jaar, setJaar] = useState<number>(defaultYear);
   const [run, setRun] = useState<GenerationRunJson | null>(initialRun);
@@ -106,7 +120,11 @@ export function GeneratieWerkblad({
   const start = () => {
     setFout(null);
     startTransition(async () => {
-      const uitkomst = await startGeneratieAction({ strategy: strategie, rosterYear: jaar });
+      const uitkomst = await startGeneratieAction({
+        strategy: strategie,
+        rosterYear: jaar,
+        mode: modus || null,
+      });
       if (uitkomst.ok) {
         await volg(uitkomst.runId);
         router.refresh();
@@ -171,6 +189,46 @@ export function GeneratieWerkblad({
           </details>
         ) : null}
       </fieldset>
+
+      {modes.length > 0 ? (
+        <fieldset className="border-t border-line pt-4">
+          <legend className="text-[13px] font-semibold text-ink-strong">Hoe grondig mag gezocht worden?</legend>
+          <p className="mt-0.5 text-[12px] text-ink-muted">
+            Langer zoeken betekent meer varianten naast elkaar en meer verbeterrondes, niet andere
+            regels. Wat mag en moet, verandert niet mee.
+          </p>
+          <div role="radiogroup" aria-label="Rekentijd" className="mt-3 grid gap-2.5 sm:grid-cols-2">
+            {modes.map((optie) => (
+              <button
+                key={optie.key}
+                type="button"
+                role="radio"
+                aria-checked={optie.key === modus}
+                onClick={() => setModus(optie.key)}
+                className={`flex h-full flex-col rounded-lg border p-3 text-left transition-colors focus-visible:outline-2 ${
+                  optie.key === modus
+                    ? "border-accent-rc bg-accent-rc-soft/60 ring-1 ring-accent-rc"
+                    : "border-line bg-surface hover:border-line-strong hover:bg-canvas"
+                }`}
+              >
+                <span className="flex items-start justify-between gap-2">
+                  <span className="text-[13px] font-semibold text-ink-strong">{optie.label}</span>
+                  <span
+                    aria-hidden
+                    className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                      optie.key === modus ? "border-accent-rc bg-accent-rc" : "border-line-strong bg-surface"
+                    }`}
+                  >
+                    {optie.key === modus ? <span className="h-1.5 w-1.5 rounded-full bg-white" /> : null}
+                  </span>
+                </span>
+                <span className="mt-1 text-[11.5px] leading-relaxed text-ink-muted">{optie.description}</span>
+                <span className="mt-auto pt-2 text-[11px] font-medium text-ink-faint">{optie.duration}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
 
       <div className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[minmax(0,14rem)_1fr] sm:items-end">
         <label className="flex flex-col gap-1">
@@ -268,6 +326,65 @@ function Tegel({
     </button>
   );
 }
+
+// ── Wat de zoektocht doet ────────────────────────────────────────────────────
+
+/**
+ * De tellers van de adaptieve zoektocht.
+ *
+ * Geen versierde getallen: dit is wat er werkelijk is gebeurd. "Onderzocht"
+ * telt elke variant die volledig is beoordeeld — de complete roosters van de
+ * solver én elke ruil die tijdens het bijschaven is doorgerekend. "Geldig" zijn
+ * de kandidaten die door de eindvalidatie kwamen; wat afvalt, valt af.
+ */
+function Zoekstand({
+  run,
+  search,
+}: {
+  run: GenerationRunJson;
+  search: NonNullable<GenerationRunJson["search"]>;
+}) {
+  const getal = (waarde: number) => waarde.toLocaleString("nl-NL");
+  const cellen = [
+    { label: "varianten onderzocht", waarde: getal(search.variants) },
+    { label: "volledige roosters berekend", waarde: getal(search.attempts) },
+    { label: "gerichte verbeterrondes", waarde: getal(search.repairs) },
+    { label: "geldige kandidaten", waarde: getal(search.validCandidates) },
+  ];
+  return (
+    <div className="rounded-lg border border-line bg-canvas px-3 py-2.5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+          Zoektocht{run.searchMode ? ` · ${MODUS_LABEL[run.searchMode] ?? run.searchMode}` : ""}
+        </p>
+        {search.budgetSeconds > 0 ? (
+          <p className="text-[11px] text-ink-faint">
+            <span className="tabular">{klokTekst(search.elapsedSeconds)}</span> van maximaal{" "}
+            <span className="tabular">{klokTekst(search.budgetSeconds)}</span> rekentijd
+          </p>
+        ) : null}
+      </div>
+      <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4">
+        {cellen.map((cel) => (
+          <div key={cel.label}>
+            <dt className="text-[11px] text-ink-muted">{cel.label}</dt>
+            <dd className="tabular text-[17px] font-semibold leading-tight text-ink-strong">{cel.waarde}</dd>
+          </div>
+        ))}
+      </dl>
+      {!run.active && search.stopReason ? (
+        <p className="mt-2 text-[11.5px] text-ink-muted">Gestopt omdat: {search.stopReason}.</p>
+      ) : null}
+    </div>
+  );
+}
+
+const MODUS_LABEL: Record<string, string> = {
+  FAST: "Snel",
+  NORMAL: "Normaal",
+  DEEP: "Grondig",
+  EXTENSIVE: "Zeer grondig",
+};
 
 // ── Voortgang ────────────────────────────────────────────────────────────────
 
@@ -386,6 +503,8 @@ function Voortgang({
           </p>
         ) : null}
       </div>
+
+      {run.search ? <Zoekstand run={run} search={run.search} /> : null}
 
       <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {groepen.map((groep) => (

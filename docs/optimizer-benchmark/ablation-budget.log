@@ -1,0 +1,64 @@
+﻿START 2026-09-18T08:25:57.5548176+02:00
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase ablation --engine adaptive --mode NORMAL --strategy BALANCED --runs 3 --first 11 --ablation no-night-clustering
+
+run 11: adaptive NORMAL BALANCED zonder no-night-clustering ÔÇª
+run 11: COMPLETED 3/3 in 288 s
+run 12: adaptive NORMAL BALANCED zonder no-night-clustering ÔÇª
+run 12: COMPLETED 3/3 in 279.3 s
+run 13: adaptive NORMAL BALANCED zonder no-night-clustering ÔÇª
+run 13: COMPLETED 3/3 in 287.6 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase ablation --engine adaptive --mode NORMAL --strategy BALANCED --runs 3 --first 21 --ablation no-transitions
+
+run 21: adaptive NORMAL BALANCED zonder no-transitions ÔÇª
+run 21: COMPLETED 3/3 in 268 s
+run 22: adaptive NORMAL BALANCED zonder no-transitions ÔÇª
+run 22: COMPLETED 3/3 in 261.9 s
+run 23: adaptive NORMAL BALANCED zonder no-transitions ÔÇª
+run 23: COMPLETED 3/3 in 280.2 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase ablation --engine adaptive --mode NORMAL --strategy BALANCED --runs 3 --first 31 --ablation no-adaptive-repair
+
+run 31: adaptive NORMAL BALANCED zonder no-adaptive-repair ÔÇª
+run 31: COMPLETED 3/3 in 191.4 s
+run 32: adaptive NORMAL BALANCED zonder no-adaptive-repair ÔÇª
+run 32: COMPLETED 3/3 in 191.5 s
+run 33: adaptive NORMAL BALANCED zonder no-adaptive-repair ÔÇª
+run 33: COMPLETED 3/3 in 191.2 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase budget --engine adaptive --mode FAST --strategy BALANCED --runs 2 --first 1
+
+run 1: adaptive FAST BALANCED ÔÇª
+run 1: COMPLETED 3/3 in 110.6 s
+run 2: adaptive FAST BALANCED ÔÇª
+run 2: COMPLETED 3/3 in 110 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase budget --engine adaptive --mode DEEP --strategy BALANCED --runs 2 --first 5
+
+run 5: adaptive DEEP BALANCED ÔÇª
+run 5: COMPLETED 3/3 in 875.4 s
+run 6: adaptive DEEP BALANCED ÔÇª
+run 6: COMPLETED 3/3 in 768.5 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase budget --engine adaptive --mode EXTENSIVE --strategy BALANCED --runs 2 --first 8
+
+run 8: adaptive EXTENSIVE BALANCED ÔÇª
+run 8: COMPLETED 3/3 in 1611.8 s
+run 9: adaptive EXTENSIVE BALANCED ÔÇª
+run 9: COMPLETED 3/3 in 1760.3 s
+
+> ns-roosterplatform@1.0.3 verify:optimizer-benchmark
+> tsx --conditions=react-server scripts/optimizer-benchmark.ts run --phase budget --engine adaptive --mode NORMAL --strategy BALANCED --runs 2 --first 3
+
+run 3: adaptive NORMAL BALANCED ÔÇª
+run 3: COMPLETED 3/3 in 285.1 s
+run 4: adaptive NORMAL BALANCED ÔÇª
+run 4: COMPLETED 3/3 in 285.8 s
+KLAAR 2026-09-18T10:40:12.8960695+02:00

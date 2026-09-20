@@ -1,0 +1,196 @@
+{
+  "schema": "ns-machinist-decision/1",
+  "decidedAt": "2026-09-19T09:28:02.380Z",
+  "rule": "M1",
+  "question": "Model v3 in rangschikking en bijschaven?",
+  "before": "mp-m1",
+  "after": "mp-m2",
+  "preferenceGain": 4.69,
+  "requiredGain": 2,
+  "margins": [
+    {
+      "key": "singletons",
+      "label": "losse nachten",
+      "maxWorse": 0.34,
+      "higherIsBetter": false,
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "ok": true
+    },
+    {
+      "key": "pairs",
+      "label": "reeksen van twee",
+      "maxWorse": 0.34,
+      "higherIsBetter": false,
+      "before": 0.333,
+      "after": 0.556,
+      "delta": 0.22,
+      "ok": true
+    },
+    {
+      "key": "worstNightExit",
+      "label": "slechtste nachtuitgang",
+      "maxWorse": 10,
+      "higherIsBetter": true,
+      "before": 22.222,
+      "after": 50,
+      "delta": 27.78,
+      "ok": true
+    },
+    {
+      "key": "rest",
+      "label": "rust",
+      "maxWorse": 1,
+      "higherIsBetter": true,
+      "before": 81.467,
+      "after": 81.289,
+      "delta": -0.18,
+      "ok": true
+    },
+    {
+      "key": "worstLineV2",
+      "label": "slechtste regel (v2)",
+      "maxWorse": 1,
+      "higherIsBetter": true,
+      "before": 82.681,
+      "after": 79.189,
+      "delta": -3.49,
+      "ok": false
+    },
+    {
+      "key": "fairness",
+      "label": "eerlijkheid",
+      "maxWorse": 0.5,
+      "higherIsBetter": true,
+      "before": 84.344,
+      "after": 84.767,
+      "delta": 0.42,
+      "ok": true
+    },
+    {
+      "key": "hours",
+      "label": "uren",
+      "maxWorse": 1,
+      "higherIsBetter": true,
+      "before": 89.711,
+      "after": 89.589,
+      "delta": -0.12,
+      "ok": true
+    }
+  ],
+  "differences": {
+    "preference": {
+      "before": 73.089,
+      "after": 77.778,
+      "delta": 4.69
+    },
+    "affinity": {
+      "before": 65.044,
+      "after": 66.211,
+      "delta": 1.17
+    },
+    "restDuties": {
+      "before": 73.367,
+      "after": 78.211,
+      "delta": 4.84
+    },
+    "dayDuties": {
+      "before": 56.489,
+      "after": 65.2,
+      "delta": 8.71
+    },
+    "popularFairness": {
+      "before": 86.844,
+      "after": 96.067,
+      "delta": 9.22
+    },
+    "weekendStart": {
+      "before": 92.711,
+      "after": 92.856,
+      "delta": 0.14
+    },
+    "robustV3": {
+      "before": 80.756,
+      "after": 81.533,
+      "delta": 0.78
+    },
+    "robustV2": {
+      "before": 84.111,
+      "after": 83.833,
+      "delta": -0.28
+    },
+    "worstLineV2": {
+      "before": 82.681,
+      "after": 79.189,
+      "delta": -3.49
+    },
+    "nightsV2": {
+      "before": 89.578,
+      "after": 90.644,
+      "delta": 1.07
+    },
+    "rest": {
+      "before": 81.467,
+      "after": 81.289,
+      "delta": -0.18
+    },
+    "hours": {
+      "before": 89.711,
+      "after": 89.589,
+      "delta": -0.12
+    },
+    "fairness": {
+      "before": 84.344,
+      "after": 84.767,
+      "delta": 0.42
+    },
+    "flow": {
+      "before": 95.689,
+      "after": 94.033,
+      "delta": -1.66
+    },
+    "singletons": {
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    "pairs": {
+      "before": 0.333,
+      "after": 0.556,
+      "delta": 0.22
+    },
+    "worstNightExit": {
+      "before": 22.222,
+      "after": 50,
+      "delta": 27.78
+    },
+    "minRecoveryHours": {
+      "before": 41.665,
+      "after": 43.183,
+      "delta": 1.52
+    },
+    "rangeerCv": {
+      "before": 0.067,
+      "after": 0.081,
+      "delta": 0.01
+    },
+    "rangeerMaxShare": {
+      "before": 0.182,
+      "after": 0.194,
+      "delta": 0.01
+    },
+    "operationalViolations": {
+      "before": 0,
+      "after": 0,
+      "delta": 0
+    },
+    "extremeEarlySteps": {
+      "before": 1.889,
+      "after": 2.778,
+      "delta": 0.89
+    }
+  },
+  "decision": "uit",
+  "reason": "slechtste regel (v2) -3.49"
+}

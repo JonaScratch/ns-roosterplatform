@@ -1,0 +1,81 @@
+
+> ns-roosterplatform@1.0.3 test:battery
+> tsx --conditions=react-server scripts/test-battery.ts --out docs/v1.0.5/test-baseline.json
+
+Typecontrole             … geslaagd 3.1 s
+Codestijl                … geslaagd 31.0 s
+Eenheidstests            … geslaagd 15.5 s
+Mutatietests             … geslaagd 86.5 s
+Regels                   … geslaagd 0.4 s
+Regeldekking             … geslaagd 0.5 s
+Roosteruren              … geslaagd 1.4 s
+Kwaliteitsmodel          … GEFAALD  2.4 s
+      ✓ het officiële rooster is hard geldig volgens de evaluator
+      ✓ geen enkele component van het officiële rooster onder de 40
+      ✓ het officiële rooster heeft patroonafstand 0 tot zichzelf — 0
+      ✓ continuïteit van het officiële rooster is 100
+      Meting BALANCED — kandidaat 1: totaal 89 robuust 88.5 patroonafstand 19.9 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 33 min (DDR-V) | slechtste regel: DDR-BLM regel 1 (85.4)
+      ✓ Meting BALANCED — kandidaat 1: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 2: totaal 86.6 robuust 83.5 patroonafstand 22 · 223/223 diensten geplaatst | 1 losse nacht(en) | grootste afwijking van 40:00: 21 min (DDR-MIX)
+      ✓ Meting BALANCED — kandidaat 2: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 3: totaal 88.6 robuust 87 patroonafstand 17.2 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 33 min (DDR-V) | slechtste regel: DDR-BLM regel 6 (77.9)
+      ✓ Meting BALANCED — kandidaat 3: hard geldig volgens de evaluator
+    ══════════════════════════════════════════════════════════════════════════════
+    36 geslaagd, 1 mislukt, 0 geblokkeerd
+Roosterkwaliteit         … GEFAALD  0.8 s
+      ✓ het officiële rooster is hard geldig volgens de evaluator
+      ✓ geen enkele component van het officiële rooster onder de 40
+      ✓ het officiële rooster heeft patroonafstand 0 tot zichzelf — 0
+      ✓ continuïteit van het officiële rooster is 100
+      Meting BALANCED — kandidaat 1: totaal 89 robuust 88.5 patroonafstand 19.9 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 33 min (DDR-V) | slechtste regel: DDR-BLM regel 1 (85.4)
+      ✓ Meting BALANCED — kandidaat 1: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 2: totaal 86.6 robuust 83.5 patroonafstand 22 · 223/223 diensten geplaatst | 1 losse nacht(en) | grootste afwijking van 40:00: 21 min (DDR-MIX)
+      ✓ Meting BALANCED — kandidaat 2: hard geldig volgens de evaluator
+      Meting BALANCED — kandidaat 3: totaal 88.6 robuust 87 patroonafstand 17.2 · 223/223 diensten geplaatst | grootste afwijking van 40:00: 33 min (DDR-V) | slechtste regel: DDR-BLM regel 6 (77.9)
+      ✓ Meting BALANCED — kandidaat 3: hard geldig volgens de evaluator
+    ══════════════════════════════════════════════════════════════════════════════
+    36 geslaagd, 1 mislukt, 0 geblokkeerd
+Profielen                … geslaagd 5.0 s
+Menselijke beoordeling   … geslaagd 0.9 s
+Scenario's               … geslaagd 15.1 s
+Structuurgeneratie       … geslaagd 0.6 s
+Toegang per rol          … GEFAALD  0.6 s
+    > ns-roosterplatform@1.0.3 verify:toegang
+    > tsx --conditions=react-server scripts/verify-toegang.ts
+    Toegangscontrole tegen http://localhost:3300
+    pad                                       medewerker          rooster-commissie   dienstindeling      admin               
+    --------------------------------------------------------------------------------------------------------------------------
+    fetch failed
+Schermen                 … GEFAALD  0.6 s
+    SCHERMCONTROLE tegen http://localhost:3300
+    ════════════════════════════════════════════════════════════
+    medewerker
+    ────────────────────────────────────────────────────────────
+    [TypeError: fetch failed] {
+      [cause]: AggregateError [ECONNREFUSED]: 
+          at internalConnectMultiple (node:net:1194:18)
+          at afterConnectMultiple (node:net:1784:7) {
+        code: 'ECONNREFUSED',
+        [errors]: [ [Error], [Error] ]
+      }
+    }
+Doorloop (e2e)           … GEFAALD  760.0 s
+    Crashbestendigheid en herstel… ✓ 19 geslaagd, 0 mislukt (40s)
+    ──────────────────────────────────────────────────────────────────────────────
+    20 metingen: 377 controles geslaagd, 0 mislukt, 2 geblokkeerd door een ontbrekende bron.
+    ──────────────────────────────────────────────────────────────────────────────
+    Dekking van de gevraagde doorloop
+      afgedekt en geslaagd   69/71
+      Niet aangetoond:
+        mislukt: demo: sjabloon downloaden met de diensten erin
+        mislukt: demo: sjabloon weigert een onbekende standplaats
+    ══════════════════════════════════════════════════════════════════════════════
+    De doorloop is niet volledig aangetoond. Wat hierboven bij 'Niet aangetoond'
+    staat, hoort in het eindrapport te staan — niet als afgerond.
+Crashherstel             … geslaagd 39.7 s
+Productiebouw            … geslaagd 138.8 s
+Draagbare bundel         … geslaagd 33.1 s
+
+14 van de 19 suites geslaagd in 1136 s.
+Geschreven: C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform\docs\v1.0.5\test-baseline.json
+Gefaald: Kwaliteitsmodel, Roosterkwaliteit, Toegang per rol, Schermen, Doorloop (e2e)

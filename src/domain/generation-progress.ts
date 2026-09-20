@@ -36,13 +36,43 @@ export interface RunProgress {
   readonly attempt: number;
 }
 
-export type PipelineKind = "SOLVER" | "BASELINE" | "REBUILD";
+export type PipelineKind = "SOLVER" | "BASELINE" | "REBUILD" | "ADAPTIVE";
 
 export function candidateStepKeys(index: number): readonly string[] {
   return [`SOLVE_${index}`, `ANALYSE_${index}`, `REPAIR_${index}`, `VALIDATE_${index}`, `STORE_${index}`];
 }
 
+/**
+ * De stappen van de adaptieve engine.
+ *
+ * Geen stap per kandidaat: die machine zoekt, beoordeelt en repareert door
+ * elkaar heen, en hoeveel pogingen dat kost staat vooraf niet vast. Wat wel
+ * vaststaat is de volgorde van de fases; hoeveel varianten zijn onderzocht,
+ * staat in de tellers ernaast.
+ */
+function adaptiefPlan(requested: number): RunProgress {
+  return {
+    steps: [
+      { key: "INPUT", label: "Dienstenpakket controleren", state: "pending" },
+      { key: "STRUCTURE", label: "Roosterstructuur voorbereiden", state: "pending" },
+      { key: "SEARCH", label: "Kandidaten zoeken en beoordelen", state: "pending" },
+      { key: "REPAIR", label: "Topkandidaten gericht verbeteren", state: "pending" },
+      { key: "DIVERSIFY", label: "Verschillende topkandidaten zoeken", state: "pending" },
+      { key: "VALIDATE_FINAL", label: "Eindvalidatie van de topkandidaten", state: "pending" },
+      { key: "STORE", label: "Topkandidaten opslaan", state: "pending" },
+      { key: "FINISH", label: "Resultaten afronden", state: "pending" },
+    ],
+    candidatesRequested: requested,
+    candidatesFound: 0,
+    currentCandidate: null,
+    attempt: 0,
+  };
+}
+
 export function planProgress(kind: PipelineKind, requested: number): RunProgress {
+  if (kind === "ADAPTIVE") {
+    return adaptiefPlan(requested);
+  }
   const steps: ProgressStep[] = [
     { key: "INPUT", label: "Dienstenpakket controleren", state: "pending" },
     { key: "STRUCTURE", label: "Roosterstructuur voorbereiden", state: "pending" },
@@ -143,4 +173,23 @@ export interface GenerationRunJson {
   readonly candidateIds: readonly string[];
   readonly parentCandidateId: string | null;
   readonly cancelRequested: boolean;
+  readonly engine: string;
+  readonly searchMode: string | null;
+  /**
+   * Wat de adaptieve zoektocht tot nu toe heeft gedaan: pogingen, onderzochte
+   * varianten, geldige kandidaten. Leeg bij de klassieke engine.
+   */
+  readonly search: {
+    readonly attempts: number;
+    readonly starts: number;
+    readonly repairs: number;
+    readonly variants: number;
+    readonly validCandidates: number;
+    readonly rejected: number;
+    readonly polishSwaps: number;
+    readonly bestRobust: number | null;
+    readonly elapsedSeconds: number;
+    readonly budgetSeconds: number;
+    readonly stopReason: string | null;
+  } | null;
 }

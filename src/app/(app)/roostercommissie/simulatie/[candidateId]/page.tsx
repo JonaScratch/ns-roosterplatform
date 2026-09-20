@@ -59,7 +59,7 @@ export default async function KandidaatPakket({
   if (!pakket) {
     notFound();
   }
-  const { card, run, rosters, subscores, official, validation, lineage } = pakket;
+  const { card, run, rosters, subscores, official, validation, lineage, search } = pakket;
   const ouderScores = new Map(lineage.parent?.subscores.map((entry) => [entry.key, entry.score]) ?? []);
   const officieel = new Map(official.map((entry) => [entry.key, entry.score]));
   const bruikbaar = card.status === "GEREED" || card.status === "VEROUDERD";
@@ -373,6 +373,8 @@ export default async function KandidaatPakket({
             ) : null}
           </WidgetCard>
 
+          {search ? <Zoektocht search={search} /> : null}
+
           {lineage.parent || lineage.children.length > 0 ? (
             <WidgetCard tone="neutral" title="Herkomst" bodyClassName="border-t border-line p-4">
               {lineage.parent ? (
@@ -483,5 +485,98 @@ export default async function KandidaatPakket({
         </dl>
       </details>
     </RosterCommitteeShell>
+  );
+}
+
+/**
+ * Hoe de zoekmachine aan deze kandidaat kwam.
+ *
+ * ## Waarom dit op het scherm staat
+ *
+ * De machine onderzoekt duizenden varianten en laat er drie zien. Zonder uitleg
+ * is dat een orakel. Hier staat wat er van die zoektocht bewaard is: welke
+ * poging het was, waar hij het van won, en waar hij zelf zwak is. Alles komt uit
+ * de opgeslagen herkomst; staat er niets, dan staat er ook niets.
+ */
+function Zoektocht({ search }: { search: NonNullable<Awaited<ReturnType<typeof candidatePackage>>["search"]> }) {
+  const onderdelen = search.components.filter((entry) => entry.score !== null);
+  return (
+    <WidgetCard tone="neutral" title="Waarom deze kandidaat" bodyClassName="border-t border-line p-4">
+      {search.whySurvived.length > 0 ? (
+        <ul className="space-y-1 text-[12px]">
+          {search.whySurvived.map((regel) => (
+            <li key={regel} className="flex gap-1.5">
+              <span aria-hidden className="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent-rc" />
+              <span>{regel}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-[12px] text-ink-muted">
+          Voor deze kandidaat is geen zoekverslag bewaard; hij komt uit de klassieke zoekmachine.
+        </p>
+      )}
+
+      {onderdelen.length > 0 ? (
+        <div className="mt-3 border-t border-line pt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">Kwaliteitsopbouw</p>
+          <dl className="mt-1.5 space-y-1">
+            {onderdelen.map((entry) => (
+              <div key={entry.key} className="flex items-center gap-2">
+                <dt className="w-[42%] shrink-0 text-[12px]">{entry.label}</dt>
+                <dd className="flex flex-1 items-center gap-2">
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-canvas ring-1 ring-line">
+                    <div
+                      className="h-full rounded-full bg-accent-rc"
+                      style={{ width: `${Math.max(0, Math.min(100, entry.score ?? 0))}%` }}
+                    />
+                  </div>
+                  <span className="tabular w-9 shrink-0 text-right text-[11.5px] font-semibold">
+                    {Math.round(entry.score ?? 0)}
+                  </span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          {search.worstLine ? (
+            <p className="mt-2 text-[11.5px] text-ink-muted">
+              Zwakste roosterregel: {search.worstLine.roster} regel {search.worstLine.lineNumber} (
+              {Math.round(search.worstLine.score ?? 0)} van 100). Die regel telt apart mee, zodat een goed
+              gemiddelde geen slechte regel kan verbergen.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {search.explanations.length > 0 ? (
+        <div className="mt-3 border-t border-line pt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">
+            Waar deze kandidaat zwak is
+          </p>
+          <ul className="mt-1.5 space-y-1.5 text-[12px]">
+            {search.explanations.map((uitleg) => (
+              <li key={`${uitleg.title}-${uitleg.detail}`}>
+                <span className="font-semibold">{uitleg.title}</span>
+                <span className="block text-ink-muted">{uitleg.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <p className="mt-3 border-t border-line pt-2 text-[12px] text-ink-muted">
+        Dit is de <strong className="font-semibold text-ink">beste gevonden kandidaat</strong> binnen de
+        gekozen rekentijd, niet het best mogelijke rooster: het aantal mogelijke roosters is te groot om
+        allemaal door te rekenen. Wat er ligt is wel volledig doorgerekend en onafhankelijk gevalideerd.
+      </p>
+
+      <p className="mt-2 text-[11px] text-ink-faint">
+        {search.modeLabel ? `Zoekmodus ${search.modeLabel}` : "Zoekmodus onbekend"}
+        {search.attempt !== null ? ` · poging ${search.attempt}` : ""}
+        {search.seed !== null ? ` · zaadwaarde ${search.seed}` : ""}
+        {search.paretoFront ? " · op het Pareto-front" : ""}
+        {search.qualityModelVersion ? ` · kwaliteitsmodel ${search.qualityModelVersion}` : ""}
+      </p>
+    </WidgetCard>
   );
 }

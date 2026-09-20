@@ -1,0 +1,395 @@
+{
+  "schema": "ns-machinist-phase/1",
+  "phase": "official",
+  "measuredAt": "2026-09-19T11:30:58.398Z",
+  "qualityModelV2Hash": "dfd592adf4d84a65",
+  "qualityModelV3Hash": "4525b9106095c24b",
+  "official": {
+    "base": {
+      "hard": {
+        "valid": true,
+        "unassigned": 0,
+        "profileBreaches": 0
+      },
+      "quality": {
+        "robust": 83.5,
+        "overall": 86.3,
+        "overallWithoutContinuity": 84.7,
+        "components": {
+          "hours": 83.9,
+          "flow": 88.7,
+          "rest": 79.4,
+          "nights": 98.9,
+          "fairness": 66.9,
+          "preference": null,
+          "stability": 100
+        },
+        "worstLine": {
+          "score": 68.15972222222221,
+          "roster": "DDR-50MIX",
+          "line": 4
+        },
+        "patternDistance": 0,
+        "robustV1": 64.9,
+        "worstLineV1": 15.625
+      },
+      "nights": {
+        "total": 19,
+        "blocks": {
+          "3": 1,
+          "5+": 3
+        },
+        "singletons": 0,
+        "pairs": 0,
+        "blockValue": 98.42105263157895,
+        "exitValue": 100,
+        "worstExitValue": 100,
+        "exitsBelowRule": 0,
+        "exitsToEarly": 0,
+        "minRecoveryHours": 55.95,
+        "worstExit": {
+          "roster": "DDR-LN",
+          "lines": "2+3",
+          "pattern": "NNNNNNRRL",
+          "hours": 56
+        }
+      },
+      "coherence": {
+        "blocks": 102,
+        "fullyCoherent": 98,
+        "coherentShare": 96.07843137254902,
+        "dayWeighted": 97.81420765027322,
+        "meanBlockLength": 2.1862745098039214
+      },
+      "transitions": {
+        "oscillations": 2,
+        "labelOnlyOscillations": 1,
+        "directDaypartChanges": 5,
+        "changesThroughRest": 82.75862068965517,
+        "worstLabel": 4,
+        "heavyClockAware": 0,
+        "linesWithHeavyLabel": 2,
+        "boundaryDaypartChanges": 1,
+        "boundaryHeavy": 0,
+        "forwardChanges": 14,
+        "backwardChanges": 15,
+        "backwardDirectOver60": 0
+      },
+      "startJitter": {
+        "mean": 73.39655172413794,
+        "median": 60,
+        "p90": 150,
+        "over120": 26
+      },
+      "worstWorkBlock": {
+        "switches": 2,
+        "states": "LLEL"
+      },
+      "hours": {
+        "maxRosterDeviation": 48,
+        "meanRosterDeviation": 12.714285714285714,
+        "lineOutliers": 3
+      },
+      "rest": {
+        "shortestSurplusMinutes": 29
+      },
+      "structureFamily": "6237943e6032",
+      "perRoster": {
+        "DDR-50MIX": {
+          "profile": "MIX_50PLUS",
+          "worstLine": 68.15972222222221,
+          "weeklyDeviation": -9,
+          "nightBlocks": {},
+          "exitsBelowRule": 0,
+          "minRecoveryHours": null,
+          "coherence": 76.92307692307693,
+          "oscillations": 2,
+          "startJitterMean": 95.75,
+          "worstTransition": 4
+        },
+        "DDR-BLM": {
+          "profile": "BLM",
+          "worstLine": 83.875,
+          "weeklyDeviation": -48,
+          "nightBlocks": {
+            "3": 1
+          },
+          "exitsBelowRule": 0,
+          "minRecoveryHours": 79.45,
+          "coherence": 96.15384615384616,
+          "oscillations": 0,
+          "startJitterMean": 63.294117647058826,
+          "worstTransition": 1
+        },
+        "DDR-L": {
+          "profile": "LAAT",
+          "worstLine": 77.56944444444444,
+          "weeklyDeviation": -1,
+          "nightBlocks": {},
+          "exitsBelowRule": 0,
+          "minRecoveryHours": null,
+          "coherence": 100,
+          "oscillations": 0,
+          "startJitterMean": 92.29411764705883,
+          "worstTransition": 0
+        },
+        "DDR-LN": {
+          "profile": "LAAT_NACHT",
+          "worstLine": 87.56655092592591,
+          "weeklyDeviation": -1,
+          "nightBlocks": {
+            "6": 1
+          },
+          "exitsBelowRule": 0,
+          "minRecoveryHours": 55.95,
+          "coherence": 100,
+          "oscillations": 0,
+          "startJitterMean": 66.07692307692308,
+          "worstTransition": 0
+        },
+        "DDR-MIX": {
+          "profile": "MIX",
+          "worstLine": 71.33680555555554,
+          "weeklyDeviation": -9,
+          "nightBlocks": {
+            "5": 2
+          },
+          "exitsBelowRule": 0,
+          "minRecoveryHours": 59.31666666666667,
+          "coherence": 100,
+          "oscillations": 0,
+          "startJitterMean": 69.16,
+          "worstTransition": 1
+        },
+        "DDR-V": {
+          "profile": "VROEG",
+          "worstLine": 83.75868055555554,
+          "weeklyDeviation": -16,
+          "nightBlocks": {},
+          "exitsBelowRule": 0,
+          "minRecoveryHours": null,
+          "coherence": 100,
+          "oscillations": 0,
+          "startJitterMean": 80.68181818181819,
+          "worstTransition": 0
+        },
+        "DDR-VL": {
+          "profile": "VROEG_LAAT",
+          "worstLine": 79.7265625,
+          "weeklyDeviation": -5,
+          "nightBlocks": {},
+          "exitsBelowRule": 0,
+          "minRecoveryHours": null,
+          "coherence": 100,
+          "oscillations": 0,
+          "startJitterMean": 62.388888888888886,
+          "worstTransition": 0
+        }
+      }
+    },
+    "v3": {
+      "hardValid": true,
+      "robust": 82.4,
+      "overall": 84.7,
+      "worstLine": 69.54678362573098,
+      "nights": 93.7,
+      "preference": 81.4,
+      "parts": {
+        "affinity": 68.6,
+        "restDuties": 81.8,
+        "dayDuties": 78.7,
+        "popularFairness": 94.3,
+        "weekendStart": 93.1
+      }
+    },
+    "operational": {
+      "compliant": true,
+      "violations": 0,
+      "hoursCompliant": 7,
+      "maxAverageWeeklyMinutes": 2399,
+      "fridayCompliant": 32,
+      "freeWeekends": 32,
+      "structuralFindings": 0
+    },
+    "profiles": {
+      "DDR-50MIX": {
+        "profile": "MIX_50PLUS",
+        "lines": 6,
+        "affinity": 0.8105263157894735,
+        "lessShare": 0,
+        "dutyDays": 19,
+        "extremeEarly": 0,
+        "moderateEarly": 7,
+        "daylikeEarly": 4,
+        "earlyLate": 6,
+        "premiumLate": 0,
+        "night": 0,
+        "rangeer": 2,
+        "dayDuties": 10,
+        "dayDutyTarget": 11.212121212121213,
+        "nightWindowMinutesPerWeek": 0,
+        "weekendMinutesPerWeek": 322,
+        "weekendStart": 1,
+        "extremeEarlySteps": 0
+      },
+      "DDR-BLM": {
+        "profile": "BLM",
+        "lines": 6,
+        "affinity": 0.5999999999999998,
+        "lessShare": 0,
+        "dutyDays": 26,
+        "extremeEarly": 3,
+        "moderateEarly": 11,
+        "daylikeEarly": 0,
+        "earlyLate": 3,
+        "premiumLate": 1,
+        "night": 3,
+        "rangeer": 7,
+        "dayDuties": 3,
+        "dayDutyTarget": 5.606060606060606,
+        "nightWindowMinutesPerWeek": 229.83333333333334,
+        "weekendMinutesPerWeek": 504.6666666666667,
+        "weekendStart": 1,
+        "extremeEarlySteps": 1
+      },
+      "DDR-L": {
+        "profile": "LAAT",
+        "lines": 12,
+        "affinity": 0.7297297297297297,
+        "lessShare": 0.16216216216216217,
+        "dutyDays": 37,
+        "extremeEarly": 0,
+        "moderateEarly": 0,
+        "daylikeEarly": 0,
+        "earlyLate": 6,
+        "premiumLate": 18,
+        "night": 0,
+        "rangeer": 5,
+        "dayDuties": 6,
+        "dayDutyTarget": 2.166666666666666,
+        "nightWindowMinutesPerWeek": 103.5,
+        "weekendMinutesPerWeek": 285.9166666666667,
+        "weekendStart": 0.9235390318852584,
+        "extremeEarlySteps": 0
+      },
+      "DDR-LN": {
+        "profile": "LAAT_NACHT",
+        "lines": 6,
+        "affinity": 0.6363636363636361,
+        "lessShare": 0.18181818181818182,
+        "dutyDays": 22,
+        "extremeEarly": 0,
+        "moderateEarly": 0,
+        "daylikeEarly": 0,
+        "earlyLate": 4,
+        "premiumLate": 6,
+        "night": 6,
+        "rangeer": 6,
+        "dayDuties": 4,
+        "dayDutyTarget": 2.166666666666666,
+        "nightWindowMinutesPerWeek": 390.3333333333333,
+        "weekendMinutesPerWeek": 494.5,
+        "weekendStart": 0.8350187412311086,
+        "extremeEarlySteps": 0
+      },
+      "DDR-MIX": {
+        "profile": "MIX",
+        "lines": 12,
+        "affinity": 0.6727272727272731,
+        "lessShare": 0,
+        "dutyDays": 44,
+        "extremeEarly": 6,
+        "moderateEarly": 8,
+        "daylikeEarly": 1,
+        "earlyLate": 3,
+        "premiumLate": 6,
+        "night": 10,
+        "rangeer": 11,
+        "dayDuties": 4,
+        "dayDutyTarget": 5.606060606060606,
+        "nightWindowMinutesPerWeek": 369.3333333333333,
+        "weekendMinutesPerWeek": 358.1666666666667,
+        "weekendStart": 0.8565162471411608,
+        "extremeEarlySteps": 1
+      },
+      "DDR-V": {
+        "profile": "VROEG",
+        "lines": 12,
+        "affinity": 0.658536585365854,
+        "lessShare": 0.04878048780487805,
+        "dutyDays": 41,
+        "extremeEarly": 8,
+        "moderateEarly": 31,
+        "daylikeEarly": 2,
+        "earlyLate": 0,
+        "premiumLate": 0,
+        "night": 0,
+        "rangeer": 5,
+        "dayDuties": 2,
+        "dayDutyTarget": 0.6363636363636365,
+        "nightWindowMinutesPerWeek": 57,
+        "weekendMinutesPerWeek": 392.3333333333333,
+        "weekendStart": 0.9997329421914382,
+        "extremeEarlySteps": 2
+      },
+      "DDR-VL": {
+        "profile": "VROEG_LAAT",
+        "lines": 10,
+        "affinity": 0.7176470588235296,
+        "lessShare": 0,
+        "dutyDays": 34,
+        "extremeEarly": 9,
+        "moderateEarly": 10,
+        "daylikeEarly": 0,
+        "earlyLate": 4,
+        "premiumLate": 5,
+        "night": 0,
+        "rangeer": 3,
+        "dayDuties": 4,
+        "dayDutyTarget": 5.606060606060606,
+        "nightWindowMinutesPerWeek": 80.7,
+        "weekendMinutesPerWeek": 456.2,
+        "weekendStart": 0.922719871096017,
+        "extremeEarlySteps": 0
+      }
+    },
+    "rangeer": {
+      "cvPerLine": 0.5175605116829323,
+      "maxShare": 0.28205128205128205
+    },
+    "popular": {
+      "PREMIUM_LATE": {
+        "score": 0.8851851851851851,
+        "maxShare": 0.5
+      },
+      "EXTREME_EARLY": {
+        "score": 1,
+        "maxShare": 0.34615384615384615
+      }
+    }
+  },
+  "means": {
+    "preference": 81.4,
+    "affinity": 68.6,
+    "restDuties": 81.8,
+    "dayDuties": 78.7,
+    "popularFairness": 94.3,
+    "weekendStart": 93.1,
+    "robustV3": 82.4,
+    "robustV2": 83.5,
+    "worstLineV2": 68.16,
+    "nightsV2": 98.9,
+    "rest": 79.4,
+    "hours": 83.9,
+    "fairness": 66.9,
+    "flow": 88.7,
+    "singletons": 0,
+    "pairs": 0,
+    "worstNightExit": 100,
+    "minRecoveryHours": 55.95,
+    "rangeerCv": 0.518,
+    "rangeerMaxShare": 0.282,
+    "operationalViolations": 0,
+    "extremeEarlySteps": 4
+  }
+}

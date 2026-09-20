@@ -1,0 +1,288 @@
+{
+  "schema": "ns-final-brain-duty-classes/1",
+  "measuredAt": "2026-09-18T22:06:39.727Z",
+  "bounds": {
+    "extremeEarlyBefore": 330,
+    "daylikeEarlyFrom": 540,
+    "earlyLateEndBefore": 1260,
+    "premiumLateEndAfter": 1440
+  },
+  "labels": {
+    "EXTREME_EARLY": "extreem vroeg",
+    "EARLY": "gematigd vroeg",
+    "DAYLIKE_EARLY": "daglijk vroeg",
+    "EARLY_LATE": "vroege late",
+    "LATE": "late",
+    "PREMIUM_LATE": "echte afloper",
+    "NIGHT": "nacht",
+    "OTHER": "overig"
+  },
+  "packageClassCounts": {
+    "LATE": 42,
+    "EARLY_LATE": 26,
+    "DAYLIKE_EARLY": 7,
+    "EARLY": 67,
+    "EXTREME_EARLY": 26,
+    "PREMIUM_LATE": 36,
+    "NIGHT": 19
+  },
+  "exposureProxy": "minuten in het CAO-nachtvenster 00:00–06:00 en minuten op zaterdag/zondag; GEEN toeslag of ORT (daar zijn geen regels voor in het platform)",
+  "official": {
+    "perRoster": {
+      "DDR-50MIX": {
+        "profile": "MIX_50PLUS",
+        "weeks": 6,
+        "dutyDays": 19,
+        "classes": {
+          "LATE": 2,
+          "EARLY_LATE": 6,
+          "DAYLIKE_EARLY": 4,
+          "EARLY": 7
+        },
+        "nightWindowMinutes": 0,
+        "weekendMinutes": 1932,
+        "nightWindowMinutesPerWeek": 0,
+        "weekendMinutesPerWeek": 322
+      },
+      "DDR-BLM": {
+        "profile": "BLM",
+        "weeks": 6,
+        "dutyDays": 26,
+        "classes": {
+          "EARLY": 11,
+          "EXTREME_EARLY": 3,
+          "PREMIUM_LATE": 1,
+          "NIGHT": 3,
+          "EARLY_LATE": 3,
+          "LATE": 5
+        },
+        "nightWindowMinutes": 1379,
+        "weekendMinutes": 3028,
+        "nightWindowMinutesPerWeek": 229.83333333333334,
+        "weekendMinutesPerWeek": 504.6666666666667
+      },
+      "DDR-L": {
+        "profile": "LAAT",
+        "weeks": 12,
+        "dutyDays": 37,
+        "classes": {
+          "LATE": 13,
+          "PREMIUM_LATE": 18,
+          "EARLY_LATE": 6
+        },
+        "nightWindowMinutes": 1242,
+        "weekendMinutes": 3431,
+        "nightWindowMinutesPerWeek": 103.5,
+        "weekendMinutesPerWeek": 285.9166666666667
+      },
+      "DDR-LN": {
+        "profile": "LAAT_NACHT",
+        "weeks": 6,
+        "dutyDays": 22,
+        "classes": {
+          "PREMIUM_LATE": 6,
+          "EARLY_LATE": 4,
+          "NIGHT": 6,
+          "LATE": 6
+        },
+        "nightWindowMinutes": 2342,
+        "weekendMinutes": 2967,
+        "nightWindowMinutesPerWeek": 390.3333333333333,
+        "weekendMinutesPerWeek": 494.5
+      },
+      "DDR-MIX": {
+        "profile": "MIX",
+        "weeks": 12,
+        "dutyDays": 44,
+        "classes": {
+          "EARLY": 8,
+          "EXTREME_EARLY": 6,
+          "NIGHT": 10,
+          "PREMIUM_LATE": 6,
+          "LATE": 10,
+          "EARLY_LATE": 3,
+          "DAYLIKE_EARLY": 1
+        },
+        "nightWindowMinutes": 4432,
+        "weekendMinutes": 4298,
+        "nightWindowMinutesPerWeek": 369.3333333333333,
+        "weekendMinutesPerWeek": 358.1666666666667
+      },
+      "DDR-V": {
+        "profile": "VROEG",
+        "weeks": 12,
+        "dutyDays": 41,
+        "classes": {
+          "EXTREME_EARLY": 8,
+          "EARLY": 31,
+          "DAYLIKE_EARLY": 2
+        },
+        "nightWindowMinutes": 684,
+        "weekendMinutes": 4708,
+        "nightWindowMinutesPerWeek": 57,
+        "weekendMinutesPerWeek": 392.3333333333333
+      },
+      "DDR-VL": {
+        "profile": "VROEG_LAAT",
+        "weeks": 10,
+        "dutyDays": 34,
+        "classes": {
+          "EXTREME_EARLY": 9,
+          "EARLY": 10,
+          "LATE": 6,
+          "PREMIUM_LATE": 5,
+          "EARLY_LATE": 4
+        },
+        "nightWindowMinutes": 807,
+        "weekendMinutes": 4562,
+        "nightWindowMinutesPerWeek": 80.7,
+        "weekendMinutesPerWeek": 456.2
+      }
+    },
+    "lift": {
+      "EXTREME_EARLY": {
+        "DDR-50MIX": 0,
+        "DDR-BLM": 0.727810650887574,
+        "DDR-L": null,
+        "DDR-LN": null,
+        "DDR-MIX": 0.8601398601398601,
+        "DDR-V": 1.2307692307692308,
+        "DDR-VL": 1.669683257918552
+      },
+      "EARLY": {
+        "DDR-50MIX": 0.9018067556952081,
+        "DDR-BLM": 1.0355912743972446,
+        "DDR-L": null,
+        "DDR-LN": null,
+        "DDR-MIX": 0.4450474898236092,
+        "DDR-V": 1.8507462686567164,
+        "DDR-VL": 0.719929762949956
+      },
+      "DAYLIKE_EARLY": {
+        "DDR-50MIX": 4.932330827067669,
+        "DDR-BLM": 0,
+        "DDR-L": null,
+        "DDR-LN": null,
+        "DDR-MIX": 0.5324675324675324,
+        "DDR-V": 1.1428571428571428,
+        "DDR-VL": 0
+      },
+      "EARLY_LATE": {
+        "DDR-50MIX": 2.210526315789474,
+        "DDR-BLM": 0.8076923076923078,
+        "DDR-L": 1.1351351351351353,
+        "DDR-LN": 1.2727272727272727,
+        "DDR-MIX": 0.4772727272727273,
+        "DDR-V": null,
+        "DDR-VL": 0.823529411764706
+      },
+      "LATE": {
+        "DDR-50MIX": 0.45614035087719296,
+        "DDR-BLM": 0.8333333333333334,
+        "DDR-L": 1.5225225225225225,
+        "DDR-LN": 1.1818181818181817,
+        "DDR-MIX": 0.9848484848484848,
+        "DDR-V": null,
+        "DDR-VL": 0.7647058823529411
+      },
+      "PREMIUM_LATE": {
+        "DDR-50MIX": 0,
+        "DDR-BLM": 0.19444444444444445,
+        "DDR-L": 2.4594594594594597,
+        "DDR-LN": 1.3787878787878787,
+        "DDR-MIX": 0.6893939393939393,
+        "DDR-V": null,
+        "DDR-VL": 0.7434640522875817
+      },
+      "NIGHT": {
+        "DDR-50MIX": 0,
+        "DDR-BLM": 0.6740890688259109,
+        "DDR-L": null,
+        "DDR-LN": 1.5933014354066986,
+        "DDR-MIX": 1.3277511961722488,
+        "DDR-V": null,
+        "DDR-VL": null
+      }
+    }
+  },
+  "v104Mean": {
+    "DDR-50MIX": {
+      "EXTREME_EARLY": 3.066666666666668,
+      "EARLY": 9.400000000000002,
+      "DAYLIKE_EARLY": 2.0500000000000016,
+      "EARLY_LATE": 0.7166666666666671,
+      "LATE": 2.6166666666666676,
+      "PREMIUM_LATE": 1.150000000000001,
+      "NIGHT": 0,
+      "nightWindowMinutesPerWeek": 47.88333333333331,
+      "weekendMinutesPerWeek": 350.8805555555556
+    },
+    "DDR-BLM": {
+      "EXTREME_EARLY": 3.6000000000000028,
+      "EARLY": 12.083333333333329,
+      "DAYLIKE_EARLY": 1.4000000000000004,
+      "EARLY_LATE": 0.5166666666666666,
+      "LATE": 2.9999999999999996,
+      "PREMIUM_LATE": 1.2166666666666672,
+      "NIGHT": 4.183333333333336,
+      "nightWindowMinutesPerWeek": 302.21388888888896,
+      "weekendMinutesPerWeek": 454.8499999999999
+    },
+    "DDR-L": {
+      "EXTREME_EARLY": 0,
+      "EARLY": 0,
+      "DAYLIKE_EARLY": 0,
+      "EARLY_LATE": 9.500000000000005,
+      "LATE": 13.183333333333326,
+      "PREMIUM_LATE": 14.316666666666665,
+      "NIGHT": 0,
+      "nightWindowMinutesPerWeek": 82.58333333333333,
+      "weekendMinutesPerWeek": 305.8805555555554
+    },
+    "DDR-LN": {
+      "EXTREME_EARLY": 0,
+      "EARLY": 0,
+      "DAYLIKE_EARLY": 0,
+      "EARLY_LATE": 4.1833333333333345,
+      "LATE": 6.749999999999997,
+      "PREMIUM_LATE": 4.933333333333331,
+      "NIGHT": 6.1333333333333275,
+      "nightWindowMinutesPerWeek": 397.188888888889,
+      "weekendMinutesPerWeek": 479.9611111111113
+    },
+    "DDR-MIX": {
+      "EXTREME_EARLY": 6.683333333333329,
+      "EARLY": 15.2,
+      "DAYLIKE_EARLY": 0.5666666666666667,
+      "EARLY_LATE": 2.5333333333333323,
+      "LATE": 5.25,
+      "PREMIUM_LATE": 5.083333333333331,
+      "NIGHT": 8.683333333333342,
+      "nightWindowMinutesPerWeek": 329.1375000000001,
+      "weekendMinutesPerWeek": 387.54861111111103
+    },
+    "DDR-V": {
+      "EXTREME_EARLY": 10.083333333333337,
+      "EARLY": 28.083333333333325,
+      "DAYLIKE_EARLY": 2.8333333333333344,
+      "EARLY_LATE": 0,
+      "LATE": 0,
+      "PREMIUM_LATE": 0,
+      "NIGHT": 0,
+      "nightWindowMinutesPerWeek": 64.31666666666663,
+      "weekendMinutesPerWeek": 392.0180555555554
+    },
+    "DDR-VL": {
+      "EXTREME_EARLY": 2.5666666666666673,
+      "EARLY": 2.233333333333334,
+      "DAYLIKE_EARLY": 0.15,
+      "EARLY_LATE": 8.550000000000002,
+      "LATE": 11.200000000000001,
+      "PREMIUM_LATE": 9.299999999999999,
+      "NIGHT": 0,
+      "nightWindowMinutesPerWeek": 68.98333333333333,
+      "weekendMinutesPerWeek": 418.6483333333333
+    }
+  },
+  "v104Candidates": 60
+}

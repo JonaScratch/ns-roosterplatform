@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { allowedKindsForProfile } from "@/domain/roster-profiles";
+import { allowedKindsForProfile, profileAllowsDuty } from "@/domain/roster-profiles";
+import type { DutyKind, RosterProfile } from "@/lib/generated/prisma/enums";
 import { isHardNightService } from "@/domain/duty-window";
 import { type CandidateAssignment, sealCandidate } from "@/domain/candidate";
 import type {
@@ -25,8 +26,16 @@ import {
   COMFORTABLE_REST_MINUTES,
   OFF_POSITION_TYPES,
   OVER_ONE_OFF_DAY_PENALTY,
+  OVER_TWO_OFF_DAYS_PENALTY,
+  HUMAN_OVER_ONE_OFF_DAY_PENALTY,
+  HUMAN_ADJACENT_TRANSITION_PENALTY,
 } from "@/domain/roster-quality-config";
 import { ANCHOR_CREDIT_MINUTES, TARGET_WEEKLY_MINUTES } from "@/domain/roster-hours";
+import type { OperationalRequirements } from "@/domain/operational-requirements";
+import { type DutyClass, dutyClass } from "@/domain/duty-class";
+import { DAY_DUTY_CLASSES, DAY_DUTY_WEIGHTS, affinityValue } from "@/domain/profile-affinity";
+import { QUALITY_MODEL_V2 } from "@/domain/quality-model";
+import { humanNightExitTables } from "./night-exit-tables";
 
 /**
  * De globale roosteroptimizer.
@@ -181,10 +190,62 @@ export interface CpSatRunOptions {
   readonly exclude?: readonly (readonly CandidateAssignment[])[];
   /** Zie SolverOptions.explainShortfall. */
   readonly explainShortfall?: boolean;
+  /** Plaatsingen die blijven staan; de rest wordt opnieuw ingedeeld. */
+  readonly fixedAssignments?: readonly CandidateAssignment[];
+  readonly linearizationLevel?: number;
   /** Op ten minste zoveel dienstdagen anders dan elke uitgesloten kandidaat. */
   readonly minDifferentSlots?: number;
   readonly feedbackPenalties?: SolverOptions["feedbackPenalties"];
   readonly signal?: AbortSignal;
+  /**
+   * De geijkte nachtuitgang uit de menselijke roosters: na een nachtreeks eerst
+   * twee vrije dagen, dan liever laat dan vroeg (zie HUMAN_ADJACENT_TRANSITION_PENALTY).
+   * De begintijdsterm `startJitter` staat hier los van en hoort bij de gewichten.
+   * Uit voor de klassieke zoekmachine.
+   */
+  readonly humanRhythm?: boolean;
+  /**
+   * Factor op de nachtrij van die menselijke tabel (standaard 1); zie
+   * `night-exit-tables.ts`. Alleen met `humanRhythm`.
+   */
+  readonly nightExitScale?: number;
+  /** Operationele ontwerpeisen die hard in het model gaan; zie `operational-requirements.ts`. */
+  readonly operational?: OperationalRequirements;
+  /**
+   * Voorkeurstermen (machinistenvoorkeur): gewicht per stap van 0,1 affiniteit
+   * per plaatsing, en per tiende dienst afwijking van het dagdienstdoel per
+   * rooster. Nul of afwezig: uit. Gewichten uit de wisselkoersen × schaal.
+   */
+  readonly preference?: { readonly affinityWeight: number; readonly dayDutyWeight: number };
+}
+
+const DUTY_CLASSES: readonly DutyClass[] = ["EXTREME_EARLY", "EARLY", "DAYLIKE_EARLY", "EARLY_LATE", "LATE", "PREMIUM_LATE", "NIGHT", "OTHER"];
+
+/** Affiniteit per profiel en klasse, voor de oplosser. */
+function affinityTable(profiles: readonly string[]): Record<string, Record<string, number>> {
+  return Object.fromEntries(
+    [...new Set(profiles)].map((profiel) => [profiel, Object.fromEntries(DUTY_CLASSES.map((k) => [k, affinityValue(profiel, k)]))]),
+  );
+}
+
+/**
+ * Verwacht aantal dagachtige diensten per basisrooster: elke dagachtige dienst
+ * verdeelt zich over de roosters die hem mogen rijden, naar hun relatieve
+ * gewicht (per profiel genormaliseerd), zoals `dayDutyDistribution` meet.
+ */
+function dayDutyTargets(input: OptimizerInput, instances: readonly DutyInstance[]): Record<string, number> {
+  const roosters = new Map<string, string>();
+  for (const line of input.rosterLines) roosters.set(line.baseRosterCode, line.profile);
+  const doel: Record<string, number> = Object.fromEntries([...roosters.keys()].map((code) => [code, 0]));
+  for (const instance of instances) {
+    const d = instance.duty;
+    if (!DAY_DUTY_CLASSES.includes(dutyClass({ startMinute: d.startMinute, endMinute: d.endMinute, kinds: d.kinds }))) continue;
+    const geschikt = [...roosters].filter(([, profiel]) => profileAllowsDuty(profiel as RosterProfile, d.kinds as DutyKind[]));
+    const noemer = geschikt.reduce((s, [, profiel]) => s + (DAY_DUTY_WEIGHTS[profiel]?.weight ?? 20), 0);
+    if (noemer === 0) continue;
+    for (const [code, profiel] of geschikt) doel[code] += (DAY_DUTY_WEIGHTS[profiel]?.weight ?? 20) / noemer;
+  }
+  return doel;
 }
 
 function slotKeyOf(entry: {
@@ -231,7 +292,7 @@ export class CpSatOptimizer implements RosterOptimizer {
   // 2.0.0 sinds platformversie 1.0.3: cyclus in rotatievolgorde, nachtreeksen,
   // overgangen en diversiteit. Een kandidaat van 1.0.0 is met een ander model
   // gemaakt, en dat hoort aan de stempel te zien zijn.
-  readonly version = "2.0.0";
+  readonly version = "2.1.0";
   readonly describe =
     "Constraint-optimalisatie over alle roosterlijnen en profielen tegelijk, met " +
     "harde grenzen als uitsluiting en de overige doelen als kosten.";
@@ -275,11 +336,23 @@ export class CpSatOptimizer implements RosterOptimizer {
         timeLimitSeconds: this.timeLimitSeconds,
         seed: this.options.seed ?? this.scenario.seed,
         workers: this.options.workers ?? 1,
-        objective: { ...(this.options.objective ?? this.scenario.objective) },
-        transitionPenalties: {
-          adjacent: ADJACENT_TRANSITION_PENALTY,
-          overOffDay: OVER_ONE_OFF_DAY_PENALTY,
+        objective: {
+          ...(this.options.objective ?? this.scenario.objective),
+          ...(this.options.preference
+            ? { profileAffinity: this.options.preference.affinityWeight, dayDutyTarget: this.options.preference.dayDutyWeight }
+            : {}),
         },
+        transitionPenalties: {
+          ...(this.options.humanRhythm
+            ? humanNightExitTables(this.options.nightExitScale ?? 1)
+            : { adjacent: ADJACENT_TRANSITION_PENALTY, overOffDay: OVER_ONE_OFF_DAY_PENALTY }),
+        },
+        ...(this.options.humanRhythm
+          ? {
+              startJitterFreeMinutes: QUALITY_MODEL_V2.components.flow.parts.startJitter.freeMinutes,
+              startJitterFullMinutes: QUALITY_MODEL_V2.components.flow.parts.startJitter.fullMinutes,
+            }
+          : {}),
         offPositionTypes: OFF_POSITION_TYPES,
         comfortableRestMinutes: COMFORTABLE_REST_MINUTES,
         targetWeeklyMinutes: TARGET_WEEKLY_MINUTES,
@@ -290,7 +363,25 @@ export class CpSatOptimizer implements RosterOptimizer {
         excludeSolutions: (this.options.exclude ?? []).map(slotAssignmentsOf),
         minDifferentSlots: this.options.minDifferentSlots ?? 0,
         explainShortfall: this.options.explainShortfall ?? true,
+        fixedAssignments: slotAssignmentsOf(this.options.fixedAssignments ?? []),
+        ...(this.options.linearizationLevel === undefined ? {} : { linearizationLevel: this.options.linearizationLevel }),
         feedbackPenalties: this.options.feedbackPenalties ?? [],
+        ...(this.options.preference && (this.options.preference.affinityWeight > 0 || this.options.preference.dayDutyWeight > 0)
+          ? {
+              profileAffinityTable: affinityTable(input.rosterLines.map((line) => line.profile)),
+              dayDutyTargets: dayDutyTargets(input, instances),
+            }
+          : {}),
+        ...(this.options.operational
+          ? {
+              operationalRequirements: {
+                maxAverageWeeklyMinutes: this.options.operational.rosterAverageHours.maxAverageWeeklyMinutes,
+                fridayLatestEndMinute: this.options.operational.freeWeekendFriday.latestEndMinute,
+                fridayExemptKinds: this.options.operational.freeWeekendFriday.exemptKinds,
+                freeWeekendTypes: this.options.operational.freeWeekend.freeTypes,
+              },
+            }
+          : {}),
       },
     }, this.options.signal);
 
@@ -518,6 +609,8 @@ function toSolverDuty(instance: DutyInstance): SolverDuty {
     isShunting: duty.kinds.includes("RANGEER"),
     isWeekend: instance.weekday >= 6,
     isLong: duty.endMinute - duty.startMinute >= 9 * 60 || isHardNightService(shape),
+    preferenceClass: dutyClass({ startMinute: duty.startMinute, endMinute: duty.endMinute, kinds: duty.kinds }),
+    isDayDuty: DAY_DUTY_CLASSES.includes(dutyClass({ startMinute: duty.startMinute, endMinute: duty.endMinute, kinds: duty.kinds })),
   };
 }
 

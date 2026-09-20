@@ -1,0 +1,85 @@
+DRAAGBARE VERSIE
+════════════════════════════════════════════════════════════════════════
+
+Een verse kopie van de bundel klaarzetten…
+
+1. De structuur
+  ✓ Start NS Roosterplatform.bat staat erin
+  ✓ Stop NS Roosterplatform.bat staat erin
+  ✓ LEESMIJ.txt staat erin
+  ✓ HANDLEIDING.md staat erin
+  ✓ NS Roosterplatform - Brochure.pdf staat erin
+  ✓ NS Roosterplatform - Handleiding.pdf staat erin
+  ✓ start.mjs staat erin
+  ✓ stop.mjs staat erin
+  ✓ app\server.js staat erin
+  ✓ app\portable-migrate.mjs staat erin
+  ✓ app\prisma\migrations staat erin
+  ✓ runtime\node\node.exe staat erin
+  ✓ runtime\postgres\bin\pg_ctl.exe staat erin
+  ✓ runtime\postgres\bin\initdb.exe staat erin
+  ✓ config\instellingen.env staat erin
+  ✓ logs staat erin
+  ✓ exports staat erin
+  ✓ backups staat erin
+  ✓ database staat erin
+  ✓ de optimizerruntime staat erin
+
+2. Geen paden van de bouwmachine
+  ✓ de start- en stopbestanden bevatten geen enkele schijfletter
+  ✓ en nergens het pad van deze ontwikkelmachine
+  ✓ het startbestand rekent vanaf zijn eigen map (%~dp0)
+  ✓ en zet elk pad tussen aanhalingstekens, zodat een spatie het niet breekt
+  ✓ het stopbestand stopt niet zomaar alle node-processen
+
+3. Starten vanaf X:\proef met spaties
+      De bundel is nu bereikbaar als X:\proef met spaties\portableproef-bundel
+  ✓ de bundel is bereikbaar via de nieuwe schijfletter
+  ✓ het pad bevat een spatie
+
+4. De eerste start (database wordt aangemaakt)
+  ✓ het platform komt op zonder dat er iets geïnstalleerd is
+  ✓ het aanmeldscherm wordt geleverd
+  ✓ en het is werkelijk de applicatie
+
+5. Alleen localhost
+  ✓ de applicatie is niet bereikbaar op 192.168.178.225 (alleen 127.0.0.1)
+  ✓ de database is niet bereikbaar op 192.168.178.225
+
+6. De gegevens
+  ✓ de demonstratiegegevens staan erin (67 accounts)
+  ✓ en de diensten ook (223)
+
+6b. Downloads uit de bundel
+  ✓ het Excel-sjabloon komt als bestand uit de bundel
+  ✓ het roosterblad als PDF komt als bestand uit de bundel
+  ✓ het roosterblad van een scenario als PDF komt als bestand uit de bundel
+  ✓ een wijziging wordt geaccepteerd
+
+7. Stoppen
+      Klaar. De stick kan er veilig uit.
+  ✓ het stopscript meldt zich netjes af
+  ✓ de webpoort is vrij
+  ✓ de databasepoort is vrij
+  ✓ de grendel is opgeruimd
+
+8. Opnieuw starten
+  ✓ het platform komt opnieuw op
+  ✓ de wijziging van vóór het afsluiten staat er nog
+  ✓ de demonstratiegegevens zijn niet opnieuw ingeladen
+
+9. Eén exemplaar tegelijk
+  ✓ een tweede exemplaar weigert te starten
+  ✓ en het eerste exemplaar draait gewoon door
+
+10. Wat er op de schijf staat
+  ✓ de database staat in de bundel en niet ergens op de computer
+  ✓ er zijn logbestanden geschreven in de bundel
+  ✓ de toelichting waarschuwt tegen echte persoonsgegevens
+  ✓ en legt uit hoe een reservekopie werkt
+
+Opruimen
+      X: losgekoppeld en de proefmap verwijderd.
+
+════════════════════════════════════════════════════════════════════════
+51 controles geslaagd, 0 mislukt, 0 geblokkeerd.

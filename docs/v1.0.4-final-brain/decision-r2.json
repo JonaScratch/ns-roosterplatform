@@ -1,0 +1,171 @@
+{
+  "rule": "R2",
+  "decisions": [
+    {
+      "component": "nachtrij × 5 (informatief; beslist door R1)",
+      "on": "ab-k5",
+      "off": "human",
+      "onCounts": {
+        "night": 1,
+        "guard": 3,
+        "all": 10,
+        "failed": [
+          "pairs",
+          "nightBlockValue",
+          "worstNightExit",
+          "minRecoveryHours",
+          "coherence",
+          "rest"
+        ]
+      },
+      "offCounts": {
+        "night": 0,
+        "guard": 2,
+        "all": 8,
+        "failed": [
+          "singletons",
+          "pairs",
+          "nightBlockValue",
+          "worstNightExit",
+          "minRecoveryHours",
+          "coherence",
+          "rest",
+          "worstLine"
+        ]
+      },
+      "keep": true,
+      "decision": "aan",
+      "binding": false
+    },
+    {
+      "component": "slechtste geval in de rangschikking",
+      "on": "ab-k5-wc",
+      "off": "ab-k5",
+      "onCounts": {
+        "night": 5,
+        "guard": 3,
+        "all": 14,
+        "failed": [
+          "coherence",
+          "rest"
+        ]
+      },
+      "offCounts": {
+        "night": 1,
+        "guard": 3,
+        "all": 10,
+        "failed": [
+          "pairs",
+          "nightBlockValue",
+          "worstNightExit",
+          "minRecoveryHours",
+          "coherence",
+          "rest"
+        ]
+      },
+      "keep": true,
+      "decision": "aan",
+      "binding": true
+    },
+    {
+      "component": "nachtuitgangreparatie + nachten eerst",
+      "on": "ab-k5-full",
+      "off": "ab-k5-wc",
+      "onCounts": {
+        "night": 4,
+        "guard": 3,
+        "all": 14,
+        "failed": [
+          "singletons",
+          "rest"
+        ]
+      },
+      "offCounts": {
+        "night": 5,
+        "guard": 3,
+        "all": 14,
+        "failed": [
+          "coherence",
+          "rest"
+        ]
+      },
+      "keep": false,
+      "decision": "uit",
+      "binding": true
+    },
+    {
+      "component": "nachten eerst (binnen de reparatie)",
+      "on": "ab-k5-full",
+      "off": "ab-k5-nofirst",
+      "onCounts": {
+        "night": 4,
+        "guard": 3,
+        "all": 14,
+        "failed": [
+          "singletons",
+          "rest"
+        ]
+      },
+      "offCounts": {
+        "night": 3,
+        "guard": 3,
+        "all": 13,
+        "failed": [
+          "singletons",
+          "worstNightExit",
+          "rest"
+        ]
+      },
+      "keep": true,
+      "decision": "aan",
+      "binding": true
+    }
+  ],
+  "fairnessTolerance": {
+    "options": [
+      {
+        "tolerance": 0.25,
+        "phase": "ab-k5-f025",
+        "counts": {
+          "night": 4,
+          "guard": 3,
+          "all": 13,
+          "failed": [
+            "minRecoveryHours",
+            "coherence",
+            "rest"
+          ]
+        }
+      },
+      {
+        "tolerance": 0.5,
+        "phase": "ab-k5-full",
+        "counts": {
+          "night": 4,
+          "guard": 3,
+          "all": 14,
+          "failed": [
+            "singletons",
+            "rest"
+          ]
+        }
+      },
+      {
+        "tolerance": 1,
+        "phase": "ab-k5-f100",
+        "counts": {
+          "night": 2,
+          "guard": 4,
+          "all": 12,
+          "failed": [
+            "singletons",
+            "pairs",
+            "nightBlockValue",
+            "coherence"
+          ]
+        }
+      }
+    ],
+    "chosen": 0.5
+  }
+}

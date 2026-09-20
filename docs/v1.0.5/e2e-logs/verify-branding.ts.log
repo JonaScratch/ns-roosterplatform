@@ -1,0 +1,33 @@
+BEELDMERK
+══════════════════════════════════════════════════════════════════
+
+1. Het aangeleverde bestand
+  ✓ het aangeleverde bestand staat er (ns-logo.svg, 3 kB)
+  ✓ het is werkelijk een SVG en niet een ander bestand met die naam
+  ✓ de SVG is om te zetten naar tekenopdrachten voor de export
+      538.32953 × 210.2625 punten, 34 tekenopdrachten
+
+2. Geen oude assets
+  ✓ er staat geen oudere logoasset naast de canonieke
+  ✓ nergens in de broncode wordt nog naar een oude asset verwezen
+
+3. Het centrale component
+  ✓ er is één centraal logo-component
+  ✓ het component leest het aangeleverde bestand uit public/brand
+  ✓ de assetdetectie wijst naar precies één canoniek bestand
+
+4. Geen terugvalvorm
+  ✓ geen enkel scherm tekent nog rechtstreeks de terugvalvorm
+  ✓ de terugval wordt niet getoond zolang het aangeleverde bestand er is
+
+5. De plekken waar het beeldmerk hoort
+  ✓ Aanmeldscherm gebruikt NsLogo
+  ✓ Zijbalk en voettekst (alle vier de omgevingen) gebruikt NsLogo
+
+6. De export
+  ✓ het roosterblad tekent het beeldmerk uit hetzelfde bestand
+  ✓ het beeldmerk gaat als vector mee en niet als plaatje
+  ✓ de voorvertoning gebruikt hetzelfde ingesloten beeldmerk
+
+══════════════════════════════════════════════════════════════════
+15 controles geslaagd, 0 mislukt, 0 geblokkeerd door een ontbrekende bron.

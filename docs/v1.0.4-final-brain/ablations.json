@@ -1,0 +1,2028 @@
+{
+  "schema": "ns-final-brain-ablations/1",
+  "measuredAt": "2026-09-19T03:01:18.756Z",
+  "reference": "before.json (v1.0.4, dezelfde strategieën)",
+  "ablations": [
+    {
+      "phase": "human",
+      "label": "Ontwikkeling 2 (H09, referentie)",
+      "change": "menselijke tabel ×1, geen slechtste geval, geen nachtuitgangreparatie",
+      "strategies": [
+        "BALANCED"
+      ],
+      "status": "gemeten",
+      "runs": 10,
+      "candidates": 30,
+      "variant": null,
+      "runtimeMeanSeconds": 284.29,
+      "means": {
+        "robust": 81.84333333333332,
+        "overallWithoutContinuity": 87.11,
+        "worstLine": 77.49507523148148,
+        "flow": 94.32,
+        "nights": 85.12999999999995,
+        "rest": 78.52333333333334,
+        "hours": 89.65666666666662,
+        "fairness": 85.38333333333334,
+        "stability": 59.74666666666667,
+        "singletons": 0.23333333333333334,
+        "pairs": 0.4,
+        "nightBlockValue": 92.08771929824563,
+        "nightExitValue": 68.90674603174605,
+        "worstNightExit": 15.833333333333334,
+        "minRecoveryHours": 34.50222222222222,
+        "exitsBelowRule": 0.8333333333333334,
+        "exitsToEarly": 1.3333333333333333,
+        "coherence": 98.34244080145722,
+        "coherentShare": 97.90849673202612,
+        "oscillations": 0,
+        "changesThroughRest": 92.81835476797195,
+        "heavyClockAware": 0.43333333333333335,
+        "worstTransition": 1.8333333333333333,
+        "backwardDirectOver60": 0.3,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 0.9666666666666667,
+        "startJitterMean": 74.27494592655371,
+        "startJitterP90": 174.33333333333334,
+        "maxRosterHoursDeviation": 26.766666666666666,
+        "patternDistance": 21.450000000000003,
+        "robustV1": 77.27
+      },
+      "minRecoveryBuckets": {
+        "<36": 18,
+        ">=56": 1,
+        "46-55": 11
+      },
+      "structureFamilies": 21,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": false,
+          "before": 0.03333333333333333,
+          "after": 0.23333333333333334,
+          "delta": 0.2,
+          "ci95": [
+            0.03333333333333334,
+            0.36666666666666664
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": false,
+          "before": 0.26666666666666666,
+          "after": 0.4,
+          "delta": 0.13333333333333336,
+          "ci95": [
+            -0.16666666666666666,
+            0.4
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": false,
+          "before": 93.38596491228074,
+          "after": 92.08771929824563,
+          "delta": -1.2982456140351104,
+          "ci95": [
+            -3.754385964912288,
+            1.1578947368420813
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": false,
+          "before": 24.166666666666668,
+          "after": 15.833333333333334,
+          "delta": -8.333333333333334,
+          "ci95": [
+            -20.833333333333336,
+            4.999999999999998
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": false,
+          "before": 43.80611111111112,
+          "after": 34.50222222222222,
+          "delta": -9.303888888888899,
+          "ci95": [
+            -15.341666666666672,
+            -3.0166666666666586
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": false,
+          "before": 98.77959927140259,
+          "after": 98.34244080145722,
+          "delta": -0.43715846994537344,
+          "ci95": [
+            -1.0200364298724907,
+            0.12750455373401337
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 74.27494592655371,
+          "delta": -9.906720162076496,
+          "ci95": [
+            -12.754976938010671,
+            -7.084075920343238
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 85.38333333333334,
+          "delta": 1.0533333333333275,
+          "ci95": [
+            -0.8166666666666771,
+            2.843333333333348
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.65666666666662,
+          "delta": -0.020000000000038654,
+          "ci95": [
+            -0.09666666666672086,
+            0.05666666666665776
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 78.52333333333334,
+          "delta": -4.4599999999999795,
+          "ci95": [
+            -6.2099999999999795,
+            -2.6666666666666714
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": false,
+          "before": 78.4338599537037,
+          "after": 77.49507523148148,
+          "delta": -0.9387847222222234,
+          "ci95": [
+            -3.8958950617284103,
+            2.2454070216049615
+          ]
+        }
+      ],
+      "gatesPassed": 8,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-frozen",
+      "label": "Bevroren v1.0.4 (reproductie)",
+      "change": "profiel frozen-1.0.4",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "frozen-1.0.4",
+      "variant": {
+        "profile": "frozen-1.0.4",
+        "engineVersion": "adaptive-1.0.4",
+        "qualityModel": "quality-model-v1",
+        "humanRhythm": false,
+        "nightExitScale": 1,
+        "guards": {},
+        "worstCase": false,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": null
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 280.73333333333335,
+      "means": {
+        "robust": 82.82222222222222,
+        "overallWithoutContinuity": 87.7111111111111,
+        "worstLine": 80.73447145061728,
+        "flow": 94.73333333333332,
+        "nights": 85.33333333333331,
+        "rest": 81.55555555555556,
+        "hours": 89.64444444444445,
+        "fairness": 85.14444444444445,
+        "stability": 57.6888888888889,
+        "singletons": 0,
+        "pairs": 0,
+        "nightBlockValue": 95.67251461988302,
+        "nightExitValue": 61.25,
+        "worstNightExit": 13.88888888888889,
+        "minRecoveryHours": 40.93888888888889,
+        "exitsBelowRule": 0.4444444444444444,
+        "exitsToEarly": 1.8888888888888888,
+        "coherence": 99.33211900425016,
+        "coherentShare": 98.91067538126362,
+        "oscillations": 0,
+        "changesThroughRest": 96.07712926832937,
+        "heavyClockAware": 0,
+        "worstTransition": 0.7777777777777778,
+        "backwardDirectOver60": 0,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 0.6666666666666666,
+        "startJitterMean": 81.64949906500709,
+        "startJitterP90": 199.55555555555554,
+        "maxRosterHoursDeviation": 33,
+        "patternDistance": 25.15555555555555,
+        "robustV1": 79.48888888888888
+      },
+      "minRecoveryBuckets": {
+        "<36": 4,
+        "46-55": 5
+      },
+      "structureFamilies": 4,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": true,
+          "before": 0.03333333333333333,
+          "after": 0,
+          "delta": -0.03333333333333333,
+          "ci95": [
+            -0.1,
+            0
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.4666666666666667,
+            -0.1
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": true,
+          "before": 93.38596491228074,
+          "after": 95.67251461988302,
+          "delta": 2.2865497076022763,
+          "ci95": [
+            0.4327485380116798,
+            4.3508771929824235
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": false,
+          "before": 24.166666666666668,
+          "after": 13.88888888888889,
+          "delta": -10.277777777777779,
+          "ci95": [
+            -22.222222222222225,
+            0.277777777777775
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": false,
+          "before": 43.80611111111112,
+          "after": 40.93888888888889,
+          "delta": -2.8672222222222317,
+          "ci95": [
+            -8.721296296296309,
+            2.8472222222222143
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": true,
+          "before": 98.77959927140259,
+          "after": 99.33211900425016,
+          "delta": 0.5525197328475713,
+          "ci95": [
+            0.048573163327233715,
+            1.0443230115360933
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 81.64949906500709,
+          "delta": -2.532167023623117,
+          "ci95": [
+            -5.936607506271926,
+            0.5981391678724464
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 85.14444444444445,
+          "delta": 0.8144444444444332,
+          "ci95": [
+            -1.5044444444444594,
+            3.473333333333329
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.64444444444445,
+          "delta": -0.0322222222222166,
+          "ci95": [
+            -0.14000000000000057,
+            0.07111111111106538
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 81.55555555555556,
+          "delta": -1.427777777777763,
+          "ci95": [
+            -3.4499999999999744,
+            0.5611111111110745
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 80.73447145061728,
+          "delta": 2.300611496913575,
+          "ci95": [
+            0.28745563271604624,
+            4.39321180555558
+          ]
+        }
+      ],
+      "gatesPassed": 13,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-k5",
+      "label": "Nachtrij × 5",
+      "change": "alleen de nachtrij in CP-SAT × 5",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "rhythm",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": false,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": {
+          "nightExitScale": 5,
+          "worstCase": false,
+          "nightExitRepair": false,
+          "nightFirst": false
+        }
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 281.0333333333333,
+      "means": {
+        "robust": 83.3111111111111,
+        "overallWithoutContinuity": 88.55555555555556,
+        "worstLine": 79.02498713991768,
+        "flow": 93.9222222222222,
+        "nights": 89.76666666666665,
+        "rest": 80.44444444444444,
+        "hours": 89.68888888888888,
+        "fairness": 86.4111111111111,
+        "stability": 60.544444444444444,
+        "singletons": 0,
+        "pairs": 0.5555555555555556,
+        "nightBlockValue": 92.69005847953217,
+        "nightExitValue": 82.96296296296296,
+        "worstNightExit": 22.22222222222222,
+        "minRecoveryHours": 43.70555555555555,
+        "exitsBelowRule": 0.3333333333333333,
+        "exitsToEarly": 0.8888888888888888,
+        "coherence": 98.29993928354584,
+        "coherentShare": 97.16775599128542,
+        "oscillations": 0,
+        "changesThroughRest": 90.30039255845708,
+        "heavyClockAware": 0.3333333333333333,
+        "worstTransition": 1.8888888888888888,
+        "backwardDirectOver60": 0.3333333333333333,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 0.7777777777777778,
+        "startJitterMean": 70.75974065603116,
+        "startJitterP90": 160.11111111111111,
+        "maxRosterHoursDeviation": 28.88888888888889,
+        "patternDistance": 18.455555555555556,
+        "robustV1": 77.26666666666667
+      },
+      "minRecoveryBuckets": {
+        "<36": 3,
+        "46-55": 6
+      },
+      "structureFamilies": 6,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": true,
+          "before": 0.03333333333333333,
+          "after": 0,
+          "delta": -0.03333333333333333,
+          "ci95": [
+            -0.1,
+            0
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": false,
+          "before": 0.26666666666666666,
+          "after": 0.5555555555555556,
+          "delta": 0.2888888888888889,
+          "ci95": [
+            -0.07777777777777778,
+            0.6555555555555554
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": false,
+          "before": 93.38596491228074,
+          "after": 92.69005847953217,
+          "delta": -0.695906432748572,
+          "ci95": [
+            -3.8596491228070136,
+            2.678362573099392
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": false,
+          "before": 24.166666666666668,
+          "after": 22.22222222222222,
+          "delta": -1.9444444444444464,
+          "ci95": [
+            -16.666666666666668,
+            12.500000000000004
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": false,
+          "before": 43.80611111111112,
+          "after": 43.70555555555555,
+          "delta": -0.10055555555557305,
+          "ci95": [
+            -7.863518518518539,
+            7.126851851851839
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": false,
+          "before": 98.77959927140259,
+          "after": 98.29993928354584,
+          "delta": -0.4796599878567491,
+          "ci95": [
+            -1.147540983606575,
+            0.28536733454765795
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 70.75974065603116,
+          "delta": -13.421925432599053,
+          "ci95": [
+            -16.610794416030842,
+            -10.107608524801023
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 86.4111111111111,
+          "delta": 2.0811111111110847,
+          "ci95": [
+            -0.6011111111111092,
+            4.70555555555552
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.68888888888888,
+          "delta": 0.01222222222222058,
+          "ci95": [
+            -0.0955555555555776,
+            0.11222222222217226
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 80.44444444444444,
+          "delta": -2.538888888888877,
+          "ci95": [
+            -5.018888888888881,
+            -0.17333333333330359
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 79.02498713991768,
+          "delta": 0.5911271862139813,
+          "ci95": [
+            -4.126691100823052,
+            5.3536233281893
+          ]
+        }
+      ],
+      "gatesPassed": 10,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-k5-wc",
+      "label": "+ slechtste geval",
+      "change": "plus het slechtste geval in de rangschikking",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "rhythm",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": {
+          "nightExitScale": 5,
+          "nightExitRepair": false,
+          "nightFirst": false
+        }
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 283.96666666666664,
+      "means": {
+        "robust": 85.11111111111111,
+        "overallWithoutContinuity": 89.23333333333333,
+        "worstLine": 84.58357767489711,
+        "flow": 95.13333333333333,
+        "nights": 91.22222222222221,
+        "rest": 81.4111111111111,
+        "hours": 89.66666666666667,
+        "fairness": 85.90000000000002,
+        "stability": 61.98888888888887,
+        "singletons": 0,
+        "pairs": 0.1111111111111111,
+        "nightBlockValue": 96.5497076023392,
+        "nightExitValue": 78.75,
+        "worstNightExit": 27.77777777777778,
+        "minRecoveryHours": 47.50555555555555,
+        "exitsBelowRule": 0.3333333333333333,
+        "exitsToEarly": 0.8888888888888888,
+        "coherence": 98.60352155434121,
+        "coherentShare": 98.25708061002177,
+        "oscillations": 0,
+        "changesThroughRest": 93.75177823453686,
+        "heavyClockAware": 0,
+        "worstTransition": 1,
+        "backwardDirectOver60": 0.1111111111111111,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 1,
+        "startJitterMean": 71.300988173047,
+        "startJitterP90": 154.77777777777777,
+        "maxRosterHoursDeviation": 28.22222222222222,
+        "patternDistance": 19.866666666666667,
+        "robustV1": 79.26666666666667
+      },
+      "minRecoveryBuckets": {
+        "<36": 3,
+        "46-55": 5,
+        ">=56": 1
+      },
+      "structureFamilies": 6,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": true,
+          "before": 0.03333333333333333,
+          "after": 0,
+          "delta": -0.03333333333333333,
+          "ci95": [
+            -0.1,
+            0
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0.1111111111111111,
+          "delta": -0.15555555555555556,
+          "ci95": [
+            -0.43333333333333335,
+            0.1333333333333333
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": true,
+          "before": 93.38596491228074,
+          "after": 96.5497076023392,
+          "delta": 3.1637426900584558,
+          "ci95": [
+            0.18128654970759328,
+            5.754385964912302
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": true,
+          "before": 24.166666666666668,
+          "after": 27.77777777777778,
+          "delta": 3.6111111111111107,
+          "ci95": [
+            -12.777777777777779,
+            20.277777777777775
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": true,
+          "before": 43.80611111111112,
+          "after": 47.50555555555555,
+          "delta": 3.699444444444431,
+          "ci95": [
+            -3.342037037037059,
+            10.67055555555553
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": false,
+          "before": 98.77959927140259,
+          "after": 98.60352155434121,
+          "delta": -0.17607771706137498,
+          "ci95": [
+            -1.18397085610205,
+            0.5646630236793868
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 71.300988173047,
+          "delta": -12.880677915583206,
+          "ci95": [
+            -16.791083245371325,
+            -9.379189713408863
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 85.90000000000002,
+          "delta": 1.5700000000000074,
+          "ci95": [
+            -0.69777777777783,
+            3.6288888888888806
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.66666666666667,
+          "delta": -0.009999999999990905,
+          "ci95": [
+            -0.10555555555554008,
+            0.09444444444443434
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 81.4111111111111,
+          "delta": -1.5722222222222229,
+          "ci95": [
+            -4.078888888888869,
+            0.6611111111111114
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 84.58357767489711,
+          "delta": 6.1497177211934115,
+          "ci95": [
+            3.365467463991763,
+            8.526045524691355
+          ]
+        }
+      ],
+      "gatesPassed": 14,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-k5-full",
+      "label": "+ nachtuitgangreparatie, nachten eerst",
+      "change": "plus gerichte reparatie van nachtuitgangen, nachtdoelen eerst",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "rhythm",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": true,
+        "overrides": {
+          "nightExitScale": 5
+        }
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 281.26666666666665,
+      "means": {
+        "robust": 85.1888888888889,
+        "overallWithoutContinuity": 89.1111111111111,
+        "worstLine": 83.83146862139918,
+        "flow": 95.32222222222222,
+        "nights": 91.46666666666667,
+        "rest": 80.3111111111111,
+        "hours": 89.66666666666666,
+        "fairness": 85.77777777777777,
+        "stability": 62.57777777777777,
+        "singletons": 0.1111111111111111,
+        "pairs": 0.1111111111111111,
+        "nightBlockValue": 95.90643274853804,
+        "nightExitValue": 81.11111111111111,
+        "worstNightExit": 41.666666666666664,
+        "minRecoveryHours": 45.581481481481475,
+        "exitsBelowRule": 0.3333333333333333,
+        "exitsToEarly": 0.6666666666666666,
+        "coherence": 99.27140255009107,
+        "coherentShare": 98.80174291938997,
+        "oscillations": 0.1111111111111111,
+        "changesThroughRest": 95.66158050718056,
+        "heavyClockAware": 0,
+        "worstTransition": 1,
+        "backwardDirectOver60": 0,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 0.8888888888888888,
+        "startJitterMean": 73.3568257054888,
+        "startJitterP90": 170.22222222222223,
+        "maxRosterHoursDeviation": 24.444444444444443,
+        "patternDistance": 20.211111111111112,
+        "robustV1": 79.11111111111111
+      },
+      "minRecoveryBuckets": {
+        "46-55": 5,
+        "<36": 3,
+        ">=56": 1
+      },
+      "structureFamilies": 7,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": false,
+          "before": 0.03333333333333333,
+          "after": 0.1111111111111111,
+          "delta": 0.07777777777777778,
+          "ci95": [
+            -0.06666666666666667,
+            0.3333333333333333
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0.1111111111111111,
+          "delta": -0.15555555555555556,
+          "ci95": [
+            -0.4,
+            0.14444444444444443
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": true,
+          "before": 93.38596491228074,
+          "after": 95.90643274853804,
+          "delta": 2.5204678362572963,
+          "ci95": [
+            -0.6491228070175623,
+            5.298245614035082
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": true,
+          "before": 24.166666666666668,
+          "after": 41.666666666666664,
+          "delta": 17.499999999999996,
+          "ci95": [
+            -10.833333333333336,
+            47.22222222222223
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": true,
+          "before": 43.80611111111112,
+          "after": 45.581481481481475,
+          "delta": 1.7753703703703536,
+          "ci95": [
+            -5.673518518518534,
+            8.950555555555553
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": true,
+          "before": 98.77959927140259,
+          "after": 99.27140255009107,
+          "delta": 0.4918032786884794,
+          "ci95": [
+            0.07285974499086478,
+            0.9289617486338244
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0.1111111111111111,
+          "delta": -0.15555555555555556,
+          "ci95": [
+            -0.4,
+            0.1333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 73.3568257054888,
+          "delta": -10.824840383141407,
+          "ci95": [
+            -12.917191286017768,
+            -8.756273331725154
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 85.77777777777777,
+          "delta": 1.447777777777759,
+          "ci95": [
+            -0.6022222222222382,
+            3.5833333333333144
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.66666666666666,
+          "delta": -0.010000000000005116,
+          "ci95": [
+            -0.13555555555556964,
+            0.10222222222220978
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 80.3111111111111,
+          "delta": -2.672222222222217,
+          "ci95": [
+            -5.8111111111111455,
+            0.2433333333333536
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 83.83146862139918,
+          "delta": 5.397608667695479,
+          "ci95": [
+            1.8833140432098787,
+            8.126106610082289
+          ]
+        }
+      ],
+      "gatesPassed": 14,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-k5-nofirst",
+      "label": "volledig, maar niet nachten eerst",
+      "change": "zonder de volgorde nachten-eerst (alles tegelijk op ernst)",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "rhythm",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": false,
+        "overrides": {
+          "nightExitScale": 5,
+          "nightFirst": false
+        }
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 283.6333333333334,
+      "means": {
+        "robust": 84.77777777777777,
+        "overallWithoutContinuity": 88.93333333333332,
+        "worstLine": 84.44418724279835,
+        "flow": 95.0222222222222,
+        "nights": 90.64444444444445,
+        "rest": 80.45555555555556,
+        "hours": 89.65555555555554,
+        "fairness": 86.12222222222222,
+        "stability": 61.666666666666664,
+        "singletons": 0.1111111111111111,
+        "pairs": 0.1111111111111111,
+        "nightBlockValue": 96.08187134502924,
+        "nightExitValue": 77.91666666666667,
+        "worstNightExit": 22.22222222222222,
+        "minRecoveryHours": 44.12777777777777,
+        "exitsBelowRule": 0.5555555555555556,
+        "exitsToEarly": 0.7777777777777778,
+        "coherence": 98.84638737097754,
+        "coherentShare": 98.25708061002177,
+        "oscillations": 0,
+        "changesThroughRest": 93.71841614466138,
+        "heavyClockAware": 0,
+        "worstTransition": 1,
+        "backwardDirectOver60": 0,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 1,
+        "startJitterMean": 71.74762550971425,
+        "startJitterP90": 158.22222222222223,
+        "maxRosterHoursDeviation": 25.22222222222222,
+        "patternDistance": 18.944444444444443,
+        "robustV1": 78.8111111111111
+      },
+      "minRecoveryBuckets": {
+        ">=56": 3,
+        "46-55": 2,
+        "<36": 4
+      },
+      "structureFamilies": 6,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": false,
+          "before": 0.03333333333333333,
+          "after": 0.1111111111111111,
+          "delta": 0.07777777777777778,
+          "ci95": [
+            -0.1,
+            0.3333333333333333
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0.1111111111111111,
+          "delta": -0.15555555555555556,
+          "ci95": [
+            -0.4,
+            0.15555555555555556
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": true,
+          "before": 93.38596491228074,
+          "after": 96.08187134502924,
+          "delta": 2.695906432748501,
+          "ci95": [
+            0.0877192982455881,
+            5.15789473684211
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": false,
+          "before": 24.166666666666668,
+          "after": 22.22222222222222,
+          "delta": -1.9444444444444464,
+          "ci95": [
+            -19.444444444444443,
+            14.722222222222218
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": true,
+          "before": 43.80611111111112,
+          "after": 44.12777777777777,
+          "delta": 0.3216666666666512,
+          "ci95": [
+            -8.78166666666668,
+            9.33018518518518
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": true,
+          "before": 98.77959927140259,
+          "after": 98.84638737097754,
+          "delta": 0.06678809957494991,
+          "ci95": [
+            -0.2975106253794877,
+            0.44323011536123147
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 71.74762550971425,
+          "delta": -12.434040578915955,
+          "ci95": [
+            -14.46109531418108,
+            -10.371917696083585
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 86.12222222222222,
+          "delta": 1.7922222222222075,
+          "ci95": [
+            -0.8966666666666754,
+            4.428888888888878
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.65555555555554,
+          "delta": -0.02111111111112507,
+          "ci95": [
+            -0.1511111111111063,
+            0.10333333333332462
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 80.45555555555556,
+          "delta": -2.5277777777777573,
+          "ci95": [
+            -6.2211111111110995,
+            0.8811111111111245
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 84.44418724279835,
+          "delta": 6.010327289094647,
+          "ci95": [
+            4.132272376543213,
+            7.983034336419735
+          ]
+        }
+      ],
+      "gatesPassed": 13,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-k5-f025",
+      "label": "volledig, eerlijkheidsmarge 0,25",
+      "change": "bewaking eerlijkheid 0,25 in plaats van 0,5",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "rhythm",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.25,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": true,
+        "overrides": {
+          "nightExitScale": 5,
+          "guards": {
+            "fairness": 0.25,
+            "hours": 1,
+            "rest": 1
+          }
+        }
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 275.8666666666667,
+      "means": {
+        "robust": 84.53333333333332,
+        "overallWithoutContinuity": 89.03333333333335,
+        "worstLine": 81.85196759259259,
+        "flow": 94.77777777777779,
+        "nights": 90.47777777777776,
+        "rest": 80.9111111111111,
+        "hours": 89.7111111111111,
+        "fairness": 86.73333333333333,
+        "stability": 61.06666666666667,
+        "singletons": 0,
+        "pairs": 0.2222222222222222,
+        "nightBlockValue": 95.43859649122807,
+        "nightExitValue": 78.88888888888889,
+        "worstNightExit": 30.555555555555557,
+        "minRecoveryHours": 42.162962962962965,
+        "exitsBelowRule": 0.4444444444444444,
+        "exitsToEarly": 0.7777777777777778,
+        "coherence": 98.42137219186401,
+        "coherentShare": 97.93028322440085,
+        "oscillations": 0,
+        "changesThroughRest": 92.57072252054331,
+        "heavyClockAware": 0,
+        "worstTransition": 1,
+        "backwardDirectOver60": 0,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 1,
+        "startJitterMean": 70.61182642548546,
+        "startJitterP90": 162.77777777777777,
+        "maxRosterHoursDeviation": 24.22222222222222,
+        "patternDistance": 19.233333333333334,
+        "robustV1": 79.02222222222223
+      },
+      "minRecoveryBuckets": {
+        "46-55": 5,
+        "<36": 4
+      },
+      "structureFamilies": 5,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": true,
+          "before": 0.03333333333333333,
+          "after": 0,
+          "delta": -0.03333333333333333,
+          "ci95": [
+            -0.1,
+            0
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0.2222222222222222,
+          "delta": -0.04444444444444445,
+          "ci95": [
+            -0.36666666666666664,
+            0.3111111111111111
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": true,
+          "before": 93.38596491228074,
+          "after": 95.43859649122807,
+          "delta": 2.0526315789473273,
+          "ci95": [
+            -1.2397660818713518,
+            5.087719298245588
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": true,
+          "before": 24.166666666666668,
+          "after": 30.555555555555557,
+          "delta": 6.388888888888889,
+          "ci95": [
+            -17.499999999999996,
+            35.55555555555556
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": false,
+          "before": 43.80611111111112,
+          "after": 42.162962962962965,
+          "delta": -1.643148148148157,
+          "ci95": [
+            -9.505000000000017,
+            6.160925925925916
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": false,
+          "before": 98.77959927140259,
+          "after": 98.42137219186401,
+          "delta": -0.3582270795385796,
+          "ci95": [
+            -0.7468123861566909,
+            0.07893139040676544
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 70.61182642548546,
+          "delta": -13.569839663144748,
+          "ci95": [
+            -16.49173021704722,
+            -10.649551998046732
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 86.73333333333333,
+          "delta": 2.4033333333333218,
+          "ci95": [
+            -0.038888888888891415,
+            4.74222222222221
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.7111111111111,
+          "delta": 0.034444444444432065,
+          "ci95": [
+            -0.06333333333331836,
+            0.12999999999996703
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": false,
+          "before": 82.98333333333332,
+          "after": 80.9111111111111,
+          "delta": -2.072222222222223,
+          "ci95": [
+            -4.25777777777779,
+            0.0544444444444423
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 81.85196759259259,
+          "delta": 3.418107638888884,
+          "ci95": [
+            1.0638117283950663,
+            5.678079989711961
+          ]
+        }
+      ],
+      "gatesPassed": 13,
+      "gatesTotal": 16
+    },
+    {
+      "phase": "ab-k5-f100",
+      "label": "volledig, eerlijkheidsmarge 1,0",
+      "change": "bewaking eerlijkheid 1,0 in plaats van 0,5",
+      "strategies": [
+        "BALANCED"
+      ],
+      "profile": "rhythm",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 1,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": true,
+        "overrides": {
+          "nightExitScale": 5,
+          "guards": {
+            "fairness": 1,
+            "hours": 1,
+            "rest": 1
+          }
+        }
+      },
+      "status": "gemeten",
+      "runs": 3,
+      "candidates": 9,
+      "runtimeMeanSeconds": 283.2,
+      "means": {
+        "robust": 84.85555555555555,
+        "overallWithoutContinuity": 89.32222222222222,
+        "worstLine": 79.89467592592592,
+        "flow": 94.31111111111109,
+        "nights": 91.4888888888889,
+        "rest": 83.67777777777778,
+        "hours": 89.66666666666666,
+        "fairness": 85.12222222222222,
+        "stability": 58.72222222222222,
+        "singletons": 0.1111111111111111,
+        "pairs": 0.5555555555555556,
+        "nightBlockValue": 90.99415204678363,
+        "nightExitValue": 92.5925925925926,
+        "worstNightExit": 72.22222222222223,
+        "minRecoveryHours": 50.579629629629636,
+        "exitsBelowRule": 0.2222222222222222,
+        "exitsToEarly": 0.2222222222222222,
+        "coherence": 98.42137219186401,
+        "coherentShare": 97.38562091503269,
+        "oscillations": 0,
+        "changesThroughRest": 91.43975375343562,
+        "heavyClockAware": 0.1111111111111111,
+        "worstTransition": 1.1111111111111112,
+        "backwardDirectOver60": 0.2222222222222222,
+        "boundaryHeavy": 0,
+        "worstWorkBlock": 0.8888888888888888,
+        "startJitterMean": 71.73183355333873,
+        "startJitterP90": 164.11111111111111,
+        "maxRosterHoursDeviation": 25.22222222222222,
+        "patternDistance": 19.56666666666667,
+        "robustV1": 78.21111111111111
+      },
+      "minRecoveryBuckets": {
+        "46-55": 4,
+        ">=56": 3,
+        "<36": 2
+      },
+      "structureFamilies": 7,
+      "gates": [
+        {
+          "key": "hardValid",
+          "group": "hard",
+          "pass": true,
+          "before": 1,
+          "after": 1,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "unassigned",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "profileBreaches",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "confirmedHard",
+          "group": "hard",
+          "pass": true,
+          "before": 0,
+          "after": 0,
+          "delta": null,
+          "ci95": null
+        },
+        {
+          "key": "singletons",
+          "group": "structure",
+          "pass": false,
+          "before": 0.03333333333333333,
+          "after": 0.1111111111111111,
+          "delta": 0.07777777777777778,
+          "ci95": [
+            -0.06666666666666667,
+            0.3333333333333333
+          ]
+        },
+        {
+          "key": "pairs",
+          "group": "structure",
+          "pass": false,
+          "before": 0.26666666666666666,
+          "after": 0.5555555555555556,
+          "delta": 0.2888888888888889,
+          "ci95": [
+            -0.0888888888888889,
+            0.6555555555555554
+          ]
+        },
+        {
+          "key": "nightBlockValue",
+          "group": "structure",
+          "pass": false,
+          "before": 93.38596491228074,
+          "after": 90.99415204678363,
+          "delta": -2.3918128654971156,
+          "ci95": [
+            -5.9064327485380375,
+            1.596491228070164
+          ]
+        },
+        {
+          "key": "worstNightExit",
+          "group": "structure",
+          "pass": true,
+          "before": 24.166666666666668,
+          "after": 72.22222222222223,
+          "delta": 48.05555555555556,
+          "ci95": [
+            16.944444444444443,
+            73.61111111111111
+          ]
+        },
+        {
+          "key": "minRecoveryHours",
+          "group": "structure",
+          "pass": true,
+          "before": 43.80611111111112,
+          "after": 50.579629629629636,
+          "delta": 6.7735185185185145,
+          "ci95": [
+            -0.9051851851852035,
+            13.02814814814814
+          ]
+        },
+        {
+          "key": "coherence",
+          "group": "structure",
+          "pass": false,
+          "before": 98.77959927140259,
+          "after": 98.42137219186401,
+          "delta": -0.3582270795385796,
+          "ci95": [
+            -0.8439587128112009,
+            0.20036429872496342
+          ]
+        },
+        {
+          "key": "oscillations",
+          "group": "structure",
+          "pass": true,
+          "before": 0.26666666666666666,
+          "after": 0,
+          "delta": -0.26666666666666666,
+          "ci95": [
+            -0.43333333333333335,
+            -0.13333333333333333
+          ]
+        },
+        {
+          "key": "startJitterMean",
+          "group": "structure",
+          "pass": true,
+          "before": 84.18166608863021,
+          "after": 71.73183355333873,
+          "delta": -12.449832535291478,
+          "ci95": [
+            -16.19650752903169,
+            -8.076997338190594
+          ]
+        },
+        {
+          "key": "fairness",
+          "group": "guardrail",
+          "pass": true,
+          "before": 84.33000000000001,
+          "after": 85.12222222222222,
+          "delta": 0.7922222222222075,
+          "ci95": [
+            -1.7522222222222297,
+            3.382222222222211
+          ]
+        },
+        {
+          "key": "hours",
+          "group": "guardrail",
+          "pass": true,
+          "before": 89.67666666666666,
+          "after": 89.66666666666666,
+          "delta": -0.010000000000005116,
+          "ci95": [
+            -0.1155555555555452,
+            0.09666666666667822
+          ]
+        },
+        {
+          "key": "rest",
+          "group": "guardrail",
+          "pass": true,
+          "before": 82.98333333333332,
+          "after": 83.67777777777778,
+          "delta": 0.6944444444444571,
+          "ci95": [
+            -2.1188888888888897,
+            3.0366666666666475
+          ]
+        },
+        {
+          "key": "worstLine",
+          "group": "guardrail",
+          "pass": true,
+          "before": 78.4338599537037,
+          "after": 79.89467592592592,
+          "delta": 1.4608159722222211,
+          "ci95": [
+            -4.36337962962962,
+            6.473640046296282
+          ]
+        }
+      ],
+      "gatesPassed": 12,
+      "gatesTotal": 16
+    }
+  ]
+}

@@ -1,0 +1,885 @@
+{
+  "schema": "ns-machinist-preferences-measure/1",
+  "measuredAt": "2026-09-19T11:17:19.766Z",
+  "sourceStatus": {
+    "affinityDirection": "MACHINIST_PREFERENCE (werkopdracht), voor 50+ Mix het menselijke rooster",
+    "weekendRR": "USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT",
+    "fridayBeforeMidnight": "USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT",
+    "hoursMax40": "USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT",
+    "exposure": "PROXY: CAO-nachtvenster 00:00–06:00 en weekendminuten; geen ORT"
+  },
+  "official": {
+    "perRoster": [
+      {
+        "code": "DDR-50MIX",
+        "profile": "MIX_50PLUS",
+        "lines": 6,
+        "classes": {
+          "LATE": 2,
+          "EARLY_LATE": 6,
+          "DAYLIKE_EARLY": 4,
+          "EARLY": 7
+        },
+        "dayDuties": 10,
+        "rangeer": 2,
+        "rangeerPerLine": [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "nightWindowMinutesPerWeek": 0,
+        "weekendMinutesPerWeek": 322,
+        "averageWeeklyMinutes": 2391,
+        "exactTotalMinusTarget": -49,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 2,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": null,
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 3,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "16:28",
+            "fridayEndMinute": 988,
+            "mondayStart": "07:00",
+            "restHours": 62.5,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 5,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "08:00",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 4,
+          "3": 3,
+          "4": 1,
+          "5": 1
+        },
+        "restStreaks": {
+          "1": 5,
+          "2": 2,
+          "3": 1,
+          "4": 1
+        },
+        "affinityMean": 0.8105263157894735,
+        "nightBlocks": {}
+      },
+      {
+        "code": "DDR-BLM",
+        "profile": "BLM",
+        "lines": 6,
+        "classes": {
+          "EARLY": 11,
+          "EXTREME_EARLY": 3,
+          "PREMIUM_LATE": 1,
+          "NIGHT": 3,
+          "EARLY_LATE": 3,
+          "LATE": 5
+        },
+        "dayDuties": 3,
+        "rangeer": 7,
+        "rangeerPerLine": [
+          2,
+          0,
+          0,
+          3,
+          1,
+          1
+        ],
+        "nightWindowMinutesPerWeek": 230,
+        "weekendMinutesPerWeek": 505,
+        "averageWeeklyMinutes": 2352,
+        "exactTotalMinusTarget": -288,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 3,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "13:58",
+            "fridayEndMinute": 838,
+            "mondayStart": "16:52",
+            "restHours": 50.9,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 4,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "13:27",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 6,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "05:30",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 2,
+          "3": 3,
+          "4": 2,
+          "5": 1
+        },
+        "restStreaks": {
+          "1": 2,
+          "2": 4,
+          "3": 2
+        },
+        "affinityMean": 0.5999999999999998,
+        "nightBlocks": {
+          "3": 1
+        }
+      },
+      {
+        "code": "DDR-L",
+        "profile": "LAAT",
+        "lines": 12,
+        "classes": {
+          "LATE": 13,
+          "PREMIUM_LATE": 18,
+          "EARLY_LATE": 6
+        },
+        "dayDuties": 6,
+        "rangeer": 5,
+        "rangeerPerLine": [
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "nightWindowMinutesPerWeek": 104,
+        "weekendMinutesPerWeek": 286,
+        "averageWeeklyMinutes": 2399,
+        "exactTotalMinusTarget": -9,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 1,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "22:58",
+            "fridayEndMinute": 1378,
+            "mondayStart": "18:00",
+            "restHours": 67,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 4,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "16:27",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 5,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "12:06",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 7,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "20:58",
+            "fridayEndMinute": 1258,
+            "mondayStart": "11:09",
+            "restHours": 38.2,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 10,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": null,
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 11,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "16:09",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 5,
+          "3": 3,
+          "4": 7,
+          "5": 1
+        },
+        "restStreaks": {
+          "1": 7,
+          "2": 4,
+          "3": 3,
+          "4": 2
+        },
+        "affinityMean": 0.7297297297297297,
+        "nightBlocks": {}
+      },
+      {
+        "code": "DDR-LN",
+        "profile": "LAAT_NACHT",
+        "lines": 6,
+        "classes": {
+          "PREMIUM_LATE": 6,
+          "EARLY_LATE": 4,
+          "NIGHT": 6,
+          "LATE": 6
+        },
+        "dayDuties": 4,
+        "rangeer": 6,
+        "rangeerPerLine": [
+          1,
+          3,
+          1,
+          1,
+          0,
+          0
+        ],
+        "nightWindowMinutesPerWeek": 390,
+        "weekendMinutesPerWeek": 495,
+        "averageWeeklyMinutes": 2399,
+        "exactTotalMinusTarget": -5,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 1,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "20:28",
+            "fridayEndMinute": 1228,
+            "mondayStart": "12:09",
+            "restHours": 39.7,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 4,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "21:07",
+            "fridayEndMinute": 1267,
+            "mondayStart": "13:17",
+            "restHours": 64.2,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 5,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "21:28",
+            "fridayEndMinute": 1288,
+            "mondayStart": "12:57",
+            "restHours": 63.5,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 2,
+          "3": 4,
+          "4": 1,
+          "6": 1
+        },
+        "restStreaks": {
+          "1": 2,
+          "2": 4,
+          "3": 2
+        },
+        "affinityMean": 0.6363636363636361,
+        "nightBlocks": {
+          "6": 1
+        }
+      },
+      {
+        "code": "DDR-MIX",
+        "profile": "MIX",
+        "lines": 12,
+        "classes": {
+          "EARLY": 8,
+          "EXTREME_EARLY": 6,
+          "NIGHT": 10,
+          "PREMIUM_LATE": 6,
+          "LATE": 10,
+          "EARLY_LATE": 3,
+          "DAYLIKE_EARLY": 1
+        },
+        "dayDuties": 4,
+        "rangeer": 11,
+        "rangeerPerLine": [
+          1,
+          2,
+          1,
+          0,
+          0,
+          2,
+          0,
+          4,
+          0,
+          1,
+          0,
+          0
+        ],
+        "nightWindowMinutesPerWeek": 369,
+        "weekendMinutesPerWeek": 358,
+        "averageWeeklyMinutes": 2391,
+        "exactTotalMinusTarget": -98,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 1,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "05:02",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 4,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "22:28",
+            "fridayEndMinute": 1348,
+            "mondayStart": "15:09",
+            "restHours": 40.7,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 7,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "23:24",
+            "fridayEndMinute": 1404,
+            "mondayStart": "23:00",
+            "restHours": 47.6,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 8,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "06:00 (za)",
+            "fridayEndMinute": 1800,
+            "mondayStart": "17:19",
+            "restHours": 35.3,
+            "rr": true,
+            "fridayBeforeMidnight": false
+          },
+          {
+            "line": 10,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "12:00",
+            "fridayEndMinute": 720,
+            "mondayStart": "14:19",
+            "restHours": 50.3,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 11,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "06:08",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 6,
+          "3": 4,
+          "4": 3,
+          "5": 2,
+          "6": 1
+        },
+        "restStreaks": {
+          "1": 5,
+          "2": 7,
+          "3": 3,
+          "4": 1
+        },
+        "affinityMean": 0.6727272727272731,
+        "nightBlocks": {
+          "5": 2
+        }
+      },
+      {
+        "code": "DDR-V",
+        "profile": "VROEG",
+        "lines": 12,
+        "classes": {
+          "EXTREME_EARLY": 8,
+          "EARLY": 31,
+          "DAYLIKE_EARLY": 2
+        },
+        "dayDuties": 2,
+        "rangeer": 5,
+        "rangeerPerLine": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "nightWindowMinutesPerWeek": 57,
+        "weekendMinutesPerWeek": 392,
+        "averageWeeklyMinutes": 2384,
+        "exactTotalMinusTarget": -181,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 1,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "14:58",
+            "fridayEndMinute": 898,
+            "mondayStart": "08:49",
+            "restHours": 41.9,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 4,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "12:00",
+            "fridayEndMinute": 720,
+            "mondayStart": "08:43",
+            "restHours": 44.7,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 7,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "05:43",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 9,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "17:11",
+            "fridayEndMinute": 1031,
+            "mondayStart": "06:52",
+            "restHours": 37.7,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 10,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": "05:47",
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 12,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "14:41",
+            "fridayEndMinute": 881,
+            "mondayStart": null,
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 1,
+          "3": 10,
+          "4": 4,
+          "5": 1
+        },
+        "restStreaks": {
+          "1": 2,
+          "2": 13,
+          "3": 1
+        },
+        "affinityMean": 0.658536585365854,
+        "nightBlocks": {}
+      },
+      {
+        "code": "DDR-VL",
+        "profile": "VROEG_LAAT",
+        "lines": 10,
+        "classes": {
+          "EXTREME_EARLY": 9,
+          "EARLY": 10,
+          "LATE": 6,
+          "PREMIUM_LATE": 5,
+          "EARLY_LATE": 4
+        },
+        "dayDuties": 4,
+        "rangeer": 3,
+        "rangeerPerLine": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "nightWindowMinutesPerWeek": 81,
+        "weekendMinutesPerWeek": 456,
+        "averageWeeklyMinutes": 2395,
+        "exactTotalMinusTarget": -46,
+        "hoursGate": true,
+        "weekends": [
+          {
+            "line": 1,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": null,
+            "fridayEndMinute": null,
+            "mondayStart": null,
+            "restHours": null,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 2,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "12:40",
+            "fridayEndMinute": 760,
+            "mondayStart": "15:16",
+            "restHours": 50.6,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 4,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "23:11",
+            "fridayEndMinute": 1391,
+            "mondayStart": "13:00",
+            "restHours": 37.8,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 7,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "19:37",
+            "fridayEndMinute": 1177,
+            "mondayStart": "05:01",
+            "restHours": 57.4,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          },
+          {
+            "line": 10,
+            "saturday": "RUST",
+            "sunday": "RUST",
+            "fridayEnd": "10:54",
+            "fridayEndMinute": 654,
+            "mondayStart": "04:27",
+            "restHours": 41.6,
+            "rr": true,
+            "fridayBeforeMidnight": true
+          }
+        ],
+        "workStreaks": {
+          "2": 2,
+          "3": 5,
+          "4": 5,
+          "5": 1
+        },
+        "restStreaks": {
+          "1": 3,
+          "2": 7,
+          "3": 3
+        },
+        "affinityMean": 0.7176470588235296,
+        "nightBlocks": {}
+      }
+    ],
+    "affinity": {
+      "mean": 0.6860986547085203,
+      "worstLine": {
+        "roster": "DDR-L",
+        "lineNumber": 4,
+        "mean": 0.4
+      },
+      "rosterSpread": 0.21052631578947378,
+      "exposureSpread": 0.3337724334999968
+    },
+    "popular": {
+      "premiumLate": {
+        "perRoster": [
+          {
+            "code": "DDR-50MIX",
+            "perLine": 0,
+            "total": 0
+          },
+          {
+            "code": "DDR-BLM",
+            "perLine": 0.16666666666666666,
+            "total": 1
+          },
+          {
+            "code": "DDR-L",
+            "perLine": 1.5,
+            "total": 18
+          },
+          {
+            "code": "DDR-LN",
+            "perLine": 1,
+            "total": 6
+          },
+          {
+            "code": "DDR-MIX",
+            "perLine": 0.5,
+            "total": 6
+          },
+          {
+            "code": "DDR-VL",
+            "perLine": 0.5,
+            "total": 5
+          }
+        ],
+        "cv": 0.8282212344676635,
+        "maxShare": 0.5,
+        "zeroRosters": [
+          "DDR-50MIX"
+        ]
+      },
+      "extremeEarly": {
+        "perRoster": [
+          {
+            "code": "DDR-50MIX",
+            "perLine": 0,
+            "total": 0
+          },
+          {
+            "code": "DDR-BLM",
+            "perLine": 0.5,
+            "total": 3
+          },
+          {
+            "code": "DDR-MIX",
+            "perLine": 0.5,
+            "total": 6
+          },
+          {
+            "code": "DDR-V",
+            "perLine": 0.6666666666666666,
+            "total": 8
+          },
+          {
+            "code": "DDR-VL",
+            "perLine": 0.9,
+            "total": 9
+          }
+        ],
+        "cv": 0.5758389422700095,
+        "maxShare": 0.34615384615384615,
+        "zeroRosters": [
+          "DDR-50MIX"
+        ]
+      },
+      "rangeer": {
+        "perRoster": [
+          {
+            "code": "DDR-50MIX",
+            "perLine": 0.3333333333333333,
+            "total": 2
+          },
+          {
+            "code": "DDR-BLM",
+            "perLine": 1.1666666666666667,
+            "total": 7
+          },
+          {
+            "code": "DDR-MIX",
+            "perLine": 0.9166666666666666,
+            "total": 11
+          },
+          {
+            "code": "DDR-V",
+            "perLine": 0.4166666666666667,
+            "total": 5
+          },
+          {
+            "code": "DDR-VL",
+            "perLine": 0.3,
+            "total": 3
+          }
+        ],
+        "cv": 0.5585359670041868,
+        "maxShare": 0.39285714285714285,
+        "zeroRosters": [],
+        "note": "rangeerdiensten kunnen vroeg of laat zijn; verdeling over alle roosters met vroeg"
+      }
+    },
+    "weekendsFree": 32,
+    "weekendsRR": 32,
+    "weekendsFridayBeforeMidnight": 31,
+    "hoursGateRosters": 7,
+    "operational": {
+      "violations": [],
+      "fridayCompliant": 32,
+      "weekends": 32,
+      "hoursCompliant": 7,
+      "structuralFindings": []
+    }
+  },
+  "summary": {
+    "official": {
+      "candidates": 1,
+      "affinityMean": 0.6860986547085203,
+      "affinityWorstLine": 0.4,
+      "preferenceSpread": 0.21052631578947378,
+      "exposureSpread": 0.3337724334999968,
+      "premiumLateMaxShare": 0.5,
+      "premiumLateCv": 0.8282212344676635,
+      "extremeEarlyMaxShare": 0.34615384615384615,
+      "rangeerCv": 0.5585359670041868,
+      "rangeerMaxShare": 0.39285714285714285,
+      "weekendFridayCompliance": 0.96875,
+      "hoursGateAllRosters": 1,
+      "operationalCompliantPackages": 1,
+      "fridayRuleCompliance": 1
+    },
+    "v104": {
+      "candidates": 60,
+      "affinityMean": 0.6538116591928254,
+      "affinityWorstLine": 0.29000000000000004,
+      "preferenceSpread": 0.17301613610342811,
+      "exposureSpread": 0.31517832624688247,
+      "premiumLateMaxShare": 0.4009259259259261,
+      "premiumLateCv": 0.6678266808461321,
+      "extremeEarlyMaxShare": 0.3916666666666667,
+      "rangeerCv": 0.06438962741534283,
+      "rangeerMaxShare": 0.25236118713130207,
+      "weekendFridayCompliance": 0.884375,
+      "hoursGateAllRosters": 59,
+      "operationalCompliantPackages": 0,
+      "fridayRuleCompliance": 0.9369791666666667
+    },
+    "baseline": {
+      "candidates": 60,
+      "affinityMean": 0.6504035874439467,
+      "affinityWorstLine": 0.2455555555555554,
+      "preferenceSpread": 0.17330596146385682,
+      "exposureSpread": 0.3119945365529201,
+      "premiumLateMaxShare": 0.40509259259259245,
+      "premiumLateCv": 0.6375955484726085,
+      "extremeEarlyMaxShare": 0.3705128205128206,
+      "rangeerCv": 0.0666655915382957,
+      "rangeerMaxShare": 0.25415678404184155,
+      "weekendFridayCompliance": 0.896875,
+      "hoursGateAllRosters": 59,
+      "operationalCompliantPackages": 4,
+      "fridayRuleCompliance": 0.9526041666666667
+    },
+    "after": {
+      "candidates": 60,
+      "affinityMean": 0.6539312406576983,
+      "affinityWorstLine": 0.24877777777777774,
+      "preferenceSpread": 0.16604896762791566,
+      "exposureSpread": 0.3125597668381754,
+      "premiumLateMaxShare": 0.42870370370370353,
+      "premiumLateCv": 0.693406465832262,
+      "extremeEarlyMaxShare": 0.37115384615384617,
+      "rangeerCv": 0.06662751827220556,
+      "rangeerMaxShare": 0.2520855379188712,
+      "weekendFridayCompliance": 0.9432291666666667,
+      "hoursGateAllRosters": 60,
+      "operationalCompliantPackages": 60,
+      "fridayRuleCompliance": 1
+    }
+  }
+}

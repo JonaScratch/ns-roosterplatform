@@ -1,0 +1,29 @@
+ROOSTERUREN — TWEE ONAFHANKELIJKE BEREKENINGEN
+════════════════════════════════════════════════════════════════════════════════════════════════
+
+rooster      regels  werkuren     WTV   overig    totaal   gem/week  blad zegt  verschil   R-dagen    rusturen
+────────────────────────────────────────────────────────────────────────────────────────────────
+DDR-50MIX       6    151:11   24:00    64:00    239:11      39:51      39:51     -0:09        12      856:49
+DDR-BLM         6    203:12   24:00     8:00    235:12      39:12      39:12     -0:48        12      804:48
+DDR-L          12    295:51   48:00   136:00    479:51      39:59      39:59     -0:01        24     1720:09
+DDR-LN          6    175:55   24:00    40:00    239:55      39:59      39:59     -0:01        12      832:05
+DDR-MIX        12    350:22   48:00    80:00    478:22      39:51      39:51     -0:09        24     1665:38
+DDR-V          12    324:59   48:00   104:00    476:59      39:44      39:44     -0:16        24     1691:01
+DDR-VL         10    271:14   40:00    88:00    399:14      39:55      39:55     -0:05        20     1408:46
+
+────────────────────────────────────────────────────────────────────────────────────────────────
+  ✓ de urensom uit de database komt overeen met die van het aangeleverde blad
+  ✓ de gemiddelde weekomvang komt overeen met wat het blad zelf noemt
+
+De 40-uursbalans, per rooster afzonderlijk
+  Er is geen aangeleverde bron die zegt hoeveel afwijking aanvaardbaar is. Er staat
+  hieronder daarom geen goedkeuring, alleen het verschil. Wat wél een bevinding is:
+  een rooster dat meer dan een uur per week afwijkt van de andere.
+  ✓ geen enkel rooster wijkt meer dan een uur per week af van de beoogde 40:00
+  7 van de 7 roosters komt onder de 40:00 uit; 0 erboven of precies erop.
+
+  Spreiding tussen de roosters: 39:12 tot 39:59 (0:47 verschil).
+  ✓ geen enkel rooster is structureel lichter of zwaarder dan de andere
+
+════════════════════════════════════════════════════════════════════════════════════════════════
+4 controles geslaagd, 0 mislukt.
