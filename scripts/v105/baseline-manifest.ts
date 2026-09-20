@@ -13,10 +13,10 @@ import { describeVariant, engineVariant } from "@/server/generation/adaptive/var
  *
  * ## Waarom dit bestand bestaat
  *
- * Alles van v1.0.4 en de machinistenronde staat in de werkmap maar niet in Git
- * (laatste commit: het benchmarkharnas van v1.0.3). Een latere commit met de
- * naam v1.0.4 zou dus níet de code zijn waarmee destijds is gemeten. Dit
- * manifest legt vast wat er nú staat: vingerafdrukken per map en per kritiek
+ * Alles van v1.0.4 en de machinistenronde stond tot 20-09-2026 niet in Git
+ * (laatste commit: het benchmarkharnas van v1.0.3) en is toen vastgelegd als
+ * achteraf-stand op de tak stand/v1.0.4-machinist. Die commit is dus níet de
+ * code zoals die tijdens de metingen was. Dit manifest legt vast wat er staat: vingerafdrukken per map en per kritiek
  * bestand, de engineprofielen, de kwaliteitsmodellen, de benchmarkfasen en de
  * bevroren codekopieën. Wie later wil weten of de code sindsdien is veranderd,
  * draait dit opnieuw en vergelijkt.
@@ -35,7 +35,9 @@ function mapVingerafdruk(map: string, filter = /\.(ts|tsx|py|prisma|json|mjs)$/)
   const loop = (dir: string) => {
     if (!existsSync(dir)) return;
     for (const naam of readdirSync(dir).sort()) {
-      if (naam === "node_modules" || naam === "__pycache__" || naam === ".next") continue;
+      // Gegenereerde code (Prisma-client) telt niet mee: die wordt bij elke bouw
+      // opnieuw geschreven en zou de vingerafdruk onbruikbaar maken.
+      if (naam === "node_modules" || naam === "__pycache__" || naam === ".next" || naam === "generated") continue;
       const pad = path.join(dir, naam);
       const s = statSync(pad);
       if (s.isDirectory()) loop(pad);
@@ -92,7 +94,7 @@ function main() {
     schema: "ns-v105-baseline-manifest/1",
     recordedAt: new Date().toISOString(),
     purpose:
-      "De stand van het platform bij de start van v1.0.5. Code van v1.0.4 en de machinistenronde staat niet in Git; deze vingerafdrukken maken achteraf controleerbaar of er sindsdien iets is veranderd.",
+      "De stand van het platform bij de start van v1.0.5, met vingerafdrukken die controleerbaar maken of er sindsdien iets aan de code is veranderd.",
     git: {
       headCommit: git(["rev-parse", "HEAD"]),
       headSubject: git(["log", "-1", "--pretty=%s"]),
@@ -101,7 +103,8 @@ function main() {
       tags: git(["tag"]).split("\n").filter(Boolean),
       uncommittedPaths: dirty.length,
       warning:
-        "De laatste commit is het benchmarkharnas van v1.0.3. Alles van v1.0.4, de menselijke ijking, de Final-Brain-ronde en de machinistenronde is niet vastgelegd in Git. Een commit met het label v1.0.4 zou de code van vandaag bevatten, niet die van de metingen.",
+        "De code van v1.0.4, de menselijke ijking, de Final-Brain-ronde en de machinistenronde stond tot 20-09-2026 niet in Git. Op die datum is de werkmap vastgelegd als commit op de tak stand/v1.0.4-machinist, uitdrukkelijk als achteraf vastgelegde stand: het is niet de code zoals die tijdens de metingen was. De meetbasis (dienstpakket, regels, machine) is wel aantoonbaar ongewijzigd ten opzichte van het BEFORE-manifest.",
+      snapshotCommit: "cf8a0e3 op stand/v1.0.4-machinist (20-09-2026)",
     },
     packageVersion: JSON.parse(readFileSync(path.join(WORTEL, "package.json"), "utf8")).version,
     code: {

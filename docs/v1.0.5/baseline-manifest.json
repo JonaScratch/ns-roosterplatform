@@ -1,30 +1,31 @@
 {
   "schema": "ns-v105-baseline-manifest/1",
-  "recordedAt": "2026-09-20T13:45:08.889Z",
-  "purpose": "De stand van het platform bij de start van v1.0.5. Code van v1.0.4 en de machinistenronde staat niet in Git; deze vingerafdrukken maken achteraf controleerbaar of er sindsdien iets is veranderd.",
+  "recordedAt": "2026-09-20T14:05:13.957Z",
+  "purpose": "De stand van het platform bij de start van v1.0.5, met vingerafdrukken die controleerbaar maken of er sindsdien iets aan de code is veranderd.",
   "git": {
-    "headCommit": "e2b20918d703322b0a19c9d4ee02195669c97935",
-    "headSubject": "Benchmarkharnas voor de optimizer en de werkelijke zaadwaarde in de solverstatistiek",
-    "headDate": "2026-09-17T19:30:38+02:00",
-    "branch": "v1.0.4",
+    "headCommit": "cf8a0e39c949de0fd72ba54b71fb2c52aac67956",
+    "headSubject": "Stand van 20-09-2026 vastgelegd: v1.0.4, menselijke ijking, Final Brain en machinistenronde",
+    "headDate": "2026-09-20T16:04:24+02:00",
+    "branch": "v1.0.5",
     "tags": [
       "v1.0.2",
       "v1.0.3"
     ],
-    "uncommittedPaths": 86,
-    "warning": "De laatste commit is het benchmarkharnas van v1.0.3. Alles van v1.0.4, de menselijke ijking, de Final-Brain-ronde en de machinistenronde is niet vastgelegd in Git. Een commit met het label v1.0.4 zou de code van vandaag bevatten, niet die van de metingen."
+    "uncommittedPaths": 3,
+    "warning": "De code van v1.0.4, de menselijke ijking, de Final-Brain-ronde en de machinistenronde stond tot 20-09-2026 niet in Git. Op die datum is de werkmap vastgelegd als commit op de tak stand/v1.0.4-machinist, uitdrukkelijk als achteraf vastgelegde stand: het is niet de code zoals die tijdens de metingen was. De meetbasis (dienstpakket, regels, machine) is wel aantoonbaar ongewijzigd ten opzichte van het BEFORE-manifest.",
+    "snapshotCommit": "cf8a0e3 op stand/v1.0.4-machinist (20-09-2026)"
   },
   "packageVersion": "1.0.3",
   "code": {
     "src": {
-      "files": 318,
-      "bytes": 6611791,
-      "hash": "d1d867970477b719"
+      "files": 268,
+      "bytes": 2419361,
+      "hash": "50fcab194201a453"
     },
     "scripts": {
       "files": 104,
-      "bytes": 1240181,
-      "hash": "79494c3cb0be6eb7"
+      "bytes": 1240579,
+      "hash": "891cfe1212f06c5c"
     },
     "python": {
       "files": 1,
