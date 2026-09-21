@@ -23,12 +23,18 @@ const actor = (roles: Role[]): Actor => ({
   depot: "DDR",
 });
 
-const verzoek = (text: string, extra: Partial<PlanRequest["context"]> = {}, capabilities: string[] = ["agent:chat"]): PlanRequest => ({
+const verzoek = (
+  text: string,
+  extra: Partial<PlanRequest["context"]> = {},
+  capabilities: string[] = ["agent:chat"],
+  suspended = false,
+): PlanRequest => ({
   text,
   context: { locationCode: "DDR", source: "official", candidateId: null, rosterCode: null, lineNumber: null, weekday: null, dutyCode: null, missing: [], ...extra },
   tools: [],
   history: [],
   capabilities,
+  suspended,
 });
 
 describe("bevoegdheden", () => {
@@ -110,6 +116,23 @@ describe("welke tool bij welke vraag", () => {
     expect(plan.toolCalls.map((c) => c.tool)).toEqual(["nightStructure"]);
   });
 
+  it("laat een rooster en regel uit de vraag zwaarder wegen dan de keuzelijst", async () => {
+    // Gevonden tijdens het doorlopen van het scherm: de kiezer stond op een
+    // ander rooster en het antwoord ging keurig over het verkeerde rooster.
+    const plan = await stubModel.plan(
+      verzoek("Welke diensten staan er in regel 7 van DDR-MIX?", { rosterCode: "DDR-50MIX", lineNumber: 2 }),
+    );
+    expect(plan.toolCalls[0]?.tool).toBe("rosterLine");
+    expect(plan.toolCalls[0]?.input).toMatchObject({ rosterCode: "DDR-MIX", lineNumber: 7 });
+  });
+
+  it("ziet een documentnummer niet aan voor een roostercode", async () => {
+    const plan = await stubModel.plan(verzoek("Staat dat in CAO-NS-2024-2025?", { rosterCode: "DDR-L" }));
+    for (const call of plan.toolCalls) {
+      if ("rosterCode" in call.input) expect(call.input.rosterCode).toBe("DDR-L");
+    }
+  });
+
   it("leest een vraag over hersteltijd als regelvraag", async () => {
     const plan = await stubModel.plan(verzoek("Welke regel geldt voor herstel na een nachtreeks?"));
     expect(plan.toolCalls[0]?.tool).toBe("ruleLookup");
@@ -156,6 +179,14 @@ describe("welke tool bij welke vraag", () => {
     const plan = await stubModel.plan(verzoek("Onderzoek of dit beter kan.", { rosterCode: "DDR-L" }, ["agent:chat"]));
     expect(plan.intent).toBe("OPTIMALISATIEVERZOEK");
     expect(plan.refusal).toMatch(/bevoegdheid/);
+  });
+
+  it("noemt de noodrem als die de reden is, en niet een ontbrekende bevoegdheid", async () => {
+    // Gevonden door verify:agent (TEST 20): met de bevoegdheid áán maar de agent
+    // stilgezet, gaf de agent geen weigering maar een leeg antwoord.
+    const plan = await stubModel.plan(verzoek("Start een optimalisatie.", { rosterCode: "DDR-L" }, [], true));
+    expect(plan.intent).toBe("OPTIMALISATIEVERZOEK");
+    expect(plan.refusal).toMatch(/stilgezet/);
   });
 });
 

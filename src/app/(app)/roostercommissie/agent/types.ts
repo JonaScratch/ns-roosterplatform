@@ -33,6 +33,15 @@ export interface AgentAntwoordJson {
     readonly dutyCode: string | null;
     readonly missing: readonly string[];
   };
+  /**
+   * Het basisrooster waar de agent werkelijk naar keek.
+   *
+   * Kan afwijken van de keuzelijst: wie in zijn vraag een rooster noemt,
+   * bedoelt dat rooster. Het scherm zegt het erbij als die twee verschillen —
+   * anders staat er een antwoord over het ene rooster onder een label van het
+   * andere.
+   */
+  readonly usedRosterCode: string | null;
   readonly level: "A" | "B" | "C";
   readonly model: string;
   /** Onwaar bij de lokale stub. Het scherm moet dat blijven tonen. */

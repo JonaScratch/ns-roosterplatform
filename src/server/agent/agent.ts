@@ -2,6 +2,7 @@ import "server-only";
 import type { Actor } from "@/server/auth/session";
 import { recordAudit } from "@/server/audit/log";
 import { prisma } from "@/server/data/prisma";
+import { finishActivity, heartbeat, recordEvent, startActivity } from "./activity";
 import { AGENT_CAPABILITIES, AgentCapabilityError, agentMay, currentGrant, levelOf } from "./capabilities";
 import { type UiContext, resolveContext, uiContextSchema } from "./context";
 import { stubModel } from "./model/stub";
@@ -107,20 +108,53 @@ export async function askAgent(input: {
     },
     tools: toolCatalogue(input.actor),
     history: geschiedenis,
-    capabilities: grant.capabilities,
+    // Wat er werkelijk overblijft: recht van de vrager én toekenning én de
+    // noodrem. Een planner die meer ziet dan dat, belooft wat de
+    // rechtencontrole daarna weigert.
+    capabilities: grant.capabilities.filter((c) => agentMay(input.actor, grant, c)),
+    suspended: grant.suspendedAt !== null,
   };
 
+  // Vanaf hier is er iets te volgen. Het activiteitenpaneel leest mee, ook als
+  // dit tabblad wordt gesloten: de stappen staan in de database.
+  const activiteit = input.persist === false ? null : await startActivity({
+    actor: input.actor,
+    locationCode: resolved.locationCode,
+    kind: "CHAT",
+    title: input.text.length > 70 ? `${input.text.slice(0, 67)}…` : input.text,
+    sessionId: input.sessionId ?? null,
+    detail: basis.contextUsed,
+  });
+  const stap = async (kind: Parameters<typeof recordEvent>[0]["kind"], message: string, detail?: Record<string, unknown>) => {
+    if (!activiteit) return;
+    await recordEvent({ activity: activiteit, locationCode: resolved.locationCode, sessionId: input.sessionId ?? null, kind, message, detail });
+  };
+
+  await stap("VRAAG", input.text);
+
   const plan = await model.plan(verzoek);
+  await stap("PLAN", plan.reasoning || "geen toelichting", { intent: plan.intent, tools: plan.toolCalls.map((c) => c.tool) });
 
   const calls: ToolCall[] = [];
   const results: { tool: string; ok: boolean; data: unknown; sources: readonly string[]; error?: string; note?: string }[] = [];
-  for (const stap of plan.toolCalls) {
-    const { result, call, error } = await callTool(input.actor, stap.tool, stap.input);
+  for (const toolStap of plan.toolCalls) {
+    if (activiteit) await heartbeat(activiteit);
+    const { result, call, error } = await callTool(input.actor, toolStap.tool, toolStap.input);
     calls.push(call);
-    results.push({ tool: stap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error, note: call.note });
+    results.push({ tool: toolStap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error, note: call.note });
+    await stap(
+      call.ok ? "TOOL" : "FOUT",
+      call.ok ? `${toolStap.tool} geraadpleegd (${call.ms} ms)` : `${toolStap.tool} leverde niets op: ${call.note ?? error ?? "onbekend"}`,
+      { sources: result?.sources ?? [] },
+    );
   }
 
   const antwoord = await model.compose({ ...verzoek, plan, results });
+  await stap(antwoord.status === "GEWEIGERD" ? "WEIGERING" : "ANTWOORD", antwoord.text.length > 200 ? `${antwoord.text.slice(0, 197)}…` : antwoord.text, {
+    status: antwoord.status,
+    sources: antwoord.sources,
+  });
+  if (activiteit) await finishActivity(activiteit, antwoord.status === "FOUT" ? "FAILED" : "DONE");
 
   if (input.persist !== false) {
     const sessionId = input.sessionId ?? (await maakSessie(input.actor, resolved.locationCode, input.text)).id;

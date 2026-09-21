@@ -49,8 +49,16 @@ export interface PlanRequest {
   readonly context: PlanContext;
   readonly tools: readonly PlanTool[];
   readonly history: readonly { readonly role: "USER" | "AGENT"; readonly text: string }[];
-  /** Welke agentbevoegdheden voor dit project aan staan. */
+  /**
+   * Wat de agent hier en nu werkelijk mag.
+   *
+   * Niet de ruwe toekenning: het recht van de vrager en de noodrem zijn er al
+   * uit gerekend. Het model hoort geen mogelijkheid te zien die er niet is —
+   * anders belooft het iets wat de rechtencontrole daarna weigert.
+   */
   readonly capabilities: readonly string[];
+  /** Staat de agent stil? Dan is dat de reden, en niet "de bevoegdheid staat uit". */
+  readonly suspended: boolean;
 }
 
 export type AgentIntent =

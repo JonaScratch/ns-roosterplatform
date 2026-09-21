@@ -101,8 +101,10 @@ function rekenverzoek(request: PlanRequest): AgentPlan {
     toolCalls: [],
     refusal: mag
       ? undefined
-      : "Ik mag voor dit project geen berekening starten: die bevoegdheid staat uit. Een commissielid kan hem aanzetten in het bevoegdhedenpaneel, en kan de opdracht zelf wel starten in het generatiescherm.",
-    reasoning: mag ? "verbeterdoel formuleren en laten bevestigen" : "bevoegdheid om te rekenen staat uit",
+      : request.suspended
+        ? "Ik ben stilgezet en start daarom niets: geen berekening, geen ronde, geen experiment. Vragen beantwoorden kan wel. Een commissielid kan mij weer aanzetten in het activiteitenpaneel."
+        : "Ik mag voor dit project geen berekening starten: die bevoegdheid staat uit. Een commissielid kan hem aanzetten in het bevoegdhedenpaneel, en kan de opdracht zelf wel starten in het generatiescherm.",
+    reasoning: mag ? "verbeterdoel formuleren en laten bevestigen" : request.suspended ? "de agent is stilgezet" : "bevoegdheid om te rekenen staat uit",
   };
 }
 
@@ -111,13 +113,39 @@ const weekdagUitTekst = (tekst: string): number | null => {
   return null;
 };
 
+/**
+ * Wat er in de vraag zelf staat, wint van de keuzelijst.
+ *
+ * Gevonden bij het doorlopen van het scherm: iemand typt "in DDR-MIX" terwijl
+ * de kiezer nog op een ander rooster staat, en krijgt een keurig antwoord over
+ * het verkeerde rooster. De code moet uit dezelfde standplaats komen, anders is
+ * het geen roostercode maar toeval — een documentnummer bijvoorbeeld.
+ */
+const roosterUitTekst = (tekst: string, locationCode: string): string | null => {
+  const match = new RegExp(`\\b${locationCode.toLowerCase()}-[a-z0-9]+\\b`).exec(tekst);
+  return match ? match[0].toUpperCase() : null;
+};
+
+/** "regel 4" in de vraag telt net zo goed als het vakje ernaast. */
+const regelUitTekst = (tekst: string): number | null => {
+  const match = /\b(?:rooster)?regel\s+(\d{1,2})\b/.exec(tekst);
+  return match ? Number(match[1]) : null;
+};
+
 export const stubModel: ChatModel = {
   name: "stub",
   isLanguageModel: false,
 
   async plan(request: PlanRequest): Promise<AgentPlan> {
     const tekst = request.text.toLowerCase();
-    const ctx = request.context;
+    const gevraagd = request.context;
+    // De vraag mag de keuzelijst overrulen: wie een rooster of regel noemt,
+    // bedoelt dat rooster en die regel.
+    const ctx = {
+      ...gevraagd,
+      rosterCode: roosterUitTekst(tekst, gevraagd.locationCode) ?? gevraagd.rosterCode,
+      lineNumber: regelUitTekst(tekst) ?? gevraagd.lineNumber,
+    };
 
     for (const regel of VERBODEN) {
       if (bevat(tekst, ...regel.woorden)) {

@@ -1831,5 +1831,85 @@ model AgentCapabilityGrant {
   revokedAt      DateTime?
   note           String?
 
+  /// De noodrem. Staat hier een tijdstip, dan mag de agent niets meer starten:
+  /// geen berekening, geen autonome ronde, geen experiment. Vragen beantwoorden
+  /// blijft wel kunnen — lezen is geen ingreep. Een lopende opdracht wordt
+  /// apart gestopt; dit voorkomt dat er een nieuwe bij komt.
+  suspendedAt      DateTime?
+  suspendedByUserId String?
+  suspendReason    String?
+
   @@index([locationCode, revokedAt])
+}
+
+/// Wat de agent doet of gedaan heeft: één regel per activiteit die tijd kost.
+/// Het activiteitenpaneel leest hieruit; een herstart leest hier ook uit, en
+/// daarom staat alles in de database en niet in het geheugen van het proces.
+model AgentActivity {
+  id           String   @id @default(uuid())
+  locationCode String
+  sessionId    String?
+  /// CHAT, ONDERZOEK of JOBBEWAKING.
+  kind         String
+  title        String
+  status       AgentActivityStatus @default(RUNNING)
+
+  /// De generatieopdracht waar deze activiteit aan hangt, als die er is.
+  generationRunId String?
+
+  /// Een stopverzoek van een mens. De activiteit zelf kijkt hiernaar en stopt;
+  /// een knop die alleen het scherm verandert, stopt niets.
+  stopRequested Boolean @default(false)
+  stopRequestedByUserId String?
+  stopRequestedAt DateTime?
+
+  /// Een lopende activiteit meldt zich. Stopt dat, dan is het proces weg en
+  /// wordt de activiteit bij de eerstvolgende start als onderbroken gemarkeerd.
+  heartbeatAt  DateTime?
+  startedAt    DateTime @default(now())
+  finishedAt   DateTime?
+  createdByUserId String?
+  detail       Json?
+  events       AgentEvent[]
+
+  @@index([locationCode, startedAt])
+  @@index([status])
+}
+
+enum AgentActivityStatus {
+  RUNNING
+  DONE
+  FAILED
+  STOPPED
+  /// Het proces is weggevallen zonder af te ronden.
+  INTERRUPTED
+}
+
+enum AgentEventKind {
+  VRAAG
+  PLAN
+  TOOL
+  ANTWOORD
+  WEIGERING
+  STAP
+  STOP
+  FOUT
+}
+
+/// Wat er tijdens een activiteit gebeurde, in leesbare stappen. Dit is de
+/// inhoud van het activiteitenpaneel en tegelijk het spoor waarmee achteraf te
+/// volgen is waar een antwoord vandaan kwam.
+model AgentEvent {
+  id           String   @id @default(uuid())
+  locationCode String
+  activityId   String?
+  activity     AgentActivity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  sessionId    String?
+  kind         AgentEventKind
+  message      String
+  detail       Json?
+  createdAt    DateTime @default(now())
+
+  @@index([locationCode, createdAt])
+  @@index([activityId, createdAt])
 }

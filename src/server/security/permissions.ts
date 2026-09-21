@@ -121,6 +121,12 @@ export const PERMISSIONS = {
   AGENT_EXPERIMENT_PROPOSE: "agent:experiment:propose",
   /** Een afgeschermd technisch experiment draaien. */
   AGENT_EXPERIMENT_RUN: "agent:experiment:run",
+  /**
+   * De noodrem: de agent stilzetten of weer aanzetten, en een lopende
+   * activiteit stoppen. Bewust breder dan de bevoegdheden hierboven — stoppen
+   * is de veilige kant op, en moet niet wachten op wie er toevallig mag.
+   */
+  AGENT_STOP: "agent:stop",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -173,6 +179,7 @@ const ROSTER_COMMITTEE_PERMISSIONS: readonly Permission[] = [
   PERMISSIONS.AGENT_PREFERENCE_APPROVE,
   PERMISSIONS.AGENT_CROSSLOCATION_READ,
   PERMISSIONS.AGENT_EXPERIMENT_PROPOSE,
+  PERMISSIONS.AGENT_STOP,
 ];
 
 /**

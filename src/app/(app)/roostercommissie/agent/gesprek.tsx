@@ -125,6 +125,13 @@ export function Gesprek({
             sources: antwoord.sources,
             tools: antwoord.tools.map((t) => `${t.tool}${t.ok ? "" : " (mislukt)"}`),
             missing: antwoord.contextUsed.missing,
+            // Noemde de vraag een ander rooster dan de kiezer? Dan hoort dat er
+            // hardop bij te staan, anders leest een antwoord over het ene
+            // rooster als een antwoord over het andere.
+            context:
+              antwoord.usedRosterCode && context.rosterCode && antwoord.usedRosterCode !== context.rosterCode
+                ? `Je noemde ${antwoord.usedRosterCode} in je vraag; daar heb ik naar gekeken. De kiezer staat op ${context.rosterCode}.`
+                : null,
           },
         ]);
       });
@@ -276,6 +283,9 @@ export function Gesprek({
                   )}
                 </div>
                 <p className="whitespace-pre-wrap text-[13px] text-ink">{bericht.tekst}</p>
+                {bericht.context && (
+                  <p className="mt-1.5 text-[11px] text-accent-rc">{bericht.context}</p>
+                )}
                 {bericht.sources && bericht.sources.length > 0 && (
                   <p className="mt-1.5 text-[11px] text-ink-muted">Bron: {bericht.sources.join(" · ")}</p>
                 )}
