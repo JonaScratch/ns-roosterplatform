@@ -118,6 +118,9 @@ const rosterLine = tool({
         lineNumber: input.lineNumber,
         source: ctx.source,
         candidateId: ctx.candidate?.id ?? null,
+        // De dag waar de vraag over ging, als die genoemd is. De regel komt
+        // altijd compleet terug: zeven dagen zijn de context van die ene dag.
+        requestedWeekday: input.weekday ?? null,
         days: dagen.map((d) => ({
           weekday: d.weekday,
           weekdayName: DAG_NAMEN[d.weekday],

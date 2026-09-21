@@ -8,6 +8,7 @@ import {
   BuildingIcon,
   CalendarCheckIcon,
   CalendarIcon,
+  ChatIcon,
   ClipboardListIcon,
   CompareIcon,
   DownloadIcon,
@@ -194,6 +195,17 @@ export function rosterCommitteeNavigation(): readonly NavSection[] {
           label: "Scenario's vergelijken",
           icon: SparkIcon,
           permission: PERMISSIONS.ROSTER_GENERATE,
+        },
+      ],
+    },
+    {
+      label: "Roosteragent",
+      items: [
+        {
+          href: "/roostercommissie/agent",
+          label: "Vragen aan de agent",
+          icon: ChatIcon,
+          permission: PERMISSIONS.AGENT_CHAT,
         },
       ],
     },

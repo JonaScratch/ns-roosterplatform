@@ -343,6 +343,13 @@ export const SparkIcon = (p: IconProps) => (
   </Icon>
 );
 
+export const ChatIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M20 12.5a7 7 0 0 1-7 7H8l-4 2.5v-4.2a7 7 0 0 1-1-3.6v-1A7 7 0 0 1 10 5.2h3a7 7 0 0 1 7 7Z" />
+    <path d="M9 11.5h6M9 14.5h3.5" />
+  </Icon>
+);
+
 export const MegaphoneIcon = (p: IconProps) => (
   <Icon {...p}>
     <path d="M4 10.5v3a2 2 0 0 0 2 2h1.5L19 20V4L7.5 8.5H6a2 2 0 0 0-2 2Z" />

@@ -500,7 +500,9 @@ async function createEmployees(lines: readonly SeedLine[]): Promise<readonly See
     {
       number: "900001",
       roles: [Role.EMPLOYEE, Role.ROSTER_COMMITTEE],
-      name: "Rooster Commissie Dordrecht",
+      // Zichtbare naam van het demoaccount. Bewust "Demo" en niet een
+      // standplaatsnaam: het scherm mag geen echte functionaris suggereren.
+      name: "Rooster Commissie Demo",
     },
     {
       number: "910001",

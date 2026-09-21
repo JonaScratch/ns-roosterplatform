@@ -30,6 +30,22 @@ const bevat = (tekst: string, ...woorden: string[]) => woorden.some((w) => tekst
 const EENHEID: Readonly<Record<string, string>> = { HOURS: "uur", MINUTES: "minuten", DAYS: "dagen", COUNT: "keer", PERCENT: "procent" };
 const eenheid = (unit: unknown) => EENHEID[String(unit)] ?? String(unit).toLowerCase();
 
+/**
+ * Positietypen in gewone woorden.
+ *
+ * Op een roosterblad staat "RES" of "WR"; in een zin hoort te staan wat dat is.
+ * `WR` draagt in dit datamodel de WTV-dag — zie roster-structure.ts: het anker
+ * bestaat, alleen de naam is dubbel bezet.
+ */
+const POSITIE: Readonly<Record<string, string>> = {
+  DUTY: "een dienst",
+  RES: "een reservedag",
+  WR: "een WTV-dag",
+  CO: "een compensatiedag",
+  RUST: "een rustdag",
+};
+const positie = (type: unknown) => POSITIE[String(type)] ?? String(type).toLowerCase();
+
 /** Woorden die op een handeling wijzen waarvoor een mens moet tekenen. */
 const VERBODEN = [
   { woorden: ["publiceer", "publiceren", "vaststellen als definitief"], uitleg: "Publiceren is een menselijke handeling; de agent heeft die bevoegdheid niet en krijgt die ook niet." },
@@ -122,10 +138,12 @@ export const stubModel: ChatModel = {
     // Vragen over de geselecteerde regel.
     if (ctx.rosterCode && ctx.lineNumber) {
       if (bevat(tekst, "welke dienst", "welke diensten", "wat staat", "hoe laat", "eindtijd", "begintijd", "afgelopen", "begint")) {
+        // Wie "op donderdag" tikt, hoeft de dagkiezer niet ook nog te zetten.
+        const dag = ctx.weekday ?? weekdagUitTekst(tekst);
         return {
           intent: "ROOSTERVRAAG",
-          toolCalls: [{ tool: "rosterLine", input: { rosterCode: ctx.rosterCode, lineNumber: ctx.lineNumber, locationCode: ctx.locationCode, source: ctx.source, candidateId: ctx.candidateId } }],
-          reasoning: `regel ${ctx.lineNumber} van ${ctx.rosterCode} ophalen met de echte tijden`,
+          toolCalls: [{ tool: "rosterLine", input: { rosterCode: ctx.rosterCode, lineNumber: ctx.lineNumber, weekday: dag, locationCode: ctx.locationCode, source: ctx.source, candidateId: ctx.candidateId } }],
+          reasoning: `regel ${ctx.lineNumber} van ${ctx.rosterCode} ophalen met de echte tijden${dag ? `, met nadruk op ${DAG_NAMEN[dag]}` : ""}`,
         };
       }
       if (bevat(tekst, "waarom")) {
@@ -208,10 +226,20 @@ export const stubModel: ChatModel = {
           data = { ...(data ?? {}), line: d };
           const diensten = (d.days as Record<string, any>[]).filter((x) => x.dutyCode); // eslint-disable-line @typescript-eslint/no-explicit-any
           const vast = (d.days as Record<string, any>[]).filter((x) => !x.dutyCode); // eslint-disable-line @typescript-eslint/no-explicit-any
+          // Is er naar één dag gevraagd, dan begint het antwoord daar — de rest
+          // van de week blijft eronder staan, want die is de context.
+          if (d.requestedWeekday) {
+            const dag = (d.days as Record<string, any>[]).find((x) => x.weekday === d.requestedWeekday); // eslint-disable-line @typescript-eslint/no-explicit-any
+            zinnen.push(
+              dag?.dutyCode
+                ? `Op ${dag.weekdayName} rijdt ${d.rosterCode} regel ${d.lineNumber} dienst ${dag.dutyCode}, van ${dag.start} tot ${dag.end}.`
+                : `Op ${dag?.weekdayName ?? DAG_NAMEN[d.requestedWeekday as number]} staat er geen dienst: die dag is ${positie(dag?.positionType)}.`,
+            );
+          }
           zinnen.push(
             `${d.rosterCode} regel ${d.lineNumber} heeft ${diensten.length} ${diensten.length === 1 ? "dienst" : "diensten"}: ` +
               diensten.map((x) => `${x.weekdayName} dienst ${x.dutyCode} (${x.start}–${x.end})`).join(", ") +
-              (vast.length ? `. De andere dagen liggen vast in de structuur: ${vast.map((x) => `${x.weekdayName} ${x.positionType.toLowerCase()}`).join(", ")}.` : "."),
+              (vast.length ? `. De andere dagen liggen vast in de structuur: ${vast.map((x) => `${x.weekdayName} ${positie(x.positionType)}`).join(", ")}.` : "."),
           );
           break;
         }
@@ -251,7 +279,9 @@ export const stubModel: ChatModel = {
             }
             const bron = regel.source as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
             zinnen.push(
-              `${regel.title ?? regel.ruleId}: ${regel.value} ${eenheid(regel.unit)}. Bron: ${bron?.documentTitle ?? bron?.document ?? "onbekend"}${bron?.article ? `, ${bron.article}` : ""}. ` +
+              // Zelfde bronnotatie als de rest van het platform: document,
+              // artikelnummer met "art." ervoor, en eventueel de paragraaf.
+              `${regel.title ?? regel.ruleId}: ${regel.value} ${eenheid(regel.unit)}. Bron: ${[bron?.documentTitle ?? bron?.document ?? "onbekend", bron?.article ? `art. ${bron.article}` : null, bron?.paragraph ?? null].filter(Boolean).join(", ")}. ` +
                 (regel.verified ? "Deze bron is bevestigd." : "Let op: de juridische status van deze bron is niet formeel geverifieerd."),
             );
           }
@@ -270,7 +300,7 @@ export const stubModel: ChatModel = {
                     (b) =>
                       `De reeks van ${b.length} begint op regel ${b.startLine} (${b.startWeekdayName})` +
                       (b.crossesLineBoundary ? ` en loopt door in regel ${(b.lines as number[]).filter((x) => x !== b.startLine).join(", ")}` : "") +
-                      `; daarna ${b.nextDay.dutyCode ? `dienst ${b.nextDay.dutyCode}` : b.nextDay.positionType.toLowerCase()}`,
+                      `; daarna ${b.nextDay.dutyCode ? `dienst ${b.nextDay.dutyCode}` : positie(b.nextDay.positionType)}`,
                   )
                   .join(". ") + ".",
           );
