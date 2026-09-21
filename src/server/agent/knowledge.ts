@@ -1,5 +1,6 @@
 import "server-only";
 import { activeRuleset } from "@/server/rules-engine";
+import { prisma } from "@/server/data/prisma";
 import { BLOCKING_STATUSES, type RuleContext, type RuleDefinition, currentLegalStatus, resolveRule } from "@/server/rules-engine/ruleset/types";
 
 /**
@@ -77,10 +78,24 @@ export interface RuleHit {
     readonly paragraph: string | null;
     readonly legalAuthority: string;
     readonly legalStatus: string;
+    readonly userChecked: GebruikersControle | null;
   };
   /** Geldt deze regel voor de gevraagde groep, standplaats en datum? */
   readonly applicable: boolean;
   readonly score: number;
+}
+
+/**
+ * Een voorlopige controle van een bron door een gebruiker.
+ *
+ * Dit is geen goedkeuring namens NS en wordt ook nergens als zodanig getoond.
+ * Het is precies wat het is: iemand heeft het document nagelopen, op een datum,
+ * met een aantekening. Dat is meer dan niets en minder dan bevestigd.
+ */
+export interface GebruikersControle {
+  readonly by: string;
+  readonly at: string;
+  readonly note: string | null;
 }
 
 export interface KnowledgeResult {
@@ -148,7 +163,21 @@ function scoreVan(regel: RuleDefinition, termen: readonly string[]): { score: nu
   return { score, raak };
 }
 
-export function searchRules(vraag: string, context: RuleContext, limit = 5): KnowledgeResult {
+/**
+ * Regels zoeken. Zuiver: geen database, alleen het regelbestand.
+ *
+ * De gebruikerscontroles komen er van buiten in. Dat is geen preutsheid maar
+ * onderhoud: deze functie was met een handvol regels te toetsen zonder database,
+ * en die eigenschap is meer waard dan het gemak van hier even een query doen.
+ * `searchRulesMetControles` hieronder doet dat wél, aan de rand.
+ */
+export function searchRules(
+  vraag: string,
+  context: RuleContext,
+  opties: { readonly limit?: number; readonly checks?: ReadonlyMap<string, GebruikersControle> } = {},
+): KnowledgeResult {
+  const limit = opties.limit ?? 5;
+  const controles = opties.checks ?? new Map<string, GebruikersControle>();
   const ruleset = activeRuleset();
   const termen = zoekwoorden(vraag);
 
@@ -181,6 +210,8 @@ export function searchRules(vraag: string, context: RuleContext, limit = 5): Kno
         paragraph: geldend.source.paragraph ?? null,
         legalAuthority: geldend.source.legalAuthority,
         legalStatus: currentLegalStatus(geldend.source, context.onDate),
+        /** Voorlopig nagelopen door een mens; nadrukkelijk geen NS-bevestiging. */
+        userChecked: controles.get(geldend.source.document) ?? null,
       },
       applicable: resolutie.kind === "RESOLVED",
       score,
@@ -201,6 +232,27 @@ export function searchRules(vraag: string, context: RuleContext, limit = 5): Kno
     hits,
     missing: ontbrekend.map((p) => ({ id: p.id, title: p.title, reason: p.reason, blocks: p.blocks })),
   };
+}
+
+/**
+ * Dezelfde zoektocht, met de voorlopige controles van mensen erbij.
+ *
+ * Een controle door een gebruiker is nadrukkelijk geen goedkeuring namens NS.
+ * Hij wordt daarom apart bijgehouden en apart getoond; de status van de regel
+ * zelf verandert er niet door.
+ */
+export async function searchRulesMetControles(vraag: string, context: RuleContext, limit = 5): Promise<KnowledgeResult> {
+  const rijen = await prisma.ruleSourceCheck.findMany({
+    select: { document: true, checkedByName: true, checkedAt: true, note: true },
+    orderBy: { checkedAt: "desc" },
+  });
+  const checks = new Map<string, GebruikersControle>();
+  for (const rij of rijen) {
+    if (!checks.has(rij.document)) {
+      checks.set(rij.document, { by: rij.checkedByName, at: rij.checkedAt.toISOString().slice(0, 10), note: rij.note });
+    }
+  }
+  return searchRules(vraag, context, { limit, checks });
 }
 
 /** De statussen in gewone taal, voor het antwoord aan de gebruiker. */

@@ -91,6 +91,7 @@ model UserAccount {
   agentGrants             AgentCapabilityGrant[]
   projectGoals            ProjectOptimisationGoal[]
   researchLoops           AgentResearchLoop[]
+  ruleSourceChecks        RuleSourceCheck[]
 
   // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
   // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
@@ -2099,4 +2100,29 @@ model AgentResearchRound {
   at           DateTime @default(now())
 
   @@index([loopId, roundNumber])
+}
+
+/// Een voorlopige inhoudelijke controle van een regelbron door een gebruiker.
+///
+/// Uitdrukkelijk géén formele goedkeuring namens NS. Dat onderscheid is de hele
+/// reden dat dit een eigen tabel is en geen status op de regel zelf: zou een
+/// gebruikerscontrole de status VALIDATED opleveren, dan staat er even later
+/// "door NS bevestigd" terwijl niemand van NS ernaar heeft gekeken.
+model RuleSourceCheck {
+  id              String   @id @default(uuid())
+  /// De documentcode uit het regelbestand, bijvoorbeeld "CAO-NS-2024-2025".
+  document        String
+  checkedByUserId String
+  checkedBy       UserAccount @relation(fields: [checkedByUserId], references: [id])
+  /// Momentopname van de naam, zoals het auditlogboek dat ook doet.
+  checkedByName   String
+  checkedAt       DateTime @default(now())
+  /// Wat er is nagelopen, en wat niet.
+  note            String?
+  /// Voorlopig: USER_PRELIMINARY. Een formele bevestiging krijgt een eigen
+  /// soort zodra die bestaat; ze worden nooit door elkaar gehaald.
+  kind            String   @default("USER_PRELIMINARY")
+
+  @@unique([document, checkedByUserId])
+  @@index([document])
 }

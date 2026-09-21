@@ -7,7 +7,7 @@ import { flowDays, nightBlocksFlow } from "@/domain/roster-flow";
 import { dutyKey } from "@/domain/roster-quality";
 import type { Actor } from "@/server/auth/session";
 import { recordAudit } from "@/server/audit/log";
-import { STATUS_TEKST, searchRules } from "./knowledge";
+import { STATUS_TEKST, searchRulesMetControles } from "./knowledge";
 import { recall } from "./memory";
 import { prisma } from "@/server/data/prisma";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
@@ -334,7 +334,7 @@ const ruleSearch = tool({
     employeeGroup: z.enum(["MACHINIST", "HOOFDCONDUCTEUR"]).default("MACHINIST"),
   }),
   run: async (_actor, input) => {
-    const uitkomst = searchRules(input.query, {
+    const uitkomst = await searchRulesMetControles(input.query, {
       employeeGroup: input.employeeGroup,
       company: "NSR",
       location: input.locationCode,

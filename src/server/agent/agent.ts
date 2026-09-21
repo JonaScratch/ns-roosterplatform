@@ -5,6 +5,7 @@ import { prisma } from "@/server/data/prisma";
 import { finishActivity, heartbeat, recordEvent, startActivity } from "./activity";
 import { AGENT_CAPABILITIES, AgentCapabilityError, agentMay, currentGrant, levelOf } from "./capabilities";
 import { type UiContext, resolveContext, uiContextSchema } from "./context";
+import { localConfigFromEnv, localModel } from "./model/local";
 import { stubModel } from "./model/stub";
 import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/types";
 import { projectGoals } from "./project-goals";
@@ -27,10 +28,21 @@ import { type ToolCall, callTool, toolCatalogue } from "./tools";
  * stil te blijven.
  */
 
+/**
+ * Welk model beantwoordt deze vraag?
+ *
+ * Staat er een lokaal model ingesteld (NS_LOCAL_LLM_URL en NS_LOCAL_LLM_MODEL),
+ * dan praat de agent daarmee. Staat dat er niet, dan blijft de stub actief en
+ * zegt het scherm dat er geen taalmodel draait.
+ *
+ * Er wordt hier niet gekeken óf het model bereikbaar is: dat zou elke vraag een
+ * netwerkcontrole kosten. Valt het eindpunt weg, dan mislukt de aanroep en komt
+ * dat als fout terug — zichtbaar, in plaats van stil terugvallen op een stub die
+ * dan voor een taalmodel zou doorgaan.
+ */
 export function modelForRequest(): ChatModel {
-  // Later: een echt taalmodel achter dezelfde adapter, zodra daarover is
-  // besloten. Tot dan de lokale stub, en die telt niet als taalvaardigheid.
-  return stubModel;
+  const config = localConfigFromEnv();
+  return config ? localModel(config) : stubModel;
 }
 
 export interface AskResult extends AgentAnswer {

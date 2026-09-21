@@ -743,8 +743,12 @@ export const stubModel: ChatModel = {
             const bron = [regel.source?.documentTitle, regel.source?.article ? `art. ${regel.source.article}` : null, regel.source?.paragraph]
               .filter(Boolean)
               .join(", ");
+            // Een voorlopige controle door een mens is geen NS-bevestiging, en
+            // die twee mogen in één zin niet door elkaar lopen.
+            const controle = regel.source?.userChecked as { by: string; at: string; note: string | null } | null | undefined;
             zinnen.push(
               `${regel.title}: ${waarde}. Bron: ${bron || "onbekend"} (${regel.statusText ?? regel.status}).` +
+                (controle ? ` Voorlopig nagelopen door ${controle.by} op ${controle.at}; dat is geen formele bevestiging namens NS.` : "") +
                 (regel.blocking ? " Deze regel kan zo geen beslissing dragen." : "") +
                 (regel.applicable === false ? " Let op: hij geldt niet voor deze groep of standplaats." : ""),
             );

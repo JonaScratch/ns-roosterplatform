@@ -111,13 +111,16 @@
     {
       "id": 6,
       "name": "Niveau C",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T3",
-        "T4",
-        "T14",
-        "T15",
-        "T20"
+      "status": "TESTED",
+      "tests": {
+        "scenarios": "npm run verify:onderzoek -- --zwaar — 15 controles, 0 mislukt",
+        "unit": "tests/agent/onderzoekslus.test.ts — 8 tests"
+      },
+      "deliverables": [
+        "AgentResearchLoop/Round",
+        "rondeBesluit als losse beslisregels",
+        "drie remmen per ronde",
+        "voorstel voor een onderzoekslus in het gesprek"
       ]
     },
     {
@@ -159,11 +162,11 @@
     }
   ],
   "openDecisions": [
-    "Wat betekent RET in het Dordrechtse dienstenpakket?",
-    "AI-provider en gegevensstroom",
-    "formele bronstatus regels",
-    "NS-rollen en bevoegdheden",
-    "bewaartermijnen"
+    "AI-provider: beslist — volledig lokaal, geen externe API (21-09-2026)",
+    "RET: beslist — rangeerdienst (21-09-2026)",
+    "formele bronstatus: Jonathan controleert voorlopig zelf; formele NS-bevestiging nog open",
+    "bewaartermijnen: uitgesteld tot afspraken met NS",
+    "NS-rollen en bevoegdheden"
   ],
   "benchmarks": [
     {
@@ -256,6 +259,59 @@
       "name": "Praktijkscenarios 1-12 als integratietests",
       "status": "NOT_STARTED",
       "phase": 9
+    },
+    {
+      "id": "DOM-1",
+      "name": "Domeinwoordenboek met herkomst (RET = rangeerdienst)",
+      "status": "IMPLEMENTED",
+      "phase": 3,
+      "note": "RET komt letterlijk niet voor in het pakket; vertaling loopt via workType RANGEER (39 instanties, nummers 701-703/730-732/760-761)."
+    },
+    {
+      "id": "BRON-1",
+      "name": "Onderscheid gebruikerscontrole vs formele bevestiging",
+      "status": "IMPLEMENTED",
+      "phase": 3,
+      "note": "RuleSourceCheck + npm run regelbron:gecontroleerd; nog geen document nagelopen."
+    },
+    {
+      "id": "LOKAAL-1",
+      "name": "Hardware, kandidaatmodellen en haalbaarheid",
+      "status": "TESTED",
+      "phase": "lokale-ai",
+      "note": "RTX 3080 10 GB (nvidia-smi), 64 GB RAM, i7-14700K; geen runtime geinstalleerd. docs/v1.0.5/lokale-ai/hardware-en-modellen.md"
+    },
+    {
+      "id": "LOKAAL-2",
+      "name": "Runtime-adapter voor een OpenAI-compatibel lokaal eindpunt",
+      "status": "IMPLEMENTED",
+      "phase": "lokale-ai",
+      "note": "src/server/agent/model/local.ts; zonder NS_LOCAL_LLM_URL blijft de stub actief."
+    },
+    {
+      "id": "LOKAAL-3",
+      "name": "Eerste werkende lokale modelintegratie",
+      "status": "NOT_STARTED",
+      "phase": "lokale-ai"
+    },
+    {
+      "id": "LOKAAL-4",
+      "name": "Lokale-AI-benchmark op het draaiende model",
+      "status": "IN_PROGRESS",
+      "phase": "lokale-ai",
+      "note": "Harnas af (npm run bench:lokale-ai) en weigert aantoonbaar zonder model: docs/v1.0.5/benchmarks/lokaal-0."
+    },
+    {
+      "id": "LOKAAL-5",
+      "name": "Verbeteren op grond van gemeten tekortkomingen",
+      "status": "NOT_STARTED",
+      "phase": "lokale-ai"
+    },
+    {
+      "id": "LOKAAL-6",
+      "name": "Onderzoeken of gerichte training iets toevoegt",
+      "status": "NOT_STARTED",
+      "phase": "lokale-ai"
     }
   ]
 }
