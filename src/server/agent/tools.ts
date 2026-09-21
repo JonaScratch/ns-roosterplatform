@@ -7,6 +7,7 @@ import { flowDays, nightBlocksFlow } from "@/domain/roster-flow";
 import { dutyKey } from "@/domain/roster-quality";
 import type { Actor } from "@/server/auth/session";
 import { recordAudit } from "@/server/audit/log";
+import { STATUS_TEKST, searchRules } from "./knowledge";
 import { prisma } from "@/server/data/prisma";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
 import { RULE } from "@/server/rules-engine/ruleset/rule-ids";
@@ -250,6 +251,33 @@ const ruleLookup = tool({
   },
 });
 
+const ruleSearch = tool({
+  name: "ruleSearch",
+  description: "Regels zoeken op wat iemand vraagt (in gewone woorden), met waarde, bron, artikel en status — en wat er ontbreekt.",
+  permission: PERMISSIONS.RULES_READ,
+  input: z.object({
+    query: z.string().min(2).max(300),
+    locationCode: z.string().default("DDR"),
+    employeeGroup: z.enum(["MACHINIST", "HOOFDCONDUCTEUR"]).default("MACHINIST"),
+  }),
+  run: async (_actor, input) => {
+    const uitkomst = searchRules(input.query, {
+      employeeGroup: input.employeeGroup,
+      company: "NSR",
+      location: input.locationCode,
+      onDate: new Date().toISOString().slice(0, 10),
+    });
+    return {
+      data: {
+        ...uitkomst,
+        hits: uitkomst.hits.map((h) => ({ ...h, statusText: STATUS_TEKST[h.status] ?? h.status })),
+        note: "Een waarde zonder bevestigde status is geen juridisch oordeel.",
+      },
+      sources: [`regelbestand ${uitkomst.rulesetVersion}`],
+    };
+  },
+});
+
 const qualityReport = tool({
   name: "qualityReport",
   description: "De kwaliteitsmeting van een kandidaat of het officiële rooster: onderdelen, slechtste regel en de voorkeurslaag.",
@@ -332,7 +360,7 @@ const knowledgeSearch = tool({
   }),
 });
 
-export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, rosterHours, ruleLookup, qualityReport, nightStructure, knowledgeSearch] as const;
+export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, rosterHours, ruleLookup, ruleSearch, qualityReport, nightStructure, knowledgeSearch] as const;
 
 export type ToolName = (typeof AGENT_TOOLS)[number]["name"];
 

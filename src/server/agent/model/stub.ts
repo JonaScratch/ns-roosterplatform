@@ -283,6 +283,14 @@ export const stubModel: ChatModel = {
       if (ruleId) {
         return { intent: "REGELVRAAG", toolCalls: [{ tool: "ruleLookup", input: { ruleId, locationCode: ctx.locationCode } }], reasoning: `regel ${ruleId} opzoeken met bron en status` };
       }
+      // Geen bekende regel bij deze woorden: dan de kennisbank doorzoeken in
+      // plaats van er een te verzinnen. Wat niet gevonden wordt, blijft
+      // onbeantwoord — en wat ontbreekt in het regelbestand, wordt gezegd.
+      return {
+        intent: "REGELVRAAG",
+        toolCalls: [{ tool: "ruleSearch", input: { query: request.text, locationCode: ctx.locationCode } }],
+        reasoning: "regelkennisbank doorzoeken op de woorden van de vraag",
+      };
     }
 
     // Verdelingsvragen over soorten diensten.
@@ -478,6 +486,30 @@ export const stubModel: ChatModel = {
               `${regel.title ?? regel.ruleId}: ${regel.value} ${eenheid(regel.unit)}. Bron: ${[bron?.documentTitle ?? bron?.document ?? "onbekend", bron?.article ? `art. ${bron.article}` : null, bron?.paragraph ?? null].filter(Boolean).join(", ")}. ` +
                 (regel.verified ? "Deze bron is bevestigd." : "Let op: de juridische status van deze bron is niet formeel geverifieerd."),
             );
+          }
+          break;
+        }
+        case "ruleSearch": {
+          data = { ...(data ?? {}), rules: d };
+          const treffers = (d.hits ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+          const ontbreekt = (d.missing ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+          if (treffers.length === 0 && ontbreekt.length === 0) {
+            zinnen.push("In het regelbestand vind ik hier geen regel over. Dat betekent niet dat er geen regel bestaat — alleen dat hij hier niet in staat.");
+            break;
+          }
+          for (const regel of treffers.slice(0, 3)) {
+            const waarde = regel.value === null ? "geen waarde aangeleverd" : `${regel.value} ${eenheid(regel.unit)}`;
+            const bron = [regel.source?.documentTitle, regel.source?.article ? `art. ${regel.source.article}` : null, regel.source?.paragraph]
+              .filter(Boolean)
+              .join(", ");
+            zinnen.push(
+              `${regel.title}: ${waarde}. Bron: ${bron || "onbekend"} (${regel.statusText ?? regel.status}).` +
+                (regel.blocking ? " Deze regel kan zo geen beslissing dragen." : "") +
+                (regel.applicable === false ? " Let op: hij geldt niet voor deze groep of standplaats." : ""),
+            );
+          }
+          for (const pakket of ontbreekt.slice(0, 2)) {
+            zinnen.push(`Niet aangeleverd: ${pakket.title}. ${pakket.reason} Daardoor is dit niet te beoordelen: ${(pakket.blocks as string[]).join(", ")}.`);
           }
           break;
         }
