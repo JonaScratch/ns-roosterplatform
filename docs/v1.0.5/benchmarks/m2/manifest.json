@@ -1,0 +1,711 @@
+{
+  "schema": "ns-v105-baseline-manifest/1",
+  "recordedAt": "2026-09-21T05:50:17.119Z",
+  "purpose": "De stand van het platform bij de start van v1.0.5, met vingerafdrukken die controleerbaar maken of er sindsdien iets aan de code is veranderd.",
+  "git": {
+    "headCommit": "24bcebe761150cee8a2f76407dcce90876fd9797",
+    "headSubject": "Fase 5: de menselijke feedbacklus rond het leergeheugen",
+    "headDate": "2026-09-21T07:48:17+02:00",
+    "branch": "v1.0.5",
+    "tags": [
+      "v1.0.2",
+      "v1.0.3"
+    ],
+    "uncommittedPaths": 4,
+    "warning": "De code van v1.0.4, de menselijke ijking, de Final-Brain-ronde en de machinistenronde stond tot 20-09-2026 niet in Git. Op die datum is de werkmap vastgelegd als commit op de tak stand/v1.0.4-machinist, uitdrukkelijk als achteraf vastgelegde stand: het is niet de code zoals die tijdens de metingen was. De meetbasis (dienstpakket, regels, machine) is wel aantoonbaar ongewijzigd ten opzichte van het BEFORE-manifest.",
+    "snapshotCommit": "cf8a0e3 op stand/v1.0.4-machinist (20-09-2026)"
+  },
+  "packageVersion": "1.0.3",
+  "code": {
+    "src": {
+      "files": 290,
+      "bytes": 2654591,
+      "hash": "ac213e96ce02b96c"
+    },
+    "scripts": {
+      "files": 111,
+      "bytes": 1303615,
+      "hash": "70f2cf6f1e6afa12"
+    },
+    "python": {
+      "files": 1,
+      "bytes": 36173,
+      "hash": "a6392fb06b44d8a6"
+    },
+    "configs": {
+      "files": 6,
+      "bytes": 36712,
+      "hash": "de8be4dc6d289ea0"
+    },
+    "prisma": {
+      "files": 4,
+      "bytes": 112113,
+      "hash": "a93039c342bc2474"
+    },
+    "tests": {
+      "files": 61,
+      "bytes": 470698,
+      "hash": "27790bcf076a59ac"
+    },
+    "criticalFiles": {
+      "python/cpsat_roster.py": "2f805db871211dc8",
+      "src/server/optimizer/cpsat-optimizer.ts": "d0de20ac66721060",
+      "src/server/optimizer/objective-weights.ts": "a5604e28a13a41f3",
+      "src/server/generation/adaptive/config.ts": "96f72c447e8055ba",
+      "src/server/generation/adaptive/engine.ts": "ca8a5bca03eff00e",
+      "src/server/generation/adaptive/variant.ts": "ecd6e3959373f04d",
+      "src/domain/quality-model.ts": "0a1c5fdb54573c9f",
+      "src/domain/quality-evaluator.ts": "38a882cff1421ff5",
+      "src/domain/operational-requirements.ts": "50beac3335497318",
+      "src/domain/machinist-preference.ts": "7c9bae4919f1507a",
+      "src/domain/profile-affinity.ts": "d2553c74a392945f",
+      "src/domain/night-rhythm.ts": "3d19e2808540f1ab",
+      "src/server/rules-engine/final-validator.ts": "e0ff42b3d346c3e8",
+      "prisma/schema.prisma": "d535761792e53a12"
+    }
+  },
+  "engine": {
+    "configVersion": "adaptive-1.0.4-machinist",
+    "defaultVariant": {
+      "profile": "machinist",
+      "engineVersion": "adaptive-1.0.4-machinist",
+      "qualityModel": "quality-model-v2",
+      "humanRhythm": true,
+      "nightExitScale": 5,
+      "guards": {
+        "fairness": 0.5,
+        "hours": 1,
+        "rest": 1
+      },
+      "worstCase": true,
+      "nightExitRepair": false,
+      "nightFirst": false,
+      "operational": "operational-requirements-v1",
+      "preferenceScale": 0,
+      "overrides": null
+    },
+    "profiles": [
+      "machinist (standaard)",
+      "rhythm (Final-Brain-stand, model v2)",
+      "frozen-1.0.4 (exact v1.0.4)"
+    ],
+    "configPrints": {
+      "configs/optimizer-config-v1.0.4-machinist.json": "04a82ba303b5ba6e",
+      "configs/optimizer-config-v1.0.4-rhythm.json": "f7bcbd75232b8982",
+      "configs/optimizer-config-v1.0.4.json": "e3df4465f6ca9475"
+    }
+  },
+  "qualityModels": {
+    "current": "quality-model-v2",
+    "versions": {
+      "quality-model-v1": "5c479df794f06723",
+      "quality-model-v2": "dfd592adf4d84a65",
+      "quality-model-v3": "4525b9106095c24b"
+    },
+    "prints": {
+      "configs/quality-model-v1.json": "96dbd67fa6315e1b",
+      "configs/quality-model-v2.json": "f6c4b27e1e0fb334",
+      "configs/quality-model-v3.json": "a4a8b47abf375180"
+    },
+    "note": "v3 bevat de voorkeurslaag en de operationele eisen; de zoekmachine rangschikt op v2 (beslisregel M1 stond v3 niet toe)."
+  },
+  "operationalRequirements": {
+    "version": "operational-requirements-v1",
+    "sourceStatus": "USER_PROVIDED_OPERATIONAL_DESIGN_REQUIREMENT",
+    "providedOn": "2026-09-19",
+    "rosterAverageHours": {
+      "maxAverageWeeklyMinutes": 2400,
+      "semantics": "floor(roostercredit / cyclusweken) ≤ max; roostercredit = dienstduur + 8:00 per RES/WR/CO, R = 0 (roosterblad, rosterHours)"
+    },
+    "freeWeekendFriday": {
+      "latestEndMinute": 1439,
+      "exemptKinds": [
+        "NACHT"
+      ],
+      "meaning": "zaterdag en zondag zonder dienst en zonder reserve: een dag- of late dienst op vrijdag is uiterlijk 23:59 klaar; een nachtdienst mag"
+    },
+    "freeWeekend": {
+      "freeTypes": [
+        "RUST",
+        "WR",
+        "CO"
+      ],
+      "requiredTypes": [
+        "RUST",
+        "RUST"
+      ],
+      "structural": true
+    }
+  },
+  "data": {
+    "location": "DDR",
+    "dutyPackage": {
+      "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+      "label": "DDR-BDU-05-10-2026-V1",
+      "timetableId": "BDU-05-10-2026",
+      "sourceChecksum": "425b37902bf70752fd9f9ca7f5326f823516ce212c3024bbe7afcec883fe3d83",
+      "duties": 223
+    },
+    "rosterStructureVersion": "e2611821d375c42d",
+    "inputDataVersion": "7ff588d3e53e4f87",
+    "rosters": [
+      {
+        "code": "DDR-50MIX",
+        "profile": "MIX_50PLUS",
+        "lines": 6,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-BLM",
+        "profile": "BLM",
+        "lines": 6,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-L",
+        "profile": "LAAT",
+        "lines": 12,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-LN",
+        "profile": "LAAT_NACHT",
+        "lines": 6,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-MIX",
+        "profile": "MIX",
+        "lines": 12,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-V",
+        "profile": "VROEG",
+        "lines": 12,
+        "cycleWeeks": 1
+      },
+      {
+        "code": "DDR-VL",
+        "profile": "VROEG_LAAT",
+        "lines": 10,
+        "cycleWeeks": 1
+      }
+    ],
+    "hashes": {
+      "profileConfig": "e73a3bab43b59be285560a65772078aa2053848fb1df98dc614d8523c65dc06f",
+      "ruleset": "6dd5d1619bd3d3d74f8115bf683a9d9a44efda269f4aec6c666ca8e5ab76cdf1",
+      "optimizerConfig": "c3d50ebc3e0db5217c2f88a99e16866480319de42d60b06dfd6aafbd47038962",
+      "solverScript": "9a76e9638cc09c4bdbf0ca0d13fb9acd94ebf2279313e584ab307c376d29b34d"
+    },
+    "ruleset": {
+      "version": "2026.1-cao-2024-2025-transcribed",
+      "legalStatus": "LEGAL_RULESET_NOT_CURRENTLY_VERIFIED",
+      "rules": 71
+    },
+    "machine": {
+      "cpuModel": "Intel(R) Core(TM) i7-14700K",
+      "logicalCpus": 28,
+      "totalMemoryBytes": 68468662272,
+      "os": "Windows_NT 10.0.26200 x64",
+      "node": "v24.17.0",
+      "python": "3.11.1",
+      "ortools": "9.15.6755",
+      "solverWorkers": 8
+    }
+  },
+  "benchmarkPhases": {
+    "ab-frozen": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "frozen-1.0.4",
+        "engineVersion": "adaptive-1.0.4",
+        "qualityModel": "quality-model-v1",
+        "humanRhythm": false,
+        "nightExitScale": 1,
+        "guards": {},
+        "worstCase": false,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": null
+      },
+      "firstRunAt": "2026-09-19T01:22:19.597Z"
+    },
+    "ab-k5": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": false,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": {
+          "nightExitScale": 5,
+          "worstCase": false,
+          "nightExitRepair": false,
+          "nightFirst": false
+        }
+      },
+      "firstRunAt": "2026-09-19T01:36:23.134Z"
+    },
+    "ab-k5-f025": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.25,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": true,
+        "overrides": {
+          "nightExitScale": 5,
+          "guards": {
+            "fairness": 0.25,
+            "hours": 1,
+            "rest": 1
+          }
+        }
+      },
+      "firstRunAt": "2026-09-19T02:32:58.274Z"
+    },
+    "ab-k5-f100": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 1,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": true,
+        "overrides": {
+          "nightExitScale": 5,
+          "guards": {
+            "fairness": 1,
+            "hours": 1,
+            "rest": 1
+          }
+        }
+      },
+      "firstRunAt": "2026-09-19T02:46:47.123Z"
+    },
+    "ab-k5-full": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": true,
+        "overrides": {
+          "nightExitScale": 5
+        }
+      },
+      "firstRunAt": "2026-09-19T02:04:40.829Z"
+    },
+    "ab-k5-nofirst": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": true,
+        "nightFirst": false,
+        "overrides": {
+          "nightExitScale": 5,
+          "nightFirst": false
+        }
+      },
+      "firstRunAt": "2026-09-19T02:18:45.986Z"
+    },
+    "ab-k5-wc": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": {
+          "nightExitScale": 5,
+          "nightExitRepair": false,
+          "nightFirst": false
+        }
+      },
+      "firstRunAt": "2026-09-19T01:50:27.603Z"
+    },
+    "ablation": {
+      "runs": 9,
+      "strategies": {
+        "BALANCED": 9
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-18T06:25:58.597Z"
+    },
+    "after": {
+      "runs": 21,
+      "strategies": {
+        "BALANCED": 10,
+        "REST_QUALITY": 5,
+        "FAIR_BURDEN": 5,
+        "REPRODUCE": 1
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-17T22:21:56.264Z"
+    },
+    "before": {
+      "runs": 21,
+      "strategies": {
+        "BALANCED": 10,
+        "REST_QUALITY": 5,
+        "FAIR_BURDEN": 5,
+        "REPRODUCE": 1
+      },
+      "engine": "legacy",
+      "mode": null,
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-17T17:31:21.686Z"
+    },
+    "brain-after": {
+      "runs": 20,
+      "strategies": {
+        "BALANCED": 10,
+        "REST_QUALITY": 5,
+        "FAIR_BURDEN": 5
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "overrides": null
+      },
+      "firstRunAt": "2026-09-19T03:01:58.375Z"
+    },
+    "budget": {
+      "runs": 8,
+      "strategies": {
+        "BALANCED": 8
+      },
+      "engine": "adaptive",
+      "mode": "FAST",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-18T07:03:21.612Z"
+    },
+    "human": {
+      "runs": 20,
+      "strategies": {
+        "BALANCED": 10,
+        "REST_QUALITY": 5,
+        "FAIR_BURDEN": 5
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-18T20:29:12.414Z"
+    },
+    "human-dev1": {
+      "runs": 20,
+      "strategies": {
+        "BALANCED": 10,
+        "REST_QUALITY": 5,
+        "FAIR_BURDEN": 5
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-18T16:21:48.793Z"
+    },
+    "mp-after": {
+      "runs": 20,
+      "strategies": {
+        "BALANCED": 10,
+        "REST_QUALITY": 5,
+        "FAIR_BURDEN": 5
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "machinist",
+        "engineVersion": "adaptive-1.0.4-machinist",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "operational": "operational-requirements-v1",
+        "preferenceScale": 0,
+        "overrides": null
+      },
+      "firstRunAt": "2026-09-19T09:43:59.405Z"
+    },
+    "mp-m1": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "operational": "operational-requirements-v1",
+        "overrides": {
+          "operational": true
+        }
+      },
+      "firstRunAt": "2026-09-19T09:00:00.762Z"
+    },
+    "mp-m2": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v3",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "operational": "operational-requirements-v1",
+        "overrides": {
+          "operational": true,
+          "qualityModel": "quality-model-v3"
+        }
+      },
+      "firstRunAt": "2026-09-19T09:13:42.654Z"
+    },
+    "mp-smoke": {
+      "runs": 1,
+      "strategies": {
+        "BALANCED": 1
+      },
+      "engine": "adaptive",
+      "mode": "FAST",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "rhythm",
+        "engineVersion": "adaptive-1.0.4-rhythm+ablation",
+        "qualityModel": "quality-model-v3",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "operational": "operational-requirements-v1",
+        "overrides": {
+          "operational": true,
+          "qualityModel": "quality-model-v3"
+        }
+      },
+      "firstRunAt": "2026-09-19T08:57:16.281Z"
+    },
+    "mp-x13": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": {
+        "profile": "machinist",
+        "engineVersion": "adaptive-1.0.4-machinist+ablation",
+        "qualityModel": "quality-model-v2",
+        "humanRhythm": true,
+        "nightExitScale": 5,
+        "guards": {
+          "fairness": 0.5,
+          "hours": 1,
+          "rest": 1
+        },
+        "worstCase": true,
+        "nightExitRepair": false,
+        "nightFirst": false,
+        "operational": "operational-requirements-v1",
+        "preferenceScale": 0.333,
+        "overrides": {
+          "preferenceScale": 0.333
+        }
+      },
+      "firstRunAt": "2026-09-19T11:16:29.925Z"
+    },
+    "smoke": {
+      "runs": 3,
+      "strategies": {
+        "BALANCED": 3
+      },
+      "engine": "adaptive",
+      "mode": "NORMAL",
+      "manifestHash": "a0aafaa35dd0ca3f124c5a99410026444047889b7b9450a82996268384e4b0c8",
+      "variant": null,
+      "firstRunAt": "2026-09-17T19:07:56.007Z"
+    }
+  },
+  "frozenCopies": [
+    {
+      "path": "C:/Users/Jonathan Schram/ClaudeCode/ns-roosterplatform-ablatie",
+      "purpose": "Final-Brain-ablaties",
+      "fingerprint": "551aca67512aac1f"
+    },
+    {
+      "path": "C:/Users/Jonathan Schram/ClaudeCode/ns-roosterplatform-mp",
+      "purpose": "machinisten-A/B M1 en M2",
+      "fingerprint": "3b0bc8e6d3f22ac7"
+    },
+    {
+      "path": "C:/Users/Jonathan Schram/ClaudeCode/ns-roosterplatform-mp2",
+      "purpose": "machinisten-AFTER en verkennende run",
+      "fingerprint": "1d9d5f1febd6093d"
+    }
+  ],
+  "acceptedResults": {
+    "finalBrain": "docs/v1.0.4-final-brain/gates.json — 12 van 16 poorten; geen reviewpakketten (§26 van die werkopdracht).",
+    "machinist": "docs/v1.0.4-final-brain/machinist-preferences/gates.json — 18 van 19 poorten; eerlijkheid −0,55 tegen marge 0,5; geen reviewpakketten.",
+    "report": "docs/NS-Roosterplatform-v1.0.4-Final-Brain-Report.pdf (deel I Final Brain, deel II machinistenvoorkeur)."
+  }
+}

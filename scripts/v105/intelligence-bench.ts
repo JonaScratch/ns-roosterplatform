@@ -119,6 +119,8 @@ async function laadAgent(): Promise<null | {
   answer: (item: Json) => Promise<Json>;
   pinLevel: (level: "A" | "B" | "C") => Promise<string>;
   restoreLevel: (level: string) => Promise<void>;
+  seedMemory: () => Promise<void>;
+  clearMemory: () => Promise<void>;
 }> {
   const pad = path.join(WORTEL, "src", "server", "agent", "bench-adapter.ts");
   if (!existsSync(pad)) return null;
@@ -127,9 +129,11 @@ async function laadAgent(): Promise<null | {
     benchAnswer?: (item: Json) => Promise<Json>;
     benchPinLevel?: (level: "A" | "B" | "C") => Promise<string>;
     benchRestoreLevel?: (level: string) => Promise<void>;
+    benchSeedMemory?: () => Promise<void>;
+    benchClearMemory?: () => Promise<void>;
   };
-  if (!mod.benchAnswer || !mod.benchPinLevel || !mod.benchRestoreLevel) return null;
-  return { answer: mod.benchAnswer, pinLevel: mod.benchPinLevel, restoreLevel: mod.benchRestoreLevel };
+  if (!mod.benchAnswer || !mod.benchPinLevel || !mod.benchRestoreLevel || !mod.benchSeedMemory || !mod.benchClearMemory) return null;
+  return { answer: mod.benchAnswer, pinLevel: mod.benchPinLevel, restoreLevel: mod.benchRestoreLevel, seedMemory: mod.benchSeedMemory, clearMemory: mod.benchClearMemory };
 }
 
 async function main() {
@@ -151,6 +155,11 @@ async function main() {
    * reeks rondes (mag niet) werkelijk gemeten wordt.
    */
   const niveauVoor = agent ? await agent.pinLevel("B") : null;
+
+  // Een vaste geheugenset, zodat de geheugentests niet het toevallige geheugen
+  // van de demo-omgeving meten. Na afloop wordt hij opgeruimd.
+  const geheugenGezet = agent !== null && argument("geheugen") !== "nee";
+  if (agent && geheugenGezet) await agent.seedMemory();
 
   const resultaten: Json[] = [];
   for (const item of testset.items as Json[]) {
@@ -179,6 +188,7 @@ async function main() {
     testsetVersion: testset.version,
     agentPresent: agent !== null,
     agentLevel: agent ? "B" : null,
+    memoryFixture: geheugenGezet,
     model: agent ? (process.env.NS_AGENT_MODEL ?? "stub") : null,
     items: resultaten.length,
     byCategory: perCategorie,
@@ -189,6 +199,7 @@ async function main() {
   for (const [cat, tellingen] of Object.entries(perCategorie).sort()) console.log(`  ${cat}: ${Object.entries(tellingen).map(([s, n]) => `${s} ${n}`).join(", ")}`);
   const deterministisch = resultaten.filter((r) => r.expectKind === "deterministic");
   console.log(`  deterministisch te controleren: ${deterministisch.length}, waarvan verwachting berekend: ${deterministisch.filter((r) => r.expected !== null).length}`);
+  if (agent && geheugenGezet) await agent.clearMemory();
   if (agent && niveauVoor) await agent.restoreLevel(niveauVoor);
   await prisma.$disconnect();
 }

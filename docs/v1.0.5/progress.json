@@ -83,21 +83,29 @@
     {
       "id": 4,
       "name": "Leergeheugen",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T8",
-        "T13",
-        "T21",
-        "T25"
+      "status": "TESTED",
+      "tests": {
+        "scenarios": "npm run verify:geheugen — 22 controles, 0 mislukt (TEST 8,9,10,12,13,21,25)",
+        "unit": "tests/agent/leergeheugen.test.ts — 5 tests",
+        "benchmark": "M2: categorie E 3 GOED"
+      },
+      "deliverables": [
+        "AgentMemoryItem/AgentMemoryApplication met vier lagen",
+        "recall met bereikisolatie en pakketcontext",
+        "tool knowledgeSearch op echt geheugen"
       ]
     },
     {
       "id": 5,
       "name": "Menselijke feedbacklus",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T8",
-        "T12"
+      "status": "TESTED",
+      "tests": {
+        "handmatig": "volledige lus doorlopen in de draaiende applicatie",
+        "benchmark": "M2"
+      },
+      "deliverables": [
+        "voorstellen vanuit het gesprek (agent biedt aan, mens bevestigt)",
+        "geheugenpaneel met goedkeuren, afwijzen, corrigeren en intrekken"
       ]
     },
     {
@@ -187,8 +195,17 @@
     },
     {
       "id": "M2",
-      "status": "NOT_STARTED",
-      "after": "fase 4-5"
+      "status": "DONE",
+      "after": "fase 4-5",
+      "at": "2026-09-21",
+      "engine": "ongewijzigd t.o.v. M0 en M1, aantoonbaar",
+      "agent": "32 tests, niveau B, met vaste geheugenset: 21 GOED, 0 FOUT (E van 0 naar 3 GOED)",
+      "files": [
+        "benchmarks/m2/engine.json",
+        "benchmarks/m2/intelligence.json",
+        "benchmarks/m2/manifest.json",
+        "benchmarks/m2/summary.md"
+      ]
     },
     {
       "id": "M3",

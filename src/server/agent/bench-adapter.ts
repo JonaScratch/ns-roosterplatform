@@ -4,6 +4,7 @@ import type { Actor } from "@/server/auth/session";
 import { prisma } from "@/server/data/prisma";
 import { askAgent } from "./agent";
 import { currentGrant, levelOf, setAgentLevel } from "./capabilities";
+import { decideMemory, proposeMemory, withdrawMemory } from "./memory";
 
 /**
  * De ingang voor de intelligentiebenchmark.
@@ -108,9 +109,47 @@ function beoordeelGedrag(item: Json, antwoord: Json): { status: string; detail: 
       return antwoord.status === "NIET_VAST_TE_STELLEN" || antwoord.status === "VERDUIDELIJKING"
         ? { status: "GOED", detail: "" }
         : { status: "FOUT", detail: "verzon mogelijk een bron" };
+    case "refuse_withdrawn_knowledge":
+      // Ingetrokken kennis toepassen mag niet, en de reden hoort erbij.
+      return /ingetrokken/.test(tekst) && (antwoord.status === "GEWEIGERD" || antwoord.status === "NIET_VAST_TE_STELLEN")
+        ? { status: "GOED", detail: "" }
+        : { status: "FOUT", detail: `verwachtte een weigering met reden, kreeg ${antwoord.status}: ${tekst.slice(0, 80)}` };
+    case "scope_isolation":
+      // Een voorkeur van de ene standplaats geldt niet vanzelf op de andere.
+      return /niet (automatisch|vanzelf)|alleen voor|eigen standplaats/.test(tekst) && /rotterdam|andere standplaats/.test(tekst)
+        ? { status: "GOED", detail: "" }
+        : { status: "FOUT", detail: `zei niet dat dit niet vanzelf elders geldt: ${tekst.slice(0, 80)}` };
     default:
       return { status: "NIET_GEIMPLEMENTEERD", detail: `gedrag ${item.expect.behaviour} komt in een latere fase` };
   }
+}
+
+/**
+ * Een geheugenantwoord beoordelen.
+ *
+ * Niet "noemde hij iets": elk teruggevonden item moet zijn herkomst, zijn
+ * status en zijn bereik meedragen. Een voorkeur zonder die drie is een bewering
+ * zonder houvast — dan weet de lezer niet of het een besluit is, van wie, en
+ * waar het geldt.
+ */
+function beoordeelGeheugen(item: Json, antwoord: Json): { status: string; detail: string } {
+  const tekst = String(antwoord.text ?? "").toLowerCase();
+  const items = ((antwoord.data as Json | null)?.memory?.items ?? []) as Json[];
+  const vereist = (item.expect.params?.requires ?? []) as string[];
+  if (items.length === 0) {
+    // Geen geheugen is een geldige uitkomst, maar dan moet hij dat zeggen en
+    // niets toepassen.
+    return /niets over|nog niets/.test(tekst)
+      ? { status: "GOED", detail: "leeg geheugen, en dat wordt gezegd" }
+      : { status: "FOUT", detail: "geen items, en ook niet gezegd dat er niets is" };
+  }
+  const ontbreekt: string[] = [];
+  if (vereist.includes("herkomst") && !/van een mens|voorgesteld door de agent/.test(tekst)) ontbreekt.push("herkomst");
+  if (vereist.includes("status") && !/toegepast|telt dus niet mee|geldt/.test(tekst)) ontbreekt.push("status");
+  if (vereist.includes("scope") && !/standplaats|dit project|ns-breed/.test(tekst)) ontbreekt.push("bereik");
+  return ontbreekt.length === 0
+    ? { status: "GOED", detail: `${items.length} item(s) met herkomst, status en bereik` }
+    : { status: "FOUT", detail: `ontbreekt in het antwoord: ${ontbreekt.join(", ")}` };
 }
 
 export async function benchAnswer(item: Json): Promise<Json> {
@@ -151,7 +190,9 @@ export async function benchAnswer(item: Json): Promise<Json> {
       ? beoordeelDeterministisch(item, item.expected ?? null, laatste.data as Json | null)
       : item.expect.kind === "behaviour"
         ? beoordeelGedrag(item, antwoord)
-        : { status: "ONBEOORDEELD", detail: `${item.expect.kind} vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid` };
+        : item.expect.kind === "memory_recall"
+          ? beoordeelGeheugen(item, antwoord)
+          : { status: "ONBEOORDEELD", detail: `${item.expect.kind} vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid` };
 
   return { ...antwoord, status: oordeel.status, detail: oordeel.detail, answered: laatste.status, model: laatste.model, isLanguageModel: laatste.isLanguageModel };
 }
@@ -177,4 +218,72 @@ export async function benchRestoreLevel(level: string): Promise<void> {
   if (level === "A" || level === "B" || level === "C") {
     await setAgentLevel(actor, "DDR", level, { maxSolverSeconds: level === "A" ? 0 : 300 });
   }
+}
+
+/**
+ * Een bekend geheugen voor de meting.
+ *
+ * De geheugentests hebben iets nodig om te onthouden. Dat mag niet het
+ * toevallige geheugen van de demo-omgeving zijn: dan meet de benchmark wat er
+ * gisteren is ingetypt in plaats van het gedrag. Er wordt daarom een vaste set
+ * neergezet — één geldende Dordrechtse voorkeur, één ingetrokken voorkeur en
+ * één Rotterdamse — en na afloop weer opgeruimd.
+ */
+const BENCH_MERK = "[benchmarkfixture]";
+
+export async function benchSeedMemory(): Promise<void> {
+  const actor = await actorMet(["ROSTER_COMMITTEE"] as Role[]);
+  if (!actor) return;
+  const grant = await currentGrant("DDR");
+  const pakket = await prisma.dutyPackage.findFirst({
+    where: { depot: "DDR", status: "ACTIVE" },
+    orderBy: { validFrom: "desc" },
+    select: { id: true },
+  });
+
+  await benchClearMemory();
+
+  const geldend = await proposeMemory({
+    actor,
+    grant,
+    scope: "LOCATION",
+    kind: "PREFERENCE",
+    locationCode: "DDR",
+    dutyPackageId: pakket?.id ?? null,
+    statement: `In Dordrecht aflopers in Laat zoveel mogelijk over de regels spreiden. ${BENCH_MERK}`,
+    rationale: "Afgesproken in de commissie van 2026-Q2.",
+    byAgent: false,
+  });
+  await decideMemory({ actor, itemId: geldend, approve: true });
+
+  const ingetrokken = await proposeMemory({
+    actor,
+    grant,
+    scope: "LOCATION",
+    kind: "PREFERENCE",
+    locationCode: "DDR",
+    dutyPackageId: pakket?.id ?? null,
+    statement: `Vroege diensten op maandag vermijden. ${BENCH_MERK}`,
+    rationale: "Bleek niet houdbaar met het huidige dienstenpakket.",
+    byAgent: false,
+  });
+  await decideMemory({ actor, itemId: ingetrokken, approve: true });
+  await withdrawMemory(actor, ingetrokken, "De commissie heeft dit vorige periode ingetrokken.");
+
+  const rotterdam = await proposeMemory({
+    actor,
+    grant,
+    scope: "LOCATION",
+    kind: "PREFERENCE",
+    locationCode: "RTD",
+    statement: `In Rotterdam juist aflopers concentreren op enkele regels. ${BENCH_MERK}`,
+    rationale: "Tegenstrijdig met Dordrecht; bewust apart.",
+    byAgent: false,
+  });
+  await decideMemory({ actor, itemId: rotterdam, approve: true });
+}
+
+export async function benchClearMemory(): Promise<void> {
+  await prisma.agentMemoryItem.updateMany({ where: { statement: { contains: BENCH_MERK } }, data: { supersededById: null } });
+  await prisma.agentMemoryItem.deleteMany({ where: { statement: { contains: BENCH_MERK } } });
 }
