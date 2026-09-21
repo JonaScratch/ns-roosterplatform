@@ -83,6 +83,14 @@ export interface AgentPlan {
   readonly cannotDetermine?: string;
   /** Waarom dit niet mag, in gewone taal. */
   readonly refusal?: string;
+  /**
+   * Een voorgestelde rekenopdracht (niveau B).
+   *
+   * Een voorstel is geen opdracht: het scherm laat het zien met wat het gaat
+   * doen en hoe lang het duurt, en pas als een mens bevestigt, gebeurt er iets.
+   * De grenzen worden daarna server-side gecontroleerd tegen de toekenning.
+   */
+  readonly proposal?: Record<string, unknown>;
   /** Wat de agent van plan is, voor het activiteitenpaneel. */
   readonly reasoning: string;
 }
@@ -109,7 +117,7 @@ export interface AgentAnswer {
   /** Gestructureerd antwoord waar dat kan: hiermee wordt de agent afgerekend. */
   readonly data: Record<string, unknown> | null;
   readonly sources: readonly string[];
-  readonly status: "BEANTWOORD" | "VERDUIDELIJKING" | "NIET_VAST_TE_STELLEN" | "GEWEIGERD" | "FOUT";
+  readonly status: "BEANTWOORD" | "VERDUIDELIJKING" | "NIET_VAST_TE_STELLEN" | "GEWEIGERD" | "FOUT" | "VOORSTEL";
 }
 
 export interface ChatModel {

@@ -127,6 +127,11 @@ export const PERMISSIONS = {
    * is de veilige kant op, en moet niet wachten op wie er toevallig mag.
    */
   AGENT_STOP: "agent:stop",
+  /**
+   * Bevoegdheden van de agent toekennen of intrekken voor een project.
+   * Bij de commissie: het is hun rooster, en hun verantwoordelijkheid.
+   */
+  AGENT_GRANT: "agent:grant",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -180,6 +185,7 @@ const ROSTER_COMMITTEE_PERMISSIONS: readonly Permission[] = [
   PERMISSIONS.AGENT_CROSSLOCATION_READ,
   PERMISSIONS.AGENT_EXPERIMENT_PROPOSE,
   PERMISSIONS.AGENT_STOP,
+  PERMISSIONS.AGENT_GRANT,
 ];
 
 /**

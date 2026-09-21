@@ -1,4 +1,6 @@
 import "server-only";
+import { SCENARIO_PROFILES } from "@/server/optimizer/cpsat-optimizer";
+import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
 import { DAG_NAMEN } from "../context";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
@@ -82,6 +84,14 @@ const REKENVERZOEK_HARD = [
   "laat rekenen",
   "laten rekenen",
   "doorrekenen",
+  // Gevonden door verify:agent --zwaar: "laat eens uitrekenen of de nachten
+  // beter kunnen" werd gelezen als een vraag over de nachtstructuur, omdat
+  // "uitrekenen" nergens stond. Het werd dus netjes beantwoord in plaats van
+  // voorgesteld door te rekenen.
+  "uitrekenen",
+  "reken uit",
+  "laat berekenen",
+  "laten berekenen",
   "nieuwe kandidaat",
   "nieuwe kandidaten",
   "kandidaten maken",
@@ -93,18 +103,87 @@ const REKENVERZOEK_ZACHT = ["onderzoek", "probeer", "verbeter", "bereken"];
 /** Begrippen die in dit dienstenpakket niet bestaan: daar hoort een wedervraag bij. */
 const ONBEKENDE_BEGRIPPEN = ["ret", "sprinterdienst", "intercitydienst"];
 
+/**
+ * Waar een verbeterverzoek over kan gaan, en welk herbouwdoel daarbij hoort.
+ *
+ * Eén doel per herkenbaar woord. Wie niets herkenbaars zegt, krijgt geen
+ * voorstel maar een wedervraag: "maak het beter" is geen opdracht waar een
+ * zoekmachine iets mee kan, en een verzonnen doel is erger dan een vraag.
+ */
+const DOELWOORDEN: readonly { readonly herkent: (t: string) => boolean; readonly goal: string; readonly strategie: string }[] = [
+  // Stammen in plaats van hele woorden: "geclusterd", "clusteren" en
+  // "clustering" zijn hetzelfde doel. Gevonden door verify:agent --zwaar, waar
+  // "of de nachten beter geclusterd kunnen worden" geen enkel doel raakte.
+  { herkent: (t) => bevat(t, "nacht") && bevat(t, "cluster", "achter elkaar", "reeks", "blok"), goal: "NIGHT_CLUSTERING", strategie: "REST_QUALITY" },
+  { herkent: (t) => bevat(t, "nacht") && bevat(t, "eerlijk", "verdel", "spreid"), goal: "NIGHT_FAIRNESS", strategie: "FAIR_BURDEN" },
+  { herkent: (t) => bevat(t, "rust", "hersteltijd"), goal: "REST", strategie: "REST_QUALITY" },
+  { herkent: (t) => bevat(t, "uren", "40:00", "roostergemiddelde", "urenbalans"), goal: "HOURS", strategie: "BALANCED" },
+  { herkent: (t) => bevat(t, "rangeer"), goal: "SHUNTING_FAIRNESS", strategie: "FAIR_BURDEN" },
+  { herkent: (t) => bevat(t, "weekend"), goal: "WEEKEND_FAIRNESS", strategie: "FAIR_BURDEN" },
+  { herkent: (t) => bevat(t, "overgang", "wisseling"), goal: "TRANSITIONS", strategie: "REST_QUALITY" },
+  { herkent: (t) => bevat(t, "minder verander", "zo min mogelijk wijzig", "dicht bij het huidige"), goal: "LESS_CHANGE", strategie: "BALANCED" },
+];
+
 /** Een verzoek om te rekenen: mag alleen met de bevoegdheid, en anders met uitleg. */
-function rekenverzoek(request: PlanRequest): AgentPlan {
+function rekenverzoek(request: PlanRequest, tekst: string, ctx: PlanRequest["context"]): AgentPlan {
   const mag = request.capabilities.includes("agent:job:create");
+  if (!mag) {
+    return {
+      intent: "OPTIMALISATIEVERZOEK",
+      toolCalls: [],
+      refusal: request.suspended
+        ? "Ik ben stilgezet en start daarom niets: geen berekening, geen ronde, geen experiment. Vragen beantwoorden kan wel. Een commissielid kan mij weer aanzetten in het activiteitenpaneel."
+        : "Ik mag voor dit project geen berekening starten: die bevoegdheid staat uit. Een commissielid kan hem aanzetten in het bevoegdhedenpaneel, en kan de opdracht zelf wel starten in het generatiescherm.",
+      reasoning: request.suspended ? "de agent is stilgezet" : "bevoegdheid om te rekenen staat uit",
+    };
+  }
+
+  const gevonden = DOELWOORDEN.filter((d) => d.herkent(tekst));
+  if (gevonden.length === 0) {
+    // "Nachten" zonder meer is twee verschillende doelen die elkaar kunnen
+    // tegenwerken. Daar hoort een keuze bij en geen gok.
+    const alleenNacht = bevat(tekst, "nacht");
+    return {
+      intent: "VERDUIDELIJKING_NODIG",
+      toolCalls: [],
+      clarification: alleenNacht
+        ? "Wat moet er met de nachten gebeuren: de reeksen beter clusteren (minder losse nachten), of de nachten eerlijker over de regels verdelen? Dat zijn twee verschillende doelen, en ze kunnen elkaar tegenwerken."
+        : "Ik mag een berekening laten doen, maar dan moet ik weten waarop. Waar moet het beter worden: " +
+          "de uren richting 40:00, meer rust tussen diensten, de nachten (clusteren of eerlijker verdelen), " +
+          "rangeerdiensten, de weekendbelasting, of zo min mogelijk verandering?",
+      reasoning: "rekenverzoek zonder scherp doel; zonder doel is er niets te optimaliseren",
+    };
+  }
+
+  const isKandidaat = ctx.source === "candidate" && Boolean(ctx.candidateId);
+  const doelen = [...new Set(gevonden.map((d) => d.goal))];
+  // In het scherm horen woorden te staan, geen enumwaarden uit de motor.
+  const doelenInWoorden = doelen.map((g) => REBUILD_GOAL_LABELS[g as RebuildGoal] ?? g).join(" en ");
   return {
     intent: "OPTIMALISATIEVERZOEK",
     toolCalls: [],
-    refusal: mag
-      ? undefined
-      : request.suspended
-        ? "Ik ben stilgezet en start daarom niets: geen berekening, geen ronde, geen experiment. Vragen beantwoorden kan wel. Een commissielid kan mij weer aanzetten in het activiteitenpaneel."
-        : "Ik mag voor dit project geen berekening starten: die bevoegdheid staat uit. Een commissielid kan hem aanzetten in het bevoegdhedenpaneel, en kan de opdracht zelf wel starten in het generatiescherm.",
-    reasoning: mag ? "verbeterdoel formuleren en laten bevestigen" : request.suspended ? "de agent is stilgezet" : "bevoegdheid om te rekenen staat uit",
+    proposal: {
+      kind: isKandidaat ? "REBUILD" : "GENERATE",
+      strategy: gevonden[0].strategie,
+      // Het label komt uit de motor zelf, zodat er in het scherm geen tweede
+      // naam voor dezelfde strategie ontstaat.
+      strategyLabel: SCENARIO_PROFILES.find((p) => p.key === gevonden[0].strategie)?.label ?? gevonden[0].strategie,
+      rosterYear: new Date().getFullYear() + 1,
+      // Een voorstel begint kort. Wie meer rekentijd wil, kiest die zelf; de
+      // toekenning bepaalt wat er maximaal mag.
+      searchMode: "FAST",
+      // De doelen gaan altijd mee. Bij een herbouw sturen ze de gewichten; bij
+      // een nieuwe generatie zijn ze ter informatie — daar stuurt de strategie.
+      // Ze weglaten zou de gebruiker een leeg "gericht op" opleveren, en dat
+      // verbergt juist waarop hij ja zegt.
+      goals: doelen,
+      parentCandidateId: isKandidaat ? ctx.candidateId : null,
+      note: isKandidaat
+        ? `herbouw van de gekozen kandidaat, gericht op: ${doelenInWoorden}`
+        : `nieuwe kandidaten met de nadruk op: ${doelenInWoorden}`,
+      locationCode: ctx.locationCode,
+    },
+    reasoning: `rekenvoorstel opstellen (${doelen.join(", ")}); een mens bevestigt`,
   };
 }
 
@@ -165,7 +244,7 @@ export const stubModel: ChatModel = {
 
     // Ondubbelzinnige rekenverzoeken meteen: dit is geen leesvraag, en of het
     // mag hangt aan een bevoegdheid en niet aan de formulering.
-    if (bevat(tekst, ...REKENVERZOEK_HARD)) return rekenverzoek(request);
+    if (bevat(tekst, ...REKENVERZOEK_HARD)) return rekenverzoek(request, tekst, ctx);
 
     // De oorspronkelijke solverkeuze per dienst is nergens vastgelegd. Dat moet de
     // agent zeggen, ook als de context onvolledig is — een wedervraag zou hier de
@@ -255,7 +334,7 @@ export const stubModel: ChatModel = {
       };
     }
 
-    if (bevat(tekst, ...REKENVERZOEK_ZACHT)) return rekenverzoek(request);
+    if (bevat(tekst, ...REKENVERZOEK_ZACHT)) return rekenverzoek(request, tekst, ctx);
 
     if (ctx.rosterCode) {
       return {
@@ -299,6 +378,32 @@ export const stubModel: ChatModel = {
 
     if (plan.clarification) {
       return { text: plan.clarification, data: { intent: plan.intent }, sources: bronnen, status: "VERDUIDELIJKING" };
+    }
+
+    // Een voorstel is nog geen opdracht: er staat wat het gaat doen, wat het
+    // kost aan rekentijd, en wat het níet doet. Iemand drukt daarna op start.
+    if (plan.proposal) {
+      const p = plan.proposal as { kind: string; strategyLabel: string; searchMode: string; goals: string[]; note: string };
+      const doelen = p.goals.map((g) => REBUILD_GOAL_LABELS[g as RebuildGoal] ?? g);
+      const minuten = { FAST: 2, NORMAL: 5, DEEP: 15, EXTENSIVE: 30 }[p.searchMode] ?? 5;
+      return {
+        text:
+          (p.kind === "REBUILD"
+            ? `Voorstel: deze kandidaat herbouwen met de nadruk op ${doelen.join(" en ")}.`
+            : // Bij een nieuwe generatie stuurt de strategie, niet een los doel.
+              // Dat verschil hoort er te staan: anders belooft het voorstel een
+              // knop die er niet is.
+              `Voorstel: een nieuwe reeks kandidaten laten maken met strategie "${p.strategyLabel}"` +
+              (doelen.length > 0
+                ? `. Die strategie stuurt op ${doelen.join(" en ")}; bij een nieuwe generatie gaat dat via de strategie en niet via een apart doel.`
+                : ".")) +
+          ` Dat kost ongeveer ${minuten} minuten rekentijd. Er wordt niets vervangen en niets gepubliceerd:` +
+          " het resultaat komt als kandidaat naast de bestaande te staan, en de validator beoordeelt hem onafhankelijk." +
+          " Zal ik dat doen?",
+        data: { proposal: plan.proposal },
+        sources: bronnen,
+        status: "VOORSTEL",
+      };
     }
 
     const zinnen: string[] = [];

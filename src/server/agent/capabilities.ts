@@ -148,6 +148,50 @@ export async function setAgentSuspended(actor: Actor, locationCode: string, susp
   });
 }
 
+/**
+ * Een niveau toekennen of intrekken.
+ *
+ * De oude toekenning wordt ingetrokken en er komt een nieuwe bij, in plaats van
+ * de bestaande te overschrijven: wie later wil weten wat de agent vorige week
+ * mocht, moet dat kunnen terugvinden. Het niveau is een voorinstelling; de
+ * losse bevoegdheden blijven wat ze zijn.
+ */
+export async function setAgentLevel(
+  actor: Actor,
+  locationCode: string,
+  level: "A" | "B" | "C",
+  limits?: { readonly maxRounds?: number; readonly maxSolverSeconds?: number; readonly allowedStrategies?: readonly string[]; readonly protectedRosters?: readonly string[] },
+): Promise<void> {
+  const oud = await prisma.agentCapabilityGrant.findFirst({
+    where: { locationCode, revokedAt: null },
+    orderBy: { grantedAt: "desc" },
+    select: { id: true, capabilities: true, maxRounds: true, maxSolverSeconds: true, allowedStrategies: true, protectedRosters: true },
+  });
+  if (oud) {
+    await prisma.agentCapabilityGrant.update({ where: { id: oud.id }, data: { revokedAt: new Date() } });
+  }
+  await prisma.agentCapabilityGrant.create({
+    data: {
+      locationCode,
+      capabilities: [...AGENT_LEVELS[level]],
+      maxRounds: limits?.maxRounds ?? oud?.maxRounds ?? 0,
+      maxSolverSeconds: limits?.maxSolverSeconds ?? oud?.maxSolverSeconds ?? 0,
+      allowedStrategies: [...(limits?.allowedStrategies ?? oud?.allowedStrategies ?? [])],
+      protectedRosters: [...(limits?.protectedRosters ?? oud?.protectedRosters ?? [])],
+      grantedByUserId: actor.userId,
+      note: `Niveau ${level} toegekend.`,
+    },
+  });
+  await recordAudit({
+    actor,
+    action: "agent.bevoegdheden.toegekend",
+    objectType: "AgentCapabilityGrant",
+    objectId: oud?.id ?? null,
+    oldValue: oud ? { capabilities: oud.capabilities } : undefined,
+    newValue: { locationCode, level, capabilities: AGENT_LEVELS[level], limits: limits ?? null },
+  });
+}
+
 export class AgentCapabilityError extends Error {
   constructor(
     readonly capability: AgentCapability,

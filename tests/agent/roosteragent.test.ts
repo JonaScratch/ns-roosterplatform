@@ -181,6 +181,39 @@ describe("welke tool bij welke vraag", () => {
     expect(plan.refusal).toMatch(/bevoegdheid/);
   });
 
+  it("stelt met de bevoegdheid een opdracht voor in plaats van te weigeren", async () => {
+    const plan = await stubModel.plan(
+      verzoek("Kun je laten uitrekenen of de nachten beter geclusterd kunnen worden?", { rosterCode: "DDR-MIX" }, ["agent:chat", "agent:job:create"]),
+    );
+    expect(plan.intent).toBe("OPTIMALISATIEVERZOEK");
+    expect(plan.refusal).toBeUndefined();
+    expect(plan.proposal).toMatchObject({ kind: "GENERATE", goals: ["NIGHT_CLUSTERING"], searchMode: "FAST" });
+    // Een voorstel roept geen tools aan en start niets.
+    expect(plan.toolCalls).toHaveLength(0);
+  });
+
+  it("vraagt bij 'de nachten' welke van de twee doelen bedoeld wordt", async () => {
+    const plan = await stubModel.plan(
+      verzoek("Kun je de nachten laten berekenen?", { rosterCode: "DDR-MIX" }, ["agent:chat", "agent:job:create"]),
+    );
+    expect(plan.intent).toBe("VERDUIDELIJKING_NODIG");
+    expect(plan.clarification).toMatch(/clusteren/);
+    expect(plan.clarification).toMatch(/verdelen/);
+  });
+
+  it("zet het voorstel om in een zin zonder lege opsomming", async () => {
+    // Gevonden in het scherm: "gericht op ." omdat de doelen bij een nieuwe
+    // generatie niet werden meegegeven.
+    const vraag = verzoek("Laat uitrekenen of de nachten beter geclusterd kunnen worden.", { rosterCode: "DDR-MIX" }, ["agent:chat", "agent:job:create"]);
+    const plan = await stubModel.plan(vraag);
+    const antwoord = await stubModel.compose({ ...vraag, plan, results: [] });
+    expect(antwoord.status).toBe("VOORSTEL");
+    expect(antwoord.text).not.toMatch(/gericht op \./);
+    expect(antwoord.text).toMatch(/Nachten beter clusteren/);
+    expect(antwoord.text).toMatch(/niets gepubliceerd/);
+    expect(antwoord.data).toMatchObject({ proposal: { kind: "GENERATE" } });
+  });
+
   it("noemt de noodrem als die de reden is, en niet een ontbrekende bevoegdheid", async () => {
     // Gevonden door verify:agent (TEST 20): met de bevoegdheid áán maar de agent
     // stilgezet, gaf de agent geen weigering maar een leeg antwoord.

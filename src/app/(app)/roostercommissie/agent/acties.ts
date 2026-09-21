@@ -3,7 +3,9 @@
 import { z } from "zod";
 import { askAgent } from "@/server/agent/agent";
 import { requestStop } from "@/server/agent/activity";
-import { setAgentSuspended } from "@/server/agent/capabilities";
+import { AgentCapabilityError, currentGrant, setAgentLevel, setAgentSuspended } from "@/server/agent/capabilities";
+import { JobLimitError, jobProposalSchema, startProposedJob } from "@/server/agent/jobs";
+import { ActiveGenerationError } from "@/server/services/generation-service";
 import { currentActor } from "@/server/auth/session";
 import { requirePermission } from "@/server/security/authorize";
 import { locationScopeFor } from "@/server/security/location-scope";
@@ -42,6 +44,7 @@ export async function vraagAgentAction(invoer: unknown): Promise<AgentAntwoordJs
     reasoning: "",
     sources: [],
     tools: [],
+    proposal: null,
     contextUsed: { source: "official", rosterCode: null, lineNumber: null, weekday: null, dutyCode: null, missing: [] },
     usedRosterCode: null,
     level: "A" as const,
@@ -84,12 +87,51 @@ export async function vraagAgentAction(invoer: unknown): Promise<AgentAntwoordJs
     reasoning: antwoord.reasoning,
     sources: antwoord.sources,
     tools: antwoord.toolCalls.map((c) => ({ tool: c.tool, ok: c.ok, durationMs: c.ms })),
+    proposal: (antwoord.data?.proposal as Record<string, unknown> | undefined) ?? null,
     contextUsed: ctx,
     usedRosterCode: gebruiktRooster(antwoord.toolCalls) ?? ctx.rosterCode,
     level: antwoord.level,
     model: antwoord.model,
     isLanguageModel: antwoord.isLanguageModel,
   };
+}
+
+/**
+ * Een voorgestelde rekenopdracht starten, nadat een mens hem heeft bevestigd.
+ *
+ * Het voorstel komt terug uit het scherm; dat is invoer van buiten en wordt
+ * hier opnieuw gelezen, gevalideerd en getoetst aan de toekenning. Wie het
+ * voorstel onderweg zou aanpassen, komt langs dezelfde controles als de agent.
+ */
+export async function startVoorstelAction(input: unknown): Promise<{ ok: boolean; message: string; runId?: string }> {
+  const gelezen = z.object({ proposal: jobProposalSchema, sessionId: z.string().min(1).nullish() }).safeParse(input);
+  if (!gelezen.success) {
+    return { ok: false, message: "Dat voorstel kan ik niet lezen." };
+  }
+
+  const actor = await currentActor();
+  if (!actor) return { ok: false, message: "Je sessie is verlopen. Meld je opnieuw aan." };
+
+  const scope = await locationScopeFor(actor, gelezen.data.proposal.locationCode);
+  const grant = await currentGrant(scope.code);
+  try {
+    const gestart = await startProposedJob({
+      actor,
+      grant,
+      proposal: { ...gelezen.data.proposal, locationCode: scope.code },
+      sessionId: gelezen.data.sessionId ?? null,
+    });
+    return { ok: true, message: `De opdracht loopt: ${gestart.description}`, runId: gestart.runId };
+  } catch (fout) {
+    if (fout instanceof AgentCapabilityError || fout instanceof JobLimitError) {
+      return { ok: false, message: fout.message };
+    }
+    if (fout instanceof ActiveGenerationError) {
+      return { ok: false, message: fout.message };
+    }
+    console.error("[agent] opdracht starten mislukt", fout);
+    return { ok: false, message: "De opdracht kon niet worden gestart." };
+  }
 }
 
 /**
@@ -129,6 +171,42 @@ export async function zetAgentStilAction(input: unknown): Promise<{ ok: boolean;
     message: gelezen.data.suspended
       ? "De agent is stilgezet. Hij beantwoordt nog vragen, maar start niets meer."
       : "De agent staat weer aan.",
+  };
+}
+
+/**
+ * Het niveau van de agent instellen.
+ *
+ * Niveau B en C betekenen dat de agent rekentijd mag laten gebruiken; dat is
+ * een besluit van de commissie en geen instelling van het scherm. Het budget
+ * gaat mee: zonder grens zou "binnen vastgestelde grenzen" niets betekenen.
+ */
+export async function zetNiveauAction(input: unknown): Promise<{ ok: boolean; message: string }> {
+  const gelezen = z
+    .object({
+      level: z.enum(["A", "B", "C"]),
+      locationCode: z.string().min(1).optional(),
+      maxSolverSeconds: z.number().int().min(0).max(7200).optional(),
+      maxRounds: z.number().int().min(0).max(20).optional(),
+    })
+    .safeParse(input);
+  if (!gelezen.success) return { ok: false, message: "Dat verzoek kan ik niet lezen." };
+
+  const actor = await requirePermission(PERMISSIONS.AGENT_GRANT);
+  const scope = await locationScopeFor(actor, gelezen.data.locationCode ?? null);
+  await setAgentLevel(actor, scope.code, gelezen.data.level, {
+    // Niveau A rekent niet; dan hoort er ook geen rekenbudget te staan.
+    maxSolverSeconds: gelezen.data.level === "A" ? 0 : (gelezen.data.maxSolverSeconds ?? 300),
+    maxRounds: gelezen.data.level === "C" ? (gelezen.data.maxRounds ?? 3) : 0,
+  });
+  return {
+    ok: true,
+    message:
+      gelezen.data.level === "A"
+        ? "De agent staat op niveau A: analyseren en uitleggen."
+        : gelezen.data.level === "B"
+          ? "De agent staat op niveau B: hij mag een berekening voorstellen, die jij bevestigt."
+          : "De agent staat op niveau C: hij mag binnen het budget meerdere rondes doen.",
   };
 }
 

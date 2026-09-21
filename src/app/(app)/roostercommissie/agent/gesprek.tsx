@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { Alert, Badge, Button, type Tone, inputClass } from "@/components/ui/primitives";
-import { vraagAgentAction } from "./acties";
+import { startVoorstelAction, vraagAgentAction } from "./acties";
 import type { AgentContextKeuze, GesprekBericht } from "./types";
 
 /**
@@ -25,6 +25,7 @@ import type { AgentContextKeuze, GesprekBericht } from "./types";
 
 const STATUS_LABELS: Record<string, { label: string; tone: Tone }> = {
   BEANTWOORD: { label: "Beantwoord", tone: "ok" },
+  VOORSTEL: { label: "Voorstel", tone: "rc" },
   VERDUIDELIJKING: { label: "Wedervraag", tone: "info" },
   NIET_VAST_TE_STELLEN: { label: "Niet vast te stellen", tone: "warn" },
   GEWEIGERD: { label: "Mag niet", tone: "error" },
@@ -125,6 +126,7 @@ export function Gesprek({
             sources: antwoord.sources,
             tools: antwoord.tools.map((t) => `${t.tool}${t.ok ? "" : " (mislukt)"}`),
             missing: antwoord.contextUsed.missing,
+            proposal: antwoord.proposal,
             // Noemde de vraag een ander rooster dan de kiezer? Dan hoort dat er
             // hardop bij te staan, anders leest een antwoord over het ene
             // rooster als een antwoord over het andere.
@@ -137,6 +139,24 @@ export function Gesprek({
       });
     },
     [bezig, bron, huidigeContext, kandidaatId, kandidaten, sessionId],
+  );
+
+  /**
+   * Een voorstel bevestigen.
+   *
+   * De uitkomst komt onder het voorstel te staan, ook als hij negatief is: een
+   * geweigerde opdracht hoort net zo zichtbaar te zijn als een gestarte.
+   */
+  const startVoorstel = useCallback(
+    (berichtId: string, proposal: Record<string, unknown>) => {
+      startOvergang(async () => {
+        const uitkomst = await startVoorstelAction({ proposal, sessionId });
+        setBerichten((oud) =>
+          oud.map((b) => (b.id === berichtId ? { ...b, proposalResult: uitkomst.message } : b)),
+        );
+      });
+    },
+    [sessionId],
   );
 
   return (
@@ -292,6 +312,40 @@ export function Gesprek({
                 {bericht.missing && bericht.missing.length > 0 && (
                   <p className="mt-1 text-[11px] text-state-warn">
                     Niet ingevuld in de context: {bericht.missing.join(", ")}
+                  </p>
+                )}
+
+                {/* Een voorstel wacht op een mens. Zonder deze knop gebeurt er
+                    niets — dat is precies het verschil tussen niveau B en C. */}
+                {bericht.proposal && !bericht.proposalResult && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <Button
+                      variant="primary"
+                      size="small"
+                      type="button"
+                      disabled={bezig}
+                      onClick={() => startVoorstel(bericht.id, bericht.proposal!)}
+                    >
+                      Ja, laat berekenen
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      type="button"
+                      disabled={bezig}
+                      onClick={() =>
+                        setBerichten((oud) =>
+                          oud.map((b) => (b.id === bericht.id ? { ...b, proposalResult: "Niet gestart." } : b)),
+                        )
+                      }
+                    >
+                      Nee, laat maar
+                    </Button>
+                  </div>
+                )}
+                {bericht.proposalResult && (
+                  <p className="mt-2 rounded-lg bg-canvas px-2.5 py-1.5 text-[11.5px] text-ink">
+                    {bericht.proposalResult}
                   </p>
                 )}
               </div>

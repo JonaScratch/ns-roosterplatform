@@ -104,13 +104,32 @@ export async function finishActivity(
   });
 }
 
-/** Een mens drukt op stop. Het verzoek wordt vastgelegd; de activiteit stopt zelf. */
+/**
+ * Een mens drukt op stop. Het verzoek wordt vastgelegd; de activiteit stopt zelf.
+ *
+ * Hangt er een rekenopdracht aan, dan wordt die ook echt afgebroken. Alleen een
+ * vlag op de activiteit zetten zou betekenen dat het paneel "gestopt" zegt
+ * terwijl de zoekmachine doorrekent — precies het soort stopknop dat niet mag
+ * bestaan.
+ */
 export async function requestStop(actor: Actor, activityId: string): Promise<void> {
   await prisma.agentActivity.update({
     where: { id: activityId },
     data: { stopRequested: true, stopRequestedByUserId: actor.userId, stopRequestedAt: new Date() },
   });
-  const rij = await prisma.agentActivity.findUnique({ where: { id: activityId }, select: { locationCode: true, sessionId: true } });
+  const rij = await prisma.agentActivity.findUnique({
+    where: { id: activityId },
+    select: { locationCode: true, sessionId: true, generationRunId: true },
+  });
+  if (rij?.generationRunId) {
+    const afgebroken = await prisma.generationRun.updateMany({
+      where: { id: rij.generationRunId, status: { in: ["QUEUED", "RUNNING"] } },
+      data: { cancelRequested: true, stageMessage: "Stoppen gevraagd — de lopende berekening wordt beëindigd." },
+    });
+    if (afgebroken.count > 0) {
+      await recordAudit({ actor, action: "generatie.stoppen-gevraagd", objectType: "GenerationRun", objectId: rij.generationRunId });
+    }
+  }
   if (rij) {
     await recordEvent({
       activity: { id: activityId, locationCode: rij.locationCode },
@@ -124,6 +143,61 @@ export async function requestStop(actor: Actor, activityId: string): Promise<voi
 }
 
 /**
+ * Een activiteit die een rekenopdracht bewaakt, volgt die opdracht.
+ *
+ * ## Waarom niet met een eigen hartslag
+ *
+ * De opdracht heeft er al een. Een tweede hartslag ernaast zou twee waarheden
+ * geven die uit elkaar kunnen lopen — en dat deed hij ook: de opdracht liep
+ * prima, terwijl het paneel de activiteit na anderhalve minuut "onderbroken"
+ * noemde omdat niemand die tweede hartslag gaf. De opdracht is de bron; de
+ * activiteit neemt zijn uitkomst over.
+ */
+const STATUS_VAN_RUN: Readonly<Record<string, AgentActivityStatus>> = {
+  COMPLETED: "DONE",
+  PARTIAL: "DONE",
+  CANCELLED: "STOPPED",
+  FAILED: "FAILED",
+  INTERRUPTED: "INTERRUPTED",
+};
+
+export async function syncJobActivities(locationCode: string): Promise<number> {
+  const lopend = await prisma.agentActivity.findMany({
+    where: { locationCode, status: "RUNNING", generationRunId: { not: null } },
+    select: { id: true, generationRunId: true, sessionId: true },
+  });
+  let bijgewerkt = 0;
+  for (const rij of lopend) {
+    const run = await prisma.generationRun.findUnique({
+      where: { id: rij.generationRunId! },
+      select: { status: true, stageMessage: true, foundCandidates: true, heartbeatAt: true },
+    });
+    if (!run) continue;
+    if (run.status === "RUNNING" || run.status === "QUEUED") {
+      // Zolang de opdracht ademt, ademt de activiteit mee.
+      await prisma.agentActivity.update({ where: { id: rij.id }, data: { heartbeatAt: run.heartbeatAt ?? new Date() } });
+      continue;
+    }
+    const status = STATUS_VAN_RUN[run.status] ?? "FAILED";
+    await prisma.agentActivity.update({ where: { id: rij.id }, data: { status, finishedAt: new Date() } });
+    await recordEvent({
+      activity: { id: rij.id, locationCode },
+      locationCode,
+      sessionId: rij.sessionId,
+      kind: status === "DONE" ? "STAP" : status === "STOPPED" ? "STOP" : "FOUT",
+      message:
+        status === "DONE"
+          ? `De opdracht is afgerond: ${run.stageMessage ?? `${run.foundCandidates} kandidaten`}.`
+          : status === "STOPPED"
+            ? "De opdracht is op verzoek gestopt."
+            : `De opdracht eindigde als ${run.status.toLowerCase()}.`,
+    });
+    bijgewerkt += 1;
+  }
+  return bijgewerkt;
+}
+
+/**
  * Wat er tijdens een storing is blijven hangen.
  *
  * Draait bij het openen van het paneel en bij het starten van een nieuwe
@@ -131,6 +205,9 @@ export async function requestStop(actor: Actor, activityId: string): Promise<voi
  * en zeker niet "klaar".
  */
 export async function recoverStaleActivities(locationCode: string, now = new Date()): Promise<number> {
+  // Eerst de bewakers bijwerken: een opdracht die nog loopt, mag niet als
+  // verdwenen gelden alleen omdat de activiteit zelf niet klopt.
+  await syncJobActivities(locationCode);
   const grens = new Date(now.getTime() - HARTSLAG_GRENS_MS);
   const verdwenen = await prisma.agentActivity.findMany({
     where: { locationCode, status: "RUNNING", OR: [{ heartbeatAt: { lt: grens } }, { heartbeatAt: null, startedAt: { lt: grens } }] },

@@ -9,10 +9,11 @@ import { currentActor } from "@/server/auth/session";
 import { prisma } from "@/server/data/prisma";
 import { actorHasPermission } from "@/server/security/authorize";
 import { locationScopeFor } from "@/server/security/location-scope";
-import type { Permission } from "@/server/security/permissions";
+import { PERMISSIONS, type Permission } from "@/server/security/permissions";
 import { listBaseRosters } from "@/server/services/roster-service";
 import { ActiviteitenPaneel } from "./activiteitenpaneel";
 import { Gesprek } from "./gesprek";
+import { Niveaukiezer } from "./niveaukiezer";
 import type { GesprekBericht } from "./types";
 
 export const dynamic = "force-dynamic";
@@ -143,6 +144,9 @@ export default async function Roosteragent({
           <ActiviteitenPaneel locationCode={locationCode} />
 
           <WidgetCard title="Wat de agent mag" subtitle="Twee sloten: jouw recht én de toekenning">
+            {actorHasPermission(actor, PERMISSIONS.AGENT_GRANT) && (
+              <Niveaukiezer huidig={niveau} locationCode={locationCode} />
+            )}
             <ul className="divide-y divide-line py-1">
               {Object.values(AGENT_CAPABILITIES).map((cap) => {
                 const toegekend = grant.capabilities.includes(cap);

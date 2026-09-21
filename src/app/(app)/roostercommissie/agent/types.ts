@@ -25,6 +25,8 @@ export interface AgentAntwoordJson {
   readonly reasoning: string;
   readonly sources: readonly string[];
   readonly tools: readonly { readonly tool: string; readonly ok: boolean; readonly durationMs: number }[];
+  /** Een voorgestelde rekenopdracht die op bevestiging wacht (niveau B). */
+  readonly proposal: Record<string, unknown> | null;
   readonly contextUsed: {
     readonly source: string;
     readonly rosterCode: string | null;
@@ -57,4 +59,8 @@ export interface GesprekBericht {
   readonly tools?: readonly string[];
   readonly missing?: readonly string[];
   readonly context?: string | null;
+  /** Wacht dit bericht op een "ja" voordat er iets gebeurt? */
+  readonly proposal?: Record<string, unknown> | null;
+  /** Is het voorstel inmiddels gestart, en met welke uitkomst? */
+  readonly proposalResult?: string | null;
 }
