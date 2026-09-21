@@ -3,6 +3,7 @@ import type { Role } from "@/lib/generated/prisma/enums";
 import type { Actor } from "@/server/auth/session";
 import { prisma } from "@/server/data/prisma";
 import { askAgent } from "./agent";
+import { currentGrant, levelOf, setAgentLevel } from "./capabilities";
 
 /**
  * De ingang voor de intelligentiebenchmark.
@@ -153,4 +154,27 @@ export async function benchAnswer(item: Json): Promise<Json> {
         : { status: "ONBEOORDEELD", detail: `${item.expect.kind} vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid` };
 
   return { ...antwoord, status: oordeel.status, detail: oordeel.detail, answered: laatste.status, model: laatste.model, isLanguageModel: laatste.isLanguageModel };
+}
+
+/**
+ * Het niveau vastzetten voor de duur van een meting, en daarna terugzetten.
+ *
+ * Gevonden bij M1: de uitkomst hing af van wat er toevallig in de omgeving aan
+ * stond. Een meting die met de stand van gisteren meebeweegt, meet niet het
+ * gedrag maar de omgeving.
+ */
+export async function benchPinLevel(level: "A" | "B" | "C"): Promise<string> {
+  const actor = await actorMet(["ROSTER_COMMITTEE"] as Role[]);
+  if (!actor) throw new Error("Geen commissieaccount om het niveau mee te zetten.");
+  const huidig = levelOf(await currentGrant("DDR"));
+  await setAgentLevel(actor, "DDR", level, { maxSolverSeconds: 300 });
+  return huidig;
+}
+
+export async function benchRestoreLevel(level: string): Promise<void> {
+  const actor = await actorMet(["ROSTER_COMMITTEE"] as Role[]);
+  if (!actor) return;
+  if (level === "A" || level === "B" || level === "C") {
+    await setAgentLevel(actor, "DDR", level, { maxSolverSeconds: level === "A" ? 0 : 300 });
+  }
 }

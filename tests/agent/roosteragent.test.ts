@@ -214,6 +214,30 @@ describe("welke tool bij welke vraag", () => {
     expect(antwoord.data).toMatchObject({ proposal: { kind: "GENERATE" } });
   });
 
+  it("weigert meerdere rondes zonder de bevoegdheid daarvoor", async () => {
+    // Gevonden door M1: met rekenbevoegdheid vroeg de agent netjes waarop hij
+    // moest sturen, en liep het verschil tussen één opdracht en "je mag drie
+    // rondes" stil weg.
+    const plan = await stubModel.plan(
+      verzoek("Probeer dit rooster te verbeteren, je mag drie rondes.", { rosterCode: "DDR-L" }, ["agent:chat", "agent:job:create"]),
+    );
+    expect(plan.intent).toBe("OPTIMALISATIEVERZOEK");
+    expect(plan.refusal).toMatch(/agent:autonomous/);
+    expect(plan.proposal).toBeUndefined();
+  });
+
+  it("stelt met de autonome bevoegdheid wél iets voor bij meerdere rondes", async () => {
+    const plan = await stubModel.plan(
+      verzoek("Probeer de nachten beter te clusteren, je mag drie rondes.", { rosterCode: "DDR-L" }, [
+        "agent:chat",
+        "agent:job:create",
+        "agent:autonomous",
+      ]),
+    );
+    expect(plan.refusal).toBeUndefined();
+    expect(plan.proposal).toBeTruthy();
+  });
+
   it("schrijft een laag-2-doel niet op het conto van de strategie", async () => {
     // Gevonden in het scherm: het voorstel zei "die strategie stuurt op X en Y"
     // terwijl Y van de commissie kwam, niet van de strategie.
@@ -274,6 +298,21 @@ describe("hoe de agent antwoordt", () => {
     expect(antwoord.text).toMatch(/12 uur/);
     expect(antwoord.text).toMatch(/CAO NS 2024–2025/);
     expect(antwoord.text).toMatch(/niet formeel geverifieerd/);
+  });
+
+  it("noemt een lege regelzoektocht niet 'beantwoord'", async () => {
+    // Gevonden door M1 (holdout C4): "geen regel gevonden" kwam als antwoord
+    // naar buiten, terwijl de gebruiker juist moet weten dat hier niets over
+    // vaststaat.
+    const vraag = verzoek("Welk CAO-artikel regelt de vergoeding voor een verschoven dienst?");
+    const plan = await stubModel.plan(vraag);
+    const antwoord = await stubModel.compose({
+      ...vraag,
+      plan,
+      results: [{ tool: "ruleSearch", ok: true, sources: ["regelbestand 2026.1"], data: { hits: [], missing: [], rulesetVersion: "2026.1" } }],
+    });
+    expect(antwoord.status).toBe("NIET_VAST_TE_STELLEN");
+    expect(antwoord.text).toMatch(/verzin er geen artikel bij/);
   });
 
   it("vertelt bij een nachtreeks dat hij over de regelgrens loopt", async () => {

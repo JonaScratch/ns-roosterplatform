@@ -115,21 +115,42 @@ async function verwachting(item: Json, context: Awaited<ReturnType<typeof loadEv
 }
 
 /** De agent, als die er is. Nu nog niet: fase 1 levert hem. */
-async function laadAgent(): Promise<null | { answer: (item: Json) => Promise<Json> }> {
+async function laadAgent(): Promise<null | {
+  answer: (item: Json) => Promise<Json>;
+  pinLevel: (level: "A" | "B" | "C") => Promise<string>;
+  restoreLevel: (level: string) => Promise<void>;
+}> {
   const pad = path.join(WORTEL, "src", "server", "agent", "bench-adapter.ts");
   if (!existsSync(pad)) return null;
   // Pad als variabele: TypeScript mag een module die nog niet bestaat niet willen oplossen.
-  const mod = (await import(pathToFileURL(pad).href)) as { benchAnswer?: (item: Json) => Promise<Json> };
-  return mod.benchAnswer ? { answer: mod.benchAnswer } : null;
+  const mod = (await import(pathToFileURL(pad).href)) as {
+    benchAnswer?: (item: Json) => Promise<Json>;
+    benchPinLevel?: (level: "A" | "B" | "C") => Promise<string>;
+    benchRestoreLevel?: (level: string) => Promise<void>;
+  };
+  if (!mod.benchAnswer || !mod.benchPinLevel || !mod.benchRestoreLevel) return null;
+  return { answer: mod.benchAnswer, pinLevel: mod.benchPinLevel, restoreLevel: mod.benchRestoreLevel };
 }
 
 async function main() {
   const meting = argument("meting") ?? "m0";
+  const bestand = argument("bestand") ?? "intelligence.json";
   const map = path.join(WORTEL, "docs", "v1.0.5", "benchmarks", meting);
   mkdirSync(map, { recursive: true });
   const testset = JSON.parse(readFileSync(TESTSET, "utf8")) as Json;
   const context = await loadEvaluationContextCore("DDR");
   const agent = await laadAgent();
+
+  /**
+   * Het niveau van de agent wordt vastgezet op B.
+   *
+   * Gevonden bij M1: de uitkomst hing af van wat er toevallig in de omgeving
+   * aan stond. Op niveau A werd élk rekenverzoek geweigerd, waardoor een test
+   * over "meerdere rondes zonder de bevoegdheid" om de verkeerde reden groen
+   * stond. B is het niveau waarop het verschil tussen één opdracht (mag) en een
+   * reeks rondes (mag niet) werkelijk gemeten wordt.
+   */
+  const niveauVoor = agent ? await agent.pinLevel("B") : null;
 
   const resultaten: Json[] = [];
   for (const item of testset.items as Json[]) {
@@ -157,16 +178,18 @@ async function main() {
     measuredAt: new Date().toISOString(),
     testsetVersion: testset.version,
     agentPresent: agent !== null,
+    agentLevel: agent ? "B" : null,
     model: agent ? (process.env.NS_AGENT_MODEL ?? "stub") : null,
     items: resultaten.length,
     byCategory: perCategorie,
     results: resultaten,
   };
-  writeFileSync(path.join(map, "intelligence.json"), `${JSON.stringify(uit, null, 2)}\n`);
+  writeFileSync(path.join(map, bestand), `${JSON.stringify(uit, null, 2)}\n`);
   console.log(`${meting}: ${resultaten.length} tests · agent aanwezig: ${agent ? "ja" : "nee"}`);
   for (const [cat, tellingen] of Object.entries(perCategorie).sort()) console.log(`  ${cat}: ${Object.entries(tellingen).map(([s, n]) => `${s} ${n}`).join(", ")}`);
   const deterministisch = resultaten.filter((r) => r.expectKind === "deterministic");
   console.log(`  deterministisch te controleren: ${deterministisch.length}, waarvan verwachting berekend: ${deterministisch.filter((r) => r.expected !== null).length}`);
+  if (agent && niveauVoor) await agent.restoreLevel(niveauVoor);
   await prisma.$disconnect();
 }
 

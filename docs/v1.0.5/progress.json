@@ -43,7 +43,7 @@
         "chatscherm /roostercommissie/agent met contextkiezer, bronnen en bevoegdhedenpaneel",
         "UI-5: zichtbare demonaam"
       ],
-      "note": "Gebouwd en gemeten. Nog niet ACCEPTED: de acceptatiecriteria van fase 1 vragen ook M1, en M1 komt na fase 3. De metingen liepen op de lokale stub en zeggen niets over taalvaardigheid. Het uitvoeren van de verplichte scenario's legde vier defecten bloot die de unittests niet zagen (rekenopdracht niet herkend, rolwissel gaf een toolfout in plaats van een weigering, ontbrekend recht werd als storing gepresenteerd, stopverzoek niet herkend); die zijn hersteld en vastgelegd in tests."
+      "note": "Gebouwd en gemeten. Nog niet ACCEPTED: de acceptatiecriteria van fase 1 vragen ook M1, en M1 komt na fase 3. De metingen liepen op de lokale stub en zeggen niets over taalvaardigheid. Het uitvoeren van de verplichte scenario's legde vier defecten bloot die de unittests niet zagen (rekenopdracht niet herkend, rolwissel gaf een toolfout in plaats van een weigering, ontbrekend recht werd als storing gepresenteerd, stopverzoek niet herkend); die zijn hersteld en vastgelegd in tests. M1 is gedraaid."
     },
     {
       "id": 2,
@@ -60,17 +60,25 @@
         "noodrem: AgentCapabilityGrant.suspendedAt + recht agent:stop",
         "recoverStaleActivities: onderbroken heet onderbroken"
       ],
-      "note": "Het paneel leest uit de database, niet uit het tabblad. Nog niet ACCEPTED: dat hangt aan M1 (na fase 3). Wat nog een ontwerpvraag is: wat een medewerker in het paneel hoort te zien."
+      "note": "Het paneel leest uit de database, niet uit het tabblad. Nog niet ACCEPTED: dat hangt aan M1 (na fase 3). Wat nog een ontwerpvraag is: wat een medewerker in het paneel hoort te zien. M1 is gedraaid."
     },
     {
       "id": 3,
       "name": "Niveau B",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T2",
-        "T7",
-        "T23"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "scenarios": "npm run verify:agent -- --zwaar — 52 controles, 0 mislukt (TEST 2 met een echte generatie)",
+        "unit": "tests/agent — 36 tests",
+        "schermen": "npm run verify:schermen — 40 schermen in orde",
+        "benchmark": "M1"
+      },
+      "deliverables": [
+        "niveau B: voorstel + bevestiging, met controle tegen de toekenning (src/server/agent/jobs.ts)",
+        "niveaukiezer A/B/C met rekenbudget (recht agent:grant)",
+        "regelkennisbank met zoeken op gewone woorden (src/server/agent/knowledge.ts, tool ruleSearch)",
+        "UI-1 standaardgeneratie, UI-2 regels onder elkaar, UI-3 AI-werkruimte, UI-4 laag-2-doelen"
+      ],
+      "note": "Niveau B is end-to-end bewezen: voorstel, bevestiging, echte zoekmachine, 3 kandidaten, niets gepubliceerd."
     },
     {
       "id": 4,
@@ -164,8 +172,18 @@
     },
     {
       "id": "M1",
-      "status": "NOT_STARTED",
-      "after": "fase 1-3"
+      "status": "DONE",
+      "after": "fase 1-3",
+      "at": "2026-09-21",
+      "engine": "ongewijzigd t.o.v. M0, aantoonbaar (geen enginebestand gewijzigd sinds cf8a0e3)",
+      "agent": "32 tests op de lokale stub: eerste meting 18 GOED / 2 FOUT, na reparatie 18 GOED / 0 FOUT; 10 ONBEOORDEELD (taaloordeel), 4 NIET_GEIMPLEMENTEERD (geheugen, zelfstandigheid)",
+      "files": [
+        "benchmarks/m1/engine.json",
+        "benchmarks/m1/intelligence.json",
+        "benchmarks/m1/intelligence-na-herstel.json",
+        "benchmarks/m1/manifest.json",
+        "benchmarks/m1/summary.md"
+      ]
     },
     {
       "id": "M2",
@@ -182,25 +200,25 @@
     {
       "id": "UI-1",
       "name": "Strategietegels uit primaire generatie; een intelligente standaardgeneratie",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED",
       "phase": 3
     },
     {
       "id": "UI-2",
       "name": "Alle roosterregels standaard onder elkaar",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED",
       "phase": 3
     },
     {
       "id": "UI-3",
       "name": "Scenario vergelijken als AI-werkruimte",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED",
       "phase": 3
     },
     {
       "id": "UI-4",
       "name": "Layer-2-paneel voor aanvullende optimalisatiedoelen",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED",
       "phase": 3
     },
     {
@@ -213,7 +231,7 @@
     {
       "id": "KB-1",
       "name": "Regelkennisbank met bron, artikel en verificatiestatus",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED",
       "phase": 3
     },
     {

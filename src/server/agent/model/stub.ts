@@ -124,9 +124,33 @@ const DOELWOORDEN: readonly { readonly herkent: (t: string) => boolean; readonly
   { herkent: (t) => bevat(t, "minder verander", "zo min mogelijk wijzig", "dicht bij het huidige"), goal: "LESS_CHANGE", strategie: "BALANCED" },
 ];
 
+/**
+ * Vraagt dit om meerdere rondes achter elkaar?
+ *
+ * Dat is niveau C en een aparte bevoegdheid. Gevonden door M1: met alleen
+ * rekenbevoegdheid vroeg de agent netjes waarop hij moest sturen, en liep het
+ * verschil tussen "één opdracht" en "blijf net zolang zoeken" stil weg.
+ */
+const meerdereRondes = (tekst: string): boolean =>
+  // Ook uitgeschreven getallen: "je mag drie rondes" is precies de zin waarmee
+  // iemand om niveau C vraagt zonder het zo te noemen.
+  /\b(twee|drie|vier|vijf|zes|zeven|acht|negen|tien|\d+)\s*(rondes?|keer|pogingen)\b/.test(tekst) ||
+  /\brondes\b/.test(tekst) ||
+  bevat(tekst, "meerdere rondes", "meer rondes", "blijf zoeken", "net zolang", "blijf proberen", "zolang tot");
+
 /** Een verzoek om te rekenen: mag alleen met de bevoegdheid, en anders met uitleg. */
 function rekenverzoek(request: PlanRequest, tekst: string, ctx: PlanRequest["context"]): AgentPlan {
   const mag = request.capabilities.includes("agent:job:create");
+  if (meerdereRondes(tekst) && !request.capabilities.includes("agent:autonomous")) {
+    return {
+      intent: "OPTIMALISATIEVERZOEK",
+      toolCalls: [],
+      refusal: request.suspended
+        ? "Ik ben stilgezet en start niets, ook geen reeks rondes."
+        : "Meerdere rondes achter elkaar is niveau C, en die bevoegdheid (agent:autonomous) staat voor dit project niet aan. Eén opdracht kan ik wel voorstellen; die bevestig jij dan.",
+      reasoning: "verzoek om meerdere rondes zonder de bevoegdheid daarvoor",
+    };
+  }
   if (!mag) {
     return {
       intent: "OPTIMALISATIEVERZOEK",
@@ -244,7 +268,9 @@ export const stubModel: ChatModel = {
 
     // Ondubbelzinnige rekenverzoeken meteen: dit is geen leesvraag, en of het
     // mag hangt aan een bevoegdheid en niet aan de formulering.
-    if (bevat(tekst, ...REKENVERZOEK_HARD)) return rekenverzoek(request, tekst, ctx);
+    // Een verzoek om meerdere rondes telt als hard signaal: het gaat over wat
+    // de agent mag doen, niet over wat hij mag opzoeken.
+    if (bevat(tekst, ...REKENVERZOEK_HARD) || meerdereRondes(tekst)) return rekenverzoek(request, tekst, ctx);
 
     // De oorspronkelijke solverkeuze per dienst is nergens vastgelegd. Dat moet de
     // agent zeggen, ook als de context onvolledig is — een wedervraag zou hier de
@@ -502,8 +528,18 @@ export const stubModel: ChatModel = {
           const treffers = (d.hits ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
           const ontbreekt = (d.missing ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
           if (treffers.length === 0 && ontbreekt.length === 0) {
-            zinnen.push("In het regelbestand vind ik hier geen regel over. Dat betekent niet dat er geen regel bestaat — alleen dat hij hier niet in staat.");
-            break;
+            // Niets gevonden is geen antwoord op de vraag. Gevonden door M1:
+            // dit kwam als "beantwoord" naar buiten, terwijl de gebruiker juist
+            // moet weten dat hier niets over vaststaat.
+            return {
+              text:
+                "In het regelbestand vind ik hier geen regel over. Dat betekent niet dat er geen regel bestaat — " +
+                "alleen dat hij niet in dit bestand staat, en ik verzin er geen artikel bij. " +
+                "De regelcatalogus onder Regels & kaders laat zien wat er wél in staat.",
+              data: { rules: d },
+              sources: bronnen,
+              status: "NIET_VAST_TE_STELLEN",
+            };
           }
           for (const regel of treffers.slice(0, 3)) {
             const waarde = regel.value === null ? "geen waarde aangeleverd" : `${regel.value} ${eenheid(regel.unit)}`;

@@ -1,7 +1,9 @@
 import "dotenv/config";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+
+const fs_mkdir = (dir: string) => mkdirSync(dir, { recursive: true });
 import path from "node:path";
 import { QUALITY_MODEL_V1, QUALITY_MODEL_V2, QUALITY_MODEL_V3, CURRENT_QUALITY_MODEL } from "@/domain/quality-model";
 import { OPERATIONAL_REQUIREMENTS_V1 } from "@/domain/operational-requirements";
@@ -25,7 +27,19 @@ import { describeVariant, engineVariant } from "@/server/generation/adaptive/var
  */
 
 const WORTEL = path.resolve(__dirname, "..", "..");
-const DOEL = path.join(WORTEL, "docs", "v1.0.5", "baseline-manifest.json");
+/**
+ * Waar het manifest heen gaat.
+ *
+ * Standaard de baseline van v1.0.5. Met --uit <pad> schrijft het script ergens
+ * anders heen: een meting krijgt haar eigen manifest en overschrijft de
+ * vastgelegde uitgangssituatie niet. Dat was geen theoretische regel — bij M1
+ * overschreef dit script eerst de baseline van M0.
+ */
+const uitArgument = (() => {
+  const i = process.argv.indexOf("--uit");
+  return i >= 0 ? (process.argv[i + 1] ?? null) : null;
+})();
+const DOEL = uitArgument ? path.resolve(WORTEL, uitArgument) : path.join(WORTEL, "docs", "v1.0.5", "baseline-manifest.json");
 
 const sha = (data: Buffer | string) => createHash("sha256").update(data).digest("hex");
 
@@ -165,6 +179,7 @@ function main() {
       report: "docs/NS-Roosterplatform-v1.0.4-Final-Brain-Report.pdf (deel I Final Brain, deel II machinistenvoorkeur).",
     },
   };
+  fs_mkdir(path.dirname(DOEL));
   writeFileSync(DOEL, `${JSON.stringify(uit, null, 2)}\n`);
   console.log(`Geschreven: ${DOEL}`);
   console.log(`  HEAD ${uit.git.headCommit.slice(0, 8)} (${uit.git.headSubject}) · ${uit.git.uncommittedPaths} niet-vastgelegde paden`);
