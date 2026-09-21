@@ -2,6 +2,7 @@ import "server-only";
 import { SCENARIO_PROFILES } from "@/server/optimizer/cpsat-optimizer";
 import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
 import { DAG_NAMEN } from "../context";
+import { begripIn } from "../vocabulary";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
 /**
@@ -100,8 +101,15 @@ const REKENVERZOEK_HARD = [
 ];
 const REKENVERZOEK_ZACHT = ["onderzoek", "probeer", "verbeter", "bereken"];
 
-/** Begrippen die in dit dienstenpakket niet bestaan: daar hoort een wedervraag bij. */
-const ONBEKENDE_BEGRIPPEN = ["ret", "sprinterdienst", "intercitydienst"];
+/**
+ * Begrippen die in dit dienstenpakket niet bestaan: daar hoort een wedervraag bij.
+ *
+ * "ret" stond hier tot 21 september 2026 ook tussen. Dat was juist zolang
+ * niemand wist wat het betekende; nu staat het in het domeinwoordenboek
+ * (rangeerdienst, opgegeven door de gebruiker) en wordt de vraag beantwoord in
+ * plaats van teruggekaatst.
+ */
+const ONBEKENDE_BEGRIPPEN = ["sprinterdienst", "intercitydienst"];
 
 /**
  * Waar een verbeterverzoek over kan gaan, en welk herbouwdoel daarbij hoort.
@@ -299,6 +307,34 @@ export const stubModel: ChatModel = {
         toolCalls: [{ tool: "dutyInstance", input: { dutyCode: onbekend.toUpperCase(), locationCode: ctx.locationCode } }],
         clarification: `Ik kan "${onbekend.toUpperCase()}" niet terugvinden in dit dienstenpakket: niet als dienstnummer, niet in een omschrijving en niet als dienstsoort (dat zijn vroeg, laat, nacht, rangeer en reserve). Wat bedoel je ermee — een bepaald soort dienst, een bestemming, of iets anders?`,
         reasoning: "begrip komt niet voor in de gegevens; doorvragen in plaats van aannemen",
+      };
+    }
+
+    // "Waarom heeft regel 4 geen rangeerdiensten?" — een waaromvraag over iets
+    // wat er níet staat. Die is te beantwoorden uit de gegevens: waar de
+    // diensten van die soort wél terechtkwamen, en wat er op die regel staat.
+    const gevraagdBegrip = begripIn(tekst);
+    if (
+      gevraagdBegrip?.verwijst.soort === "DIENSTSOORT" &&
+      bevat(tekst, "geen", "waarom", "mist", "ontbreek") &&
+      ctx.rosterCode
+    ) {
+      return {
+        intent: "UITLEGVRAAG",
+        toolCalls: [
+          {
+            tool: "dutyKindPerLine",
+            input: {
+              kind: gevraagdBegrip.verwijst.kind,
+              lineNumber: ctx.lineNumber,
+              rosterCode: ctx.rosterCode,
+              locationCode: ctx.locationCode,
+              source: ctx.source,
+              candidateId: ctx.candidateId,
+            },
+          },
+        ],
+        reasoning: `uitzoeken waar de ${gevraagdBegrip.verwijst.kind.toLowerCase()}diensten van ${ctx.rosterCode} staan${ctx.lineNumber ? ` en wat er op regel ${ctx.lineNumber} staat` : ""}`,
       };
     }
 
@@ -637,6 +673,49 @@ export const stubModel: ChatModel = {
               // artikelnummer met "art." ervoor, en eventueel de paragraaf.
               `${regel.title ?? regel.ruleId}: ${regel.value} ${eenheid(regel.unit)}. Bron: ${[bron?.documentTitle ?? bron?.document ?? "onbekend", bron?.article ? `art. ${bron.article}` : null, bron?.paragraph ?? null].filter(Boolean).join(", ")}. ` +
                 (regel.verified ? "Deze bron is bevestigd." : "Let op: de juridische status van deze bron is niet formeel geverifieerd."),
+            );
+          }
+          break;
+        }
+        case "dutyKindPerLine": {
+          data = { ...(data ?? {}), kindPerLine: d };
+          if (!d.found) {
+            zinnen.push(`Dat basisrooster kan ik niet vinden (${(d.missing as string[]).join(", ")}).`);
+            break;
+          }
+          const soort = String(d.kind).toLowerCase();
+          const metSoort = (d.linesWithKind ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+          const gevraagd = d.requestedLine as Record<string, any> | null; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+          if (gevraagd && !gevraagd.hasKind) {
+            const diensten = (gevraagd.days as Record<string, any>[]).filter((x) => x.dutyCode); // eslint-disable-line @typescript-eslint/no-explicit-any
+            zinnen.push(
+              `In ${d.rosterCode} staat regel ${gevraagd.lineNumber} inderdaad zonder ${soort}dienst. ` +
+                `Die regel heeft ${diensten.length} ${diensten.length === 1 ? "dienst" : "diensten"}: ` +
+                (diensten.map((x) => `${x.weekdayName} ${x.dutyCode}`).join(", ") || "geen enkele") +
+                `; de overige dagen liggen vast (${(gevraagd.fixedDays as string[]).join(", ")}).`,
+            );
+            zinnen.push(
+              metSoort.length > 0
+                ? `De ${d.totalInRoster} ${soort}diensten van dit rooster staan op regel ` +
+                  metSoort.map((r) => `${r.lineNumber} (${r.count}× ${r.dutyCodes.join("/")})`).join(", ") +
+                  ". Ze zijn er dus wel; ze kwamen op andere regels terecht."
+                : `Dit hele basisrooster heeft geen enkele ${soort}dienst.`,
+            );
+            zinnen.push(
+              "Waaróm de zoekmachine ze daar heeft neergelegd en niet hier, is niet per dienst vastgelegd. " +
+                "Wat ik wel kan: laten uitrekenen wat het kost om ze anders te verdelen.",
+            );
+          } else if (gevraagd) {
+            zinnen.push(
+              `Regel ${gevraagd.lineNumber} van ${d.rosterCode} heeft wél ${soort}diensten: ` +
+                `${(metSoort.find((r) => r.lineNumber === gevraagd.lineNumber)?.dutyCodes ?? []).join(", ")}.`,
+            );
+          } else {
+            zinnen.push(
+              `${d.rosterCode} heeft ${d.totalInRoster} ${soort}diensten, verdeeld over regel ` +
+                metSoort.map((r) => `${r.lineNumber} (${r.count}×)`).join(", ") +
+                ".",
             );
           }
           break;

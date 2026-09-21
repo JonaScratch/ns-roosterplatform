@@ -88,11 +88,19 @@ describe("wat de agent weigert", () => {
 
 describe("wanneer de agent doorvraagt", () => {
   it("vraagt door bij een begrip dat niet in het dienstenpakket voorkomt", async () => {
-    const plan = await stubModel.plan(verzoek("Waarom heeft LA in roosterregel 4 geen RET-diensten?", { rosterCode: "DDR-L", lineNumber: 4 }));
+    const plan = await stubModel.plan(verzoek("Waarom rijdt regel 4 geen sprinterdienst?", { rosterCode: "DDR-L", lineNumber: 4 }));
     expect(plan.intent).toBe("VERDUIDELIJKING_NODIG");
-    expect(plan.clarification).toMatch(/RET/);
-    // Niet zelf invullen wat RET zou kunnen zijn.
-    expect(plan.clarification).not.toMatch(/rangeer(diensten)? bedoel/i);
+    expect(plan.clarification).toMatch(/SPRINTERDIENST/i);
+  });
+
+  it("behandelt RET als rangeerdienst en zoekt het uit", async () => {
+    // Sinds 21-09-2026 staat RET in het domeinwoordenboek (rangeerdienst,
+    // opgegeven door de gebruiker). Doorvragen zou nu nalatig zijn: het
+    // antwoord staat in de gegevens.
+    const plan = await stubModel.plan(verzoek("Waarom heeft LA in roosterregel 4 geen RET-diensten?", { rosterCode: "DDR-L", lineNumber: 4 }));
+    expect(plan.intent).toBe("UITLEGVRAAG");
+    expect(plan.toolCalls[0]?.tool).toBe("dutyKindPerLine");
+    expect(plan.toolCalls[0]?.input).toMatchObject({ kind: "RANGEER", rosterCode: "DDR-L", lineNumber: 4 });
   });
 
   it("vraagt door bij een opmerking zonder richting", async () => {

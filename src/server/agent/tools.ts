@@ -252,6 +252,78 @@ const ruleLookup = tool({
   },
 });
 
+const dutyKindPerLine = tool({
+  name: "dutyKindPerLine",
+  description:
+    "Waar diensten van één soort (bijvoorbeeld rangeer of nacht) in een basisrooster terechtkwamen: per roosterregel, " +
+    "met wat er op de gevraagde regel wél staat. Voor vragen als 'waarom heeft regel 4 geen rangeerdiensten?'.",
+  permission: PERMISSIONS.ROSTER_READ,
+  input: uiContextSchema.extend({
+    kind: z.enum(["RANGEER", "NACHT", "VROEG", "LAAT", "RESERVE"]),
+    lineNumber: z.number().int().positive().nullish(),
+  }),
+  run: async (_actor, input) => {
+    const ctx = await resolveContext(input as UiContext);
+    if (!ctx.roster) return { data: { found: false, missing: ctx.missing }, sources: [] };
+
+    const perRegel = new Map<number, { total: number; dutyCodes: string[] }>();
+    for (const dag of ctx.roster.days) {
+      const rij = perRegel.get(dag.lineNumber) ?? { total: 0, dutyCodes: [] };
+      if (dag.dutyCode) {
+        const duty = ctx.quality.duties.get(dutyKey(dag.dutyCode, dag.weekday));
+        if (duty?.kinds.includes(input.kind)) {
+          rij.total += 1;
+          if (!rij.dutyCodes.includes(dag.dutyCode)) rij.dutyCodes.push(dag.dutyCode);
+        }
+      }
+      perRegel.set(dag.lineNumber, rij);
+    }
+
+    const regels = [...perRegel.entries()]
+      .map(([lineNumber, x]) => ({ lineNumber, ...x }))
+      .sort((a, b) => a.lineNumber - b.lineNumber);
+    const metSoort = regels.filter((r) => r.total > 0);
+
+    // Wat staat er op de gevraagde regel dan wél? Zonder dat is "geen" een
+    // constatering zonder verklaring.
+    const gevraagd = input.lineNumber ?? null;
+    const dagenVanRegel = gevraagd ? lineDays(ctx.roster, gevraagd, ctx.quality.duties) : [];
+
+    return {
+      data: {
+        found: true,
+        rosterCode: ctx.roster.code,
+        profile: ctx.roster.profile,
+        kind: input.kind,
+        totalInRoster: regels.reduce((s, r) => s + r.total, 0),
+        linesWithKind: metSoort.map((r) => ({ lineNumber: r.lineNumber, count: r.total, dutyCodes: r.dutyCodes })),
+        linesWithoutKind: regels.filter((r) => r.total === 0).map((r) => r.lineNumber),
+        requestedLine: gevraagd
+          ? {
+              lineNumber: gevraagd,
+              hasKind: (perRegel.get(gevraagd)?.total ?? 0) > 0,
+              days: dagenVanRegel.map((d) => ({
+                weekday: d.weekday,
+                weekdayName: DAG_NAMEN[d.weekday],
+                positionType: d.positionType,
+                dutyCode: d.dutyCode,
+                kinds: d.kinds,
+                start: klok(d.startMinute),
+                end: klok(d.endMinute),
+              })),
+              dutyDays: dagenVanRegel.filter((d) => d.dutyCode).length,
+              fixedDays: dagenVanRegel.filter((d) => !d.dutyCode).map((d) => `${DAG_NAMEN[d.weekday]} ${d.positionType}`),
+            }
+          : null,
+      },
+      sources: [
+        ctx.candidate ? `kandidaat ${ctx.candidate.id.slice(0, 8)} (${ctx.candidate.label})` : "officieel rooster",
+        `${ctx.roster.code} (${regels.length} regels)`,
+      ],
+    };
+  },
+});
+
 const ruleSearch = tool({
   name: "ruleSearch",
   description: "Regels zoeken op wat iemand vraagt (in gewone woorden), met waarde, bron, artikel en status — en wat er ontbreekt.",
@@ -395,7 +467,7 @@ const knowledgeSearch = tool({
   },
 });
 
-export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, rosterHours, ruleLookup, ruleSearch, qualityReport, nightStructure, knowledgeSearch] as const;
+export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, dutyKindPerLine, rosterHours, ruleLookup, ruleSearch, qualityReport, nightStructure, knowledgeSearch] as const;
 
 export type ToolName = (typeof AGENT_TOOLS)[number]["name"];
 
