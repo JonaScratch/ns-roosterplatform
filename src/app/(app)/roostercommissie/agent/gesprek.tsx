@@ -270,12 +270,19 @@ export function Gesprek({
 
       {/* ── Gesprek ───────────────────────────────────────────────────────── */}
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-        {!isTaalmodel && (
+        {!isTaalmodel ? (
           <Alert tone="warn" title="Dit is nog geen taalmodel">
             De antwoorden komen van <span className="font-mono">{modelNaam}</span>: een lokale, vaste
             redeneerlaag die de gegevens echt opzoekt, maar geen taal begrijpt. Wat hier goed gaat,
             zegt iets over de keten — context, toolkeuze, rechten en cijfers — en niets over
             taalvaardigheid. Formuleer vragen daarom nog kort en concreet.
+          </Alert>
+        ) : (
+          <Alert tone="neutral" title="Er antwoordt een taalmodel">
+            De antwoorden komen van <span className="font-mono">{modelNaam}</span>, dat op deze
+            machine draait; er gaat niets naar buiten. Een taalmodel kan overtuigend klinken en er
+            toch naast zitten. Onder elk antwoord staat waar het op steunt — bij twijfel is dat de
+            plek om te kijken, niet de toon van het antwoord.
           </Alert>
         )}
 
