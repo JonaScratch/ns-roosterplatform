@@ -81,7 +81,19 @@ export interface AgentPlan {
 
 export interface ComposeRequest extends PlanRequest {
   readonly plan: AgentPlan;
-  readonly results: readonly { readonly tool: string; readonly ok: boolean; readonly data: unknown; readonly sources: readonly string[]; readonly error?: string }[];
+  readonly results: readonly {
+    readonly tool: string;
+    readonly ok: boolean;
+    readonly data: unknown;
+    readonly sources: readonly string[];
+    readonly error?: string;
+    /**
+     * Waarom een tool niets opleverde: "geen recht", "ongeldige invoer", "fout".
+     * Een weigering is iets anders dan een storing, en de gebruiker hoort het
+     * verschil te lezen.
+     */
+    readonly note?: string;
+  }[];
 }
 
 export interface AgentAnswer {

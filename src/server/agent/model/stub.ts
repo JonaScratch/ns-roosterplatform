@@ -52,10 +52,59 @@ const VERBODEN = [
   { woorden: ["negeer de validator", "negeer validator", "sla de validatie over", "goed genoeg"], uitleg: "De onafhankelijke validator kan ik niet overslaan. Een hoge score maakt een harde overtreding niet geldig." },
   { woorden: ["eigen bevoegdheden", "zet jezelf op niveau", "geef jezelf", "verhoog je rechten"], uitleg: "Ik kan mijn eigen bevoegdheden niet aanpassen. Dat doet een commissielid in het bevoegdhedenpaneel." },
   { woorden: ["verwijder de regel", "schrap de regel", "pas de cao aan"], uitleg: "Formele regels wijzig ik niet. Die komen uit het regelbestand en hebben een bron en een status." },
+  // Gevonden door verify:agent (TEST 5): een verzoek om een andere rol aan te
+  // nemen liep niet op een weigering uit maar op een toolfout. Doen alsof is
+  // precies de route waarlangs iemand rechten zou omzeilen.
+  {
+    woorden: ["doe alsof je", "gedraag je als", "je bent nu de", "je bent nu beheerder", "stel dat je", "net alsof je"],
+    uitleg: "Ik kan niet doen alsof ik iemand anders ben. Wat ik mag, hangt aan jouw rechten en aan wat de commissie voor dit project heeft aangezet — niet aan wat we afspreken in een gesprek.",
+  },
+  // Stoppen hoort bij de knop, niet bij de agent: hij heeft die bevoegdheid
+  // niet, ook niet als iemand het hem vriendelijk vraagt.
+  {
+    woorden: ["stop de opdracht", "stop er maar mee", "stop ermee", "annuleer de opdracht", "annuleer de generatie", "breek af"],
+    uitleg: "Een lopende opdracht kan ik niet stoppen. Dat doet een commissielid met de stopknop bij de opdracht zelf; daar wordt het ook vastgelegd.",
+  },
 ];
+
+/**
+ * Woorden die om rekenwerk vragen: daarvoor is een aparte bevoegdheid nodig.
+ *
+ * In twee soorten, en dat onderscheid is niet cosmetisch. "Start een
+ * optimalisatie" kan niets anders betekenen en wordt meteen herkend. "Bereken"
+ * of "onderzoek" kan óók een leesvraag zijn ("bereken het roostergemiddelde"),
+ * en wordt daarom pas bekeken als geen enkele leesvraag past. Zou het andersom
+ * staan, dan weigerde de agent vragen die hij gewoon mag beantwoorden.
+ */
+const REKENVERZOEK_HARD = [
+  "optimalisatie",
+  "optimaliseer",
+  "laat rekenen",
+  "laten rekenen",
+  "doorrekenen",
+  "nieuwe kandidaat",
+  "nieuwe kandidaten",
+  "kandidaten maken",
+  "maak kandidaten",
+  "genereer",
+];
+const REKENVERZOEK_ZACHT = ["onderzoek", "probeer", "verbeter", "bereken"];
 
 /** Begrippen die in dit dienstenpakket niet bestaan: daar hoort een wedervraag bij. */
 const ONBEKENDE_BEGRIPPEN = ["ret", "sprinterdienst", "intercitydienst"];
+
+/** Een verzoek om te rekenen: mag alleen met de bevoegdheid, en anders met uitleg. */
+function rekenverzoek(request: PlanRequest): AgentPlan {
+  const mag = request.capabilities.includes("agent:job:create");
+  return {
+    intent: "OPTIMALISATIEVERZOEK",
+    toolCalls: [],
+    refusal: mag
+      ? undefined
+      : "Ik mag voor dit project geen berekening starten: die bevoegdheid staat uit. Een commissielid kan hem aanzetten in het bevoegdhedenpaneel, en kan de opdracht zelf wel starten in het generatiescherm.",
+    reasoning: mag ? "verbeterdoel formuleren en laten bevestigen" : "bevoegdheid om te rekenen staat uit",
+  };
+}
 
 const weekdagUitTekst = (tekst: string): number | null => {
   for (let i = 1; i <= 7; i += 1) if (tekst.includes(DAG_NAMEN[i])) return i;
@@ -85,6 +134,10 @@ export const stubModel: ChatModel = {
         reasoning: "begrip komt niet voor in de gegevens; doorvragen in plaats van aannemen",
       };
     }
+
+    // Ondubbelzinnige rekenverzoeken meteen: dit is geen leesvraag, en of het
+    // mag hangt aan een bevoegdheid en niet aan de formulering.
+    if (bevat(tekst, ...REKENVERZOEK_HARD)) return rekenverzoek(request);
 
     // De oorspronkelijke solverkeuze per dienst is nergens vastgelegd. Dat moet de
     // agent zeggen, ook als de context onvolledig is — een wedervraag zou hier de
@@ -132,7 +185,8 @@ export const stubModel: ChatModel = {
     if (bevat(tekst, "afloper", "aflopers")) {
       return { intent: "VERDELINGSVRAAG", toolCalls: [{ tool: "dutyKindCounts", input: { dutyClass: "PREMIUM_LATE", locationCode: ctx.locationCode, source: ctx.source, candidateId: ctx.candidateId } }], reasoning: "echte aflopers per basisrooster tellen" };
     }
-    if (bevat(tekst, "uren", "urenbalans", "gemiddelde week")) {
+    // "roostergemiddelde" is een leesvraag, ook al staat er "bereken" voor.
+    if (bevat(tekst, "uren", "urenbalans", "gemiddelde week", "roostergemiddelde", "weekgemiddelde")) {
       return { intent: "VERDELINGSVRAAG", toolCalls: [{ tool: "rosterHours", input: { locationCode: ctx.locationCode, source: ctx.source, candidateId: ctx.candidateId } }], reasoning: "gemiddelde weekomvang per basisrooster" };
     }
     // Vragen over de geselecteerde regel.
@@ -173,15 +227,7 @@ export const stubModel: ChatModel = {
       };
     }
 
-    if (bevat(tekst, "onderzoek", "probeer", "verbeter", "genereer", "bereken")) {
-      const mag = request.capabilities.includes("agent:job:create");
-      return {
-        intent: "OPTIMALISATIEVERZOEK",
-        toolCalls: [],
-        refusal: mag ? undefined : "Ik mag voor dit project nog geen nieuwe berekening starten. Een commissielid kan die bevoegdheid aanzetten in het bevoegdhedenpaneel.",
-        reasoning: mag ? "verbeterdoel formuleren en laten bevestigen" : "bevoegdheid om te rekenen staat uit",
-      };
-    }
+    if (bevat(tekst, ...REKENVERZOEK_ZACHT)) return rekenverzoek(request);
 
     if (ctx.rosterCode) {
       return {
@@ -204,6 +250,21 @@ export const stubModel: ChatModel = {
     const bronnen = [...new Set(results.flatMap((r) => r.sources))];
 
     if (plan.refusal) return { text: plan.refusal, data: null, sources: bronnen, status: "GEWEIGERD" };
+
+    // Een weigering is geen storing. Wie de gegevens niet mag zien, hoort te
+    // lezen dát hij ze niet mag zien — "er ging iets mis" is hier onwaar en
+    // stuurt mensen naar de verkeerde hulplijn.
+    const geweigerd = results.find((r) => !r.ok && r.note === "geen recht");
+    if (geweigerd) {
+      return {
+        text:
+          `Die vraag kan ik voor jou niet beantwoorden: daarvoor moet ik ${geweigerd.tool} raadplegen, en daar heb jij geen recht op. ` +
+          "Een lid van de roostercommissie kan deze vraag wel stellen.",
+        data: null,
+        sources: bronnen,
+        status: "GEWEIGERD",
+      };
+    }
 
     const mislukt = results.find((r) => !r.ok);
     if (mislukt) return { text: `Dat lukte niet: ${mislukt.error ?? "onbekende fout"}.`, data: null, sources: bronnen, status: "FOUT" };

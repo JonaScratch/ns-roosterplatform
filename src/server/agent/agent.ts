@@ -113,11 +113,11 @@ export async function askAgent(input: {
   const plan = await model.plan(verzoek);
 
   const calls: ToolCall[] = [];
-  const results: { tool: string; ok: boolean; data: unknown; sources: readonly string[]; error?: string }[] = [];
+  const results: { tool: string; ok: boolean; data: unknown; sources: readonly string[]; error?: string; note?: string }[] = [];
   for (const stap of plan.toolCalls) {
     const { result, call, error } = await callTool(input.actor, stap.tool, stap.input);
     calls.push(call);
-    results.push({ tool: stap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error });
+    results.push({ tool: stap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error, note: call.note });
   }
 
   const antwoord = await model.compose({ ...verzoek, plan, results });

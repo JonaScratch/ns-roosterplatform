@@ -61,6 +61,7 @@
     "verify:rule-coverage": "tsx --conditions=react-server scripts/verify-rule-coverage.ts",
     "verify:e2e": "tsx --conditions=react-server scripts/verify-e2e.ts",
     "verify:beoordeling": "tsx --conditions=react-server scripts/verify-beoordeling.ts",
+    "verify:agent": "tsx --conditions=react-server scripts/verify-agent.ts",
     "verify:generatie": "tsx --conditions=react-server scripts/verify-generatie.ts",
     "verify:profielen": "tsx --conditions=react-server scripts/verify-profielen.ts",
     "verify:kwaliteit": "tsx --conditions=react-server scripts/verify-kwaliteit.ts",

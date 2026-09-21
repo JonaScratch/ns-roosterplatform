@@ -29,13 +29,21 @@
     {
       "id": 1,
       "name": "Agentfundament (niveau A)",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T1",
-        "T5",
-        "T6",
-        "T19"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "unit": "tests/agent/roosteragent.test.ts — 21 tests (bevoegdheden, weigeren, doorvragen, antwoordvorm)",
+        "scenarios": "npm run verify:agent — TEST 1, 5, 6, 19 tegen de echte database: 20 controles, 0 mislukt",
+        "benchmark": "docs/v1.0.5/benchmarks/fase1-na-scenarios — 18 GOED, 0 FOUT, 8/8 deterministisch (lokale stub)"
+      },
+      "deliverables": [
+        "agentbevoegdheden als rechten + AgentCapabilityGrant per project",
+        "AgentSession / AgentMessage / AgentCapabilityGrant (migratie 20260921000916)",
+        "negen leestools met rechtencontrole, invoervalidatie en auditspoor",
+        "modeladapter plan/compose met lokale stub",
+        "chatscherm /roostercommissie/agent met contextkiezer, bronnen en bevoegdhedenpaneel",
+        "UI-5: zichtbare demonaam"
+      ],
+      "note": "Gebouwd en gemeten. Nog niet ACCEPTED: de acceptatiecriteria van fase 1 vragen ook M1, en M1 komt na fase 3. De metingen liepen op de lokale stub en zeggen niets over taalvaardigheid. Het uitvoeren van de verplichte scenario's legde vier defecten bloot die de unittests niet zagen (rekenopdracht niet herkend, rolwissel gaf een toolfout in plaats van een weigering, ontbrekend recht werd als storing gepresenteerd, stopverzoek niet herkend); die zijn hersteld en vastgelegd in tests."
     },
     {
       "id": 2,
@@ -191,8 +199,9 @@
     {
       "id": "UI-5",
       "name": "Zichtbare demonaam: Rooster Commissie Demo",
-      "status": "NOT_STARTED",
-      "phase": 1
+      "status": "IMPLEMENTED",
+      "phase": 1,
+      "note": "seed + scripts/v105/demo-naam.ts voor bestaande databases; zichtbaar gecontroleerd in de draaiende applicatie."
     },
     {
       "id": "KB-1",
