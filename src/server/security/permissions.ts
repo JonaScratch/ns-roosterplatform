@@ -95,6 +95,32 @@ export const PERMISSIONS = {
 
   /** De regelcatalogus inzien. Mag iedereen: transparantie is het doel. */
   RULES_READ: "rules:read",
+
+  // ── De roosteragent (v1.0.5) ──────────────────────────────────────────────
+  //
+  // Een recht hier betekent "mag dit krijgen". Of het voor een concreet
+  // roosterproject ook áán staat, bepaalt de commissie met een toekenning
+  // (AgentCapabilityGrant). Beide moeten waar zijn; de agent kan zichzelf geen
+  // van beide geven. Publiceren staat er bewust niet tussen: dat blijft een
+  // menselijke handeling met ROSTER_PUBLISH.
+  /** Vragen stellen en uitleg krijgen. Wat de agent mag ópzoeken, bepaalt het recht van de vrager. */
+  AGENT_CHAT: "agent:chat",
+  /** De agent mag een generatie- of herbouwopdracht laten uitvoeren (niveau B). */
+  AGENT_JOB_CREATE: "agent:job:create",
+  /** De agent mag binnen een budget meerdere verbeteringsrondes doen (niveau C). */
+  AGENT_AUTONOMOUS: "agent:autonomous",
+  /** Feedback en ervaringen vastleggen in het projectgeheugen. */
+  AGENT_MEMORY_WRITE: "agent:memory:write",
+  /** Een nieuwe voorkeur ter goedkeuring voorstellen. */
+  AGENT_PREFERENCE_PROPOSE: "agent:preference:propose",
+  /** Een voorgestelde voorkeur goedkeuren en activeren. */
+  AGENT_PREFERENCE_APPROVE: "agent:preference:approve",
+  /** Kennis van andere standplaatsen raadplegen. */
+  AGENT_CROSSLOCATION_READ: "agent:crosslocation:read",
+  /** Een technische hypothese voorstellen. */
+  AGENT_EXPERIMENT_PROPOSE: "agent:experiment:propose",
+  /** Een afgeschermd technisch experiment draaien. */
+  AGENT_EXPERIMENT_RUN: "agent:experiment:run",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -113,6 +139,10 @@ const EMPLOYEE_PERMISSIONS: readonly Permission[] = [
   PERMISSIONS.SWAP_RESPOND,
   PERMISSIONS.COLLEAGUE_LOOKUP,
   PERMISSIONS.RULES_READ,
+  // Een machinist mag de agent vragen stellen over zijn eigen rooster en over de
+  // regels. Wat hij te zien krijgt, hangt af van zijn eigen rechten: de agent
+  // gebruikt per vraag dezelfde rechtencontrole als de schermen.
+  PERMISSIONS.AGENT_CHAT,
 ];
 
 /**
@@ -135,6 +165,14 @@ const ROSTER_COMMITTEE_PERMISSIONS: readonly Permission[] = [
   PERMISSIONS.DUTY_PACKAGE_IMPORT,
   PERMISSIONS.FEEDBACK_READ_AGGREGATE,
   PERMISSIONS.RULES_READ,
+  PERMISSIONS.AGENT_CHAT,
+  PERMISSIONS.AGENT_JOB_CREATE,
+  PERMISSIONS.AGENT_AUTONOMOUS,
+  PERMISSIONS.AGENT_MEMORY_WRITE,
+  PERMISSIONS.AGENT_PREFERENCE_PROPOSE,
+  PERMISSIONS.AGENT_PREFERENCE_APPROVE,
+  PERMISSIONS.AGENT_CROSSLOCATION_READ,
+  PERMISSIONS.AGENT_EXPERIMENT_PROPOSE,
 ];
 
 /**
@@ -171,6 +209,8 @@ const ADMIN_ONLY_PERMISSIONS: readonly Permission[] = [
   PERMISSIONS.ROLE_MANAGE,
   PERMISSIONS.SYSTEM_READ,
   PERMISSIONS.LOCATION_MANAGE,
+  // Alleen een technisch beheerder mag een experiment daadwerkelijk laten draaien.
+  PERMISSIONS.AGENT_EXPERIMENT_RUN,
 ];
 
 const ADMIN_PERMISSIONS: readonly Permission[] = [

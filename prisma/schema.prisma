@@ -87,6 +87,8 @@ model UserAccount {
   securityEvents SecurityEvent[]
   humanLineReviews        HumanLineReview[]
   humanPairwisePreferences HumanPairwisePreference[]
+  agentSessions           AgentSession[]
+  agentGrants             AgentCapabilityGrant[]
 
   // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
   // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
@@ -1756,4 +1758,78 @@ model RosterMembership {
   @@index([employeeId, placementType, status])
   @@index([baseRosterId, status])
   @@index([locationCode, status])
+}
+
+// ── De roosteragent (v1.0.5) ─────────────────────────────────────────────────
+//
+// De agent praat met de commissie, raadpleegt de bestaande diensten en mag —
+// binnen wat een mens hem toekent — de zoekmachine aansturen. Wat hij deed
+// staat in twee sporen: AgentMessage/AgentEvent voor de leesbare tijdlijn, en
+// de bestaande AuditLogEntry voor het formele spoor.
+
+enum AgentRole {
+  USER
+  AGENT
+  SYSTEM
+}
+
+/// Eén gesprek, gekoppeld aan een standplaats en meestal aan een roosterproject.
+model AgentSession {
+  id             String   @id @default(uuid())
+  locationCode   String
+  rosterPeriodId String?
+  title          String
+  createdByUserId String
+  createdBy      UserAccount @relation(fields: [createdByUserId], references: [id])
+  createdAt      DateTime @default(now())
+  lastMessageAt  DateTime?
+  messages       AgentMessage[]
+
+  @@index([locationCode, lastMessageAt])
+  @@index([createdByUserId])
+}
+
+/// Eén beurt in het gesprek, met de context waarop hij slaat en wat de agent raadpleegde.
+model AgentMessage {
+  id        String       @id @default(uuid())
+  sessionId String
+  session   AgentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      AgentRole
+  text      String
+
+  /// Waar de gebruiker naar keek toen hij dit typte: kandidaat, rooster, regel, dienst.
+  uiContext Json?
+  /// Welke tools zijn aangeroepen, met welk argument en welke uitkomstsoort.
+  toolCalls Json?
+  /// Waarop het antwoord steunt: kandidaat-id's, regel-id's, leeritems.
+  sources   Json?
+  /// Welk model dit antwoord maakte: "stub" of een echte modelnaam.
+  model     String?
+  createdAt DateTime     @default(now())
+
+  @@index([sessionId, createdAt])
+}
+
+/// Welke agentbevoegdheden voor dit project aan staan, en binnen welke grenzen.
+/// Een recht uit PERMISSIONS zegt "mag dit krijgen"; deze toekenning zegt "staat aan".
+model AgentCapabilityGrant {
+  id             String   @id @default(uuid())
+  locationCode   String
+  rosterPeriodId String?
+
+  /// Losse capabilities; niveau A/B/C is alleen een voorinstelling in het scherm.
+  capabilities   String[]
+  maxRounds      Int      @default(0)
+  maxSolverSeconds Int    @default(0)
+  allowedStrategies String[]
+  /// Roosters die met rust gelaten moeten worden.
+  protectedRosters  String[]
+
+  grantedByUserId String
+  grantedBy       UserAccount @relation(fields: [grantedByUserId], references: [id])
+  grantedAt      DateTime @default(now())
+  revokedAt      DateTime?
+  note           String?
+
+  @@index([locationCode, revokedAt])
 }
