@@ -1886,6 +1886,104 @@ enum AgentActivityStatus {
   INTERRUPTED
 }
 
+/// Waar een geleerd item geldt. De lagen staan náást elkaar en niet in elkaar:
+/// een Dordrechtse voorkeur wordt niet vanzelf Rotterdams, en NS-breed is geen
+/// optelsom maar een apart besluit.
+enum MemoryScope {
+  /// Dit roosterproject: deze standplaats, deze dienstregelingronde.
+  PROJECT
+  /// Deze standplaats, over rondes heen.
+  LOCATION
+  /// NS-breed. Alleen na een uitdrukkelijk besluit.
+  NATIONAL
+  /// Over de zoekmachine zelf, niet over een rooster.
+  TECHNICAL
+}
+
+/// Wat een item waard is. Alleen APPROVED telt mee in een beslissing; de rest
+/// bestaat wel, is leesbaar, en wordt niet toegepast.
+enum MemoryStatus {
+  PROPOSED
+  APPROVED
+  REJECTED
+  /// Ingetrokken door een mens. Blijft leesbaar, met reden.
+  WITHDRAWN
+  /// Vervangen door een nieuwer item; de opvolger staat in supersededById.
+  SUPERSEDED
+}
+
+enum MemoryKind {
+  /// Een voorkeur: wat mensen prettiger vinden.
+  PREFERENCE
+  /// Een feit over dit project of deze standplaats.
+  FACT
+  /// Een besluit van de commissie, met reden.
+  DECISION
+  /// Een les uit een eerdere ronde.
+  LESSON
+}
+
+/// Het leergeheugen van de agent.
+///
+/// Elk item draagt zijn herkomst (wie of wat het voorstelde), zijn status, en
+/// de context waarin het gold — inclusief het dienstenpakket. Dat laatste is
+/// geen administratie: een voorkeur die is geleerd op een pakket van vorig jaar
+/// mag niet blind op een nieuw pakket worden toegepast.
+model AgentMemoryItem {
+  id           String   @id @default(uuid())
+  scope        MemoryScope
+  kind         MemoryKind
+  locationCode String?
+  rosterPeriodId String?
+  /// Het dienstenpakket waarin dit item is geleerd.
+  dutyPackageId String?
+
+  /// Wat er geleerd is, in gewone taal.
+  statement    String
+  /// Waarom, en waarop het steunt.
+  rationale    String?
+  /// Verwijzingen naar kandidaten, metingen of feedback.
+  evidence     Json?
+
+  status       MemoryStatus @default(PROPOSED)
+  /// Kwam dit voorstel van de agent of van een mens?
+  proposedByAgent Boolean @default(false)
+  proposedByUserId String?
+  approvedByUserId String?
+  approvedAt   DateTime?
+  rejectedReason String?
+  withdrawnAt  DateTime?
+  withdrawnReason String?
+  supersededById String?
+  supersededBy AgentMemoryItem? @relation("MemorySupersede", fields: [supersededById], references: [id])
+  supersedes   AgentMemoryItem[] @relation("MemorySupersede")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  applications AgentMemoryApplication[]
+
+  @@index([scope, locationCode, status])
+  @@index([status, updatedAt])
+}
+
+/// Wanneer een geheugenitem werkelijk een beslissing heeft geraakt.
+/// Een item dat nooit een volgende beslissing heeft beïnvloed, telt volgens de
+/// benchmarkmethodiek niet als vooruitgang — daarom wordt dit geteld en niet
+/// geschat.
+model AgentMemoryApplication {
+  id          String   @id @default(uuid())
+  itemId      String
+  item        AgentMemoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  /// Waar het is toegepast: een opdracht, een voorstel of een antwoord.
+  context     String
+  generationRunId String?
+  candidateId String?
+  effect      String?
+  at          DateTime @default(now())
+
+  @@index([itemId, at])
+}
+
 /// Laag 2: wat de commissie bóvenop de standaardmeting belangrijk vindt.
 /// Laag 1 is het kwaliteitsmodel zoals het gemeten en geijkt is; die staat hier
 /// niet ter discussie. Deze doelen sturen de volgende opdracht en zijn per stuk

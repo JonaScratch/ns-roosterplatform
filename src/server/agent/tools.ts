@@ -8,6 +8,7 @@ import { dutyKey } from "@/domain/roster-quality";
 import type { Actor } from "@/server/auth/session";
 import { recordAudit } from "@/server/audit/log";
 import { STATUS_TEKST, searchRules } from "./knowledge";
+import { recall } from "./memory";
 import { prisma } from "@/server/data/prisma";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
 import { RULE } from "@/server/rules-engine/ruleset/rule-ids";
@@ -351,13 +352,47 @@ const nightStructure = tool({
 
 const knowledgeSearch = tool({
   name: "knowledgeSearch",
-  description: "Eerdere ervaringen en goedgekeurde voorkeuren zoeken. Fase 4 vult dit; nu is het leeg.",
+  description: "Goedgekeurde ervaringen en voorkeuren van dit project, deze standplaats en NS-breed, met herkomst en status.",
   permission: PERMISSIONS.ROSTER_READ,
-  input: z.object({ query: z.string(), locationCode: z.string().default("DDR") }),
-  run: async () => ({
-    data: { items: [], implemented: false, reason: "Het leergeheugen wordt in fase 4 gebouwd; er is nog niets opgeslagen." },
-    sources: [],
-  }),
+  input: z.object({ query: z.string().nullish(), locationCode: z.string().default("DDR"), includeProposed: z.boolean().default(false) }),
+  run: async (_actor, input) => {
+    // Het pakket waarin nú wordt gewerkt, zodat een item dat op een ouder
+    // pakket is geleerd niet stilzwijgend als geldig wordt gepresenteerd.
+    const pakket = await prisma.dutyPackage.findFirst({
+      where: { depot: input.locationCode, status: "ACTIVE" },
+      orderBy: { validFrom: "desc" },
+      select: { id: true, label: true },
+    });
+    const items = await recall({
+      locationCode: input.locationCode,
+      dutyPackageId: pakket?.id ?? null,
+      query: input.query ?? null,
+      includeProposed: input.includeProposed,
+    });
+    return {
+      data: {
+        implemented: true,
+        dutyPackage: pakket ? { id: pakket.id, label: pakket.label } : null,
+        items: items.map((i) => ({
+          id: i.id,
+          scope: i.scope,
+          kind: i.kind,
+          statement: i.statement,
+          rationale: i.rationale,
+          status: i.status,
+          origin: i.proposedByAgent ? "voorgesteld door de agent" : "van een mens",
+          approvedAt: i.approvedAt?.toISOString() ?? null,
+          appliedCount: i.appliedCount,
+          contextStillCurrent: i.contextStillCurrent,
+          locationCode: i.locationCode,
+        })),
+        note:
+          "Alleen goedgekeurde items tellen mee in een beslissing. Een item dat in een ander " +
+          "dienstenpakket is geleerd, wordt niet zonder meer toegepast.",
+      },
+      sources: [`leergeheugen ${input.locationCode}`, ...(pakket ? [`dienstenpakket ${pakket.label}`] : [])],
+    };
+  },
 });
 
 export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, rosterHours, ruleLookup, ruleSearch, qualityReport, nightStructure, knowledgeSearch] as const;

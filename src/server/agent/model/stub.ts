@@ -296,6 +296,16 @@ export const stubModel: ChatModel = {
       };
     }
 
+    // Vragen naar wat er eerder is geleerd. Dit gaat vóór de regelvraag: "wat
+    // weten we hierover" is geen vraag naar een voorschrift.
+    if (bevat(tekst, "eerder geleerd", "vorige keer", "wat weten we", "leergeheugen", "geheugen", "eerdere ervaring", "afgesproken", "vorig jaar")) {
+      return {
+        intent: "UITLEGVRAAG",
+        toolCalls: [{ tool: "knowledgeSearch", input: { query: request.text, locationCode: ctx.locationCode } }],
+        reasoning: "leergeheugen raadplegen; alleen goedgekeurde items tellen mee",
+      };
+    }
+
     // Regelvragen: eerst kijken of er een regel bij hoort.
     if (bevat(tekst, "hoeveel rust", "minimaal rust", "rusttijd", "hersteltijd", "herstel na", "welke regel", "regel geldt", "cao", "mag dat", "is dat toegestaan", "voorschrift", "voorgeschreven")) {
       const ruleId = bevat(tekst, "nacht") ? "NIGHT_SEQUENCE_RECOVERY" : bevat(tekst, "rust") ? "RP_DAILY_REST_PLANNED" : null;
@@ -594,7 +604,24 @@ export const stubModel: ChatModel = {
           break;
         }
         case "knowledgeSearch": {
-          zinnen.push("Er is nog geen leergeheugen; ik kan dus niets uit eerdere projecten terughalen.");
+          data = { ...(data ?? {}), memory: d };
+          const items = (d.items ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+          if (items.length === 0) {
+            zinnen.push("In het leergeheugen staat hier nog niets over. Wat niet is vastgelegd en goedgekeurd, pas ik ook niet toe.");
+            break;
+          }
+          for (const item of items.slice(0, 4)) {
+            const waar = item.scope === "NATIONAL" ? "NS-breed" : item.scope === "LOCATION" ? `standplaats ${item.locationCode}` : "dit project";
+            zinnen.push(
+              `${item.statement} (${waar}, ${item.origin}, ${item.appliedCount === 0 ? "nog nooit toegepast" : `${item.appliedCount}× toegepast`})` +
+                (item.status !== "APPROVED" ? ` — let op: ${String(item.status).toLowerCase()}, telt dus niet mee in een beslissing.` : "") +
+                // Dit is de kern van T21: een les uit een ander dienstenpakket
+                // gaat niet zonder meer op voor het pakket dat nu draait.
+                (item.contextStillCurrent === false
+                  ? " Dit is geleerd in een ander dienstenpakket; of het nu nog opgaat, is niet vastgesteld."
+                  : ""),
+            );
+          }
           break;
         }
         default:
