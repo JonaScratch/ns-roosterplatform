@@ -48,12 +48,19 @@
     {
       "id": 2,
       "name": "Activiteitenpaneel",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T17",
-        "T18",
-        "T20"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "scenarios": "npm run verify:agent — TEST 17, 18, 20 erbij: 35 controles, 0 mislukt",
+        "unit": "tests/agent/roosteragent.test.ts — 24 tests",
+        "handmatig": "stilzetten en hervatten in de draaiende applicatie doorlopen; het rekenverzoek werd daarna geweigerd met de juiste reden"
+      },
+      "deliverables": [
+        "AgentActivity + AgentEvent (migratie 20260921004028)",
+        "activiteitenpaneel op het agentscherm, met peiling via een GET-route",
+        "noodrem: AgentCapabilityGrant.suspendedAt + recht agent:stop",
+        "recoverStaleActivities: onderbroken heet onderbroken"
+      ],
+      "note": "Het paneel leest uit de database, niet uit het tabblad. Nog niet ACCEPTED: dat hangt aan M1 (na fase 3). Wat nog een ontwerpvraag is: wat een medewerker in het paneel hoort te zien."
     },
     {
       "id": 3,
