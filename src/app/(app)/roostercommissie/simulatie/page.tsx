@@ -7,8 +7,20 @@ import {
 import { RosterCommitteeShell } from "@/components/layout/area-shell";
 import { ActionForm } from "@/components/ui/action-form";
 import { Alert, Badge, EmptyState, type Tone, WidgetCard, inputClass } from "@/components/ui/primitives";
-import { CompareIcon, ShieldIcon, SparkIcon } from "@/components/ui/icons";
+import { ChatIcon, CompareIcon, ShieldIcon, SparkIcon } from "@/components/ui/icons";
+import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
+import { modelForRequest } from "@/server/agent/agent";
+import { currentGrant, levelOf } from "@/server/agent/capabilities";
+import { projectGoals } from "@/server/agent/project-goals";
+import { currentActor } from "@/server/auth/session";
+import { prisma } from "@/server/data/prisma";
+import { actorHasPermission } from "@/server/security/authorize";
+import { locationScopeFor } from "@/server/security/location-scope";
+import { PERMISSIONS } from "@/server/security/permissions";
+import { listBaseRosters } from "@/server/services/roster-service";
+import { Gesprek } from "../agent/gesprek";
 import { valideerKandidaatAction } from "./acties";
+import { Laag2Paneel } from "./laag2-paneel";
 import { KandidaatKaart, datumTijd, scoreTekst } from "./onderdelen";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +41,51 @@ export const dynamic = "force-dynamic";
  * scherm zet de cijfers naast elkaar en zegt hooguit welke kandidaat op één
  * maat het hoogst scoort. Een "beste rooster" bestaat hier niet.
  */
+/**
+ * Alles wat de werkruimte nodig heeft, in één keer opgehaald.
+ *
+ * Bewust een eigen functie: de vergelijking hiernaast is al complex genoeg, en
+ * deze gegevens horen bij de agent, niet bij het vergelijken.
+ */
+async function werkruimteGegevens() {
+  const actor = await currentActor();
+  if (!actor) {
+    // De shell stuurt door naar het aanmeldscherm; dit is de typegrens.
+    throw new Error("Geen sessie.");
+  }
+  const scope = await locationScopeFor(actor, null);
+  const [roosters, kandidaatRijen, grant, doelen] = await Promise.all([
+    listBaseRosters(),
+    prisma.candidateRoster.findMany({
+      where: { locationCode: scope.code, archivedAt: null },
+      orderBy: { generatedAt: "desc" },
+      take: 8,
+      select: { id: true, scenarioLabel: true, validationState: true },
+    }),
+    currentGrant(scope.code),
+    projectGoals(scope.code, false),
+  ]);
+  const model = modelForRequest();
+  const actief = new Map(doelen.map((d) => [d.goal, d]));
+  return {
+    actor,
+    locationCode: scope.code,
+    roosters: roosters.map((r) => ({ code: r.code, label: r.profileLabel, lines: r.lines })),
+    kandidaten: kandidaatRijen.map((k) => ({ id: k.id, label: `${k.scenarioLabel} — ${k.validationState.toLowerCase()}` })),
+    niveau: levelOf(grant),
+    modelNaam: model.name,
+    isTaalmodel: model.isLanguageModel,
+    // Alle mogelijke doelen, met hun huidige stand. Zo is ook te zien wat er
+    // níet aan staat; een lijst van alleen de actieve doelen verbergt de keuze.
+    doelen: Object.entries(REBUILD_GOAL_LABELS).map(([goal, label]) => ({
+      goal,
+      label,
+      active: actief.get(goal as RebuildGoal)?.active ?? false,
+      note: actief.get(goal as RebuildGoal)?.note ?? null,
+    })),
+  };
+}
+
 export default async function Simulatie({
   searchParams,
 }: {
@@ -52,12 +109,21 @@ export default async function Simulatie({
   const aantalKandidaten =
     overzicht.runs.reduce((som, groep) => som + groep.candidates.length, 0) + overzicht.legacy.length;
 
+  // De AI-werkruimte: dit scherm is de plek waar kandidaten worden gewogen, en
+  // dus de plek waar de agent hoort mee te kijken. Wat hij mag laten zien hangt
+  // aan de rechten van wie er kijkt — daarom worden beide delen apart getoetst.
+  const werkruimte = await werkruimteGegevens();
+  const mag = {
+    agent: actorHasPermission(werkruimte.actor, PERMISSIONS.AGENT_CHAT),
+    doelen: actorHasPermission(werkruimte.actor, PERMISSIONS.ROSTER_GENERATE),
+  };
+
   return (
     <RosterCommitteeShell
       activeHref="/roostercommissie/simulatie"
       header={{
-        title: "Scenario's vergelijken",
-        subtitle: "De uitkomst van generatieopdrachten: openen, vergelijken, opnieuw bouwen",
+        title: "Scenario's & AI-werkruimte",
+        subtitle: "Kandidaten openen, vergelijken en herbouwen — met de roosteragent ernaast",
       }}
     >
       <div className="grid gap-4 xl:grid-cols-4">
@@ -269,6 +335,44 @@ export default async function Simulatie({
         </div>
 
         <div className="space-y-4">
+          {mag.agent ? (
+            <WidgetCard
+              icon={<ChatIcon size={18} />}
+              tone="rc"
+              title="Vraag het de roosteragent"
+              subtitle="Over de kandidaten hiernaast"
+              bodyClassName="border-t border-line p-3"
+            >
+              <Gesprek
+                locationCode={werkruimte.locationCode}
+                roosters={werkruimte.roosters}
+                kandidaten={werkruimte.kandidaten}
+                beginBerichten={[]}
+                beginSessionId={null}
+                voorbeelden={[
+                  "Wat is het verschil tussen deze kandidaat en het huidige rooster?",
+                  "Op welke regels van dit rooster staan nachtdiensten?",
+                  "Laat uitrekenen of de nachten beter geclusterd kunnen worden.",
+                ]}
+                niveau={werkruimte.niveau}
+                modelNaam={werkruimte.modelNaam}
+                isTaalmodel={werkruimte.isTaalmodel}
+                compact
+              />
+            </WidgetCard>
+          ) : null}
+
+          {mag.doelen ? (
+            <WidgetCard
+              tone="neutral"
+              title="Laag 2 — extra doelen"
+              subtitle="Bovenop de vaste meting, voor de volgende opdracht"
+              bodyClassName="border-t border-line px-4 py-1"
+            >
+              <Laag2Paneel doelen={werkruimte.doelen} locationCode={werkruimte.locationCode} />
+            </WidgetCard>
+          ) : null}
+
           <WidgetCard tone="neutral" title="Huidig rooster als ijkpunt" bodyClassName="border-t border-line px-4 py-2">
             <p className="py-1 text-[11.5px] text-ink-muted">
               Dezelfde meting op het rooster dat nu draait. Roosterkwaliteit gaat over comfort en

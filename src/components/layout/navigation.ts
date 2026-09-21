@@ -192,7 +192,7 @@ export function rosterCommitteeNavigation(): readonly NavSection[] {
         },
         {
           href: "/roostercommissie/simulatie",
-          label: "Scenario's vergelijken",
+          label: "Scenario's & AI-werkruimte",
           icon: SparkIcon,
           permission: PERMISSIONS.ROSTER_GENERATE,
         },

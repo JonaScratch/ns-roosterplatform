@@ -89,6 +89,7 @@ model UserAccount {
   humanPairwisePreferences HumanPairwisePreference[]
   agentSessions           AgentSession[]
   agentGrants             AgentCapabilityGrant[]
+  projectGoals            ProjectOptimisationGoal[]
 
   // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
   // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
@@ -1883,6 +1884,27 @@ enum AgentActivityStatus {
   STOPPED
   /// Het proces is weggevallen zonder af te ronden.
   INTERRUPTED
+}
+
+/// Laag 2: wat de commissie bóvenop de standaardmeting belangrijk vindt.
+/// Laag 1 is het kwaliteitsmodel zoals het gemeten en geijkt is; die staat hier
+/// niet ter discussie. Deze doelen sturen de volgende opdracht en zijn per stuk
+/// aan of uit te zetten, met de naam van wie het koos.
+model ProjectOptimisationGoal {
+  id           String   @id @default(uuid())
+  locationCode String
+  /// Een RebuildGoal uit de optimizer, bijvoorbeeld NIGHT_CLUSTERING.
+  goal         String
+  /// Waarom dit doel er is — in de woorden van de commissie.
+  note         String?
+  active       Boolean  @default(true)
+  createdByUserId String
+  createdBy    UserAccount @relation(fields: [createdByUserId], references: [id])
+  createdAt    DateTime @default(now())
+  deactivatedAt DateTime?
+
+  @@unique([locationCode, goal])
+  @@index([locationCode, active])
 }
 
 enum AgentEventKind {

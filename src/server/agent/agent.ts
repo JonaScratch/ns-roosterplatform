@@ -6,7 +6,8 @@ import { finishActivity, heartbeat, recordEvent, startActivity } from "./activit
 import { AGENT_CAPABILITIES, AgentCapabilityError, agentMay, currentGrant, levelOf } from "./capabilities";
 import { type UiContext, resolveContext, uiContextSchema } from "./context";
 import { stubModel } from "./model/stub";
-import type { AgentAnswer, ChatModel, PlanRequest } from "./model/types";
+import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/types";
+import { projectGoals } from "./project-goals";
 import { type ToolCall, callTool, toolCatalogue } from "./tools";
 
 /**
@@ -132,7 +133,12 @@ export async function askAgent(input: {
 
   await stap("VRAAG", input.text);
 
-  const plan = await model.plan(verzoek);
+  const ruwPlan = await model.plan(verzoek);
+  // Laag 2 hoort in elk voorstel terecht te komen, ook als het model er niet om
+  // vroeg: het zijn de doelen die de commissie voor dit project heeft gezet.
+  // Het model bedenkt ze niet en kan ze ook niet wegnemen; ze worden hier
+  // toegevoegd en in het antwoord genoemd.
+  const plan = await metProjectdoelen(ruwPlan, resolved.locationCode);
   await stap("PLAN", plan.reasoning || "geen toelichting", { intent: plan.intent, tools: plan.toolCalls.map((c) => c.tool) });
 
   const calls: ToolCall[] = [];
@@ -184,6 +190,31 @@ export async function askAgent(input: {
   }
 
   return { ...basis, ...antwoord, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls };
+}
+
+/**
+ * De laag-2-doelen van dit project in het voorstel zetten.
+ *
+ * Ze komen erbij, ze vervangen niets, en ze staan in het voorstel zodat een
+ * mens ziet waar zijn "ja" precies op slaat.
+ */
+async function metProjectdoelen(plan: AgentPlan, locationCode: string): Promise<AgentPlan> {
+  if (!plan.proposal) return plan;
+  const doelen = await projectGoals(locationCode);
+  if (doelen.length === 0) return plan;
+
+  const bestaand = Array.isArray(plan.proposal.goals) ? (plan.proposal.goals as string[]) : [];
+  const samen = [...new Set([...bestaand, ...doelen.map((d) => d.goal)])];
+  return {
+    ...plan,
+    proposal: {
+      ...plan.proposal,
+      goals: samen,
+      layerTwoGoals: doelen.map((d) => ({ goal: d.goal, label: d.label, note: d.note })),
+      note: `${String(plan.proposal.note ?? "")} (met de extra doelen van de commissie: ${doelen.map((d) => d.label).join(", ")})`.trim(),
+    },
+    reasoning: `${plan.reasoning}; laag 2 toegevoegd: ${doelen.map((d) => d.goal).join(", ")}`,
+  };
 }
 
 async function maakSessie(actor: Actor, locationCode: string, eersteVraag: string) {

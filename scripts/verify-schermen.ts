@@ -229,7 +229,10 @@ const SCHERMEN: Readonly<Record<string, readonly Scherm[]>> = {
         "Optimale totaalbalans",
         "Rust & regelmaat",
         "Eerlijkste lastenverdeling",
-        "Meer strategieën",
+        // Sinds UI-1 is er één standaardgeneratie; de losse strategieën en de
+        // rekentijd staan eronder, ingeklapt maar volledig aanwezig.
+        "Een andere strategie kiezen",
+        "Rekentijd instellen",
         // De rekentijdmodi van de adaptieve zoekmachine.
         "Hoe grondig mag gezocht worden?",
         "Snel",

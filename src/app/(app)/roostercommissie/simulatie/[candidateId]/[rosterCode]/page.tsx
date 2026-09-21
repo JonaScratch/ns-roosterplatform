@@ -58,7 +58,11 @@ export default async function KandidaatRooster({
   }
 
   const { candidate, roster, lines } = view;
-  const alle = query.regel === "alle";
+  // Alle regels onder elkaar is de gewone weergave. Een rooster is een rotatie:
+  // wie regel 4 beoordeelt zonder 3 en 5 te zien, beoordeelt een week uit een
+  // reeks. Eén regel tegelijk blijft mogelijk — dan is het een bewuste keuze en
+  // niet de enige manier waarop het scherm het laat zien.
+  const alle = (query.regel ?? "alle") === "alle";
   const gekozenNummer = alle ? null : Number(query.regel ?? lines[0]?.lineNumber ?? 1);
   const gekozen = lines.find((line) => line.lineNumber === gekozenNummer) ?? (alle ? null : lines[0]);
   const positie = gekozen ? lines.indexOf(gekozen) : -1;

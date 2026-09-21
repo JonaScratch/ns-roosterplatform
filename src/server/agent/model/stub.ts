@@ -392,7 +392,12 @@ export const stubModel: ChatModel = {
     // kost aan rekentijd, en wat het níet doet. Iemand drukt daarna op start.
     if (plan.proposal) {
       const p = plan.proposal as { kind: string; strategyLabel: string; searchMode: string; goals: string[]; note: string };
-      const doelen = p.goals.map((g) => REBUILD_GOAL_LABELS[g as RebuildGoal] ?? g);
+      // Wat de gebruiker vroeg en wat de commissie er als laag 2 bij heeft
+      // gezet, zijn twee verschillende dingen. Ze op één hoop gooien zou de
+      // strategie de eer geven van een doel dat ergens anders vandaan komt.
+      const laag2 = ((p as { layerTwoGoals?: { goal: string; label: string }[] }).layerTwoGoals ?? []).map((g) => g.label);
+      const laag2Codes = new Set(((p as { layerTwoGoals?: { goal: string }[] }).layerTwoGoals ?? []).map((g) => g.goal));
+      const doelen = p.goals.filter((g) => !laag2Codes.has(g)).map((g) => REBUILD_GOAL_LABELS[g as RebuildGoal] ?? g);
       const minuten = { FAST: 2, NORMAL: 5, DEEP: 15, EXTENSIVE: 30 }[p.searchMode] ?? 5;
       return {
         text:
@@ -405,6 +410,9 @@ export const stubModel: ChatModel = {
               (doelen.length > 0
                 ? `. Die strategie stuurt op ${doelen.join(" en ")}; bij een nieuwe generatie gaat dat via de strategie en niet via een apart doel.`
                 : ".")) +
+          (laag2.length > 0
+            ? ` Daarbij gelden de extra doelen die de commissie voor dit project heeft gezet: ${laag2.join(" en ")}.`
+            : "") +
           ` Dat kost ongeveer ${minuten} minuten rekentijd. Er wordt niets vervangen en niets gepubliceerd:` +
           " het resultaat komt als kandidaat naast de bestaande te staan, en de validator beoordeelt hem onafhankelijk." +
           " Zal ik dat doen?",

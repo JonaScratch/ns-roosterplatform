@@ -55,6 +55,7 @@ export function Gesprek({
   niveau,
   modelNaam,
   isTaalmodel,
+  compact = false,
 }: {
   locationCode: string;
   roosters: readonly RoosterOptie[];
@@ -65,6 +66,8 @@ export function Gesprek({
   niveau: "A" | "B" | "C";
   modelNaam: string;
   isTaalmodel: boolean;
+  /** In een zijpaneel: lager, zonder eigen kader, met dezelfde werking. */
+  compact?: boolean;
 }) {
   const [berichten, setBerichten] = useState<readonly GesprekBericht[]>(beginBerichten);
   const [sessionId, setSessionId] = useState<string | null>(beginSessionId);
@@ -160,7 +163,13 @@ export function Gesprek({
   );
 
   return (
-    <div className="flex h-[calc(100vh-13rem)] min-h-[32rem] flex-col rounded-xl border border-line bg-surface">
+    <div
+      className={
+        compact
+          ? "flex h-[30rem] flex-col rounded-lg border border-line bg-surface"
+          : "flex h-[calc(100vh-13rem)] min-h-[32rem] flex-col rounded-xl border border-line bg-surface"
+      }
+    >
       {/* ── Context ───────────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
         <span className="text-[12px] font-semibold uppercase tracking-wide text-ink-muted">Kijkt naar</span>

@@ -214,6 +214,24 @@ describe("welke tool bij welke vraag", () => {
     expect(antwoord.data).toMatchObject({ proposal: { kind: "GENERATE" } });
   });
 
+  it("schrijft een laag-2-doel niet op het conto van de strategie", async () => {
+    // Gevonden in het scherm: het voorstel zei "die strategie stuurt op X en Y"
+    // terwijl Y van de commissie kwam, niet van de strategie.
+    const vraag = verzoek("Laat uitrekenen of de rangeerdiensten eerlijker verdeeld kunnen worden.", { rosterCode: "DDR-L" }, ["agent:chat", "agent:job:create"]);
+    const ruw = await stubModel.plan(vraag);
+    const plan = {
+      ...ruw,
+      proposal: {
+        ...ruw.proposal!,
+        goals: ["SHUNTING_FAIRNESS", "NIGHT_CLUSTERING"],
+        layerTwoGoals: [{ goal: "NIGHT_CLUSTERING", label: "Nachten beter clusteren", note: null }],
+      },
+    };
+    const antwoord = await stubModel.compose({ ...vraag, plan, results: [] });
+    expect(antwoord.text).toMatch(/strategie stuurt op Rangeerdiensten eerlijker verdelen;/);
+    expect(antwoord.text).toMatch(/extra doelen die de commissie .* heeft gezet: Nachten beter clusteren/);
+  });
+
   it("noemt de noodrem als die de reden is, en niet een ontbrekende bevoegdheid", async () => {
     // Gevonden door verify:agent (TEST 20): met de bevoegdheid áán maar de agent
     // stilgezet, gaf de agent geen weigering maar een leeg antwoord.

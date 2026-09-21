@@ -48,6 +48,19 @@ export interface ModeOption {
 
 const PEILING_MS = 2000;
 
+/**
+ * De standaardgeneratie.
+ *
+ * Vier gelijkwaardige tegels vroegen van de gebruiker een keuze die hij niet
+ * kan onderbouwen: de verschillen tussen de strategieën zijn in het resultaat
+ * klein en in de uitleg abstract. Eén opdracht met de best gemeten
+ * standaardstrategie is de gewone weg; wie een accent wil verleggen, kiest dat
+ * alsnog — de strategieën zijn er nog en werken onveranderd.
+ */
+const STANDAARDSTRATEGIE = "BALANCED";
+
+const tot = (aantal: number) => (aantal === 1 ? "één" : `${aantal}`);
+
 export function GeneratieWerkblad({
   strategies,
   years,
@@ -156,26 +169,46 @@ export function GeneratieWerkblad({
   const gekozen = strategies.find((entry) => entry.key === strategie);
   const gekozenJaar = years.find((entry) => entry.year === jaar);
 
+  const standaard = strategies.find((entry) => entry.key === STANDAARDSTRATEGIE);
+  const afwijkend = standaard ? strategie !== standaard.key : false;
+
   return (
     <div className="space-y-5">
-      <fieldset>
-        <legend className="text-[13px] font-semibold text-ink-strong">Kies een strategie</legend>
-        <p className="mt-0.5 text-[12px] text-ink-muted">
-          Elke strategie werkt met hetzelfde dienstenpakket en dezelfde harde regels. Alleen de
-          accenten in de optimalisatie verschillen.
-        </p>
-        <div role="radiogroup" aria-label="Strategie" className="mt-3 grid gap-2.5 sm:grid-cols-2">
-          {hoofd.map((tile) => (
-            <Tegel key={tile.key} tile={tile} gekozen={tile.key === strategie} onKies={setStrategie} />
-          ))}
+      {/* ── De gewone weg ─────────────────────────────────────────────────
+          Eén opdracht met de standaardstrategie. De losse strategieën zijn er
+          nog — ze werken en ze zijn gemeten — maar ze zijn geen eerste keuze
+          meer: wie ze nodig heeft, weet ze te vinden, en wie ze niet nodig
+          heeft, hoeft er niet eerst iets van te vinden. */}
+      {standaard && !afwijkend ? (
+        <div className="rounded-lg border border-accent-rc/40 bg-accent-rc-soft/40 p-4">
+          <p className="text-[13.5px] font-semibold text-ink-strong">{standaard.label}</p>
+          <p className="mt-1 text-[12.5px] leading-relaxed text-ink">{standaard.description}</p>
+          <p className="mt-2 text-[11.5px] text-ink-muted">
+            De zoekmachine kiest zelf hoeveel varianten ze naast elkaar zet en waar ze bijstuurt.
+            Alle {tot(standaard.candidates)} kandidaten worden onafhankelijk gevalideerd; er wordt
+            niets vervangen of gepubliceerd.
+          </p>
         </div>
+      ) : null}
 
-        {meer.length > 0 ? (
-          <details className="group mt-3" open={meer.some((tile) => tile.key === strategie)}>
-            <summary className="cursor-pointer select-none text-[12.5px] font-semibold text-accent-rc hover:underline">
-              Meer strategieën ({meer.length})
-            </summary>
-            <div role="radiogroup" aria-label="Meer strategieën" className="mt-2 grid gap-2.5 sm:grid-cols-2">
+      <details className="group" open={afwijkend}>
+        <summary className="cursor-pointer select-none text-[12.5px] font-semibold text-accent-rc hover:underline">
+          Een andere strategie kiezen ({strategies.length})
+        </summary>
+        <fieldset className="mt-3">
+          <legend className="sr-only">Strategie</legend>
+          <p className="text-[12px] text-ink-muted">
+            Elke strategie werkt met hetzelfde dienstenpakket en dezelfde harde regels. Alleen de
+            accenten in de optimalisatie verschillen.
+          </p>
+          <div role="radiogroup" aria-label="Strategie" className="mt-3 grid gap-2.5 sm:grid-cols-2">
+            {hoofd.map((tile) => (
+              <Tegel key={tile.key} tile={tile} gekozen={tile.key === strategie} onKies={setStrategie} />
+            ))}
+          </div>
+
+          {meer.length > 0 ? (
+            <div role="radiogroup" aria-label="Meer strategieën" className="mt-2.5 grid gap-2.5 sm:grid-cols-2">
               {meer.map((tile) => (
                 <Tegel
                   key={tile.key}
@@ -186,17 +219,21 @@ export function GeneratieWerkblad({
                 />
               ))}
             </div>
-          </details>
-        ) : null}
-      </fieldset>
+          ) : null}
+        </fieldset>
+      </details>
 
       {modes.length > 0 ? (
-        <fieldset className="border-t border-line pt-4">
-          <legend className="text-[13px] font-semibold text-ink-strong">Hoe grondig mag gezocht worden?</legend>
-          <p className="mt-0.5 text-[12px] text-ink-muted">
-            Langer zoeken betekent meer varianten naast elkaar en meer verbeterrondes, niet andere
-            regels. Wat mag en moet, verandert niet mee.
-          </p>
+        <details className="group border-t border-line pt-4" open={modus !== defaultMode}>
+          <summary className="cursor-pointer select-none text-[12.5px] font-semibold text-accent-rc hover:underline">
+            Rekentijd instellen ({modes.find((m) => m.key === modus)?.label ?? modus})
+          </summary>
+          <fieldset className="mt-3">
+            <legend className="sr-only">Hoe grondig mag gezocht worden?</legend>
+            <p className="text-[12px] text-ink-muted">
+              Langer zoeken betekent meer varianten naast elkaar en meer verbeterrondes, niet andere
+              regels. Wat mag en moet, verandert niet mee.
+            </p>
           <div role="radiogroup" aria-label="Rekentijd" className="mt-3 grid gap-2.5 sm:grid-cols-2">
             {modes.map((optie) => (
               <button
@@ -226,8 +263,9 @@ export function GeneratieWerkblad({
                 <span className="mt-auto pt-2 text-[11px] font-medium text-ink-faint">{optie.duration}</span>
               </button>
             ))}
-          </div>
-        </fieldset>
+            </div>
+          </fieldset>
+        </details>
       ) : null}
 
       <div className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[minmax(0,14rem)_1fr] sm:items-end">

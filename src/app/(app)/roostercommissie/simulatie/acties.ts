@@ -6,7 +6,10 @@ import { z } from "zod";
 import type { ActionState } from "@/lib/action-state";
 import { rosterYear } from "@/domain/roster-year";
 import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
-import { toPublicError } from "@/server/security/authorize";
+import { requirePermission, toPublicError } from "@/server/security/authorize";
+import { locationScopeFor } from "@/server/security/location-scope";
+import { PERMISSIONS } from "@/server/security/permissions";
+import { setProjectGoal } from "@/server/agent/project-goals";
 import {
   ActiveGenerationError,
   archiveCandidate,
@@ -239,4 +242,30 @@ export async function kiesVoorkeurAction(_previous: ActionState, formData: FormD
     if (error instanceof ReviewInputError) return { error: error.message };
     return { error: melding(error, "De voorkeur is niet bewaard.") };
   }
+}
+
+/**
+ * Een laag-2-doel aan- of uitzetten.
+ *
+ * Laag 2 staat bóvenop de vaste kwaliteitsmeting en raakt die niet aan; zie
+ * src/server/agent/project-goals.ts. Het recht is hetzelfde als voor genereren:
+ * wie een opdracht mag geven, mag bepalen waar die opdracht extra op let.
+ */
+export async function zetProjectdoelAction(input: unknown): Promise<{ ok: boolean; message: string }> {
+  const gelezen = z
+    .object({ goal: z.string().min(2).max(40), active: z.boolean(), locationCode: z.string().min(1).max(8) })
+    .safeParse(input);
+  if (!gelezen.success) return { ok: false, message: "Dat verzoek kan ik niet lezen." };
+  if (!(gelezen.data.goal in REBUILD_GOAL_LABELS)) return { ok: false, message: "Dat doel bestaat niet." };
+
+  const actor = await requirePermission(PERMISSIONS.ROSTER_GENERATE);
+  const scope = await locationScopeFor(actor, gelezen.data.locationCode);
+  await setProjectGoal(actor, scope.code, gelezen.data.goal as RebuildGoal, gelezen.data.active);
+  revalidatePath("/roostercommissie/simulatie");
+  return {
+    ok: true,
+    message: gelezen.data.active
+      ? `"${REBUILD_GOAL_LABELS[gelezen.data.goal as RebuildGoal]}" telt mee bij de volgende opdracht.`
+      : `"${REBUILD_GOAL_LABELS[gelezen.data.goal as RebuildGoal]}" telt niet meer mee.`,
+  };
 }
