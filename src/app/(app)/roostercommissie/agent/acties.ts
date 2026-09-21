@@ -1,10 +1,13 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { askAgent } from "@/server/agent/agent";
 import { requestStop } from "@/server/agent/activity";
 import { AgentCapabilityError, currentGrant, setAgentLevel, setAgentSuspended } from "@/server/agent/capabilities";
 import { JobLimitError, jobProposalSchema, startProposedJob } from "@/server/agent/jobs";
+import { correctMemory, decideMemory, proposeMemory, withdrawMemory } from "@/server/agent/memory";
+import { prisma } from "@/server/data/prisma";
 import { ActiveGenerationError } from "@/server/services/generation-service";
 import { currentActor } from "@/server/auth/session";
 import { requirePermission } from "@/server/security/authorize";
@@ -45,6 +48,7 @@ export async function vraagAgentAction(invoer: unknown): Promise<AgentAntwoordJs
     sources: [],
     tools: [],
     proposal: null,
+    memoryProposal: null,
     contextUsed: { source: "official", rosterCode: null, lineNumber: null, weekday: null, dutyCode: null, missing: [] },
     usedRosterCode: null,
     level: "A" as const,
@@ -88,6 +92,7 @@ export async function vraagAgentAction(invoer: unknown): Promise<AgentAntwoordJs
     sources: antwoord.sources,
     tools: antwoord.toolCalls.map((c) => ({ tool: c.tool, ok: c.ok, durationMs: c.ms })),
     proposal: (antwoord.data?.proposal as Record<string, unknown> | undefined) ?? null,
+    memoryProposal: (antwoord.data?.memoryProposal as Record<string, unknown> | undefined) ?? null,
     contextUsed: ctx,
     usedRosterCode: gebruiktRooster(antwoord.toolCalls) ?? ctx.rosterCode,
     level: antwoord.level,
@@ -225,4 +230,96 @@ export async function stopOpdrachtAction(input: unknown): Promise<{ ok: boolean;
   if (!gelezen.success) return { ok: false, message: "Onbekende opdracht." };
   await cancelGeneration(gelezen.data.runId);
   return { ok: true, message: "De opdracht wordt afgebroken." };
+}
+
+// ── Leergeheugen ─────────────────────────────────────────────────────────────
+
+/**
+ * Iets laten onthouden.
+ *
+ * Dit legt een vóórstel vast, meer niet. Goedkeuren is een aparte handeling van
+ * een mens — ook als de gebruiker het zelf intikt. Zou een uitspraak in een
+ * gesprek meteen geldend zijn, dan zou één losse opmerking het volgende rooster
+ * sturen zonder dat iemand ernaar heeft gekeken.
+ */
+export async function stelGeheugenVoorAction(input: unknown): Promise<{ ok: boolean; message: string; id?: string }> {
+  const gelezen = z
+    .object({
+      statement: z.string().trim().min(8).max(500),
+      rationale: z.string().trim().max(500).optional(),
+      scope: z.enum(["PROJECT", "LOCATION"]).default("LOCATION"),
+      kind: z.enum(["PREFERENCE", "FACT", "DECISION", "LESSON"]).default("PREFERENCE"),
+      locationCode: z.string().min(1).max(8).optional(),
+      byAgent: z.boolean().default(false),
+    })
+    .safeParse(input);
+  if (!gelezen.success) return { ok: false, message: "Dat kan ik zo niet vastleggen." };
+
+  const actor = await currentActor();
+  if (!actor) return { ok: false, message: "Je sessie is verlopen." };
+  const scope = await locationScopeFor(actor, gelezen.data.locationCode ?? null);
+  const grant = await currentGrant(scope.code);
+
+  // Het dienstenpakket waarin dit is geleerd hoort erbij: zonder die context is
+  // later niet vast te stellen of het nog opgaat.
+  const pakket = await prisma.dutyPackage.findFirst({
+    where: { depot: scope.code, status: "ACTIVE" },
+    orderBy: { validFrom: "desc" },
+    select: { id: true },
+  });
+
+  try {
+    const id = await proposeMemory({
+      actor,
+      grant,
+      scope: gelezen.data.scope,
+      kind: gelezen.data.kind,
+      locationCode: scope.code,
+      dutyPackageId: pakket?.id ?? null,
+      statement: gelezen.data.statement,
+      rationale: gelezen.data.rationale ?? null,
+      byAgent: gelezen.data.byAgent,
+    });
+    revalidatePath("/roostercommissie/agent");
+    return { ok: true, id, message: "Vastgelegd als voorstel. Een commissielid keurt het goed voordat het meetelt." };
+  } catch (fout) {
+    if (fout instanceof AgentCapabilityError) return { ok: false, message: fout.message };
+    console.error("[agent] geheugenvoorstel mislukt", fout);
+    return { ok: false, message: "Dat kon niet worden vastgelegd." };
+  }
+}
+
+/** Goedkeuren of afwijzen. Altijd een mens. */
+export async function beoordeelGeheugenAction(input: unknown): Promise<{ ok: boolean; message: string }> {
+  const gelezen = z.object({ id: z.uuid(), approve: z.boolean(), reason: z.string().trim().max(300).optional() }).safeParse(input);
+  if (!gelezen.success) return { ok: false, message: "Onbekend geheugenitem." };
+  const actor = await requirePermission(PERMISSIONS.AGENT_PREFERENCE_APPROVE);
+  await decideMemory({ actor, itemId: gelezen.data.id, approve: gelezen.data.approve, reason: gelezen.data.reason ?? null });
+  revalidatePath("/roostercommissie/agent");
+  return {
+    ok: true,
+    message: gelezen.data.approve ? "Goedgekeurd; vanaf nu telt dit mee." : "Afgewezen; het blijft leesbaar met de reden erbij.",
+  };
+}
+
+/** Intrekken: telt niet meer mee, blijft leesbaar. */
+export async function trekGeheugenInAction(input: unknown): Promise<{ ok: boolean; message: string }> {
+  const gelezen = z.object({ id: z.uuid(), reason: z.string().trim().min(3).max(300) }).safeParse(input);
+  if (!gelezen.success) return { ok: false, message: "Geef een reden op om iets in te trekken." };
+  const actor = await requirePermission(PERMISSIONS.AGENT_PREFERENCE_APPROVE);
+  await withdrawMemory(actor, gelezen.data.id, gelezen.data.reason);
+  revalidatePath("/roostercommissie/agent");
+  return { ok: true, message: "Ingetrokken. Het item blijft met de reden bewaard." };
+}
+
+/** Corrigeren: de oude lezing wordt vervangen, niet overschreven. */
+export async function corrigeerGeheugenAction(input: unknown): Promise<{ ok: boolean; message: string }> {
+  const gelezen = z.object({ id: z.uuid(), statement: z.string().trim().min(8).max(500), rationale: z.string().trim().max(500).optional() }).safeParse(input);
+  if (!gelezen.success) return { ok: false, message: "Dat kan ik zo niet corrigeren." };
+  const actor = await requirePermission(PERMISSIONS.AGENT_PREFERENCE_APPROVE);
+  const scope = await locationScopeFor(actor, null);
+  const grant = await currentGrant(scope.code);
+  await correctMemory({ actor, grant, itemId: gelezen.data.id, statement: gelezen.data.statement, rationale: gelezen.data.rationale ?? null });
+  revalidatePath("/roostercommissie/agent");
+  return { ok: true, message: "Gecorrigeerd. De oude lezing blijft zichtbaar en telt niet meer mee." };
 }

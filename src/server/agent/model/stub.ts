@@ -266,6 +266,28 @@ export const stubModel: ChatModel = {
       };
     }
 
+    // Iemand spreekt een voorkeur uit. Dat is geen vraag maar een gegeven, en
+    // het is het enige moment waarop het platform iets kan leren. De agent
+    // biedt aan het vast te leggen — als voorstel, want goedkeuren doet een
+    // mens.
+    if (
+      request.capabilities.includes("agent:memory:write") &&
+      bevat(tekst, "we willen liever", "we vinden", "voortaan", "liever niet", "we hebben liever", "vinden we prettiger", "onthoud dat") &&
+      !bevat(tekst, "?")
+    ) {
+      return {
+        intent: "FEEDBACK",
+        toolCalls: [],
+        memoryProposal: {
+          scope: "LOCATION",
+          kind: "PREFERENCE",
+          statement: request.text.trim(),
+          locationCode: ctx.locationCode,
+        },
+        reasoning: "uitgesproken voorkeur; aanbieden om vast te leggen als voorstel",
+      };
+    }
+
     // Ondubbelzinnige rekenverzoeken meteen: dit is geen leesvraag, en of het
     // mag hangt aan een bevoegdheid en niet aan de formulering.
     // Een verzoek om meerdere rondes telt als hard signaal: het gaat over wat
@@ -422,6 +444,20 @@ export const stubModel: ChatModel = {
 
     if (plan.clarification) {
       return { text: plan.clarification, data: { intent: plan.intent }, sources: bronnen, status: "VERDUIDELIJKING" };
+    }
+
+    // Een uitgesproken voorkeur: aanbieden om te onthouden, niet zelf besluiten.
+    if (plan.memoryProposal) {
+      const m = plan.memoryProposal as { statement: string };
+      return {
+        text:
+          `Zal ik dit onthouden voor deze standplaats: "${m.statement}"? ` +
+          "Ik leg het dan vast als voorstel. Het telt pas mee zodra een commissielid het goedkeurt, " +
+          "en het blijft met herkomst en datum terug te vinden.",
+        data: { memoryProposal: plan.memoryProposal },
+        sources: bronnen,
+        status: "VOORSTEL",
+      };
     }
 
     // Een voorstel is nog geen opdracht: er staat wat het gaat doen, wat het

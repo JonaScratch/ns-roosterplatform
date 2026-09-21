@@ -3,6 +3,7 @@ import { LocationSelector } from "@/components/layout/location-selector";
 import { Alert, Badge, EmptyState, WidgetCard } from "@/components/ui/primitives";
 import { modelForRequest } from "@/server/agent/agent";
 import { AGENT_CAPABILITIES, AGENT_LEVEL_LABELS, currentGrant, levelOf } from "@/server/agent/capabilities";
+import { recall } from "@/server/agent/memory";
 import { ownSessionMessages, ownSessions } from "@/server/agent/sessions";
 import { toolCatalogue } from "@/server/agent/tools";
 import { currentActor } from "@/server/auth/session";
@@ -12,6 +13,7 @@ import { locationScopeFor } from "@/server/security/location-scope";
 import { PERMISSIONS, type Permission } from "@/server/security/permissions";
 import { listBaseRosters } from "@/server/services/roster-service";
 import { ActiviteitenPaneel } from "./activiteitenpaneel";
+import { Geheugenpaneel } from "./geheugenpaneel";
 import { Gesprek } from "./gesprek";
 import { Niveaukiezer } from "./niveaukiezer";
 import type { GesprekBericht } from "./types";
@@ -91,6 +93,27 @@ export default async function Roosteragent({
   const niveau = levelOf(grant);
   const model = modelForRequest();
   const tools = toolCatalogue(actor);
+
+  // Het geheugen, inclusief de voorstellen: de commissie moet ze zien om ze te
+  // kunnen beoordelen, en het verschil met geldende kennis staat erbij.
+  const pakket = await prisma.dutyPackage.findFirst({
+    where: { depot: locationCode, status: "ACTIVE" },
+    orderBy: { validFrom: "desc" },
+    select: { id: true },
+  });
+  const geheugen = (await recall({ locationCode, dutyPackageId: pakket?.id ?? null, includeProposed: true, limit: 25 })).map((i) => ({
+    id: i.id,
+    scope: i.scope as string,
+    kind: i.kind as string,
+    statement: i.statement,
+    rationale: i.rationale,
+    status: i.status as string,
+    origin: i.proposedByAgent ? "voorgesteld door de agent" : "van een mens",
+    appliedCount: i.appliedCount,
+    contextStillCurrent: i.contextStillCurrent,
+    locationCode: i.locationCode,
+    withdrawnReason: i.withdrawnReason,
+  }));
 
   const gekozenGesprek = gesprek ?? null;
   const eerdere = gekozenGesprek ? await ownSessionMessages(actor, gekozenGesprek) : [];
@@ -183,6 +206,18 @@ export default async function Roosteragent({
                 </li>
               ))}
             </ul>
+          </WidgetCard>
+
+          <WidgetCard
+            title="Leergeheugen"
+            subtitle={`${geheugen.filter((i) => i.status === "APPROVED").length} geldend · ${geheugen.filter((i) => i.status === "PROPOSED").length} voorstel`}
+            bodyClassName="border-t border-line px-4 py-1"
+          >
+            <Geheugenpaneel
+              items={geheugen}
+              locationCode={locationCode}
+              magBeoordelen={actorHasPermission(actor, PERMISSIONS.AGENT_PREFERENCE_APPROVE)}
+            />
           </WidgetCard>
 
           <WidgetCard title="Eerdere gesprekken" subtitle="Alleen je eigen gesprekken">

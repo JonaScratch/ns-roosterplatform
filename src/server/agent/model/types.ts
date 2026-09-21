@@ -91,6 +91,14 @@ export interface AgentPlan {
    * De grenzen worden daarna server-side gecontroleerd tegen de toekenning.
    */
   readonly proposal?: Record<string, unknown>;
+  /**
+   * Iets dat de agent wil onthouden.
+   *
+   * Ook dit is een voorstel: het scherm laat het zien met een knop, en pas als
+   * een mens die indrukt komt het in het leergeheugen te staan — en dan nog
+   * als voorstel, dat een commissielid goedkeurt.
+   */
+  readonly memoryProposal?: Record<string, unknown>;
   /** Wat de agent van plan is, voor het activiteitenpaneel. */
   readonly reasoning: string;
 }

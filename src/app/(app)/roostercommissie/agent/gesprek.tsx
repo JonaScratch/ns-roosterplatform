@@ -1,8 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { Alert, Badge, Button, type Tone, inputClass } from "@/components/ui/primitives";
-import { startVoorstelAction, vraagAgentAction } from "./acties";
+import { startVoorstelAction, stelGeheugenVoorAction, vraagAgentAction } from "./acties";
 import type { AgentContextKeuze, GesprekBericht } from "./types";
 
 /**
@@ -69,6 +70,7 @@ export function Gesprek({
   /** In een zijpaneel: lager, zonder eigen kader, met dezelfde werking. */
   compact?: boolean;
 }) {
+  const router = useRouter();
   const [berichten, setBerichten] = useState<readonly GesprekBericht[]>(beginBerichten);
   const [sessionId, setSessionId] = useState<string | null>(beginSessionId);
   const [tekst, setTekst] = useState("");
@@ -130,6 +132,7 @@ export function Gesprek({
             tools: antwoord.tools.map((t) => `${t.tool}${t.ok ? "" : " (mislukt)"}`),
             missing: antwoord.contextUsed.missing,
             proposal: antwoord.proposal,
+            memoryProposal: antwoord.memoryProposal,
             // Noemde de vraag een ander rooster dan de kiezer? Dan hoort dat er
             // hardop bij te staan, anders leest een antwoord over het ene
             // rooster als een antwoord over het andere.
@@ -161,6 +164,15 @@ export function Gesprek({
     },
     [sessionId],
   );
+
+  /** Een uitgesproken voorkeur laten vastleggen — als voorstel, niet als besluit. */
+  const onthoud = useCallback((berichtId: string, voorstel: Record<string, unknown>) => {
+    startOvergang(async () => {
+      const uitkomst = await stelGeheugenVoorAction({ ...voorstel, byAgent: true });
+      setBerichten((oud) => oud.map((b) => (b.id === berichtId ? { ...b, proposalResult: uitkomst.message } : b)));
+      router.refresh();
+    });
+  }, [router]);
 
   return (
     <div
@@ -345,6 +357,34 @@ export function Gesprek({
                       onClick={() =>
                         setBerichten((oud) =>
                           oud.map((b) => (b.id === bericht.id ? { ...b, proposalResult: "Niet gestart." } : b)),
+                        )
+                      }
+                    >
+                      Nee, laat maar
+                    </Button>
+                  </div>
+                )}
+                {/* Onthouden is óók een voorstel: het komt als voorstel in het
+                    leergeheugen en een commissielid keurt het daarna goed. */}
+                {bericht.memoryProposal && !bericht.proposalResult && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <Button
+                      variant="primary"
+                      size="small"
+                      type="button"
+                      disabled={bezig}
+                      onClick={() => onthoud(bericht.id, bericht.memoryProposal!)}
+                    >
+                      Ja, onthoud dit
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      type="button"
+                      disabled={bezig}
+                      onClick={() =>
+                        setBerichten((oud) =>
+                          oud.map((b) => (b.id === bericht.id ? { ...b, proposalResult: "Niet vastgelegd." } : b)),
                         )
                       }
                     >
