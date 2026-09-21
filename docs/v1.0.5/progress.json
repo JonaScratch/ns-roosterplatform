@@ -1,6 +1,6 @@
 {
   "schema": "ns-v105-progress/1",
-  "updatedAt": "2026-09-20",
+  "updatedAt": "2026-09-21",
   "legend": [
     "NOT_STARTED",
     "IN_PROGRESS",
@@ -14,7 +14,7 @@
     {
       "id": 0,
       "name": "Baseline en architectuuronderzoek",
-      "status": "TESTED",
+      "status": "ACCEPTED",
       "deliverables": [
         "architecture-current-state.md",
         "architecture-target-state.md",
@@ -24,7 +24,7 @@
         "test-baseline.md"
       ],
       "tests": "testbatterij opnieuw gemeten",
-      "note": "Alle opleverstukken gemaakt en de baseline is gemeten; stand vastgelegd als commit cf8a0e3 op stand/v1.0.4-machinist, ontwikkeltak v1.0.5. ACCEPTED zodra de gebruiker de uitgangssituatie bevestigt."
+      "note": "Opleverstukken compleet, baseline gemeten en vastgelegd (commit cf8a0e3 / a042ef6). M0 uitgevoerd."
     },
     {
       "id": 1,
@@ -128,9 +128,83 @@
     }
   ],
   "openDecisions": [
+    "Wat betekent RET in het Dordrechtse dienstenpakket?",
     "AI-provider en gegevensstroom",
     "formele bronstatus regels",
     "NS-rollen en bevoegdheden",
     "bewaartermijnen"
+  ],
+  "benchmarks": [
+    {
+      "id": "M0",
+      "status": "DONE",
+      "at": "2026-09-21",
+      "engine": "mp-after (20 runs, 60 kandidaten)",
+      "agent": "32 tests, alle NIET_GEIMPLEMENTEERD",
+      "files": [
+        "benchmarks/m0/engine.json",
+        "benchmarks/m0/intelligence.json",
+        "benchmarks/m0/summary.md"
+      ]
+    },
+    {
+      "id": "M1",
+      "status": "NOT_STARTED",
+      "after": "fase 1-3"
+    },
+    {
+      "id": "M2",
+      "status": "NOT_STARTED",
+      "after": "fase 4-5"
+    },
+    {
+      "id": "M3",
+      "status": "NOT_STARTED",
+      "after": "fase 6-8"
+    }
+  ],
+  "newWorkPackages": [
+    {
+      "id": "UI-1",
+      "name": "Strategietegels uit primaire generatie; een intelligente standaardgeneratie",
+      "status": "NOT_STARTED",
+      "phase": 3
+    },
+    {
+      "id": "UI-2",
+      "name": "Alle roosterregels standaard onder elkaar",
+      "status": "NOT_STARTED",
+      "phase": 3
+    },
+    {
+      "id": "UI-3",
+      "name": "Scenario vergelijken als AI-werkruimte",
+      "status": "NOT_STARTED",
+      "phase": 3
+    },
+    {
+      "id": "UI-4",
+      "name": "Layer-2-paneel voor aanvullende optimalisatiedoelen",
+      "status": "NOT_STARTED",
+      "phase": 3
+    },
+    {
+      "id": "UI-5",
+      "name": "Zichtbare demonaam: Rooster Commissie Demo",
+      "status": "NOT_STARTED",
+      "phase": 1
+    },
+    {
+      "id": "KB-1",
+      "name": "Regelkennisbank met bron, artikel en verificatiestatus",
+      "status": "NOT_STARTED",
+      "phase": 3
+    },
+    {
+      "id": "SC-1",
+      "name": "Praktijkscenarios 1-12 als integratietests",
+      "status": "NOT_STARTED",
+      "phase": 9
+    }
   ]
 }

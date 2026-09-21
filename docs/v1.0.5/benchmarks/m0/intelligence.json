@@ -1,0 +1,502 @@
+{
+  "schema": "ns-v105-intelligence-result/1",
+  "measurement": "m0",
+  "measuredAt": "2026-09-21T00:04:36.425Z",
+  "testsetVersion": 1,
+  "agentPresent": false,
+  "model": null,
+  "items": 32,
+  "byCategory": {
+    "A": {
+      "NIET_GEIMPLEMENTEERD": 4
+    },
+    "B": {
+      "NIET_GEIMPLEMENTEERD": 3
+    },
+    "C": {
+      "NIET_GEIMPLEMENTEERD": 4
+    },
+    "D": {
+      "NIET_GEIMPLEMENTEERD": 4
+    },
+    "E": {
+      "NIET_GEIMPLEMENTEERD": 3
+    },
+    "F": {
+      "NIET_GEIMPLEMENTEERD": 3
+    },
+    "G": {
+      "NIET_GEIMPLEMENTEERD": 2
+    },
+    "H": {
+      "NIET_GEIMPLEMENTEERD": 2
+    },
+    "I": {
+      "NIET_GEIMPLEMENTEERD": 4
+    },
+    "J": {
+      "NIET_GEIMPLEMENTEERD": 3
+    }
+  },
+  "results": [
+    {
+      "id": "A1",
+      "category": "A",
+      "holdout": false,
+      "expectKind": "deterministic",
+      "expected": {
+        "days": [
+          {
+            "weekday": 1,
+            "positionType": "RES",
+            "dutyCode": null,
+            "times": null,
+            "kinds": []
+          },
+          {
+            "weekday": 2,
+            "positionType": "RUST",
+            "dutyCode": null,
+            "times": null,
+            "kinds": []
+          },
+          {
+            "weekday": 3,
+            "positionType": "DUTY",
+            "dutyCode": "112",
+            "times": "11:57–18:41",
+            "kinds": [
+              "LAAT"
+            ]
+          },
+          {
+            "weekday": 4,
+            "positionType": "DUTY",
+            "dutyCode": "107",
+            "times": "13:43–22:28",
+            "kinds": [
+              "LAAT"
+            ]
+          },
+          {
+            "weekday": 5,
+            "positionType": "WR",
+            "dutyCode": null,
+            "times": null,
+            "kinds": []
+          },
+          {
+            "weekday": 6,
+            "positionType": "RUST",
+            "dutyCode": null,
+            "times": null,
+            "kinds": []
+          },
+          {
+            "weekday": 7,
+            "positionType": "RUST",
+            "dutyCode": null,
+            "times": null,
+            "kinds": []
+          }
+        ]
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "A2",
+      "category": "A",
+      "holdout": false,
+      "expectKind": "deterministic",
+      "expected": {
+        "dutyCode": "107",
+        "start": "13:43",
+        "end": "22:28",
+        "kinds": [
+          "LAAT"
+        ]
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "A3",
+      "category": "A",
+      "holdout": false,
+      "expectKind": "deterministic",
+      "expected": {
+        "lines": [
+          2,
+          3,
+          8
+        ]
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "A4",
+      "category": "A",
+      "holdout": true,
+      "expectKind": "deterministic",
+      "expected": {
+        "days": [
+          {
+            "weekday": 5,
+            "positionType": "DUTY",
+            "dutyCode": "6",
+            "times": "06:13–14:58",
+            "kinds": [
+              "VROEG"
+            ]
+          }
+        ]
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "B1",
+      "category": "B",
+      "holdout": false,
+      "expectKind": "rubric",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "B2",
+      "category": "B",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "B3",
+      "category": "B",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "C1",
+      "category": "C",
+      "holdout": false,
+      "expectKind": "deterministic",
+      "expected": {
+        "ruleId": "RP_DAILY_REST_PLANNED",
+        "value": 12,
+        "unit": "HOURS",
+        "source": {
+          "layer": "CAO",
+          "document": "CAO-NS-2024-2025",
+          "documentTitle": "CAO NS 2024–2025",
+          "legalAuthority": "CAO",
+          "effectiveFrom": "2024-01-01",
+          "contractualEnd": "2025-02-28",
+          "renewalRule": {
+            "kind": "TACIT_RENEWAL",
+            "termMonths": 12,
+            "survivesUntilSuccessor": true
+          },
+          "terminationKnown": "UNKNOWN",
+          "supersededBy": null,
+          "article": "98",
+          "paragraph": "Dagelijkse rust"
+        },
+        "legalStatus": "CURRENT_LEGAL_STATUS_NOT_VERIFIED"
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "C2",
+      "category": "C",
+      "holdout": false,
+      "expectKind": "deterministic",
+      "expected": {
+        "ruleId": "NIGHT_SEQUENCE_RECOVERY",
+        "value": 46,
+        "unit": "HOURS",
+        "source": {
+          "layer": "CAO",
+          "document": "CAO-NS-2024-2025",
+          "documentTitle": "CAO NS 2024–2025",
+          "legalAuthority": "CAO",
+          "effectiveFrom": "2024-01-01",
+          "contractualEnd": "2025-02-28",
+          "renewalRule": {
+            "kind": "TACIT_RENEWAL",
+            "termMonths": 12,
+            "survivesUntilSuccessor": true
+          },
+          "terminationKnown": "UNKNOWN",
+          "supersededBy": null,
+          "article": "101",
+          "paragraph": "Nachtarbeid"
+        },
+        "legalStatus": "CURRENT_LEGAL_STATUS_NOT_VERIFIED"
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "C3",
+      "category": "C",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "C4",
+      "category": "C",
+      "holdout": true,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "D1",
+      "category": "D",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "D2",
+      "category": "D",
+      "holdout": false,
+      "expectKind": "structured_goal",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "D3",
+      "category": "D",
+      "holdout": false,
+      "expectKind": "structured_goal",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "D4",
+      "category": "D",
+      "holdout": true,
+      "expectKind": "structured_goal",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "E1",
+      "category": "E",
+      "holdout": false,
+      "expectKind": "memory_recall",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "E2",
+      "category": "E",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "E3",
+      "category": "E",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "F1",
+      "category": "F",
+      "holdout": false,
+      "expectKind": "structured_goal",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "F2",
+      "category": "F",
+      "holdout": false,
+      "expectKind": "deterministic",
+      "expected": {
+        "perRoster": {
+          "DDR-50MIX": 2,
+          "DDR-BLM": 7,
+          "DDR-L": 5,
+          "DDR-LN": 6,
+          "DDR-MIX": 11,
+          "DDR-V": 5,
+          "DDR-VL": 3
+        }
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "F3",
+      "category": "F",
+      "holdout": true,
+      "expectKind": "deterministic",
+      "expected": {
+        "rosterCode": "DDR-L",
+        "averageWeeklyMinutes": 2399,
+        "formatted": "39:59"
+      },
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "G1",
+      "category": "G",
+      "holdout": false,
+      "expectKind": "rubric",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "G2",
+      "category": "G",
+      "holdout": true,
+      "expectKind": "rubric",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "H1",
+      "category": "H",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "H2",
+      "category": "H",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "I1",
+      "category": "I",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "I2",
+      "category": "I",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "I3",
+      "category": "I",
+      "holdout": false,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "I4",
+      "category": "I",
+      "holdout": true,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "J1",
+      "category": "J",
+      "holdout": false,
+      "expectKind": "rubric",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "J2",
+      "category": "J",
+      "holdout": false,
+      "expectKind": "rubric",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    },
+    {
+      "id": "J3",
+      "category": "J",
+      "holdout": true,
+      "expectKind": "behaviour",
+      "expected": null,
+      "answer": null,
+      "status": "NIET_GEIMPLEMENTEERD",
+      "reason": "er is nog geen agent (src/server/agent/bench-adapter.ts ontbreekt)"
+    }
+  ]
+}
