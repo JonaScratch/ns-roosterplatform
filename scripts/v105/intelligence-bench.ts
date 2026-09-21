@@ -1,4 +1,8 @@
 import "dotenv/config";
+
+// Deze toets meet de keten en niet het taalmodel: altijd de stub, ook als er
+// een lokaal model is ingesteld. Anders meet hij twee dingen tegelijk.
+process.env.NS_AGENT_FORCE_STUB = "1";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";

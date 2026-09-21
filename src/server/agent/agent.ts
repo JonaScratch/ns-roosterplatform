@@ -41,6 +41,12 @@ import { type ToolCall, callTool, toolCatalogue } from "./tools";
  * dan voor een taalmodel zou doorgaan.
  */
 export function modelForRequest(): ChatModel {
+  // De scenariotoetsen meten de kéten, niet het taalmodel: welke tools worden
+  // gekozen, wat wordt geweigerd, wat verandert er in de database. Zouden die
+  // toetsen meebewegen met het model dat toevallig draait, dan meten ze twee
+  // dingen tegelijk en zegt een rode uitslag niets meer. Vandaar deze schakelaar
+  // — en niet andersom: de lokale benchmark dwingt nooit een stub af.
+  if (process.env.NS_AGENT_FORCE_STUB === "1") return stubModel;
   const config = localConfigFromEnv();
   return config ? localModel(config) : stubModel;
 }

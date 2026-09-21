@@ -1,4 +1,8 @@
 import "dotenv/config";
+
+// Deze toets meet de keten en niet het taalmodel: altijd de stub, ook als er
+// een lokaal model is ingesteld. Anders meet hij twee dingen tegelijk.
+process.env.NS_AGENT_FORCE_STUB = "1";
 import { AGENT_CAPABILITIES, agentMay, currentGrant, levelOf, setAgentLevel, setAgentSuspended } from "@/server/agent/capabilities";
 import { requestStop } from "@/server/agent/activity";
 import { startResearchLoop } from "@/server/agent/research";

@@ -65,6 +65,7 @@
     "verify:agent": "tsx --conditions=react-server scripts/verify-agent.ts",
     "verify:geheugen": "tsx --conditions=react-server scripts/verify-geheugen.ts",
     "verify:onderzoek": "tsx --conditions=react-server scripts/verify-onderzoek.ts",
+    "lokaal:rooktest": "tsx --conditions=react-server scripts/v105/lokaal-rooktest.ts",
     "bench:lokale-ai": "tsx --conditions=react-server scripts/v105/lokale-ai-bench.ts",
     "verify:generatie": "tsx --conditions=react-server scripts/verify-generatie.ts",
     "verify:profielen": "tsx --conditions=react-server scripts/verify-profielen.ts",
