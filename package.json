@@ -63,6 +63,7 @@
     "verify:beoordeling": "tsx --conditions=react-server scripts/verify-beoordeling.ts",
     "verify:agent": "tsx --conditions=react-server scripts/verify-agent.ts",
     "verify:geheugen": "tsx --conditions=react-server scripts/verify-geheugen.ts",
+    "verify:onderzoek": "tsx --conditions=react-server scripts/verify-onderzoek.ts",
     "verify:generatie": "tsx --conditions=react-server scripts/verify-generatie.ts",
     "verify:profielen": "tsx --conditions=react-server scripts/verify-profielen.ts",
     "verify:kwaliteit": "tsx --conditions=react-server scripts/verify-kwaliteit.ts",

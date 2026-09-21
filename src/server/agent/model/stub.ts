@@ -141,7 +141,43 @@ const meerdereRondes = (tekst: string): boolean =>
 /** Een verzoek om te rekenen: mag alleen met de bevoegdheid, en anders met uitleg. */
 function rekenverzoek(request: PlanRequest, tekst: string, ctx: PlanRequest["context"]): AgentPlan {
   const mag = request.capabilities.includes("agent:job:create");
-  if (meerdereRondes(tekst) && !request.capabilities.includes("agent:autonomous")) {
+  const magRondes = request.capabilities.includes("agent:autonomous");
+
+  // Met de autonome bevoegdheid wordt een verzoek om meerdere rondes een
+  // onderzoekslus: de agent rekent door tot het budget op is of tot er niets
+  // beters meer komt, en zegt daarna wat hij heeft gevonden.
+  if (meerdereRondes(tekst) && magRondes && mag) {
+    const doelen = [...new Set(DOELWOORDEN.filter((d) => d.herkent(tekst)).map((d) => d.goal))];
+    if (doelen.length === 0) {
+      return {
+        intent: "VERDUIDELIJKING_NODIG",
+        toolCalls: [],
+        clarification:
+          "Meerdere rondes kan, maar dan moet ik weten waarop ik moet sturen. Waar moet het beter worden: " +
+          "de uren, de rust, de nachten (clusteren of eerlijker verdelen), rangeerdiensten, het weekend, " +
+          "of zo min mogelijk verandering?",
+        reasoning: "onderzoekslus zonder doel; zonder doel is er niets te vergelijken",
+      };
+    }
+    return {
+      intent: "OPTIMALISATIEVERZOEK",
+      toolCalls: [],
+      proposal: {
+        kind: "RESEARCH",
+        strategy: "BALANCED",
+        strategyLabel: "Optimale totaalbalans",
+        rosterYear: new Date().getFullYear() + 1,
+        searchMode: "FAST",
+        goals: doelen,
+        parentCandidateId: ctx.source === "candidate" ? ctx.candidateId : null,
+        note: `onderzoekslus: ${doelen.map((g) => REBUILD_GOAL_LABELS[g as RebuildGoal] ?? g).join(" en ")}`,
+        locationCode: ctx.locationCode,
+      },
+      reasoning: `onderzoekslus voorstellen (${doelen.join(", ")}); een mens bevestigt en kan stoppen`,
+    };
+  }
+
+  if (meerdereRondes(tekst) && !magRondes) {
     return {
       intent: "OPTIMALISATIEVERZOEK",
       toolCalls: [],
@@ -502,7 +538,14 @@ export const stubModel: ChatModel = {
       const minuten = { FAST: 2, NORMAL: 5, DEEP: 15, EXTENSIVE: 30 }[p.searchMode] ?? 5;
       return {
         text:
-          (p.kind === "REBUILD"
+          (p.kind === "RESEARCH"
+            ? // Niveau C: geen losse opdracht maar een reeks rondes, met een
+              // budget en een conclusie. Dat verschil hoort in de zin te staan.
+              `Voorstel: ik ga hier zelfstandig aan rekenen, gericht op ${doelen.join(" en ")}. ` +
+              "Na elke ronde meet ik of het beter is geworden en beslis ik of een volgende ronde zin heeft. " +
+              "Ik stop vanzelf bij het rondebudget of zodra twee rondes niets opleveren, en zeg dan wat ik heb gevonden — " +
+              "ook als dat is dat er niets beters is."
+            : p.kind === "REBUILD"
             ? `Voorstel: deze kandidaat herbouwen met de nadruk op ${doelen.join(" en ")}.`
             : // Bij een nieuwe generatie stuurt de strategie, niet een los doel.
               // Dat verschil hoort er te staan: anders belooft het voorstel een

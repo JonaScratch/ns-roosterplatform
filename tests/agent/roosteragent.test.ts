@@ -226,16 +226,33 @@ describe("welke tool bij welke vraag", () => {
     expect(plan.proposal).toBeUndefined();
   });
 
-  it("stelt met de autonome bevoegdheid wél iets voor bij meerdere rondes", async () => {
+  it("stelt met de autonome bevoegdheid een onderzoekslus voor", async () => {
+    const vraag = verzoek("Probeer de nachten beter te clusteren, je mag drie rondes.", { rosterCode: "DDR-L" }, [
+      "agent:chat",
+      "agent:job:create",
+      "agent:autonomous",
+    ]);
+    const plan = await stubModel.plan(vraag);
+    expect(plan.refusal).toBeUndefined();
+    expect(plan.proposal).toMatchObject({ kind: "RESEARCH", goals: ["NIGHT_CLUSTERING"] });
+
+    const antwoord = await stubModel.compose({ ...vraag, plan, results: [] });
+    expect(antwoord.status).toBe("VOORSTEL");
+    // Wat een lus anders maakt dan één opdracht, hoort in de zin te staan.
+    expect(antwoord.text).toMatch(/na elke ronde meet ik/i);
+    expect(antwoord.text).toMatch(/ook als dat is dat er niets beters is/i);
+  });
+
+  it("vraagt ook bij meerdere rondes eerst waarop gestuurd moet worden", async () => {
     const plan = await stubModel.plan(
-      verzoek("Probeer de nachten beter te clusteren, je mag drie rondes.", { rosterCode: "DDR-L" }, [
+      verzoek("Ga maar drie rondes door om dit rooster te verbeteren.", { rosterCode: "DDR-L" }, [
         "agent:chat",
         "agent:job:create",
         "agent:autonomous",
       ]),
     );
-    expect(plan.refusal).toBeUndefined();
-    expect(plan.proposal).toBeTruthy();
+    expect(plan.intent).toBe("VERDUIDELIJKING_NODIG");
+    expect(plan.proposal).toBeUndefined();
   });
 
   it("schrijft een laag-2-doel niet op het conto van de strategie", async () => {

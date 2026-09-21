@@ -36,7 +36,9 @@ import { AGENT_CAPABILITIES, type AgentGrant, AgentCapabilityError, assertAgentM
  */
 
 export const jobProposalSchema = z.object({
-  kind: z.enum(["GENERATE", "REBUILD"]),
+  // RESEARCH is niveau C: geen enkele opdracht maar een reeks rondes. Hij loopt
+  // langs een andere weg (research.ts) en staat hier alleen in het voorstel.
+  kind: z.enum(["GENERATE", "REBUILD", "RESEARCH"]),
   strategy: z.string().min(2).max(40),
   strategyLabel: z.string().min(2).max(120),
   rosterYear: z.number().int().min(2020).max(2100),

@@ -7,6 +7,8 @@ import { requestStop } from "@/server/agent/activity";
 import { AgentCapabilityError, currentGrant, setAgentLevel, setAgentSuspended } from "@/server/agent/capabilities";
 import { JobLimitError, jobProposalSchema, startProposedJob } from "@/server/agent/jobs";
 import { correctMemory, decideMemory, proposeMemory, withdrawMemory } from "@/server/agent/memory";
+import { startResearchLoop } from "@/server/agent/research";
+import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
 import { prisma } from "@/server/data/prisma";
 import { ActiveGenerationError } from "@/server/services/generation-service";
 import { currentActor } from "@/server/auth/session";
@@ -120,6 +122,25 @@ export async function startVoorstelAction(input: unknown): Promise<{ ok: boolean
   const scope = await locationScopeFor(actor, gelezen.data.proposal.locationCode);
   const grant = await currentGrant(scope.code);
   try {
+    // Niveau C loopt langs een andere weg: geen losse opdracht maar een reeks
+    // rondes met een eigen budget en een eigen conclusie.
+    if (gelezen.data.proposal.kind === "RESEARCH") {
+      const loopId = await startResearchLoop({
+        actor,
+        grant,
+        locationCode: scope.code,
+        goal: gelezen.data.proposal.note,
+        goals: gelezen.data.proposal.goals.filter((g): g is RebuildGoal => g in REBUILD_GOAL_LABELS),
+        searchMode: gelezen.data.proposal.searchMode,
+        sessionId: gelezen.data.sessionId ?? null,
+      });
+      return {
+        ok: true,
+        message: `De onderzoekslus loopt: maximaal ${grant.maxRounds > 0 ? grant.maxRounds : 3} rondes. Hij stopt vanzelf zodra er niets beters meer komt, en zegt dan wat hij heeft gevonden. Je kunt hem stoppen in het activiteitenpaneel.`,
+        runId: loopId,
+      };
+    }
+
     const gestart = await startProposedJob({
       actor,
       grant,

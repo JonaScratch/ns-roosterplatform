@@ -90,6 +90,7 @@ model UserAccount {
   agentSessions           AgentSession[]
   agentGrants             AgentCapabilityGrant[]
   projectGoals            ProjectOptimisationGoal[]
+  researchLoops           AgentResearchLoop[]
 
   // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
   // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
@@ -2032,4 +2033,70 @@ model AgentEvent {
 
   @@index([locationCode, createdAt])
   @@index([activityId, createdAt])
+}
+
+/// Een onderzoekslus van de agent (niveau C): meerdere rondes achter elkaar,
+/// binnen een vooraf vastgesteld budget.
+///
+/// De lus staat in de database en niet in het geheugen van het proces. Dat is
+/// geen netheid maar noodzaak: valt de server weg, dan moet achteraf vaststaan
+/// hoeveel rondes er zijn geweest, wat ze opleverden en waarom er is gestopt.
+model AgentResearchLoop {
+  id           String   @id @default(uuid())
+  locationCode String
+  /// Wat er onderzocht wordt, in gewone taal.
+  goal         String
+  /// De herbouwdoelen waarop wordt gestuurd.
+  goals        String[]
+  maxRounds    Int
+  maxSolverSeconds Int
+  status       AgentLoopStatus @default(RUNNING)
+  roundsDone   Int      @default(0)
+
+  /// De uitgangswaarde en de beste gevonden waarde, op dezelfde meetlat.
+  baselineScore Float?
+  bestScore    Float?
+  bestCandidateId String?
+
+  /// Waarom de lus is gestopt, in gewone taal. Ook als het antwoord "niets
+  /// beters gevonden" is — juist dan.
+  conclusion   String?
+  activityId   String?
+  createdByUserId String
+  createdBy    UserAccount @relation(fields: [createdByUserId], references: [id])
+  startedAt    DateTime @default(now())
+  finishedAt   DateTime?
+  heartbeatAt  DateTime?
+  rounds       AgentResearchRound[]
+
+  @@index([locationCode, startedAt])
+  @@index([status])
+}
+
+enum AgentLoopStatus {
+  RUNNING
+  DONE
+  STOPPED
+  FAILED
+  INTERRUPTED
+}
+
+/// Eén ronde: wat er is geprobeerd, wat het opleverde, en wat er daarna is
+/// besloten. De beslissing staat erbij, zodat een volgende ronde niet uit een
+/// vaste volgorde volgt maar uit een gemeten uitkomst.
+model AgentResearchRound {
+  id           String   @id @default(uuid())
+  loopId       String
+  loop         AgentResearchLoop @relation(fields: [loopId], references: [id], onDelete: Cascade)
+  roundNumber  Int
+  generationRunId String?
+  candidateId  String?
+  score        Float?
+  delta        Float?
+  /// DOORGAAN, STOPPEN_GEEN_VERBETERING, STOPPEN_BUDGET, STOPPEN_GEVRAAGD, MISLUKT.
+  decision     String
+  reason       String
+  at           DateTime @default(now())
+
+  @@index([loopId, roundNumber])
 }

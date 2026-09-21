@@ -564,8 +564,9 @@ async function main(): Promise<void> {
 
   console.log(`\n${geslaagd} geslaagd, ${mislukt} mislukt`);
   console.log(
-    "Niet gemeten: de scenario's 3, 4, 8 t/m 16 en 21 t/m 25 gaan over bevoegdheden " +
-      "en functies die nog niet gebouwd zijn.",
+    "Hier niet gemeten: de scenario's 3, 4, 8 t/m 16 en 21 t/m 25. Daarvan staan 8 t/m 13, " +
+      "21 en 25 in npm run verify:geheugen, en 3, 4, 14 en 15 in npm run verify:onderzoek. " +
+      "De overige horen bij fase 7 en 8 en bestaan nog niet.",
   );
   if (mislukt > 0) process.exitCode = 1;
 }
