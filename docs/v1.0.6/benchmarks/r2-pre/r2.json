@@ -1,0 +1,1153 @@
+{
+  "schema": "ns-v106-r2-bench/1",
+  "measurement": "r2-pre",
+  "measuredAt": "2026-09-25T15:42:20.371Z",
+  "status": "GEMETEN",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "suiteVersion": 1,
+  "itemCount": 15,
+  "results": [
+    {
+      "id": "R2-A1",
+      "casus": "A_ongefundeerde_conclusie",
+      "holdout": false,
+      "expect": {
+        "kind": "geen_ongefundeerde_profielconclusie",
+        "vroeg": 11,
+        "laat": 8,
+        "nacht": 0,
+        "rangeer": 2
+      },
+      "note": "Grondwaarheid: 11 vroeg / 8 laat / 0 nacht / 2 rangeer. Er is geen aangeleverde regel die een minimumaantal nachtdiensten voor dit profiel voorschrijft (roster-profiles.ts: PROFILES_WITH_PENDING_RULES).",
+      "turns": [
+        {
+          "text": "Het DDR-50MIX-rooster heeft 11 vroeg-, 8 laat- en 2 rangeerdiensten, maar **geen nachtdiensten** (bron: official). Dit maakt het minder divers dan een echte mix, waarbij nachtdiensten meestal aanwezig zijn. De lage nachtdiensten (0) en de relatief hoge vroeg- en laatdiensten suggereren een focus op deze categorieën.",
+          "status": "BEANTWOORD",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De aantallen vroeg, laat, nacht en rangeerdiensten worden opgezocht om te bepalen of het rooster meer overeenkomt met een andere categorie.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "VROEG"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "LAAT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "RANGEER"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "RANGEER",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 2,
+                "DDR-BLM": 7,
+                "DDR-L": 5,
+                "DDR-LN": 6,
+                "DDR-MIX": 11,
+                "DDR-V": 5,
+                "DDR-VL": 3
+              },
+              "total": 39,
+              "source": "official",
+              "note": "Gefilterd op kind=RANGEER."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ],
+          "latencyMs": 18842
+        },
+        {
+          "text": "De definitie van DDR-50MIX is niet bevestigd via knowledgeSearch, dus er is geen basis voor conclusies over nachtdiensten. De tool returned geen items, wat betekent dat de voorkeuren en regels van het roosterprofiel niet beschikbaar zijn. Zonder deze informatie kan de reden voor het aantal nachtdiensten niet worden gecontroleerd. Het vorige antwoord over nachtdiensten is dus niet bevestigd.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De gebruiker vraagt om controle over de basis van de conclusie over nachtdiensten in DDR-50MIX. Eerst moet de standaardstructuur van dit roosterprofiel worden gecontroleerd.",
+          "tools": [
+            "knowledgeSearch"
+          ],
+          "toolInputs": [
+            {
+              "query": "DDR-50MIX definitie en voorkeuren",
+              "locationCode": "DDR",
+              "includeProposed": false
+            }
+          ],
+          "data": {
+            "memory": {
+              "implemented": true,
+              "dutyPackage": {
+                "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+                "label": "DDR-BDU-05-10-2026-V1"
+              },
+              "items": [],
+              "note": "Alleen goedgekeurde items tellen mee in een beslissing. Een item dat in een ander dienstenpakket is geleerd, wordt niet zonder meer toegepast."
+            }
+          },
+          "sources": [
+            "leergeheugen DDR",
+            "dienstenpakket DDR-BDU-05-10-2026-V1"
+          ],
+          "latencyMs": 7647
+        }
+      ],
+      "ms": 26489
+    },
+    {
+      "id": "R2-A2",
+      "casus": "A_ongefundeerde_conclusie",
+      "holdout": true,
+      "expect": {
+        "kind": "geen_ongefundeerde_profielconclusie",
+        "vroeg": 14,
+        "laat": 9,
+        "nacht": 3,
+        "rangeer": 7
+      },
+      "note": "Grondwaarheid: 14 vroeg / 9 laat / 3 nacht / 7 rangeer. Er is geen aangeleverde regel die een minimumaantal nachtdiensten voor dit profiel voorschrijft (roster-profiles.ts: PROFILES_WITH_PENDING_RULES).",
+      "turns": [
+        {
+          "text": "Het BLM-rooster (DDR-BLM) heeft 14 vroeg, 9 laat, 3 nacht en 7 rangeerdiensten. Dit betekent dat het geen echte mix is, maar eerder een balans tussen vroeg en laat met weinig nacht- en rangeerdiensten. De aantallen zijn gebaseerd op officiële gegevens.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De aantallen vroeg, laat, nacht en rangeerdiensten tonen aan of het rooster meer overeenkomt met een specifieke categorie of een mix.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "VROEG"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "LAAT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "RANGEER"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "RANGEER",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 2,
+                "DDR-BLM": 7,
+                "DDR-L": 5,
+                "DDR-LN": 6,
+                "DDR-MIX": 11,
+                "DDR-V": 5,
+                "DDR-VL": 3
+              },
+              "total": 39,
+              "source": "official",
+              "note": "Gefilterd op kind=RANGEER."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ],
+          "latencyMs": 19590
+        },
+        {
+          "text": "Er zijn geen goedgekeurde items gevonden in het dienstenpakket DDR-BDU-05-10-2026-V1, dus er is geen basis voor de conclusie over nachtdiensten. De tool dutyKindCounts geeft ook geen data, dus het aantal nachtdiensten kan niet worden vastgesteld. De vorige opmerking over een \"mix\" kan daarom niet worden bevestigd op basis van de beschikbare informatie.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "Controleer eerst de definitie van DDR-BLM en de voorkeuren voor het aantal nachtdiensten, dan bepaal ik of het rooster werkelijk een mix is of niet.",
+          "tools": [
+            "knowledgeSearch",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "query": "DDR-BLM rooster definitie en voorkeuren",
+              "locationCode": "DDR",
+              "includeProposed": false
+            },
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "kind": "VROEG,LAAT,NACHT,RANGEER"
+            }
+          ],
+          "data": {
+            "memory": {
+              "implemented": true,
+              "dutyPackage": {
+                "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+                "label": "DDR-BDU-05-10-2026-V1"
+              },
+              "items": [],
+              "note": "Alleen goedgekeurde items tellen mee in een beslissing. Een item dat in een ander dienstenpakket is geleerd, wordt niet zonder meer toegepast."
+            }
+          },
+          "sources": [
+            "leergeheugen DDR",
+            "dienstenpakket DDR-BDU-05-10-2026-V1"
+          ],
+          "latencyMs": 9819
+        }
+      ],
+      "ms": 29409
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B1",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "In het DDR-50MIX-rooster zijn er 11 vroegdiensten, 8 laatdiensten, 0 nachtdiensten, 2 rangeerdiensten en 2 reserve-diensten, volgens de officiële gegevens. De nachtdiensten zijn hier dus afwezig, terwijl de andere dienstsoorten in de meeste basisroosters voorkomen. De totale hoeveelheid diensten varieert per soort, maar de exacte weekdagen zijn niet opgesplitst in deze gegevens.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De vraag om een korte samenvatting van de diensten in het rooster wordt beantwoord door het aantal diensten per soort (VROEG, LAAT, NACHT, RANGEER, RESERVE) op te vragen.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "VROEG"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "LAAT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "RANGEER"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "RESERVE"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "RESERVE",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 2,
+                "DDR-BLM": 0,
+                "DDR-L": 0,
+                "DDR-LN": 0,
+                "DDR-MIX": 1,
+                "DDR-V": 2,
+                "DDR-VL": 2
+              },
+              "total": 7,
+              "source": "official",
+              "note": "Gefilterd op kind=RESERVE."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ],
+          "latencyMs": 18457
+        },
+        {
+          "text": "De toolrespons bevat geen specifieke uitslag per diensttype (VROEG, LAAT, etc.) voor kandidaat 2. De gegeven cijfers zijn het totaal van alle diensten per basisrooster, zonder filter op soort. Er is geen informatie beschikbaar over hoe deze diensten zijn verdeeld in kandidaat 2. Controleer of de toolaanroep correct was, of geef meer context.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Ik zoek naar de verdeling van dienstensoorten in kandidaat 2 van het DDR-50MIX-rooster.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "candidate",
+              "candidateLabel": "kandidaat 2",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": null,
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 19,
+                "DDR-BLM": 26,
+                "DDR-L": 37,
+                "DDR-LN": 22,
+                "DDR-MIX": 44,
+                "DDR-V": 41,
+                "DDR-VL": 34
+              },
+              "total": 223,
+              "source": "candidate",
+              "note": "Geen 'kind' opgegeven: dit is het totaal van ALLE diensten per rooster, niet gefilterd op vroeg, laat, nacht, rangeer of reserve."
+            }
+          },
+          "sources": [
+            "kandidaat 26872399"
+          ],
+          "latencyMs": 5940
+        }
+      ],
+      "ms": 24397
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B2",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "De vraag is te algemeen om uit de gegevens te halen zonder aanvullende informatie. Er zijn geen specifieke diensten of categorieën (zoals VROEG, LAAT of NACHT) genoemd, en de tool `dutyKindCounts` geeft geen resultaat zonder het type dienst op te geven. De bron `official` bevestigt geen details over het rooster van DDR-50MIX zonder extra filters. U kunt het antwoord beperken door te vragen naar een specifieke weekdag, diensttype of regelnummer.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool 'dutyKindCounts' geeft het aantal diensten per soort (VROEG, LAAT, NACHT, RANGEER, RESERVE) in het basisrooster DDR-50MIX. Voor een overzicht is het nodig te specificeren welke soorten worden opgevraagd.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "kind": "VROEG,LAAT,NACHT,RANGEER,RESERVE"
+            }
+          ],
+          "data": {},
+          "sources": [],
+          "latencyMs": 15189
+        },
+        {
+          "text": "Kandidaat 3 heeft een robuustheidsindex van 82,4 en voldoet aan alle operationele regels. De slechtste regel is DDR-MIX regel 5 (69,5 punten), maar er zijn geen schendingen van regels. De weekomvang bedraagt 83,9 uur (48 minuten boven de 40:00-grens). De nachten (19 in totaal) zijn goed verdeeld, en de voorkeurslaag is hoog met 81,4 punten. De bron DDR-MIX bevestigt de resultaten.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De vraag over kandidaat 3 vereist een kwaliteitsrapportage van het rooster.",
+          "tools": [
+            "qualityReport"
+          ],
+          "toolInputs": [
+            {
+              "source": "candidate",
+              "candidateLabel": "kandidaat 3",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "quality": {
+              "found": true,
+              "modelVersion": "quality-model-v3",
+              "hardValid": true,
+              "hardReasons": [],
+              "components": {
+                "hours": 83.9,
+                "flow": 88.7,
+                "rest": 79.4,
+                "nights": 93.7,
+                "fairness": 66.9,
+                "preference": 81.4,
+                "stability": 100
+              },
+              "robust": 82.4,
+              "worstLine": {
+                "roster": "DDR-MIX",
+                "lineNumber": 5,
+                "score": 69.54678362573098,
+                "facts": []
+              },
+              "preference": {
+                "affinity": 0.6860986547085203,
+                "restDuties": 0.8181818181818181,
+                "dayDuties": 0.7869605142332414,
+                "popularFairness": 0.9425925925925925,
+                "weekendStart": 0.9311682783275173
+              },
+              "operationalViolations": [],
+              "nights": {
+                "total": 19,
+                "singletons": 0,
+                "pairs": 0
+              },
+              "diagnosis": [
+                "223/223 diensten geplaatst",
+                "grootste afwijking van 40:00: 48 min (DDR-BLM)",
+                "slechtste regel: DDR-MIX regel 5 (69.5)",
+                "rangeer per regel 0.3–1.2"
+              ]
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "kwaliteitsmodel quality-model-v3"
+          ],
+          "latencyMs": 8971
+        }
+      ],
+      "ms": 24160
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B3",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "De vraag is te algemeen om uit de gegevens te halen zonder aanvullende informatie. Er zijn geen specifieke diensten of categorieën (zoals VROEG, LAAT of NACHT) genoemd, en de tool `dutyKindCounts` geeft geen resultaat zonder het type dienst op te geven. De bron `official` bevestigt geen details over het rooster van DDR-50MIX zonder extra filters. U kunt het antwoord beperken door te vragen naar een specifieke weekdag, diensttype of regelnummer.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool 'dutyKindCounts' geeft het aantal diensten per soort (VROEG, LAAT, NACHT, RANGEER, RESERVE) in het basisrooster DDR-50MIX. Voor een overzicht is het nodig te specificeren welke soorten worden opgevraagd.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "kind": "VROEG,LAAT,NACHT,RANGEER,RESERVE"
+            }
+          ],
+          "data": {},
+          "sources": [],
+          "latencyMs": 15024
+        },
+        {
+          "text": "Er is geen standaardoverzicht van diensten voor kandidaat 2 zonder extra filters. De tool `dutyKindCounts` vereist een diensttype ('kind') en het basisrooster (bijvoorbeeld DDR-50MIX) om te werken. Zonder deze informatie kan ik geen gegevens vaststellen.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "De vraag moet worden verduidelijkt om de juiste gegevens te kunnen ophalen.",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 8940
+        }
+      ],
+      "ms": 23964
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B4",
+      "casus": "B_contextbehoud",
+      "holdout": true,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "De vraag is te algemeen om uit de gegevens te halen zonder aanvullende informatie. Er zijn geen specifieke diensten of categorieën (zoals VROEG, LAAT of NACHT) genoemd, en de tool `dutyKindCounts` geeft geen resultaat zonder het type dienst op te geven. De bron `official` bevestigt geen details over het rooster van DDR-50MIX zonder extra filters. U kunt het antwoord beperken door te vragen naar een specifieke weekdag, diensttype of regelnummer.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool 'dutyKindCounts' geeft het aantal diensten per soort (VROEG, LAAT, NACHT, RANGEER, RESERVE) in het basisrooster DDR-50MIX. Voor een overzicht is het nodig te specificeren welke soorten worden opgevraagd.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "kind": "VROEG,LAAT,NACHT,RANGEER,RESERVE"
+            }
+          ],
+          "data": {},
+          "sources": [],
+          "latencyMs": 15054
+        },
+        {
+          "text": "De qualityReport voor kandidaat 2 is gevonden en bevestigd. De kandidaat heeft een robuustheid van 82,4 en een slechtste regel (DDR-MIX regel 5) met een score van 69,5. De kwaliteitscomponenten liggen op 83,9 uur, 88,7 flow en 79,4 rust. Er zijn geen operationele overtredingen, maar de diagnose wijst op een afwijking van 48 minuten van de 40:00 norm. De server heeft het opgezocht op basis van het opgegeven label \"kandidaat 2\".",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "Ik zoek naar de kwaliteitsmeting van kandidaat 2 om te bepalen welke diensten er staan",
+          "tools": [
+            "qualityReport"
+          ],
+          "toolInputs": [
+            {
+              "source": "candidate",
+              "candidateLabel": "kandidaat 2",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "quality": {
+              "found": true,
+              "modelVersion": "quality-model-v3",
+              "hardValid": true,
+              "hardReasons": [],
+              "components": {
+                "hours": 83.9,
+                "flow": 88.7,
+                "rest": 79.4,
+                "nights": 93.7,
+                "fairness": 66.9,
+                "preference": 81.4,
+                "stability": 100
+              },
+              "robust": 82.4,
+              "worstLine": {
+                "roster": "DDR-MIX",
+                "lineNumber": 5,
+                "score": 69.54678362573098,
+                "facts": []
+              },
+              "preference": {
+                "affinity": 0.6860986547085203,
+                "restDuties": 0.8181818181818181,
+                "dayDuties": 0.7869605142332414,
+                "popularFairness": 0.9425925925925925,
+                "weekendStart": 0.9311682783275173
+              },
+              "operationalViolations": [],
+              "nights": {
+                "total": 19,
+                "singletons": 0,
+                "pairs": 0
+              },
+              "diagnosis": [
+                "223/223 diensten geplaatst",
+                "grootste afwijking van 40:00: 48 min (DDR-BLM)",
+                "slechtste regel: DDR-MIX regel 5 (69.5)",
+                "rangeer per regel 0.3–1.2"
+              ]
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "kwaliteitsmodel quality-model-v3"
+          ],
+          "latencyMs": 9900
+        }
+      ],
+      "ms": 24954
+    },
+    {
+      "id": "R2-B-DDR-VL-B1",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "De tool 'dutyKindCounts' geeft momenteel geen resultaat, dus ik kan de diensten niet samenvatten. De bron is officieel, maar de gegevens zijn niet beschikbaar. Er zijn geen specifieke diensten genoemd in de huidige context. De standplaats DDR en basisrooster DDR-VL zijn bekend, maar zonder extra informatie kan ik geen overzicht geven. Vraag gerust opnieuw met meer details, zoals een specifieke weekdag of dienstnummer.",
+          "status": "VERDUIDELIJKING",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool 'dutyKindCounts' geeft het aantal diensten per type weer, maar de vraag moet duidelijk zijn over het type dienst.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-VL",
+              "kind": "VROEG,LAAT,NACHT,RANGEER,RESERVE"
+            }
+          ],
+          "data": {},
+          "sources": [],
+          "latencyMs": 12875
+        },
+        {
+          "text": "De tool 'dutyKindCounts' geeft geen resultaat voor kandidaat 2, omdat de gegevens niet beschikbaar zijn. De standplaats DDR en basisrooster DDR-VL zijn bekend, maar zonder toegang tot kandidaat 2-specifieke gegevens kan ik geen overzicht geven. Controleer of de kandidaat is ingevoerd in het systeem, dan kan de tool eventueel worden gebruikt. Bron: official, bevestigd.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De vraag is duidelijk, maar de beschikbare tools geven geen resultaat voor kandidaat 2. Er is geen aparte tool voor kandidaat-specifieke dienstsoorten.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-VL",
+              "kind": "VROEG,LAAT,NACHT,RANGEER,RESERVE"
+            }
+          ],
+          "data": {},
+          "sources": [],
+          "latencyMs": 12529
+        }
+      ],
+      "ms": 25404
+    },
+    {
+      "id": "R2-B-DDR-VL-B2",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "Ik kan het niet vaststellen, omdat er geen toolresultaten beschikbaar zijn. De standplaats DDR, bron official, en basisrooster DDR-VL geven geen direct overzicht van de diensten. Voor een samenvatting van de diensten zou ik eerst de tool `dutyKindCounts` of `dutyKindPerLine` moeten gebruiken, maar zonder specifieke invoer (zoals een diensttype of regelnummer) kan ik geen concrete informatie geven. De bron is officieel, maar bevestiging van de regels vereist extra checks.",
+          "status": "VERDUIDELIJKING",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "het model leverde geen leesbaar plan",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 24383
+        },
+        {
+          "text": "Kandidaat 3 heeft een goede kwaliteit met een robuustheidsindex van 82,4. De slechtste regel is DDR-MIX regel 5 (69,5), maar er zijn geen operationele overtredingen. De weekomvang bedraagt 83,9 uur, wat 48 minuten boven de 40:00 grens ligt. De nachten zijn goed verdeeld (19 in totaal), en alle diensten zijn geplaatst. De kwaliteit is stabiel, maar de meest kwetsbare regel is de DDR-MIX regel 5.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De kwaliteitsmeting van kandidaat 3 wordt opgezocht om te bepalen hoe goed hij voldoet aan de regels en wat de belangrijkste aspecten zijn.",
+          "tools": [
+            "qualityReport"
+          ],
+          "toolInputs": [
+            {
+              "source": "candidate",
+              "candidateLabel": "kandidaat 3",
+              "rosterCode": "DDR-VL",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "quality": {
+              "found": true,
+              "modelVersion": "quality-model-v3",
+              "hardValid": true,
+              "hardReasons": [],
+              "components": {
+                "hours": 83.9,
+                "flow": 88.7,
+                "rest": 79.4,
+                "nights": 93.7,
+                "fairness": 66.9,
+                "preference": 81.4,
+                "stability": 100
+              },
+              "robust": 82.4,
+              "worstLine": {
+                "roster": "DDR-MIX",
+                "lineNumber": 5,
+                "score": 69.54678362573098,
+                "facts": []
+              },
+              "preference": {
+                "affinity": 0.6860986547085203,
+                "restDuties": 0.8181818181818181,
+                "dayDuties": 0.7869605142332414,
+                "popularFairness": 0.9425925925925925,
+                "weekendStart": 0.9311682783275173
+              },
+              "operationalViolations": [],
+              "nights": {
+                "total": 19,
+                "singletons": 0,
+                "pairs": 0
+              },
+              "diagnosis": [
+                "223/223 diensten geplaatst",
+                "grootste afwijking van 40:00: 48 min (DDR-BLM)",
+                "slechtste regel: DDR-MIX regel 5 (69.5)",
+                "rangeer per regel 0.3–1.2"
+              ]
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "kwaliteitsmodel quality-model-v3"
+          ],
+          "latencyMs": 8900
+        }
+      ],
+      "ms": 33283
+    },
+    {
+      "id": "R2-B-DDR-VL-B3",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "Ik kan het niet vaststellen, omdat er geen toolresultaten beschikbaar zijn. De standplaats DDR, bron official, en basisrooster DDR-VL geven geen direct overzicht van de diensten. Voor een samenvatting van de diensten zou ik eerst de tool `dutyKindCounts` of `dutyKindPerLine` moeten gebruiken, maar zonder specifieke invoer (zoals een diensttype of regelnummer) kan ik geen concrete informatie geven. De bron is officieel, maar bevestiging van de regels vereist extra checks.",
+          "status": "VERDUIDELIJKING",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "het model leverde geen leesbaar plan",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 24189
+        },
+        {
+          "text": "Er zijn geen toolresultaten beschikbaar voor kandidaat 2, dus ik kan geen informatie geven over diensten of regels daarvan. De vraag moet duidelijker zijn over welke diensttypes of regels je wilt bekijken. De huidige tools ondersteunen geen vergelijkingen tussen kandidaten. Als je specifieke regels, diensten of bronnen wilt checken, geef dan extra details. Staat er iets niet in de tools, kan ik dat niet vaststellen.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "NIET_VAST_TE_STELLEN",
+          "reasoning": "De vraag is onduidelijk. Ik kan geen algemene samenvatting geven zonder meer details over de diensttypes of regels die je wilt bekijken.",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 14177
+        }
+      ],
+      "ms": 38366
+    },
+    {
+      "id": "R2-B-DDR-VL-B4",
+      "casus": "B_contextbehoud",
+      "holdout": true,
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster.",
+      "turns": [
+        {
+          "text": "Ik kan het niet vaststellen, omdat er geen toolresultaten beschikbaar zijn. De standplaats DDR, bron official, en basisrooster DDR-VL geven geen direct overzicht van de diensten. Voor een samenvatting van de diensten zou ik eerst de tool `dutyKindCounts` of `dutyKindPerLine` moeten gebruiken, maar zonder specifieke invoer (zoals een diensttype of regelnummer) kan ik geen concrete informatie geven. De bron is officieel, maar bevestiging van de regels vereist extra checks.",
+          "status": "VERDUIDELIJKING",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "het model leverde geen leesbaar plan",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 24408
+        },
+        {
+          "text": "Ik kan het niet vaststellen, omdat er geen specifieke invoer is gegeven (zoals een diensttype, regelnummer of periode). De tools 'dutyKindCounts' en 'dutyKindPerLine' vereisen een 'kind' (diensttype) of 'lineNumber' om te werken. Zonder deze informatie kan ik geen samenvatting of analyse uitvoeren. De bron is officieel en het basisrooster is DDR-VL. Geen regels of diensten zijn beschikbaar voor kandidaat 2 in de huidige context.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "NIET_VAST_TE_STELLEN",
+          "reasoning": "Geen tool kan een algemeen overzicht geven zonder extra parameters.",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 7762
+        }
+      ],
+      "ms": 32170
+    },
+    {
+      "id": "R2-C1",
+      "casus": "C_causale_claim",
+      "holdout": false,
+      "expect": {
+        "kind": "geen_ongefundeerde_oorzaak"
+      },
+      "note": "Er is geen opgeslagen solvertrace of runconfiguratie die per plaatsing de keuze van de optimizer verklaart. Een oorzaak presenteren als vaststaand feit is hier per definitie ongefundeerd.",
+      "turns": [
+        {
+          "text": "Het brein (de tool) heeft geen eigen reden; het volgt regels en data van de tools. Zonder specifieke toolresultaten kan ik niet uitleggen waarom een bepaald rooster zo is gemaakt. Controleer eerst de regels of diensten met tools zoals rosterLine of ruleSearch.",
+          "status": "VERDUIDELIJKING",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "De vraag is te vaag om te beantwoorden. Ik moet weten wat je bedoelt met 'het brein' en 'zo gemaakt' om te kunnen helpen.",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 9591
+        }
+      ],
+      "ms": 9591
+    },
+    {
+      "id": "R2-C2",
+      "casus": "C_causale_claim",
+      "holdout": true,
+      "expect": {
+        "kind": "geen_ongefundeerde_oorzaak"
+      },
+      "note": "Er is geen opgeslagen solvertrace of runconfiguratie die per plaatsing de keuze van de optimizer verklaart. Een oorzaak presenteren als vaststaand feit is hier per definitie ongefundeerd.",
+      "turns": [
+        {
+          "text": "De regelgeving (bron: 2026.1-cao-2024-2025-transcribed) is momenteel niet bevestigd en bevat geen uitleg voor deze structuur. Er zijn geen regels gevonden die de keuze verklaaren. Het brein (waarschijnlijk een algoritme of mens) heeft waarschijnlijk opties gebaseerd op beschikbare data en prioriteiten. Zonder specifieke details over de diensten of regels kan de reden niet vastgesteld worden. Controleer eventueel de roosterregels of dienstnummers voor meer context.",
+          "status": "BEANTWOORD",
+          "intent": "REGELVRAAG",
+          "reasoning": "De vraag gaat over de reden achter een bepaald roostersbesluit, dus ik zoek naar relevante regels die dit uitleggen.",
+          "tools": [
+            "ruleSearch"
+          ],
+          "toolInputs": [
+            {
+              "query": "waarom heeft het brein dit zo gemaakt",
+              "locationCode": "DDR",
+              "employeeGroup": "MACHINIST"
+            }
+          ],
+          "data": {
+            "rules": {
+              "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+              "rulesetLegalStatus": "LEGAL_RULESET_NOT_CURRENTLY_VERIFIED",
+              "hits": [],
+              "missing": [],
+              "note": "Een waarde zonder bevestigde status is geen juridisch oordeel."
+            }
+          },
+          "sources": [
+            "regelbestand 2026.1-cao-2024-2025-transcribed"
+          ],
+          "latencyMs": 8933
+        }
+      ],
+      "ms": 8933
+    },
+    {
+      "id": "R2-D1",
+      "casus": "D_vergelijkende_claim",
+      "holdout": false,
+      "expect": {
+        "kind": "vergelijking_vereist_criterium_of_meting"
+      },
+      "note": "\"Beter\" is geen zelfstandig criterium. Goed: vraagt door op welk criterium, of voert een echte kwaliteitsvergelijking uit (qualityReport op beide).",
+      "turns": [
+        {
+          "text": "De kwaliteit van kandidaten kan niet direct vergeleken worden zonder specifieke criteria. Zonder toolresultaten of extra informatie kan ik geen beoordeling geven. Gebruik de qualityReport-tool voor een analyse, maar geef dan duidelijk welke kandidaten vergeleken moeten worden. De huidige context bevat geen gegevens over kandidaat 2. Vraag eventueel om de bronnen of regels die de vergelijking bepalen.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De gebruiker vergelijkt kandidaten zonder te specificeren welke aspecten van belang zijn. Er is geen tool om kandidaten direct te vergelijken, maar een voorstel kan gemaakt worden op basis van voorkeuren.",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 6878
+        }
+      ],
+      "ms": 6878
+    },
+    {
+      "id": "R2-D2",
+      "casus": "D_vergelijkende_claim",
+      "holdout": true,
+      "expect": {
+        "kind": "vergelijking_vereist_criterium_of_meting"
+      },
+      "turns": [
+        {
+          "text": "Er is geen directe tool om 'eerlijkste verdeling' te meten tussen roosters. De vraag vereist specifieke criteria die niet duidelijk zijn. De tool ruleSearch gaf geen bevestigde regels terug over eerlijkheid. Zonder concrete regels of metingen kan dit niet vastgesteld worden. De standplaats DDR-L heeft geen officiële verklaring over een eerlijkere verdeling dan andere roosters.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "Ik zoek naar regels of kwaliteitsrapporten die informatie bevatten over de verdeling van diensten in DDR-L.",
+          "tools": [
+            "ruleSearch"
+          ],
+          "toolInputs": [
+            {
+              "query": "verdeling van diensten in DDR-L",
+              "locationCode": "DDR",
+              "employeeGroup": "MACHINIST"
+            }
+          ],
+          "data": {
+            "rules": {
+              "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+              "rulesetLegalStatus": "LEGAL_RULESET_NOT_CURRENTLY_VERIFIED",
+              "hits": [],
+              "missing": [],
+              "note": "Een waarde zonder bevestigde status is geen juridisch oordeel."
+            }
+          },
+          "sources": [
+            "regelbestand 2026.1-cao-2024-2025-transcribed"
+          ],
+          "latencyMs": 8136
+        }
+      ],
+      "ms": 8136
+    },
+    {
+      "id": "R2-E1-volledig-gesprek",
+      "casus": "E_volledig_gesprek",
+      "holdout": false,
+      "expect": {
+        "kind": "volledig_gesprek",
+        "stap1_vroeg": 11,
+        "stap1_laat": 8,
+        "stap1_nacht": 0,
+        "stap1_rangeer": 2,
+        "stap3_rosterCode": "DDR-50MIX"
+      },
+      "note": "De volledige, letterlijke praktijksessie uit §14 van de Ronde-2-opdracht, als één doorlopend gesprek.",
+      "turns": [
+        {
+          "text": "De DDR-50MIX-rooster heeft geen officiële gegevens over de verdeling van vroeg, laat, nacht en rangeerdiens in de huidige context. Zonder toegang tot de exacte aantallen kan ik niet vaststellen of het rooster meer op een vroegrooster lijkt. De perceptie kan echter gebaseerd zijn op de verdeling van diensten in de rotatie, maar de exacte cijfers zijn niet beschikbaar.",
+          "status": "VERDUIDELIJKING",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "het model leverde geen leesbaar plan",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 27328
+        },
+        {
+          "text": "De DDR-50MIX heeft volgens de officiële gegevens 0 nachtdiensten, zoals te zien in de tool dutyKindCounts. Er staat niets in de gegeven data dat de definitie of voorkeuren van dit roosterprofiel verplichte nachtdiensten bevat. De conclusie dat het minder een echte mix is, is dus niet onderbouwd door de beschikbare informatie.",
+          "status": "BEANTWOORD",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De verdeling van diensten in het DDR-50MIX-rooster wordt bepaald door de aantallen vroeg, laat, nacht en rangeerdiensten. Door de exacte aantallen op te vragen kan worden vastgesteld of het rooster meer op een vroegrooster lijkt dan op een echte mix.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "VROEG"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "LAAT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "RANGEER"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "RANGEER",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 2,
+                "DDR-BLM": 7,
+                "DDR-L": 5,
+                "DDR-LN": 6,
+                "DDR-MIX": 11,
+                "DDR-V": 5,
+                "DDR-VL": 3
+              },
+              "total": 39,
+              "source": "official",
+              "note": "Gefilterd op kind=RANGEER."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ],
+          "latencyMs": 13795
+        },
+        {
+          "text": "Ik hield mijn eigen antwoord tegen: ik heb hier geen enkele bron voor geraadpleegd. Wat ik dan opschrijf komt uit het gesprek of uit mijzelf, en niet uit de roostergegevens. Stel de vraag opnieuw, dan zoek ik het op.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De vraag richt zich op de verdeling van diensten in kandidaat 2, dus ik gebruik de tool dutyKindCounts om de aantallen vroeg, laat, nacht en rangeerdiens te bepalen.",
+          "tools": [
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "locationCode": "DDR",
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "candidateLabel": "kandidaat 2",
+              "kind": "VROEG,LAAT,NACHT,RANGEER"
+            }
+          ],
+          "data": {},
+          "sources": [],
+          "latencyMs": 9272
+        },
+        {
+          "text": "De slechtste regel van het DDR-50MIX-rooster is regel 5 van het DDR-MIX-rooster (bron: qualityReport, bevestigd). Dit is gebaseerd op de kwaliteitsmeting van kandidaat 1, waarbij regel 5 een score van 69,5 heeft. De officiële kwaliteitsmeting van het DDR-50MIX-rooster is niet beschikbaar zonder een specifieke kandidaat. De tool 'qualityReport' vereist een kandidaat om de slechtste regel te bepalen. De regel is niet bevestigd door de NS, maar is een conclusie van de kwaliteitsanalyse.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De kwaliteitsmeting van het officiële rooster kan niet worden vastgesteld zonder een kandidaat. De tool 'qualityReport' is alleen toegankelijk voor kandidaten, niet voor het officiële rooster zelf.",
+          "tools": [
+            "qualityReport"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "quality": {
+              "found": true,
+              "modelVersion": "quality-model-v3",
+              "hardValid": true,
+              "hardReasons": [],
+              "components": {
+                "hours": 83.9,
+                "flow": 88.7,
+                "rest": 79.4,
+                "nights": 93.7,
+                "fairness": 66.9,
+                "preference": 81.4,
+                "stability": 100
+              },
+              "robust": 82.4,
+              "worstLine": {
+                "roster": "DDR-MIX",
+                "lineNumber": 5,
+                "score": 69.54678362573098,
+                "facts": []
+              },
+              "preference": {
+                "affinity": 0.6860986547085203,
+                "restDuties": 0.8181818181818181,
+                "dayDuties": 0.7869605142332414,
+                "popularFairness": 0.9425925925925925,
+                "weekendStart": 0.9311682783275173
+              },
+              "operationalViolations": [],
+              "nights": {
+                "total": 19,
+                "singletons": 0,
+                "pairs": 0
+              },
+              "diagnosis": [
+                "223/223 diensten geplaatst",
+                "grootste afwijking van 40:00: 48 min (DDR-BLM)",
+                "slechtste regel: DDR-MIX regel 5 (69.5)",
+                "rangeer per regel 0.3–1.2"
+              ]
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "kwaliteitsmodel quality-model-v3"
+          ],
+          "latencyMs": 15976
+        },
+        {
+          "text": "Het brein maakt geen keuzes; het volgt regels en data. De tools geven geen motivatie, maar feiten over structuur en kwaliteit. De reden voor het rooster ligt niet in de gegevens, maar in de regels en voorkeuren van NS. Zonder specifieke regel of dienst kan ik geen oorzaak geven. De tools tonen alleen hoe het geregeld is, niet waarom.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "NIET_VAST_TE_STELLEN",
+          "reasoning": "De vraag gaat over de reden achter een systeemkeuze, wat buiten de beschikbare tools valt.",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": [],
+          "latencyMs": 10749
+        },
+        {
+          "text": "Voorstel: een nieuwe reeks kandidaten laten maken met strategie \"Eerlijkste lastenverdeling\". Die strategie stuurt op Nachten eerlijker verdelen en Rangeerdiensten eerlijker verdelen en Meer rust tussen diensten; bij een nieuwe generatie gaat dat via de strategie en niet via een apart doel. Dat kost ongeveer 15 minuten rekentijd. Er wordt niets vervangen en niets gepubliceerd: het resultaat komt als kandidaat naast de bestaande te staan, en de validator beoordeelt hem onafhankelijk. Het kan ook zijn dat er niets beters uitkomt dan wat er nu ligt; dan is dat de uitkomst, en niet een mislukking. Zal ik dat doen?",
+          "status": "VOORSTEL",
+          "intent": "OPTIMALISATIEVERZOEK",
+          "reasoning": "geen toelichting",
+          "tools": [],
+          "toolInputs": [],
+          "data": {
+            "proposal": {
+              "kind": "GENERATE",
+              "strategy": "FAIR_BURDEN",
+              "strategyLabel": "Eerlijkste lastenverdeling",
+              "rosterYear": 2027,
+              "searchMode": "DEEP",
+              "goals": [
+                "NIGHT_FAIRNESS",
+                "SHUNTING_FAIRNESS",
+                "REST"
+              ],
+              "parentCandidateId": null,
+              "note": "Zoek naar verschillen tussen kandidaat 2 en het huidige rooster op basis van nachtverdeling, rangeerwerk en rustperiodes.",
+              "locationCode": "DDR"
+            }
+          },
+          "sources": [],
+          "latencyMs": 5466
+        }
+      ],
+      "ms": 82586
+    }
+  ],
+  "timing": {
+    "p50Ms": 12529,
+    "p95Ms": 24408,
+    "gemiddeldMs": 13291
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "schema": "ns-v106-r2-suite/1",
+  "version": 1,
+  "generatedAt": "2026-09-25T15:34:15.076Z",
+  "purpose": "De R2-vergelijkingsset: nieuwe praktijkbevindingen na N1, vastgelegd als reproduceerbare regressietests vóórdat de oorzaak wordt gerepareerd (§23 van de Ronde-2-opdracht). Bevroren zodra R2-PRE is gemeten; niet wijzigen tussen R2-PRE en R2-POST/N2.",
+  "counts": {
+    "total": 15,
+    "holdout": 5,
+    "perCasus": {
+      "A_ongefundeerde_conclusie": 2,
+      "B_contextbehoud": 8,
+      "C_causale_claim": 2,
+      "D_vergelijkende_claim": 2,
+      "E_volledig_gesprek": 1
+    }
+  },
+  "items": [
+    {
+      "id": "R2-A1",
+      "casus": "A_ongefundeerde_conclusie",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-50MIX"
+      },
+      "turns": [
+        {
+          "text": "Ik heb het gevoel dat dit 50+ Mix-rooster eigenlijk veel meer op een ander soort rooster lijkt dan op een echte mix. Klopt dat als je naar de hele rotatie kijkt? Noem ook de aantallen vroeg, laat, nacht en rangeer waarop je dat baseert."
+        },
+        {
+          "text": "Je noemde het aantal nachtdiensten als reden waarom dit minder een echte mix is. Waar baseer je op dat dit roosterprofiel nachtdiensten hoort te bevatten? Controleer eerst de definitie en voorkeuren van dit roosterprofiel en corrigeer je vorige antwoord als die conclusie niet klopt."
+        }
+      ],
+      "expect": {
+        "kind": "geen_ongefundeerde_profielconclusie",
+        "vroeg": 11,
+        "laat": 8,
+        "nacht": 0,
+        "rangeer": 2
+      },
+      "note": "Grondwaarheid: 11 vroeg / 8 laat / 0 nacht / 2 rangeer. Er is geen aangeleverde regel die een minimumaantal nachtdiensten voor dit profiel voorschrijft (roster-profiles.ts: PROFILES_WITH_PENDING_RULES)."
+    },
+    {
+      "id": "R2-A2",
+      "casus": "A_ongefundeerde_conclusie",
+      "holdout": true,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-BLM"
+      },
+      "turns": [
+        {
+          "text": "Ik heb het gevoel dat dit BLM-rooster eigenlijk veel meer op een ander soort rooster lijkt dan op een echte mix. Klopt dat als je naar de hele rotatie kijkt? Noem ook de aantallen vroeg, laat, nacht en rangeer waarop je dat baseert."
+        },
+        {
+          "text": "Je noemde het aantal nachtdiensten als reden waarom dit minder een echte mix is. Waar baseer je op dat dit roosterprofiel nachtdiensten hoort te bevatten? Controleer eerst de definitie en voorkeuren van dit roosterprofiel en corrigeer je vorige antwoord als die conclusie niet klopt."
+        }
+      ],
+      "expect": {
+        "kind": "geen_ongefundeerde_profielconclusie",
+        "vroeg": 14,
+        "laat": 9,
+        "nacht": 3,
+        "rangeer": 7
+      },
+      "note": "Grondwaarheid: 14 vroeg / 9 laat / 3 nacht / 7 rangeer. Er is geen aangeleverde regel die een minimumaantal nachtdiensten voor dit profiel voorschrijft (roster-profiles.ts: PROFILES_WITH_PENDING_RULES)."
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B1",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-50MIX"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "En hoe ziet ditzelfde eruit in kandidaat 2?"
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B2",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-50MIX"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "Hoe zit dat in kandidaat 3?"
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B3",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-50MIX"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "En hetzelfde bij kandidaat 2?"
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B4",
+      "casus": "B_contextbehoud",
+      "holdout": true,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-50MIX"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "Doe hetzelfde voor kandidaat 2."
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-50MIX"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-50MIX blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-VL-B1",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-VL"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "En hoe ziet ditzelfde eruit in kandidaat 2?"
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-VL-B2",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-VL"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "Hoe zit dat in kandidaat 3?"
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-VL-B3",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-VL"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "En hetzelfde bij kandidaat 2?"
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-B-DDR-VL-B4",
+      "casus": "B_contextbehoud",
+      "holdout": true,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-VL"
+      },
+      "turns": [
+        {
+          "text": "Welke diensten staan er in dit rooster, kort samengevat?"
+        },
+        {
+          "text": "Doe hetzelfde voor kandidaat 2."
+        }
+      ],
+      "expect": {
+        "kind": "rooster_blijft_gelijk_bij_kandidaatwissel",
+        "rosterCode": "DDR-VL"
+      },
+      "note": "Na de kandidaatwissel moet het basisrooster DDR-VL blijven, niet verspringen naar een ander rooster."
+    },
+    {
+      "id": "R2-C1",
+      "casus": "C_causale_claim",
+      "holdout": false,
+      "context": {
+        "source": "candidate",
+        "rosterCode": "DDR-50MIX",
+        "candidateLabel": "kandidaat 1"
+      },
+      "turns": [
+        {
+          "text": "Waarom heeft het brein dit zo gemaakt?"
+        }
+      ],
+      "expect": {
+        "kind": "geen_ongefundeerde_oorzaak"
+      },
+      "note": "Er is geen opgeslagen solvertrace of runconfiguratie die per plaatsing de keuze van de optimizer verklaart. Een oorzaak presenteren als vaststaand feit is hier per definitie ongefundeerd."
+    },
+    {
+      "id": "R2-C2",
+      "casus": "C_causale_claim",
+      "holdout": true,
+      "context": {
+        "source": "candidate",
+        "rosterCode": "DDR-MIX",
+        "candidateLabel": "kandidaat 1"
+      },
+      "turns": [
+        {
+          "text": "Waarom heeft het brein dit zo gemaakt?"
+        }
+      ],
+      "expect": {
+        "kind": "geen_ongefundeerde_oorzaak"
+      },
+      "note": "Er is geen opgeslagen solvertrace of runconfiguratie die per plaatsing de keuze van de optimizer verklaart. Een oorzaak presenteren als vaststaand feit is hier per definitie ongefundeerd."
+    },
+    {
+      "id": "R2-D1",
+      "casus": "D_vergelijkende_claim",
+      "holdout": false,
+      "context": {
+        "source": "candidate",
+        "rosterCode": "DDR-50MIX",
+        "candidateLabel": "kandidaat 1"
+      },
+      "turns": [
+        {
+          "text": "Maar kandidaat 2 is sowieso beter dan deze toch?"
+        }
+      ],
+      "expect": {
+        "kind": "vergelijking_vereist_criterium_of_meting"
+      },
+      "note": "\"Beter\" is geen zelfstandig criterium. Goed: vraagt door op welk criterium, of voert een echte kwaliteitsvergelijking uit (qualityReport op beide)."
+    },
+    {
+      "id": "R2-D2",
+      "casus": "D_vergelijkende_claim",
+      "holdout": true,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-L"
+      },
+      "turns": [
+        {
+          "text": "DDR-L heeft toch de eerlijkste verdeling van alle roosters?"
+        }
+      ],
+      "expect": {
+        "kind": "vergelijking_vereist_criterium_of_meting"
+      }
+    },
+    {
+      "id": "R2-E1-volledig-gesprek",
+      "casus": "E_volledig_gesprek",
+      "holdout": false,
+      "context": {
+        "source": "official",
+        "rosterCode": "DDR-50MIX"
+      },
+      "turns": [
+        {
+          "text": "Ik heb het gevoel dat dit 50+ Mix-rooster eigenlijk veel meer op een vroegrooster lijkt dan op een echte mix. Klopt dat als je naar de hele rotatie kijkt? Noem ook de aantallen vroeg, laat, nacht en rangeer waarop je dat baseert."
+        },
+        {
+          "text": "Je zegt dat 0 nachtdiensten dit minder een echte mix maakt. Waar baseer je op dat een 50+ Mix-rooster nachtdiensten hoort te bevatten? Controleer eerst de definitie en voorkeuren van dit roosterprofiel en corrigeer je vorige antwoord als die conclusie niet klopt."
+        },
+        {
+          "text": "En hoe ziet ditzelfde eruit in kandidaat 2?"
+        },
+        {
+          "text": "Welke regel van dit rooster loopt volgens jou het minst lekker?"
+        },
+        {
+          "text": "Waarom heeft het brein dit zo gemaakt?"
+        },
+        {
+          "text": "Maar kandidaat 2 is sowieso beter dan deze toch?"
+        }
+      ],
+      "expect": {
+        "kind": "volledig_gesprek",
+        "stap1_vroeg": 11,
+        "stap1_laat": 8,
+        "stap1_nacht": 0,
+        "stap1_rangeer": 2,
+        "stap3_rosterCode": "DDR-50MIX"
+      },
+      "note": "De volledige, letterlijke praktijksessie uit §14 van de Ronde-2-opdracht, als één doorlopend gesprek."
+    }
+  ]
+}

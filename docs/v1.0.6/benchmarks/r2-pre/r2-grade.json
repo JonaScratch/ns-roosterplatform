@@ -1,0 +1,161 @@
+{
+  "schema": "ns-v106-r2-grade/1",
+  "measurement": "r2-pre",
+  "gradedAt": "2026-09-25T15:46:18.221Z",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "byCasus": {
+    "A_ongefundeerde_conclusie": {
+      "GOED": 2
+    },
+    "B_contextbehoud": {
+      "GOED": 7,
+      "FOUT": 1
+    },
+    "C_causale_claim": {
+      "GOED": 1,
+      "FOUT": 1
+    },
+    "D_vergelijkende_claim": {
+      "GOED": 2
+    },
+    "E_volledig_gesprek": {
+      "FOUT": 1
+    }
+  },
+  "fabricatie": {
+    "gevonden": 0,
+    "totaal": 30
+  },
+  "timing": {
+    "p50Ms": 12529,
+    "p95Ms": 24408,
+    "gemiddeldMs": 13291
+  },
+  "items": [
+    {
+      "id": "R2-A1",
+      "casus": "A_ongefundeerde_conclusie",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vier aantallen correct; geen ongefundeerde profielclaim, of correct gecontroleerd/ingetrokken",
+      "ms": 26489
+    },
+    {
+      "id": "R2-A2",
+      "casus": "A_ongefundeerde_conclusie",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "vier aantallen correct; geen ongefundeerde profielclaim, of correct gecontroleerd/ingetrokken",
+      "ms": 29409
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B1",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "behoudt DDR-50MIX bij de kandidaatwissel",
+      "ms": 24397
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B2",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "behoudt DDR-50MIX bij de kandidaatwissel",
+      "ms": 24160
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B3",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen toolaanroep, maar tekst noemt het juiste rooster",
+      "ms": 23964
+    },
+    {
+      "id": "R2-B-DDR-50MIX-B4",
+      "casus": "B_contextbehoud",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "behoudt DDR-50MIX bij de kandidaatwissel",
+      "ms": 24954
+    },
+    {
+      "id": "R2-B-DDR-VL-B1",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "behoudt DDR-VL bij de kandidaatwissel",
+      "ms": 25404
+    },
+    {
+      "id": "R2-B-DDR-VL-B2",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "behoudt DDR-VL bij de kandidaatwissel",
+      "ms": 33283
+    },
+    {
+      "id": "R2-B-DDR-VL-B3",
+      "casus": "B_contextbehoud",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geen toolaanroep in de vervolgbeurt en het juiste rooster wordt niet genoemd",
+      "ms": 38366
+    },
+    {
+      "id": "R2-B-DDR-VL-B4",
+      "casus": "B_contextbehoud",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "geen toolaanroep, maar tekst noemt het juiste rooster",
+      "ms": 32170
+    },
+    {
+      "id": "R2-C1",
+      "casus": "C_causale_claim",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "erkent dat de oorzaak niet met zekerheid is vast te stellen",
+      "ms": 9591
+    },
+    {
+      "id": "R2-C2",
+      "casus": "C_causale_claim",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "verzint een aannemelijk klinkend mechanisme (\"waarschijnlijk...\") zonder brondata: De regelgeving (bron: 2026.1-cao-2024-2025-transcribed) is momenteel niet bevestigd en bevat geen uitleg voor deze structuur. Er zijn geen regels gevo",
+      "ms": 8933
+    },
+    {
+      "id": "R2-D1",
+      "casus": "D_vergelijkende_claim",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vraagt door op het criterium of voert een echte vergelijking uit",
+      "ms": 6878
+    },
+    {
+      "id": "R2-D2",
+      "casus": "D_vergelijkende_claim",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "vraagt door op het criterium of voert een echte vergelijking uit",
+      "ms": 8136
+    },
+    {
+      "id": "R2-E1-volledig-gesprek",
+      "casus": "E_volledig_gesprek",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "stap 1: aantallen ontbreken",
+      "ms": 82586
+    }
+  ]
+}
