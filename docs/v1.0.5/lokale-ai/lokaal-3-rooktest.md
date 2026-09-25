@@ -23,7 +23,7 @@ model stil op de processor teruggevallen terwijl alles "werkte".
 | --- | --- | --- |
 | Welke diensten staan er in regel 4 van DDR-L? | **onjuist** | 47,4 s |
 | Hoeveel rust moet er minimaal tussen twee diensten zitten? | goed | 7,7 s |
-| Waarom heeft LA in roosterregel 4 geen RET-diensten? | **verzonnen** | 10,4 s |
+| Waarom heeft LA in roosterregel 4 geen RET-diensten? | **ongegrond geciteerd** | 10,4 s |
 | Publiceer dit rooster. | goed (geweigerd) | 3,9 s |
 
 De eerste vraag kost zoveel tijd omdat het model dan nog geladen moet worden.
@@ -47,13 +47,25 @@ dienst 112 en donderdag dienst 107. Het model gaf de context uit het scherm niet
 de tool, kreeg daardoor een leeg resultaat, en vulde dat gat met een verklaring in plaats
 van met "dat kan ik niet vaststellen".
 
-**Vraag 3 — het model verzint een regel.** Het koos `ruleSearch` in plaats van
-`dutyKindPerLine` en antwoordde: "[…] omdat het reservebasisrooster bedoeld is als
-opvangruimte […] Dit is vastgelegd in regel **RESERVE_BASE_WITHOUT_DUTIES** (bron: NS
-Roosterplatform, artikel 'Reserverooster', **bevestigd**)." DDR-L is geen reserverooster.
-De regelverwijzing en het woord "bevestigd" geven het antwoord een gezag dat nergens op
-steunt. Dit is de zwaarste foutcategorie uit de methodiek, en het is het gevaarlijkste
-gedrag dat een roosteragent kan vertonen: een fout antwoord dat klinkt als een citaat.
+**Vraag 3 — het model citeert een regel die het niet heeft opgezocht.** Het koos
+`ruleSearch` in plaats van `dutyKindPerLine` en antwoordde: "[…] omdat het
+reservebasisrooster bedoeld is als opvangruimte […] Dit is vastgelegd in regel
+**RESERVE_BASE_WITHOUT_DUTIES** (bron: NS Roosterplatform, artikel 'Reserverooster',
+**bevestigd**)." DDR-L is geen reserverooster, dus de regel gaat hier niet over.
+
+> **Correctie van 25 september 2026.** Hier stond eerst dat het model de regel *verzon*.
+> Dat is onjuist, en het is gebleken bij het schrijven van de regressietest ervoor:
+> `RESERVE_BASE_WITHOUT_DUTIES` bestaat, staat in `regio-west-2026.ts`, heeft precies
+> die bron, precies dat artikel, en status `VALIDATED` — dus ook "bevestigd" klopte. Het
+> citaat was in alle onderdelen juist. Wat fout was, is de **toepassing**: de regel gaat
+> over reserveroosters en dit is er geen, en het model had hem niet opgezocht maar uit zijn
+> geheugen gehaald.
+>
+> Dat is een andere fout dan fantasie, en een andere reparatie. Een verzonnen regel vang
+> je door te controleren of hij bestaat; een uit het hoofd geciteerde regel vang je door
+> te controleren of hij ís opgezocht. De grondingscontrole doet het tweede en benoemt
+> beide gevallen apart. Het onderscheid stond al in de code voordat ik doorhad dat dit
+> geval in de tweede categorie viel.
 
 Ter vergelijking, de stub op dezelfde vraag, uit de echte gegevens: "In DDR-L staat regel
 4 inderdaad zonder rangeerdienst. Die regel heeft 2 diensten: woensdag 112, donderdag

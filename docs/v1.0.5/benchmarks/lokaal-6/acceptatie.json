@@ -1,7 +1,7 @@
 {
   "schema": "ns-v105-acceptance-check/1",
   "measurement": "lokaal-6",
-  "checkedAt": "2026-09-25T05:08:21.920Z",
+  "checkedAt": "2026-09-25T09:06:21.107Z",
   "source": "lokale-ai.json",
   "model": {
     "name": "qwen3:8b",
@@ -99,9 +99,16 @@
       ],
       "items": 32,
       "graded": 32,
-      "good": 32,
-      "wrong": 0,
-      "verdict": "GEHAALD",
+      "good": 28,
+      "wrong": 4,
+      "ungrounded": 0,
+      "overconfident": [
+        "B3",
+        "C3",
+        "C4",
+        "J3"
+      ],
+      "verdict": "NIET_GEHAALD",
       "norm": "nulfout"
     }
   ],

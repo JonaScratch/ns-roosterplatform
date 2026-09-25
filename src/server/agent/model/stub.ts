@@ -79,6 +79,18 @@ const REKENVERZOEK_HARD = [
   "kandidaten maken",
   "maak kandidaten",
   "genereer",
+  // Gevonden bij M3: "Zoek een verdeling waarin Laat meer aflopers krijgt én ..."
+  // werd gelezen als een vraag over de huidige verdeling, en netjes beantwoord
+  // met de cijfers. Dat is geen antwoord op wat er gevraagd werd. Hele zinsdelen
+  // en niet het losse "zoek": "zoek uit waar de nachten staan" blijft een
+  // leesvraag.
+  "zoek een verdeling",
+  "zoek een indeling",
+  "zoek een rooster",
+  "zoek een variant",
+  "zoek een alternatief",
+  "vind een verdeling",
+  "vind een indeling",
 ];
 const REKENVERZOEK_ZACHT = ["onderzoek", "probeer", "verbeter", "bereken"];
 
@@ -197,9 +209,17 @@ function rekenverzoek(request: PlanRequest, tekst: string, ctx: PlanRequest["con
       toolCalls: [],
       clarification: alleenNacht
         ? "Wat moet er met de nachten gebeuren: de reeksen beter clusteren (minder losse nachten), of de nachten eerlijker over de regels verdelen? Dat zijn twee verschillende doelen, en ze kunnen elkaar tegenwerken."
-        : "Ik mag een berekening laten doen, maar dan moet ik weten waarop. Waar moet het beter worden: " +
-          "de uren richting 40:00, meer rust tussen diensten, de nachten (clusteren of eerlijker verdelen), " +
-          "rangeerdiensten, de weekendbelasting, of zo min mogelijk verandering?",
+        : "Ik mag een berekening laten doen, maar dan moet ik weten waarop. De zoekmachine kan op zes " +
+          "dingen sturen: de uren richting 40:00, meer rust tussen diensten, de nachten (clusteren of " +
+          "eerlijker verdelen), rangeerdiensten, de weekendbelasting, of zo min mogelijk verandering. " +
+          // Gevonden bij M3: een verzoek met drie voorwaarden tegelijk ("meer
+          // aflopers in Laat én de eerlijkheid gelijk én niemand achteruit")
+          // noemt doelen die de zoekmachine niet kent. Dan is de eerlijke
+          // mededeling dat die knop niet bestaat, mét de waarschuwing dat zelfs
+          // een doel dat wél bestaat geen verbetering hoeft op te leveren.
+          "Staat jouw doel daar niet bij, dan kan ik er niet op sturen — dan kan ik het alleen laten zien. " +
+          "En ook op een doel dat er wél bij staat kan de uitkomst zijn dat er niets beters is dan wat er " +
+          "nu ligt; dat is dan het antwoord.",
       reasoning: "rekenverzoek zonder scherp doel; zonder doel is er niets te optimaliseren",
     };
   }

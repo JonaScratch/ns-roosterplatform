@@ -12,7 +12,7 @@
 
 Bij de rooktest deed `qwen3:8b` drie dingen fout die niets met taalvaardigheid te maken
 hadden. Het gaf de schermcontext niet mee aan de tools, koos de verkeerde tool, en
-citeerde één keer een regel die niet bestond. De vraag van deze ronde: hoeveel van de
+citeerde één keer een regel die het niet had opgezocht. De vraag van deze ronde: hoeveel van de
 zwakke uitslag was het model, en hoeveel was de koppeling eromheen?
 
 Het antwoord is ongemakkelijker dan verwacht. Een deel was de koppeling. Een ander deel
@@ -214,12 +214,23 @@ rapporteert die het model niet heeft geleverd.
 ## Wat het model zelf laat zien
 
 **Geen verzonnen identificaties.** Over lokaal-2, lokaal-3 én lokaal-4 geteld, met de
-schermcontext meegerekend: 0 ongegronde vermeldingen, telkens in 32 antwoorden. De fabricatie
-(`RESERVE_BASE_WITHOUT_DUTIES`, "bevestigd") kwam uit de rooktest van vier vragen, niet
-uit de benchmark. Ze rechtvaardigt de grendel — regelkennis is een nulfoutcriterium en
-één zo'n antwoord is er één te veel — maar het zou onjuist zijn te schrijven dat de
-benchmark fabricatie liet zien. Die verzonnen regel staat nu wél letterlijk in
-`verify:agent` als regressietest.
+schermcontext meegerekend: 0 ongegronde vermeldingen, telkens in 32 antwoorden.
+
+Ook het geval uit de rooktest was er geen. Ik had opgeschreven dat het model
+`RESERVE_BASE_WITHOUT_DUTIES` had verzonnen; bij het schrijven van de regressietest bleek
+die regel gewoon te bestaan, met precies die bron, dat artikel en de status "bevestigd".
+Het citaat klopte in alle onderdelen. Wat fout was, is dat het model de regel niet had
+opgezocht en hem toepaste op een rooster waar hij niet over gaat.
+
+Dat verschil is geen spitsvondigheid. Een verzonnen regel vang je door te controleren of
+hij bestaat; een uit het hoofd geciteerde regel vang je door te controleren of hij ís
+opgezocht. De grendel doet het tweede — en benoemt de twee gevallen apart, wat toevallig
+precies het onderscheid was dat dit geval nodig had. Het zinnetje in `verify:agent` is
+aangepast: het toetst nu dat dit antwoord als *niet opgezocht* wordt tegengehouden en niet
+als verzinsel.
+
+Voor het beeld van het model maakt het nogal wat uit. In vijf metingen van 32 vragen plus
+een rooktest van vier heeft `qwen3:8b` **geen enkele keer een identificatie verzonnen.**
 
 **De zwakte zit in het redeneren, niet in het Nederlands.** Waar het model faalt, faalt
 het op: een vereist argument vergeten, een vraag over een roosterregel met de

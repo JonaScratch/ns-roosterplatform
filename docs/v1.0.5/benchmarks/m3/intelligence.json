@@ -1,8 +1,8 @@
 {
   "schema": "ns-v105-intelligence-result/1",
   "measurement": "m3",
-  "measuredAt": "2026-09-25T05:13:03.061Z",
-  "testsetVersion": 1,
+  "measuredAt": "2026-09-25T09:05:07.573Z",
+  "testsetVersion": 2,
   "agentPresent": true,
   "agentLevel": "B",
   "memoryFixture": true,
@@ -14,8 +14,7 @@
     },
     "B": {
       "ONBEOORDEELD": 1,
-      "FOUT": 1,
-      "GOED": 1
+      "GOED": 2
     },
     "C": {
       "GOED": 4
@@ -35,8 +34,7 @@
       "ONBEOORDEELD": 2
     },
     "H": {
-      "GOED": 1,
-      "FOUT": 1
+      "GOED": 2
     },
     "I": {
       "GOED": 4
@@ -707,7 +705,7 @@
       "expected": null,
       "answer": {
         "text": "In DDR-L staat regel 4 inderdaad zonder rangeerdienst. Die regel heeft 2 diensten: woensdag 112, donderdag 114; de overige dagen liggen vast (maandag RES, dinsdag RUST, vrijdag WR, zaterdag RUST, zondag RUST). De 7 rangeerdiensten van dit rooster staan op regel 1 (1× 730), 2 (1× 732), 3 (1× 730), 5 (1× 731), 6 (1× 731), 9 (1× 732), 11 (1× 730). Ze zijn er dus wel; ze kwamen op andere regels terecht. Waaróm de zoekmachine ze daar heeft neergelegd en niet hier, is niet per dienst vastgelegd. Wat ik wel kan: laten uitrekenen wat het kost om ze anders te verdelen.",
-        "status": "FOUT",
+        "status": "GOED",
         "data": {
           "kindPerLine": {
             "found": true,
@@ -864,13 +862,13 @@
         "tools": [
           "dutyKindPerLine"
         ],
-        "detail": "verwachtte een wedervraag, kreeg BEANTWOORD",
+        "detail": "verklaard met 7 regel(s) waar die diensten wél staan",
         "answered": "BEANTWOORD",
         "reasoning": "uitzoeken waar de rangeerdiensten van DDR-L staan en wat er op regel 4 staat",
         "model": "stub",
         "isLanguageModel": false
       },
-      "status": "FOUT"
+      "status": "GOED"
     },
     {
       "id": "B3",
@@ -1365,14 +1363,14 @@
             },
             "items": [
               {
-                "id": "6199b1fd-9ad5-4bf4-a012-7a123dd8b396",
+                "id": "2b399570-c8da-4006-aca6-b4b65ad85a61",
                 "scope": "LOCATION",
                 "kind": "PREFERENCE",
                 "statement": "In Dordrecht aflopers in Laat zoveel mogelijk over de regels spreiden. [benchmarkfixture]",
                 "rationale": "Afgesproken in de commissie van 2026-Q2.",
                 "status": "APPROVED",
                 "origin": "van een mens",
-                "approvedAt": "2026-09-25T05:13:02.825Z",
+                "approvedAt": "2026-09-25T09:05:07.336Z",
                 "appliedCount": 0,
                 "contextStillCurrent": true,
                 "locationCode": "DDR"
@@ -1436,14 +1434,14 @@
             },
             "items": [
               {
-                "id": "6199b1fd-9ad5-4bf4-a012-7a123dd8b396",
+                "id": "2b399570-c8da-4006-aca6-b4b65ad85a61",
                 "scope": "LOCATION",
                 "kind": "PREFERENCE",
                 "statement": "In Dordrecht aflopers in Laat zoveel mogelijk over de regels spreiden. [benchmarkfixture]",
                 "rationale": "Afgesproken in de commissie van 2026-Q2.",
                 "status": "APPROVED",
                 "origin": "van een mens",
-                "approvedAt": "2026-09-25T05:13:02.825Z",
+                "approvedAt": "2026-09-25T09:05:07.336Z",
                 "appliedCount": 0,
                 "contextStillCurrent": true,
                 "locationCode": "DDR"
@@ -1728,39 +1726,21 @@
       "expectKind": "behaviour",
       "expected": null,
       "answer": {
-        "text": "Verdeling van diensten van de klasse PREMIUM_LATE (36 in totaal): DDR-L 14, DDR-VL 9, DDR-MIX 6, DDR-BLM 3, DDR-LN 3, DDR-50MIX 1, DDR-V 0.",
-        "status": "FOUT",
+        "text": "Ik mag een berekening laten doen, maar dan moet ik weten waarop. De zoekmachine kan op zes dingen sturen: de uren richting 40:00, meer rust tussen diensten, de nachten (clusteren of eerlijker verdelen), rangeerdiensten, de weekendbelasting, of zo min mogelijk verandering. Staat jouw doel daar niet bij, dan kan ik er niet op sturen — dan kan ik het alleen laten zien. En ook op een doel dat er wél bij staat kan de uitkomst zijn dat er niets beters is dan wat er nu ligt; dat is dan het antwoord.",
+        "status": "GOED",
         "data": {
-          "counts": {
-            "kind": null,
-            "dutyClass": "PREMIUM_LATE",
-            "perRoster": {
-              "DDR-50MIX": 1,
-              "DDR-BLM": 3,
-              "DDR-L": 14,
-              "DDR-LN": 3,
-              "DDR-MIX": 6,
-              "DDR-V": 0,
-              "DDR-VL": 9
-            },
-            "total": 36,
-            "source": "candidate"
-          }
+          "intent": "VERDUIDELIJKING_NODIG"
         },
-        "sources": [
-          "kandidaat 8f811522"
-        ],
-        "intent": "VERDELINGSVRAAG",
-        "tools": [
-          "dutyKindCounts"
-        ],
-        "detail": "noemt 'niets beters' niet als mogelijke uitkomst: verdeling van diensten van de klasse premium_late (36 in totaal): ddr-l 14, ddr-vl 9, ddr-",
-        "answered": "BEANTWOORD",
-        "reasoning": "echte aflopers per basisrooster tellen",
+        "sources": [],
+        "intent": "VERDUIDELIJKING_NODIG",
+        "tools": [],
+        "detail": "",
+        "answered": "VERDUIDELIJKING",
+        "reasoning": "rekenverzoek zonder scherp doel; zonder doel is er niets te optimaliseren",
         "model": "stub",
         "isLanguageModel": false
       },
-      "status": "FOUT"
+      "status": "GOED"
     },
     {
       "id": "I1",

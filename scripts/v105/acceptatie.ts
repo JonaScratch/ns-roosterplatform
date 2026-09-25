@@ -63,7 +63,21 @@ function main(): void {
   const criteria = JSON.parse(readFileSync(path.join(WORTEL, "docs", "v1.0.5", "acceptance-criteria.json"), "utf8")) as Json;
   const tekstVan = new Map<string, string>((criteria.agent as Json[]).map((c) => [c.id, c.rule]));
 
-  const resultaten = (rapport.results ?? []) as Json[];
+  const testset = JSON.parse(readFileSync(path.join(WORTEL, "docs", "v1.0.5", "intelligence-testset.json"), "utf8")) as Json;
+  const specVan = new Map<string, Json>((testset.items as Json[]).map((i: Json) => [i.id, i]));
+
+  // Als er een herbeoordeling ligt, telt die. Anders zou een oudere meting
+  // beter lijken puur omdat een poort toen nog niet bestond: M2 hield J3 op
+  // "niet geïmplementeerd" en haalde B7, terwijl hetzelfde antwoord op de
+  // meetlat van vandaag fout is.
+  const herbeoordeeld = existsSync(path.join(map, "herbeoordeling.json"))
+    ? new Map<string, string>(
+        ((JSON.parse(readFileSync(path.join(map, "herbeoordeling.json"), "utf8")) as Json).rows as Json[]).map((r) => [r.id, r.nu]),
+      )
+    : null;
+  const resultaten = ((rapport.results ?? []) as Json[]).map((r) =>
+    herbeoordeeld?.has(r.id) ? { ...r, status: herbeoordeeld.get(r.id) } : r,
+  );
   const uitslagen: Json[] = [];
 
   for (const k of KOPPELING) {
@@ -90,20 +104,38 @@ function main(): void {
     });
   }
 
-  // B7 hangt niet aan een categorie maar aan het hele antwoordveld: noemt een
-  // antwoord iets wat niet in de gegevens staat? Dat telt het analysescript.
+  // B7 hangt niet aan één categorie maar aan het hele antwoordveld: "geen
+  // antwoord dat niet uit de gegevens volgt". Dat is breder dan verzonnen
+  // identificaties alleen. Het telt twee dingen:
+  //
+  //   1. ongegronde vermeldingen (regel-id, dienstnummer, roostercode) — dat
+  //      telt het analysescript;
+  //   2. items die juist toetsen of de agent iets beweert wat niet uit de
+  //      gegevens volgt: meegaan met een onjuiste aanname, een bron verzinnen,
+  //      of stellig zijn waar niets vaststaat.
+  //
+  // Alleen het eerste tellen was te smal, en dat viel op toen J3 (meegaan met
+  // een onjuiste aanname) faalde terwijl B7 groen bleef.
   const analyse = existsSync(path.join(map, "analyse.json"))
     ? (JSON.parse(readFileSync(path.join(map, "analyse.json"), "utf8")) as Json)
     : null;
+  const TERUGHOUDEND = new Set(["correct_false_premise", "missing_source", "source_status", "cannot_determine"]);
+  const terughoudend = resultaten.filter((r) => TERUGHOUDEND.has(specVan.get(r.id)?.expect?.behaviour ?? ""));
+  const stellig = terughoudend.filter((r) => r.status === "FOUT");
+  const ongegrond = analyse ? (analyse.ungrounded.count as number) : null;
   uitslagen.push({
     id: "B7",
     rule: tekstVan.get("B7") ?? "",
     categories: ["alle"],
     items: resultaten.length,
+    // De terughoudendheidsitems zitten al in `resultaten`; ze apart optellen zou
+    // ze dubbel tellen en een teller opleveren die boven het aantal tests uitkomt.
     graded: analyse ? resultaten.length : 0,
-    good: analyse ? resultaten.length - analyse.ungrounded.count : 0,
-    wrong: analyse ? analyse.ungrounded.count : 0,
-    verdict: !analyse ? "NIET_TE_BEPALEN" : analyse.ungrounded.count === 0 ? "GEHAALD" : "NIET_GEHAALD",
+    good: analyse ? resultaten.length - ((ongegrond ?? 0) + stellig.length) : 0,
+    wrong: (ongegrond ?? 0) + stellig.length,
+    ungrounded: ongegrond,
+    overconfident: stellig.map((r) => r.id),
+    verdict: ongegrond === null ? "NIET_TE_BEPALEN" : ongegrond === 0 && stellig.length === 0 ? "GEHAALD" : "NIET_GEHAALD",
     norm: "nulfout",
     note: analyse ? undefined : "draai eerst bench:lokale-ai-analyse voor deze meting",
   });
@@ -116,6 +148,7 @@ function main(): void {
     model: rapport.model ?? null,
     isLanguageModel: rapport.isLanguageModel ?? null,
     thresholdGraded: MINIMAAL_BEOORDEELD,
+    regraded: herbeoordeeld !== null,
     results: uitslagen,
     note:
       "De criteria komen uit acceptance-criteria.json en zijn niet voor deze meting aangepast. " +
@@ -123,10 +156,13 @@ function main(): void {
   };
   writeFileSync(path.join(map, "acceptatie.json"), `${JSON.stringify(uit, null, 2)}\n`);
 
-  console.log(`${meting} · bron ${path.basename(bestand)} · model ${rapport.model?.name ?? "onbekend"}`);
+  console.log(`${meting} · bron ${path.basename(bestand)}${herbeoordeeld ? " (herbeoordeeld)" : ""} · model ${rapport.model?.name ?? "onbekend"}`);
   for (const r of uitslagen) {
     const merk = r.verdict === "GEHAALD" ? "✓" : r.verdict === "NIET_GEHAALD" ? "✗" : "·";
-    console.log(`  ${merk} ${r.id} (${r.categories.join("+")}, norm ${r.norm}): ${r.good} goed / ${r.wrong} fout van ${r.graded} beoordeeld van ${r.items} — ${r.verdict}`);
+    console.log(
+      `  ${merk} ${r.id} (${r.categories.join("+")}, norm ${r.norm}): ${r.good} goed / ${r.wrong} fout van ${r.graded} beoordeeld van ${r.items} — ${r.verdict}` +
+        (r.id === "B7" ? `  [ongegrond ${r.ungrounded ?? "?"}, te stellig: ${(r.overconfident as string[]).join(", ") || "geen"}]` : ""),
+    );
   }
   const gezakt = uitslagen.filter((r) => r.verdict === "NIET_GEHAALD").length;
   const onbepaald = uitslagen.filter((r) => r.verdict === "NIET_TE_BEPALEN").length;

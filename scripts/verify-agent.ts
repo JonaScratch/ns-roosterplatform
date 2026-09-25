@@ -627,14 +627,24 @@ async function main(): Promise<void> {
 
   const gegevens = 'rosterLine {"duties":[{"code":"760","weekday":1},{"code":"107","weekday":4}]} DDR-L';
 
-  // Letterlijk het antwoord dat qwen3:8b in de rooktest gaf: een regelnummer
-  // dat niet bestaat, met het woord "bevestigd" erachter. Dat is de zwaarste
-  // foutcategorie uit de methodiek, en dit is de regressietest ervoor.
-  const verzonnen = ongegrondeVermeldingen(
-    "Dit is vastgelegd in regel RESERVE_BASE_WITHOUT_DUTIES (bron: NS Roosterplatform, bevestigd).",
+  const verzonnen = ongegrondeVermeldingen("Volgens RP_ZESTIEN_UUR_RUST mag dat niet.", gegevens);
+  toets("een regelnummer dat niet bestaat wordt gezien", verzonnen.length === 1 && !verzonnen[0].bestaatWel, verzonnen.map((o) => o.waarde).join(", "));
+
+  // Letterlijk het antwoord dat qwen3:8b in de rooktest gaf. Dat werd eerst als
+  // verzinsel opgeschreven; bij het schrijven van déze test bleek
+  // RESERVE_BASE_WITHOUT_DUTIES een bestaande regel te zijn, met precies die
+  // bron en die status. Het model citeerde dus correct — uit zijn hoofd, op een
+  // rooster waar de regel niet over gaat. Dat is een andere fout, en de grendel
+  // hoort hem ook anders te benoemen.
+  const uitDeRooktest = ongegrondeVermeldingen(
+    "Dit is vastgelegd in regel RESERVE_BASE_WITHOUT_DUTIES (bron: NS Roosterplatform, artikel 'Reserverooster', bevestigd).",
     gegevens,
   );
-  toets("de verzonnen regel uit de rooktest wordt gezien", verzonnen.length === 1 && !verzonnen[0].bestaatWel, verzonnen.map((o) => o.waarde).join(", "));
+  toets(
+    "de regel uit de rooktest wordt tegengehouden als niet-opgezocht, niet als verzonnen",
+    uitDeRooktest.length === 1 && uitDeRooktest[0].bestaatWel,
+    grondingsMelding(uitDeRooktest).slice(0, 130),
+  );
 
   const uitHetHoofd = ongegrondeVermeldingen("Dat volgt uit RP_DAILY_REST_PLANNED.", gegevens);
   toets(

@@ -153,6 +153,25 @@ export function beoordeelGedrag(item: Json, antwoord: Json): { status: string; d
       return /ingetrokken/.test(tekst) && (antwoord.status === "GEWEIGERD" || antwoord.status === "NIET_VAST_TE_STELLEN")
         ? { status: "GOED", detail: "" }
         : { status: "FOUT", detail: `verwachtte een weigering met reden, kreeg ${antwoord.status}: ${tekst.slice(0, 80)}` };
+    case "explains_absence": {
+      // De RET-vraag. Goed is: verklaren uit de gegevens waar de diensten van
+      // die soort wél staan, en niet aannemen dat RET een dienstcode is. De
+      // controle gaat over de gegevens en niet over de formulering, zodat hij
+      // niet afhangt van welke kandidaat er toevallig openstaat.
+      const perLijn = (antwoord.data as Json | null)?.kindPerLine as Json | undefined;
+      if (!perLijn?.found) return { status: "FOUT", detail: "heeft niet opgezocht waar die diensten wél staan" };
+      if (perLijn.kind !== item.expect.params.dutyKind) {
+        return { status: "FOUT", detail: `zocht op soort ${perLijn.kind}, verwacht ${item.expect.params.dutyKind}` };
+      }
+      const elders = ((perLijn.linesWithKind ?? []) as Json[]).map((r) => Number(r.lineNumber));
+      if (elders.length === 0) return { status: "FOUT", detail: "noemt geen enkele regel waar die diensten wél staan" };
+      // Een dienstcode "RET" bestaat niet in dit pakket; hem toch noemen is de
+      // aanname die dit scenario moet uitsluiten.
+      if (/ret[- ]?d/i.test(tekst) || /dienst(nummer)? ret/i.test(tekst)) {
+        return { status: "FOUT", detail: "presenteert RET als dienstcode; dat komt in dit pakket niet voor" };
+      }
+      return { status: "GOED", detail: `verklaard met ${elders.length} regel(s) waar die diensten wél staan` };
+    }
     case "may_conclude_no_improvement": {
       // Criterium C3. Het gaat er niet om dát de agent faalt, maar dat hij de
       // uitkomst "niets beters" als eerlijke mogelijkheid benoemt in plaats van

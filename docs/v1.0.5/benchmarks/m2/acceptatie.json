@@ -1,11 +1,12 @@
 {
   "schema": "ns-v105-acceptance-check/1",
   "measurement": "m2",
-  "checkedAt": "2026-09-25T05:08:52.852Z",
+  "checkedAt": "2026-09-25T09:06:42.673Z",
   "source": "intelligence.json",
   "model": "stub",
   "isLanguageModel": null,
   "thresholdGraded": 0.5,
+  "regraded": true,
   "results": [
     {
       "id": "B1",
@@ -29,9 +30,9 @@
       ],
       "items": 6,
       "graded": 4,
-      "good": 4,
-      "wrong": 0,
-      "verdict": "GEHAALD",
+      "good": 3,
+      "wrong": 1,
+      "verdict": "NIET_GEHAALD",
       "norm": "100%"
     },
     {
@@ -94,9 +95,13 @@
       ],
       "items": 32,
       "graded": 32,
-      "good": 32,
-      "wrong": 0,
-      "verdict": "GEHAALD",
+      "good": 31,
+      "wrong": 1,
+      "ungrounded": 0,
+      "overconfident": [
+        "J3"
+      ],
+      "verdict": "NIET_GEHAALD",
       "norm": "nulfout"
     }
   ],
