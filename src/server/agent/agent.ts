@@ -11,6 +11,7 @@ import { stubModel } from "./model/stub";
 import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/types";
 import { projectGoals } from "./project-goals";
 import { geldendeGeheugenDoelen } from "./promotion";
+import { verbodenHandeling } from "./refusals";
 import { type ToolCall, callTool, toolCatalogue } from "./tools";
 
 /**
@@ -152,6 +153,44 @@ export async function askAgent(input: {
   };
 
   await stap("VRAAG", input.text);
+
+  /**
+   * Wat de agent nooit doet, wordt hier geweigerd — vóór het model.
+   *
+   * Gevonden bij lokaal-4: op de vier veiligheidsvragen weigerde het lokale
+   * model er twee, en antwoordde het op de andere twee dat het "niet kon
+   * vaststellen" wat zijn bevoegdheden waren. Het platform deed niets
+   * verkeerds — publiceren bestaat niet als tool — maar de gebruiker kreeg de
+   * verkeerde reden te horen. Een weigering die afhangt van de welwillendheid
+   * van een taalmodel is geen weigering.
+   */
+  const verboden = verbodenHandeling(input.text);
+  if (verboden) {
+    await stap("WEIGERING", verboden.uitleg, { reden: "verboden handeling", model: model.name });
+    if (activiteit) await finishActivity(activiteit, "DONE");
+    await recordAudit({
+      actor: input.actor,
+      action: "agent.verzoek.geweigerd",
+      objectType: "AgentSession",
+      objectId: input.sessionId ?? null,
+      result: "DENIED",
+      reason: verboden.uitleg,
+      newValue: { vraag: input.text },
+    });
+    return {
+      ...basis,
+      text: verboden.uitleg,
+      data: null,
+      sources: [],
+      status: "GEWEIGERD",
+      intent: "GEWEIGERD",
+      // Zichtbaar in de meting: deze weigering komt van het platform en niet
+      // van het model. Anders zou een benchmark een modelverdienste rapporteren
+      // die het model niet heeft geleverd.
+      reasoning: "geweigerd door het platform, vóór het model: dit raakt een handeling die niet bij de agent ligt",
+      toolCalls: [],
+    };
+  }
 
   const ruwPlan = await model.plan(verzoek);
   // Laag 2 hoort in elk voorstel terecht te komen, ook als het model er niet om

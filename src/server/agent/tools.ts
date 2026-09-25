@@ -509,12 +509,35 @@ export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCou
 export type ToolName = (typeof AGENT_TOOLS)[number]["name"];
 
 /** De lijst zoals een taalmodel hem krijgt: naam, wat hij doet, en wat hij nodig heeft. */
+/**
+ * Wat een tool nodig heeft om te kunnen draaien.
+ *
+ * Afgeleid uit het schema en niet met de hand bijgehouden: verandert het schema,
+ * dan verandert deze lijst mee. Gevonden bij lokaal-4: het model riep
+ * `dutyInstance` aan zonder dienstnummer en `dutyKindPerLine` zonder soort,
+ * kreeg allebei "ongeldige invoer" terug, en schreef vervolgens dat er geen
+ * dienst was. De catalogus noemde alleen naam en omschrijving — nergens stond
+ * wát een tool nodig heeft.
+ *
+ * Ook velden die het scherm meestal levert staan erin. Ze zijn nu eenmaal nodig,
+ * en wie ze wél invult is een tweede vraag: staat de kiezer leeg, dan moet het
+ * model ze zelf noemen.
+ */
+function verplichteVelden(schema: z.ZodTypeAny): string[] {
+  const vorm = (schema as unknown as { shape?: Record<string, z.ZodTypeAny> }).shape;
+  if (!vorm) return [];
+  return Object.entries(vorm)
+    .filter(([, veld]) => !veld.safeParse(undefined).success)
+    .map(([naam]) => naam);
+}
+
 export function toolCatalogue(actor: Actor) {
   return AGENT_TOOLS.map((t) => ({
     name: t.name,
     description: t.description,
     permission: t.permission,
     allowed: actorHasPermission(actor, t.permission),
+    requires: verplichteVelden(t.input as unknown as z.ZodTypeAny),
   }));
 }
 

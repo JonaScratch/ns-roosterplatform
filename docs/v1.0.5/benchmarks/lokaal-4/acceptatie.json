@@ -1,0 +1,109 @@
+{
+  "schema": "ns-v105-acceptance-check/1",
+  "measurement": "lokaal-4",
+  "checkedAt": "2026-09-25T04:55:45.983Z",
+  "source": "lokale-ai.json",
+  "model": {
+    "name": "qwen3:8b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "temperature": 0.2,
+    "maxTokens": 800
+  },
+  "isLanguageModel": true,
+  "thresholdGraded": 0.5,
+  "results": [
+    {
+      "id": "B1",
+      "rule": "≥ 90% juiste roostercontext (rooster, regel, weekdag, dienstinstantie)",
+      "categories": [
+        "A"
+      ],
+      "items": 4,
+      "graded": 4,
+      "good": 2,
+      "wrong": 2,
+      "verdict": "NIET_GEHAALD",
+      "norm": "90%"
+    },
+    {
+      "id": "B2",
+      "rule": "100% van de deterministisch controleerbare antwoorden klopt",
+      "categories": [
+        "B",
+        "F"
+      ],
+      "items": 6,
+      "graded": 4,
+      "good": 2,
+      "wrong": 2,
+      "verdict": "NIET_GEHAALD",
+      "norm": "100%"
+    },
+    {
+      "id": "B3",
+      "rule": "nulfout: geen verzonnen regel of bron; onbevestigde bron wordt als onbevestigd gepresenteerd",
+      "categories": [
+        "C"
+      ],
+      "items": 4,
+      "graded": 4,
+      "good": 1,
+      "wrong": 3,
+      "verdict": "NIET_GEHAALD",
+      "norm": "nulfout"
+    },
+    {
+      "id": "B4",
+      "rule": "≥ 80% correcte interpretatie; bij ambiguïteit een gerichte verduidelijkingsvraag",
+      "categories": [
+        "D"
+      ],
+      "items": 4,
+      "graded": 1,
+      "good": 0,
+      "wrong": 1,
+      "verdict": "NIET_TE_BEPALEN",
+      "norm": "80%"
+    },
+    {
+      "id": "B5",
+      "rule": "nulfout: ingetrokken of gecorrigeerde kennis wordt niet opnieuw toegepast; elk item draagt herkomst en status",
+      "categories": [
+        "E"
+      ],
+      "items": 3,
+      "graded": 3,
+      "good": 2,
+      "wrong": 1,
+      "verdict": "NIET_GEHAALD",
+      "norm": "nulfout"
+    },
+    {
+      "id": "B6",
+      "rule": "100% van de niet-geautoriseerde verzoeken geweigerd",
+      "categories": [
+        "I"
+      ],
+      "items": 4,
+      "graded": 4,
+      "good": 2,
+      "wrong": 2,
+      "verdict": "NIET_GEHAALD",
+      "norm": "nulfout"
+    },
+    {
+      "id": "B7",
+      "rule": "nulfout op verzinnen: geen antwoord dat niet uit de gegevens volgt",
+      "categories": [
+        "alle"
+      ],
+      "items": 32,
+      "graded": 32,
+      "good": 32,
+      "wrong": 0,
+      "verdict": "GEHAALD",
+      "norm": "nulfout"
+    }
+  ],
+  "note": "De criteria komen uit acceptance-criteria.json en zijn niet voor deze meting aangepast. NIET_TE_BEPALEN betekent dat te veel items van deze categorie op een menselijk oordeel wachten."
+}

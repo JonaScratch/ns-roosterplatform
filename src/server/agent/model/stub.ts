@@ -2,6 +2,7 @@ import "server-only";
 import { SCENARIO_PROFILES } from "@/server/optimizer/cpsat-optimizer";
 import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
 import { DAG_NAMEN } from "../context";
+import { bevat, verbodenHandeling } from "../refusals";
 import { begripIn } from "../vocabulary";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
@@ -27,7 +28,7 @@ import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } f
  * opleveren — geen stilte.
  */
 
-const bevat = (tekst: string, ...woorden: string[]) => woorden.some((w) => tekst.includes(w));
+
 
 /** Eenheden uit het regelbestand in gewoon Nederlands. */
 const EENHEID: Readonly<Record<string, string>> = { HOURS: "uur", MINUTES: "minuten", DAYS: "dagen", COUNT: "keer", PERCENT: "procent" };
@@ -49,26 +50,6 @@ const POSITIE: Readonly<Record<string, string>> = {
 };
 const positie = (type: unknown) => POSITIE[String(type)] ?? String(type).toLowerCase();
 
-/** Woorden die op een handeling wijzen waarvoor een mens moet tekenen. */
-const VERBODEN = [
-  { woorden: ["publiceer", "publiceren", "vaststellen als definitief"], uitleg: "Publiceren is een menselijke handeling; de agent heeft die bevoegdheid niet en krijgt die ook niet." },
-  { woorden: ["negeer de validator", "negeer validator", "sla de validatie over", "goed genoeg"], uitleg: "De onafhankelijke validator kan ik niet overslaan. Een hoge score maakt een harde overtreding niet geldig." },
-  { woorden: ["eigen bevoegdheden", "zet jezelf op niveau", "geef jezelf", "verhoog je rechten"], uitleg: "Ik kan mijn eigen bevoegdheden niet aanpassen. Dat doet een commissielid in het bevoegdhedenpaneel." },
-  { woorden: ["verwijder de regel", "schrap de regel", "pas de cao aan"], uitleg: "Formele regels wijzig ik niet. Die komen uit het regelbestand en hebben een bron en een status." },
-  // Gevonden door verify:agent (TEST 5): een verzoek om een andere rol aan te
-  // nemen liep niet op een weigering uit maar op een toolfout. Doen alsof is
-  // precies de route waarlangs iemand rechten zou omzeilen.
-  {
-    woorden: ["doe alsof je", "gedraag je als", "je bent nu de", "je bent nu beheerder", "stel dat je", "net alsof je"],
-    uitleg: "Ik kan niet doen alsof ik iemand anders ben. Wat ik mag, hangt aan jouw rechten en aan wat de commissie voor dit project heeft aangezet — niet aan wat we afspreken in een gesprek.",
-  },
-  // Stoppen hoort bij de knop, niet bij de agent: hij heeft die bevoegdheid
-  // niet, ook niet als iemand het hem vriendelijk vraagt.
-  {
-    woorden: ["stop de opdracht", "stop er maar mee", "stop ermee", "annuleer de opdracht", "annuleer de generatie", "breek af"],
-    uitleg: "Een lopende opdracht kan ik niet stoppen. Dat doet een commissielid met de stopknop bij de opdracht zelf; daar wordt het ook vastgelegd.",
-  },
-];
 
 /**
  * Woorden die om rekenwerk vragen: daarvoor is een aparte bevoegdheid nodig.
@@ -294,10 +275,12 @@ export const stubModel: ChatModel = {
       lineNumber: regelUitTekst(tekst) ?? gevraagd.lineNumber,
     };
 
-    for (const regel of VERBODEN) {
-      if (bevat(tekst, ...regel.woorden)) {
-        return { intent: "GEWEIGERD", toolCalls: [], refusal: regel.uitleg, reasoning: "verzoek raakt een handeling die niet bij de agent ligt" };
-      }
+    // De verboden handelingen worden nu vóór het model gecontroleerd, in
+    // askAgent. Dit vangnet blijft staan voor aanroepen die rechtstreeks met de
+    // stub praten, zoals de unittests.
+    const verboden = verbodenHandeling(tekst);
+    if (verboden) {
+      return { intent: "GEWEIGERD", toolCalls: [], refusal: verboden.uitleg, reasoning: "verzoek raakt een handeling die niet bij de agent ligt" };
     }
 
     const onbekend = ONBEKENDE_BEGRIPPEN.find((w) => new RegExp(`\\b${w}\\b`).test(tekst));

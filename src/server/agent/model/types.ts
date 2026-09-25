@@ -42,6 +42,8 @@ export interface PlanTool {
   readonly description: string;
   readonly permission: string;
   readonly allowed: boolean;
+  /** Wat het model zelf moet invullen; de schermcontext zet de server erbij. */
+  readonly requires: readonly string[];
 }
 
 export interface PlanRequest {

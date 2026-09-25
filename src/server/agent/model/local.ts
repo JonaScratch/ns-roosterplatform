@@ -45,9 +45,11 @@ export function localConfigFromEnv(): LocalModelConfig | null {
     baseUrl: baseUrl.replace(/\/$/, ""),
     model,
     timeoutMs: Number(process.env.NS_LOCAL_LLM_TIMEOUT_MS ?? 120_000),
-    // Laag, en dat is een keuze: dit model moet feiten weergeven en tools
-    // kiezen, niet creatief zijn.
-    temperature: Number(process.env.NS_LOCAL_LLM_TEMPERATURE ?? 0.2),
+    // Nul, en dat is een keuze: dit model moet feiten weergeven en tools
+    // kiezen, niet formuleren. Het stond op 0,2, en dat bleek duur bij het
+    // meten: twee metingen van dezelfde code verschilden op zeven van de
+    // 32 items. Dan meet je de dobbelsteen en niet de verbetering.
+    temperature: Number(process.env.NS_LOCAL_LLM_TEMPERATURE ?? 0),
     maxTokens: Number(process.env.NS_LOCAL_LLM_MAX_TOKENS ?? 800),
   };
 }
@@ -94,7 +96,18 @@ function systeeminstructie(request: PlanRequest): string {
     "- Je kunt je eigen bevoegdheden niet aanpassen.",
     "- Een dienstnummer is geen dienst: een nummer heeft per weekdag andere tijden. Noem altijd de weekdag erbij.",
     "",
-    `Beschikbare tools: ${tools.map((t) => `${t.name} (${t.description})`).join("; ")}.`,
+    // Mét wat elke tool verplicht nodig heeft. Zonder dat riep het model
+    // dutyInstance aan zonder dienstnummer, kreeg "ongeldige invoer" terug en
+    // concludeerde dat er geen dienst was.
+    "Beschikbare tools:",
+    ...tools.map((t) => {
+      // Alleen wat dít scherm níet levert. Bij lokaal-5 stond de volledige lijst
+      // erbij, inclusief velden die de server allang invult, en ging het model
+      // ze zelf invullen — fout, en zijn waarde wint van die van de server.
+      // A1 ging daardoor van goed naar "er staan geen diensten op deze regel".
+      const zelf = t.requires.filter((veld) => !heeftContext(request, veld));
+      return `- ${t.name}: ${t.description}` + (zelf.length > 0 ? ` Zelf invullen: ${zelf.join(", ")}.` : "");
+    }),
     "",
     // Gevonden bij de eerste lokale meting: het model koos ruleSearch op een
     // vraag over de nachtstructuur. Een korte kaart van vraagsoort naar tool
@@ -111,7 +124,7 @@ function systeeminstructie(request: PlanRequest): string {
     "- hoe goed is deze kandidaat → qualityReport",
     "- wat is hier eerder over afgesproken → knowledgeSearch",
     "",
-    "De standplaats, het basisrooster, de regel en de weekdag van het scherm worden door de server in elke toolaanroep gezet; je hoeft ze niet te herhalen. Vraagt de gebruiker om een ánder rooster of een andere regel, zet die dan wél zelf in de invoer.",
+    "Wat het scherm levert, zet de server voor je in de toolaanroep; noem die velden niet zelf, want jouw waarde wint van die van de server. Staat er bij een tool \"Zelf invullen\", dan heeft hij dat écht van jou nodig — laat je het weg, dan draait de tool niet en krijg je niets terug. Vraagt de gebruiker om een ánder rooster of een andere regel, noem die dan wél zelf.",
     "",
     `Context van het scherm: standplaats ${request.context.locationCode}, bron ${request.context.source}` +
       (request.context.rosterCode ? `, basisrooster ${request.context.rosterCode}` : "") +
@@ -122,6 +135,19 @@ function systeeminstructie(request: PlanRequest): string {
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+/**
+ * Levert de schermcontext dit veld al?
+ *
+ * Zo ja, dan hoeft het model het niet te noemen — en hoort het dat ook niet te
+ * doen, want de server weet het beter dan het model het raadt.
+ */
+function heeftContext(request: PlanRequest, veld: string): boolean {
+  const c = request.context as unknown as Record<string, unknown>;
+  if (!(veld in c)) return false;
+  const waarde = c[veld];
+  return waarde !== null && waarde !== undefined && waarde !== "";
 }
 
 /** De planinstructie: welke tools, of doorvragen, of weigeren. Antwoord in JSON. */
@@ -267,9 +293,9 @@ export function localModel(config: LocalModelConfig): ChatModel {
             "",
             feiten || "Er zijn geen toolresultaten.",
             "",
-            "Schrijf het antwoord in het Nederlands, in hooguit vijf zinnen.",
             "Gebruik uitsluitend de bovenstaande gegevens. Staat er iets niet in, zeg dan dat je het niet kunt vaststellen.",
             "Noem bij een regel altijd de bron en of die bevestigd is. Noem bij een dienst de weekdag.",
+            "Schrijf het antwoord in het Nederlands, in hooguit vijf zinnen.",
             request.plan.cannotDetermine ? `Verwerk ook dit: ${request.plan.cannotDetermine}` : "",
           ]
             .filter(Boolean)
@@ -277,6 +303,12 @@ export function localModel(config: LocalModelConfig): ChatModel {
         },
       ]);
 
+      // Geprobeerd en teruggedraaid: dit antwoord als JSON laten leveren, met de
+      // status erin. Bij lokaal-5 kostte dat meer dan het opleverde — één vraag
+      // kwam helemaal leeg terug (het model raakte door zijn tokens heen vóór
+      // het einde van de JSON) en de geheugenantwoorden verloren hun herkomst
+      // en status omdat er geen ruimte meer was. Eén criterium won, drie
+      // verloren. Het blijft dus platte tekst.
       const tekst = antwoord.trim();
       if (tekst.length === 0) {
         return { text: "Ik kreeg geen antwoord van het lokale model.", data: null, sources: bronnen, status: "FOUT" };
@@ -293,16 +325,14 @@ export function localModel(config: LocalModelConfig): ChatModel {
         text: tekst,
         data,
         sources: bronnen,
+        // Het plan wint: wat vooraf is vastgesteld, staat vast. Zegt de tekst
+        // zelf dat iets niet vaststaat, dan volgt de status dat — een scherm dat
+        // "beantwoord" meldt boven een tekst die zegt van niet, liegt.
         status: request.plan.cannotDetermine
           ? "NIET_VAST_TE_STELLEN"
           : request.plan.clarification
             ? "VERDUIDELIJKING"
-            : // Gevonden bij lokaal-3: het model schreef "kan niet worden
-              // vastgesteld" terwijl de status BEANTWOORD bleef, omdat het plan
-              // dat vooraf niet had voorzien. Dan liegt het platform tegen zijn
-              // eigen scherm: de balk zegt "beantwoord" boven een tekst die zegt
-              // van niet. De status hoort te volgen wat er staat.
-              zegtHetNietTeWeten(tekst)
+            : zegtHetNietTeWeten(tekst)
               ? "NIET_VAST_TE_STELLEN"
               : "BEANTWOORD",
       };
