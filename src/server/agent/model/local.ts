@@ -1,4 +1,5 @@
 import "server-only";
+import { DATA_SLEUTEL } from "./types";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
 /**
@@ -243,8 +244,12 @@ export function localModel(config: LocalModelConfig): ChatModel {
       }
 
       // De gestructureerde gegevens komen uit de tools, niet uit de tekst: op
-      // die gegevens wordt de agent afgerekend.
-      const data = Object.fromEntries(request.results.filter((r) => r.ok).map((r) => [r.tool, r.data]));
+      // die gegevens wordt de agent afgerekend. De veldnamen liggen vast in
+      // DATA_SLEUTEL, zodat een antwoord van dit model op dezelfde manier
+      // wordt nagekeken als een antwoord van de stub.
+      const data = Object.fromEntries(
+        request.results.filter((r) => r.ok).map((r) => [DATA_SLEUTEL[r.tool] ?? r.tool, r.data]),
+      );
       return {
         text: tekst,
         data,

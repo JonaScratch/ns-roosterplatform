@@ -128,6 +128,32 @@ export interface AgentAnswer {
   readonly status: "BEANTWOORD" | "VERDUIDELIJKING" | "NIET_VAST_TE_STELLEN" | "GEWEIGERD" | "FOUT" | "VOORSTEL";
 }
 
+/**
+ * Onder welke naam het resultaat van een tool in het antwoord terechtkomt.
+ *
+ * ## Waarom dit vastligt en niet per model verschilt
+ *
+ * `data` is waarop de agent wordt afgerekend: de benchmark kijkt daarin of het
+ * juiste dienstnummer, de juiste regel en de juiste uren zijn teruggegeven. Zou
+ * elk model zijn eigen veldnamen kiezen, dan meet je bij het ene model iets
+ * anders dan bij het andere — en dat is precies wat er bij de eerste lokale
+ * meting gebeurde: acht feitelijke vragen kwamen terug als "onbeoordeeld",
+ * omdat het lokale model zijn gegevens onder de toolnaam wegschreef.
+ */
+export const DATA_SLEUTEL: Readonly<Record<string, string>> = {
+  rosterLine: "line",
+  dutyInstance: "duty",
+  dutyKindCounts: "counts",
+  dutyKindPerLine: "kindPerLine",
+  rosterHours: "hours",
+  ruleLookup: "rules",
+  ruleSearch: "rules",
+  nightStructure: "nights",
+  qualityReport: "quality",
+  rosterProject: "project",
+  knowledgeSearch: "memory",
+};
+
 export interface ChatModel {
   readonly name: string;
   /** Kan dit model echte taal? Een stub niet; dat mag nooit als taalvaardigheid tellen. */

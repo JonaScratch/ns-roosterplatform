@@ -7,6 +7,7 @@ import { pathToFileURL } from "node:url";
 import { localConfigFromEnv, localModelAvailable } from "@/server/agent/model/local";
 import { prisma } from "@/server/data/prisma";
 import { loadEvaluationContextCore } from "@/server/services/quality-evaluation-service";
+import { verwachting } from "./verwachting";
 
 /**
  * De lokale-AI-benchmark: wat kan het model dat hier werkelijk draait?
@@ -116,7 +117,6 @@ async function main() {
   const gpuVoor = gpuStand();
   const testset = JSON.parse(readFileSync(TESTSET, "utf8")) as Json;
   const context = await loadEvaluationContextCore("DDR");
-  void context;
 
   const adapter = (await import(pathToFileURL(path.join(WORTEL, "src", "server", "agent", "bench-adapter.ts")).href)) as {
     benchAnswer: (item: Json) => Promise<Json>;
@@ -135,8 +135,11 @@ async function main() {
     for (const item of testset.items as Json[]) {
       const t0 = Date.now();
       try {
-        const antwoord = await adapter.benchAnswer(item);
-        resultaten.push({ id: item.id, category: item.category, holdout: item.holdout, kind: item.expect.kind, status: antwoord.status, detail: antwoord.detail, text: antwoord.text, tools: antwoord.tools, ms: Date.now() - t0 });
+        // De verwachting hoort mee: zonder haar is geen enkel feitelijk antwoord
+        // na te kijken, en komt een meetgat eruit te zien als een modelfout.
+        const verwacht = await verwachting(item, context);
+        const antwoord = await adapter.benchAnswer({ ...item, expected: verwacht });
+        resultaten.push({ id: item.id, category: item.category, holdout: item.holdout, kind: item.expect.kind, expected: verwacht, status: antwoord.status, detail: antwoord.detail, text: antwoord.text, data: antwoord.data, tools: antwoord.tools, sources: antwoord.sources, ms: Date.now() - t0 });
       } catch (fout) {
         resultaten.push({ id: item.id, category: item.category, kind: item.expect.kind, status: "FOUT", detail: String(fout), ms: Date.now() - t0 });
       }

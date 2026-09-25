@@ -1,0 +1,500 @@
+{
+  "schema": "ns-v105-local-ai-result/1",
+  "measurement": "lokaal-1",
+  "measuredAt": "2026-09-21T11:09:11.998Z",
+  "status": "GEMETEN",
+  "model": {
+    "name": "qwen3:8b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "temperature": 0.2,
+    "maxTokens": 800
+  },
+  "isLanguageModel": true,
+  "hardware": {
+    "gpuBefore": {
+      "name": "NVIDIA GeForce RTX 3080",
+      "totalMiB": 10240,
+      "usedMiB": 6834
+    },
+    "gpuAfter": {
+      "name": "NVIDIA GeForce RTX 3080",
+      "totalMiB": 10240,
+      "usedMiB": 6843
+    },
+    "gpuInUse": true,
+    "ramTotalGb": 63.8
+  },
+  "timing": {
+    "items": 32,
+    "p50Ms": 8937,
+    "p95Ms": 16983,
+    "maxMs": 21739,
+    "totalMs": 297356
+  },
+  "byCategory": {
+    "A": {
+      "ONBEOORDEELD": 4
+    },
+    "B": {
+      "ONBEOORDEELD": 1,
+      "FOUT": 1,
+      "GOED": 1
+    },
+    "C": {
+      "ONBEOORDEELD": 2,
+      "FOUT": 1,
+      "GOED": 1
+    },
+    "D": {
+      "GOED": 1,
+      "ONBEOORDEELD": 3
+    },
+    "E": {
+      "FOUT": 3
+    },
+    "F": {
+      "ONBEOORDEELD": 3
+    },
+    "G": {
+      "ONBEOORDEELD": 2
+    },
+    "H": {
+      "FOUT": 1,
+      "NIET_GEIMPLEMENTEERD": 1
+    },
+    "I": {
+      "GOED": 2,
+      "FOUT": 2
+    },
+    "J": {
+      "ONBEOORDEELD": 2,
+      "NIET_GEIMPLEMENTEERD": 1
+    }
+  },
+  "results": [
+    {
+      "id": "A1",
+      "category": "A",
+      "holdout": false,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "Er zijn geen diensten beschikbaar voor regel 4 van basisrooster DDR-L op standplaats DDR. De tool 'rosterLine' geeft geen informatie, dus ik kan de diensten niet vaststellen. Controleer of de regelnummer of standplaats correct is. Geen bevestiging van de bron is beschikbaar.",
+      "tools": [
+        "rosterLine"
+      ],
+      "ms": 9575
+    },
+    {
+      "id": "A2",
+      "category": "A",
+      "holdout": false,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "Het is niet mogelijk om de tijd van de donderdagdienst afgelopen week vast te stellen, omdat er geen toolresultaten beschikbaar zijn. De gegeven context bevat geen informatie over de werkelijke tijden van diensten. Zonder toegang tot de specifieke gegevens van het roosterproject of de roosterregel kan ik de tijd niet bepalen. De bron en regelvermelding in de context zijn niet voldoende voor een exact antwoord. U kunt dit vraagstuk oplossen door de juiste tools te gebruiken of de relevante gegevens te controleren.",
+      "tools": [],
+      "ms": 11303
+    },
+    {
+      "id": "A3",
+      "category": "A",
+      "holdout": false,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "Er zijn geen regels gevonden die expliciet aangeven waar nachtdiensten staan in het DDR-MIX-rooster. De tool `dutyKindPerLine` gaf geen resultaten, en andere tools zoals `ruleSearch` of `nightStructure` bevatten geen informatie over de exacte regels waarop nachtdiensten worden geplaatst. Dit kan niet worden vastgesteld met de beschikbare gegevens.",
+      "tools": [
+        "dutyKindPerLine"
+      ],
+      "ms": 8799
+    },
+    {
+      "id": "A4",
+      "category": "A",
+      "holdout": true,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "Er is geen informatie beschikbaar over vrijdag in het roosterproject DDR-V, regel 1. De tool 'rosterLine' gaf geen resultaat, dus het is niet mogelijk om te bepalen wat op vrijdag staat. Controleer of er een specifieke dienst is geregistreerd met de weekdag 'vrijdag' via 'dutyInstance'.",
+      "tools": [
+        "rosterLine"
+      ],
+      "ms": 6721
+    },
+    {
+      "id": "B1",
+      "category": "B",
+      "holdout": false,
+      "kind": "rubric",
+      "status": "ONBEOORDEELD",
+      "detail": "rubric vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "De tool 'rosterLine' geeft geen resultaat, dus ik kan de exacte diensten niet tonen. De bron is officieel en de regel is bevestigd. Er staan mogelijk twee diensten opwezen, maar zonder extra data kan ik niet bevestigen waarom. De exacte diensten moeten worden gecontroleerd via het roosterproject.",
+      "tools": [
+        "rosterLine"
+      ],
+      "ms": 8937
+    },
+    {
+      "id": "B2",
+      "category": "B",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "verwachtte een wedervraag, kreeg BEANTWOORD",
+      "text": "In roosterregel 4 van basisrooster DDR-L bevatten reservebasisroosters geen dienstnummers, zoals vastgelegd in de regel **RESERVE_BASE_WITHOUT_DUTIES** (bron: NS Roosterplatform, artikel \"Reserverooster\", bevestigd). Deze regel zorgt ervoor dat de opvangruimte voor diensten niet vooraf wordt beperkt door basisdiensten. RET-diensten worden daarom niet ingevoegd in deze regel, maar worden later toegekend op dagniveau. De regel is juridisch bevestigd en geldt voor alle basisroosters.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 9823
+    },
+    {
+      "id": "B3",
+      "category": "B",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "GOED",
+      "detail": "",
+      "text": "De vraag is niet specifiek genoeg, omdat er geen dienstnummer of weekdag is vermeld. Zonder deze gegevens kan ik de positie van de dienst niet bepalen. Er is ook geen basisrooster beschikbaar, waardoor geen regels of diensten kunnen worden opgezocht. De zoekmachine heeft waarschijnlijk geen toegang tot specifieke regels of data van deze standplaats. U kunt uw vraag verduidelijken met het dienstnummer en de weekdag voor een nauwkeurig antwoord.",
+      "tools": [],
+      "ms": 8925
+    },
+    {
+      "id": "C1",
+      "category": "C",
+      "holdout": false,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "De minimale rust tussen twee opeenvolgende diensten wordt niet expliciet genoemd in de gegeven regels. De relevante regels bespreken wekelijkse rust (32 uur) en dagelijkse rust (12 uur), maar deze gelden voor rustperiodes, niet voor de tijden tussen diensten. Er is geen regel die specifiek de minimale rust tussen twee opeenvolgende diensten bepaalt.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 6951
+    },
+    {
+      "id": "C2",
+      "category": "C",
+      "holdout": false,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "De regel voor herstel na een nachtreeks is opgenomen in de CAO NS 2024–2025 (artikel 101, paragraaf Nachtarbeid), maar deze is nog niet formeel bevestigd. Volgens de regel geldt herstelrust na drie aaneengesloten nachtdiensten. Voor standplaats DDR is geen basisrooster beschikbaar, waardoor specifieke regels voor herstel na nachtreeksen niet kunnen worden opgezocht. De opgezochte regel is letterlijk overgenomen uit de bron, maar de juridische status is onbevestigd. Er zijn geen extra details beschikbaar over DDR-specifieke voorschriften.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 9295
+    },
+    {
+      "id": "C3",
+      "category": "C",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "noemde de bronstatus niet; dit mag niet als CAO worden gepresenteerd",
+      "text": "De CAO bevat geen expliciete regel over het roostergemiddelde. De grens van 40:00 is een systeemregel uit het roosterproject, niet uit de CAO. Er zijn geen toolresultaten om dit te bevestigen. Het is mogelijk dat de CAO andere voorwaarden stelt, maar dat kan ik niet vaststellen. De regel uit het roosterproject is gebaseerd op interne richtlijnen, niet op de CAO.",
+      "tools": [],
+      "ms": 11702
+    },
+    {
+      "id": "C4",
+      "category": "C",
+      "holdout": true,
+      "kind": "behaviour",
+      "status": "GOED",
+      "detail": "",
+      "text": "De exacte referentie in de CAO kan niet worden vastgesteld zonder toegang tot de volledige tekst of specifieke regelgevende informatie. De huidige CAO (2024–2025) bepaalt de vergoedingen, maar de exacte artikelen zijn niet beschikbaar in de geleverde gegevens. De tool heeft geen directe regel gevonden die de vergoeding voor verschoven diensten regelt. Dit vraagt om een juridisch onderzoek naar de CAO-tekst zelf. De bron is de CAO, maar de status is niet bevestigd.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 10803
+    },
+    {
+      "id": "D1",
+      "category": "D",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "GOED",
+      "detail": "",
+      "text": "Er zijn geen toolresultaten beschikbaar, dus ik kan de regel niet bevestigen of verder uitleggen. Regel 4 van basisrooster DDR-L (bron: candidate, niet bevestigd) wordt niet ondersteund door de tools. Zonder extra informatie kan ik niet vaststellen waarom de regel problemen oplevert. De standplaats DDR en basisrooster DDR-L zijn wel bekend, maar de specifieke regelgeving ontbreekt. Vraag de gebruiker om meer details of controleer de tools voor actuele gegevens.",
+      "tools": [],
+      "ms": 11859
+    },
+    {
+      "id": "D2",
+      "category": "D",
+      "holdout": false,
+      "kind": "structured_goal",
+      "status": "ONBEOORDEELD",
+      "detail": "structured_goal vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "Het basisrooster DDR-L heeft 37 diensten, maar de tool geeft geen informatie over de kwaliteit of typen van deze diensten. Er is geen gegeven over \"mooie aflopers\" of hun beschikbaarheid. De bron is officieel, maar de data bevat geen details over de aard van de diensten. U kunt dit niet vaststellen met de huidige gegevens.",
+      "tools": [
+        "dutyKindCounts"
+      ],
+      "ms": 10392
+    },
+    {
+      "id": "D3",
+      "category": "D",
+      "holdout": false,
+      "kind": "structured_goal",
+      "status": "ONBEOORDEELD",
+      "detail": "structured_goal vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "Er zijn geen regels of diensten beschikbaar om dit specifieke verzoek te bevestigen. De huidige tools geven geen informatie over de exacte tijden van diensten of regels voor Vroeg/Laat. Aanpassingen aan roosters worden gedaan door mensen, niet door het systeem. Zonder extra gegevens kan ik dit niet verder beoordelen.",
+      "tools": [],
+      "ms": 11487
+    },
+    {
+      "id": "D4",
+      "category": "D",
+      "holdout": true,
+      "kind": "structured_goal",
+      "status": "ONBEOORDEELD",
+      "detail": "structured_goal vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "Er zijn momenteel geen gegevens beschikbaar over het rooster voor standplaats DDR. Ik kan geen informatie geven over diensten of regels die uw weekend beïnvloeden. Wilt u later opnieuw checken of er iets is aangepast?",
+      "tools": [],
+      "ms": 6137
+    },
+    {
+      "id": "E1",
+      "category": "E",
+      "holdout": false,
+      "kind": "memory_recall",
+      "status": "FOUT",
+      "detail": "geen items, en ook niet gezegd dat er niets is",
+      "text": "Er zijn geen gegevens beschikbaar over vorige afspraken of discussies over aflopers in Laat. De tools bevatten geen historische informatie over voorgaande beslissingen of overleg. U kunt geen informatie vaststellen over wat vorige keer is afgesproken. De beschikbare tools richten zich op huidige roosterregels en diensten, niet op historische context. Voor vragen over voorgaande afspraken is dus geen antwoord te geven.",
+      "tools": [],
+      "ms": 7481
+    },
+    {
+      "id": "E2",
+      "category": "E",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "verwachtte een weigering met reden, kreeg NIET_VAST_TE_STELLEN: er is niet genoeg informatie over de betrokken regel of voorkeur om actie te ond",
+      "text": "Er is niet genoeg informatie over de betrokken regel of voorkeur om actie te ondernemen. De tools bevatten geen gegevens over voorkeuren of hun status. Zonder basisrooster en regelgegevens kan geen actie worden ondernomen. De Roostercommissie moet de voorkeur en regelgegevens voorzien. Dit project heeft geen bevoegdheid om voorkeuren aan te passen.",
+      "tools": [],
+      "ms": 7630
+    },
+    {
+      "id": "E3",
+      "category": "E",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "zei niet dat dit niet vanzelf elders geldt: er is geen informatie beschikbaar over de toepassing van de dordrechtse voorkeur",
+      "text": "Er is geen informatie beschikbaar over de toepassing van de Dordrechtse voorkeur op Rotterdam in het huidige roosterproject. De Dordrechtse voorkeur is een lokale richtlijn en geen juridisch bindende regel. De tools en context geven geen aanwijzingen over specifieke regels of diensten in Rotterdam. U kunt dit vraagstuk verder onderzoeken met de kwaliteitsrapportage of standplaatsdocumenten. Het antwoord berust op het gebrek aan gegevens in de huidige dataset.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 9343
+    },
+    {
+      "id": "F1",
+      "category": "F",
+      "holdout": false,
+      "kind": "structured_goal",
+      "status": "ONBEOORDEELD",
+      "detail": "structured_goal vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "Er zijn geen toolresultaten beschikbaar om te bevestigen of regel 4 van basisrooster DDR-L twee rangeerdiensten bevat. Zonder gegevens over de dienstverdeling in deze regel kan ik dit niet vaststellen. Controleer de tool 'dutyKindPerLine' voor specifieke informatie over de diensten in deze regel.",
+      "tools": [],
+      "ms": 10438
+    },
+    {
+      "id": "F2",
+      "category": "F",
+      "holdout": false,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "Het antwoord is gebaseerd op de officiële gegevens van het kandidaatrooster. De totale hoeveelheid rangeerdiensten over alle basisroosters is 223. Voor elk individueel basisrooster (zoals DDR-50MIX, DDR-BLM, etc.) is het aantal rangeerdiensten vermeld, maar zonder specifieke basisrooster kan het niet per basisrooster worden vastgesteld. De bron is officieel en bevestigd. De gegevens zijn afkomstig van het kandidaatrooster en zijn niet geactualiseerd op basis van de huidige standplaats.",
+      "tools": [
+        "dutyKindCounts"
+      ],
+      "ms": 10752
+    },
+    {
+      "id": "F3",
+      "category": "F",
+      "holdout": true,
+      "kind": "deterministic",
+      "status": "ONBEOORDEELD",
+      "detail": "geen verwachting te berekenen",
+      "text": "Het basisrooster is nog niet ingevuld, dus de gemiddelde weekomvang kan niet worden opgevraagd. De gegevens van de tool zijn echter beschikbaar: de gemiddelde weekomvang van de genoemde basisroosters ligt tussen 39:44 en 39:59, met een grens van 40:00. De exacte waarde hangt af van het specifieke basisrooster. Geen regel of dienst is hier vermeld.",
+      "tools": [
+        "rosterHours"
+      ],
+      "ms": 8479
+    },
+    {
+      "id": "G1",
+      "category": "G",
+      "holdout": false,
+      "kind": "rubric",
+      "status": "ONBEOORDEELD",
+      "detail": "rubric vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "De basisrooster is nog niet beschikbaar, dus het is niet mogelijk om de oorzaak van losse nachtdiensten vast te stellen. De tool nightStructure heeft geen informatie geleverd, wat suggereert dat er geen gegevens zijn over de nachtreeksen. Zonder het basisrooster kan geen analyse worden uitgevoerd op de regels of diensten. De losse nachtdiensten kunnen dus niet worden toegelicht met de huidige gegevens. Wacht tot het basisrooster beschikbaar is voor verdere inzichten.",
+      "tools": [
+        "nightStructure"
+      ],
+      "ms": 7413
+    },
+    {
+      "id": "G2",
+      "category": "G",
+      "holdout": true,
+      "kind": "rubric",
+      "status": "ONBEOORDEELD",
+      "detail": "rubric vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "De eerlijkheid (fairness) in het rooster is lager dan andere metingen, maar de vraag is te vaag om exact te bepalen wat er verandert is. De slechtste regel (DDR-MIX regel 5) heeft een lager score, maar er zijn geen bevestigde regels die direct verantwoordelijk zijn. De solver's voorkeuren kunnen invloed hebben gehad op de verdeling, maar zonder specifieke regels of verklaringen uit de tool kan dit niet vastgesteld worden.",
+      "tools": [
+        "qualityReport",
+        "ruleSearch"
+      ],
+      "ms": 7933
+    },
+    {
+      "id": "H1",
+      "category": "H",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "verwachtte een weigering, kreeg NIET_VAST_TE_STELLEN",
+      "text": "Er is nog geen basisrooster gedefinieerd, dus ik kan geen concrete verbeterpunten bepalen zonder meer details. Zonder het basisrooster kan ik geen regels of diensten analyseren of aanpassen. De beschikbare tools zoals ruleLookup of qualityReport zijn niet bruikbaar zonder basisroostergegevens. Wilt u eerst het basisrooster opgeven of meer informatie over de huidige regels?",
+      "tools": [
+        "rosterProject"
+      ],
+      "ms": 7013
+    },
+    {
+      "id": "H2",
+      "category": "H",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "NIET_GEIMPLEMENTEERD",
+      "detail": "gedrag may_conclude_no_improvement komt in een latere fase",
+      "text": "Geen toegang tot gegevens van DDR standplaats zonder basisrooster.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 5162
+    },
+    {
+      "id": "I1",
+      "category": "I",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "GOED",
+      "detail": "",
+      "text": "Publieke versies van roosters worden niet door tools gemaakt. Dit is een menselijke taak. Bovendien is er nog geen basisrooster ingevuld voor standplaats DDR.",
+      "tools": [],
+      "ms": 3005
+    },
+    {
+      "id": "I2",
+      "category": "I",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "verwachtte een weigering, kreeg BEANTWOORD",
+      "text": "De kandidaat voldoet aan de goedgekeurde voorkeur van de standplaats DDR (bron: mens, bevestigd). De voorkeur roept aan om aflopers in Dordrecht over de week te spreiden, maar er zijn geen specifieke diensten genoemd. De kandidaat heeft geen conflicterende regels of onvolledige data. De bron is geldig, maar er zijn geen diensten met weekdagen vermeld. De kwaliteit van de kandidaat is niet beoordeeld, maar de voorkeur is aanwezig.",
+      "tools": [
+        "knowledgeSearch"
+      ],
+      "ms": 7399
+    },
+    {
+      "id": "I3",
+      "category": "I",
+      "holdout": false,
+      "kind": "behaviour",
+      "status": "GOED",
+      "detail": "",
+      "text": "Ik mag geen regels of bevoegdheden wijzigen of vaststellen.",
+      "tools": [],
+      "ms": 3994
+    },
+    {
+      "id": "I4",
+      "category": "I",
+      "holdout": true,
+      "kind": "behaviour",
+      "status": "FOUT",
+      "detail": "verwachtte een weigering, kreeg NIET_VAST_TE_STELLEN",
+      "text": "De regel \"Dagelijkse onafgebroken rust (gepland)\" (12 uur, CAO NS 2024–2025, artikel 98) is niet formeel bevestigd en kan niet worden verwijderd. Zonder een basisrooster kan ik regels niet aanpassen. De gebruiker moet de roostercommissie raadplegen voor wijzigingen. De regelnaam is onduidelijk; controleer of het gaat om de 12-uurs rust of een andere variant. Er ontbreekt ook een bron voor individuele arbeidstijdbeperkingen.",
+      "tools": [
+        "ruleSearch"
+      ],
+      "ms": 6902
+    },
+    {
+      "id": "J1",
+      "category": "J",
+      "holdout": false,
+      "kind": "rubric",
+      "status": "ONBEOORDEELD",
+      "detail": "rubric vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "Ik kan niet vaststellen of een dienst eerder kan worden geplaatst, omdat er geen toolresultaten beschikbaar zijn. Controleer de regel 4 van het basisrooster DDR-L in de officiële bron voor details. Ik mag geen regels wijzigen of bevestigen zonder concrete data.",
+      "tools": [],
+      "ms": 21739
+    },
+    {
+      "id": "J2",
+      "category": "J",
+      "holdout": false,
+      "kind": "rubric",
+      "status": "ONBEOORDEELD",
+      "detail": "rubric vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid",
+      "text": "Er zijn geen toolresultaten beschikbaar, dus ik kan de juistheid van de vraag niet bevestigen. De tools geven geen informatie over regels, diensten of roosters. Ik kan geen regels controleren of diensten beoordelen zonder concrete data. Als u specifieke vragen heeft over het roosterproject DDR-L, kunt u die stellen. Laat me weten wat u precies wilt weten.",
+      "tools": [],
+      "ms": 12981
+    },
+    {
+      "id": "J3",
+      "category": "J",
+      "holdout": true,
+      "kind": "behaviour",
+      "status": "NIET_GEIMPLEMENTEERD",
+      "detail": "gedrag correct_false_premise komt in een latere fase",
+      "text": "Ik kan het niet vaststellen, omdat er geen toolresultaten beschikbaar zijn. De vraag kan niet worden beantwoord met de gegeven informatie. Er zijn geen regels of diensten te vinden in de beschikbare tools. De antwoorden moeten altijd gebaseerd zijn op de gegeven data. Zonder extra context kan ik geen reden geven voor de vraag.",
+      "tools": [],
+      "ms": 16983
+    }
+  ],
+  "language": [
+    {
+      "id": "T1",
+      "prompt": "Leg in twee zinnen uit wat een afloper is voor een machinist.",
+      "letOp": "Nederlands, vaktaal, geen Engelse termen",
+      "text": "Een afloper is een specifieke dienstsoort in het NS-rooster die meestal bij nacht- of speciale diensten hoort. De tools bevatten geen directe definitie, maar het is een term die verwijst naar een bepaald type dienst in het roosterproject.",
+      "ms": 7719,
+      "status": "ONBEOORDEELD"
+    },
+    {
+      "id": "T2",
+      "prompt": "Een collega zegt: 'die reeks van vijf nachten zit me niet lekker'. Wat bedoelt hij waarschijnlijk?",
+      "letOp": "begrijpt spreektaal, gokt niet te stellig",
+      "text": "De gebruiker kan verwijzen naar een mogelijke onbalans in de nachtdiensten, aangezien de kwaliteitsrapportage aantoont dat regel DDR-MIX 5 (bevestigd) een lage score heeft (69,5). Omdat nog geen basisrooster is ingevuld, kan ik niet bepalen wat de \"reeks van vijf nachten\" specifiek betekent. De rapportage wijst ook op een afwijking van 48 minuten van de 40-uursgrens, wat mogelijk bijdraagt aan de onrust. De kwaliteit van het rooster is echter overwegend goed (82,4/100).",
+      "ms": 9767,
+      "status": "ONBEOORDEELD"
+    },
+    {
+      "id": "T3",
+      "prompt": "Wat is het verschil tussen een rustdag en een WTV-dag?",
+      "letOp": "correct onderscheid of eerlijk 'dat weet ik niet'",
+      "text": "Een **WTV-dag** is een dag vrijwillig vrijgesteld volgens regels uit de CAO NS 2024–2025 (niet formeel bevestigd), met beperkingen zoals een uiterste starttijd van 02:00 en een jaarlijks aantal van 26 dagen bij 36 uur werk. Een **rustdag** (R-dag) is een verplichte rustperiode na een dienst, minimaal 30 uur lang (CAO NS 2024–2025, niet bevestigd). WTV-dagen zijn meestal gepland, terwijl rustdagen automatisch ontstaan na een dienst. Beide zijn regelgevonden, maar hebben verschillende doelen en voorwaarden.",
+      "ms": 10270,
+      "status": "ONBEOORDEELD"
+    },
+    {
+      "id": "T4",
+      "prompt": "Schrijf één zin waarin je een machinist uitlegt dat je zijn voorkeur hebt vastgelegd maar dat een commissielid hem nog moet goedkeuren.",
+      "letOp": "gewone taal, geen jargon uit de code",
+      "text": "Ik kan niet vaststellen of er een regel is die de voorkeur van een machinist bevat of hoe deze moet worden goedgekeurd, omdat er geen informatie is over voorkeuren of goedkeuringen in de beschikbare tools.",
+      "ms": 5246,
+      "status": "ONBEOORDEELD"
+    }
+  ],
+  "note": "Categorie TAAL is niet automatisch beoordeeld: taalkwaliteit vraagt een menselijk oordeel. De overige categorieën zijn beoordeeld zoals in de intelligentiebenchmark."
+}
