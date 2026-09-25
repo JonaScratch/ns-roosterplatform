@@ -7,6 +7,7 @@ import { askAgent } from "@/server/agent/agent";
 import { recoverStaleActivities } from "@/server/agent/activity";
 import { AGENT_CAPABILITIES, AGENT_LEVELS, agentMay, currentGrant, levelOf, setAgentLevel, setAgentSuspended } from "@/server/agent/capabilities";
 import { jobProposalSchema, startProposedJob } from "@/server/agent/jobs";
+import { grondingsMelding, ongegrondeVermeldingen } from "@/server/agent/grounding";
 import { callTool } from "@/server/agent/tools";
 import type { Actor } from "@/server/auth/session";
 import { prisma } from "@/server/data/prisma";
@@ -562,6 +563,54 @@ async function main(): Promise<void> {
     }
   }
 
+  // ── GRONDING ──────────────────────────────────────────────────────────────
+  // Gevonden bij de eerste meting op het lokale model: de agent citeerde een
+  // regel die in geen enkel toolresultaat voorkwam. De systeeminstructie verbood
+  // dat al; een instructie is geen grendel. Deze staat in de keten, buiten het
+  // model, en geldt dus ook voor het volgende model.
+  console.log("\nGRONDING — wat niet in de gegevens staat, komt er niet uit");
+
+  const gegevens = 'rosterLine {"duties":[{"code":"760","weekday":1},{"code":"107","weekday":4}]} DDR-L';
+
+  const verzonnen = ongegrondeVermeldingen("Volgens RP_VERZONNEN_REGEL mag dat niet.", gegevens);
+  toets("een verzonnen regelidentificatie wordt gezien", verzonnen.length === 1 && !verzonnen[0].bestaatWel, verzonnen.map((o) => o.waarde).join(", "));
+
+  const uitHetHoofd = ongegrondeVermeldingen("Dat volgt uit RP_DAILY_REST_PLANNED.", gegevens);
+  toets(
+    "een bestaande regel die niet is opgezocht wordt ook gezien, maar anders genoemd",
+    uitHetHoofd.length === 1 && uitHetHoofd[0].bestaatWel,
+    grondingsMelding(uitHetHoofd).slice(0, 120),
+  );
+
+  const dienst = ongegrondeVermeldingen("Op woensdag staat dienst 412 ingeroosterd.", gegevens);
+  toets("een dienstnummer dat nergens staat wordt gezien", dienst.some((o) => o.waarde === "412"), dienst.map((o) => o.waarde).join(", "));
+
+  const klopt = ongegrondeVermeldingen("Op maandag staat dienst 760 en op donderdag dienst 107 in DDR-L.", gegevens);
+  toets("wat wél in de gegevens staat, gaat gewoon door", klopt.length === 0, `${klopt.length} vermelding(en)`);
+
+  const eigenWoorden = ongegrondeVermeldingen("Dat kan ik NIET_VAST_TE_STELLEN noemen; in 2026 verandert het pakket.", gegevens);
+  toets("eigen statuswoorden en jaartallen zijn geen verzinsels", eigenWoorden.length === 0, eigenWoorden.map((o) => o.waarde).join(", "));
+
+  // En nu de belangrijkste vraag bij elke grendel: houdt hij ook goede
+  // antwoorden tegen? Een controle met valse alarmen wordt uitgezet en beschermt
+  // daarna niets meer.
+  let vals = 0;
+  const vragen = [
+    `Welke diensten staan er in regel 2 van ${rooster.code}?`,
+    `Hoeveel nachtdiensten staan er in ${rooster.code}?`,
+    "Hoeveel rust moet er minimaal tussen twee diensten zitten?",
+    `Hoeveel uur staat er in regel 3 van ${rooster.code}?`,
+  ];
+  for (const vraag of vragen) {
+    const uit = await askAgent({ actor: commissie, text: vraag, uiContext: context(rooster.code, 2), persist: false });
+    const tegengehouden = uit.text.startsWith("Ik hield mijn eigen antwoord tegen");
+    if (tegengehouden) {
+      vals += 1;
+      console.log(`     ! "${vraag}" → ${uit.text.slice(0, 140)}`);
+    }
+  }
+  toets("de grendel houdt geen enkel gegrond stubantwoord tegen", vals === 0, `${vragen.length} vragen, ${vals} vals alarm`);
+
   // De omgeving terug zoals hij was.
   await setAgentLevel(commissie, LOCATIE, beginNiveau);
   console.log(`\nNiveau teruggezet op ${beginNiveau}.`);
@@ -569,8 +618,8 @@ async function main(): Promise<void> {
   console.log(`\n${geslaagd} geslaagd, ${mislukt} mislukt`);
   console.log(
     "Hier niet gemeten: de scenario's 3, 4, 8 t/m 16 en 21 t/m 25. Daarvan staan 8 t/m 13, " +
-      "21 en 25 in npm run verify:geheugen, en 3, 4, 14 en 15 in npm run verify:onderzoek. " +
-      "De overige horen bij fase 7 en 8 en bestaan nog niet.",
+      "21 en 25 in npm run verify:geheugen, 3, 4, 14 en 15 in npm run verify:onderzoek, en " +
+      "16 en 24 in npm run verify:experimenten.",
   );
   if (mislukt > 0) process.exitCode = 1;
 }

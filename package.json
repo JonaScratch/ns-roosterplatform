@@ -107,7 +107,8 @@
     "final-brain:queue-ablations": "tsx scripts/final-brain/queue-ablations.ts",
     "final-brain:rest-analysis": "tsx --conditions=react-server scripts/final-brain/rest-analysis.ts",
     "machinist:measure": "tsx --conditions=react-server scripts/machinist/measure.ts",
-    "final-brain:gate": "tsx --conditions=react-server scripts/final-brain/gate.ts"
+    "final-brain:gate": "tsx --conditions=react-server scripts/final-brain/gate.ts",
+    "verify:experimenten": "tsx --conditions=react-server scripts/verify-experimenten.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { ongegrondeVermeldingen } from "@/server/agent/grounding";
 
 /**
  * Ongegronde antwoorden tellen in plaats van aanvoelen.
@@ -31,39 +32,13 @@ const argument = (naam: string): string | null => {
 const WORTEL = path.resolve(__dirname, "..", "..");
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-/** Dingen die letterlijk in de gegevens moeten staan als ze in het antwoord staan. */
-const PATRONEN: readonly { readonly naam: string; readonly regex: RegExp }[] = [
-  // Regelidentificaties: HOOFDLETTERS_MET_UNDERSCORES, minstens twee delen.
-  { naam: "regelidentificatie", regex: /\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+){1,5}\b/g },
-  // Dienstnummers in dit pakket: drie cijfers.
-  { naam: "dienstnummer", regex: /\b[0-9]{3}\b/g },
-  // Roostercodes: DDR-XXX.
-  { naam: "roostercode", regex: /\bDDR-[A-Z0-9]+\b/g },
-];
-
-/** Woorden die wel op een nummer lijken maar het niet zijn. */
-const UITZONDERINGEN = new Set(["100", "200", "300", "400", "500", "600", "700", "800", "900", "000"]);
-
-function ongegrond(antwoord: string, gegevens: string): { naam: string; waarde: string }[] {
-  const gevonden: { naam: string; waarde: string }[] = [];
-  for (const patroon of PATRONEN) {
-    for (const match of antwoord.match(patroon.regex) ?? []) {
-      if (UITZONDERINGEN.has(match)) continue;
-      // Jaartallen en tijden laten we met rust: die staan zelden letterlijk in
-      // de gegevens en zeggen niets over verzinnen.
-      if (/^(19|20)\d{2}$/.test(match)) continue;
-      if (!gegevens.includes(match)) gevonden.push({ naam: patroon.naam, waarde: match });
-    }
-  }
-  // Eén keer per waarde is genoeg.
-  const gezien = new Set<string>();
-  return gevonden.filter((g) => {
-    const sleutel = `${g.naam}:${g.waarde}`;
-    if (gezien.has(sleutel)) return false;
-    gezien.add(sleutel);
-    return true;
-  });
-}
+/**
+ * Het oordeel zelf staat in `src/server/agent/grounding.ts`, want de agent
+ * gebruikt het tijdens het draaien om zulke antwoorden tegen te houden. Dit
+ * script telt na afloop hoe vaak dat nodig was. Twee kopieën van dezelfde
+ * definitie zouden vroeg of laat uit elkaar lopen, en dan meet dit script iets
+ * anders dan de agent doet.
+ */
 
 async function main() {
   const meting = argument("meting") ?? "lokaal-1";
@@ -81,7 +56,7 @@ async function main() {
     if (tekst.length === 0) continue;
     // Wat de tools hebben opgeleverd, als platte tekst om in te zoeken.
     const gegevens = JSON.stringify(r.data ?? {}) + JSON.stringify(r.tools ?? []) + JSON.stringify(r.sources ?? []);
-    const los = ongegrond(tekst, gegevens);
+    const los = ongegrondeVermeldingen(tekst, gegevens);
     if (los.length > 0) bevindingen.push({ id: r.id, category: r.category, status: r.status, ongegrond: los, text: tekst.slice(0, 220) });
   }
 
@@ -113,7 +88,7 @@ async function main() {
   }
   console.log(`\nongegronde vermeldingen: ${bevindingen.length} van ${uit.items} antwoorden`);
   for (const b of bevindingen.slice(0, 8)) {
-    console.log(`  ${b.id} (${b.category}): ${b.ongegrond.map((o: Json) => `${o.naam} ${o.waarde}`).join(", ")}`);
+    console.log(`  ${b.id} (${b.category}): ${b.ongegrond.map((o: Json) => `${o.soort} ${o.waarde}`).join(", ")}`);
   }
   console.log(`\ntijd: p50 ${rapport.timing?.p50Ms} ms · p95 ${rapport.timing?.p95Ms} ms`);
 }

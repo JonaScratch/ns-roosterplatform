@@ -92,6 +92,7 @@ model UserAccount {
   projectGoals            ProjectOptimisationGoal[]
   researchLoops           AgentResearchLoop[]
   ruleSourceChecks        RuleSourceCheck[]
+  experiments             AgentExperiment[] @relation("ExperimentProposer")
 
   // Geen index op `roles`: een scalaire lijst is in PostgreSQL niet zinvol te
   // indexeren met een gewone B-tree, en de aantallen per rol worden geteld op
@@ -2130,4 +2131,50 @@ model RuleSourceCheck {
 
   @@unique([document, checkedByUserId])
   @@index([document])
+}
+
+/// Een technisch experiment met de zoekmachine: een hypothese, een variant en
+/// een uitkomst.
+///
+/// Een experiment verandert nooit iets aan productie. Het beschrijft wat er
+/// geprobeerd zou worden, wat ervan gemeten is, en of het door de vooraf
+/// vastgelegde poorten komt. Promoveren naar de productie-instelling is een
+/// aparte, menselijke handeling; de agent heeft daar geen bevoegdheid voor en
+/// er is er ook geen die dat aanzet.
+model AgentExperiment {
+  id           String   @id @default(uuid())
+  locationCode String
+  /// Wat er onderzocht wordt, in gewone taal.
+  hypothesis   String
+  /// De variantoverschrijvingen (zie VARIANT_VELDEN in variant.ts).
+  variant      Json
+  status       ExperimentStatus @default(PROPOSED)
+
+  /// De uitgangswaarden en de gemeten uitkomst, op dezelfde meetlat.
+  baseline     Json?
+  result       Json?
+  /// Per poort: gehaald of niet, met de marge erbij.
+  gateResults  Json?
+  conclusion   String?
+
+  proposedByAgent Boolean @default(false)
+  proposedByUserId String
+  proposedBy    UserAccount @relation("ExperimentProposer", fields: [proposedByUserId], references: [id])
+  /// Wie het resultaat heeft beoordeeld. Zonder mens blijft dit leeg.
+  reviewedByUserId String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([locationCode, createdAt])
+  @@index([status])
+}
+
+enum ExperimentStatus {
+  PROPOSED
+  RUNNING
+  MEASURED
+  /// Door de poorten, maar nog steeds niet in productie.
+  PASSED
+  REJECTED
 }

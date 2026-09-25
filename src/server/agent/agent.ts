@@ -5,6 +5,7 @@ import { prisma } from "@/server/data/prisma";
 import { finishActivity, heartbeat, recordEvent, startActivity } from "./activity";
 import { AGENT_CAPABILITIES, AgentCapabilityError, agentMay, currentGrant, levelOf } from "./capabilities";
 import { type UiContext, resolveContext, uiContextSchema } from "./context";
+import { gegevensTekst, grondingsMelding, ongegrondeVermeldingen } from "./grounding";
 import { localConfigFromEnv, localModel } from "./model/local";
 import { stubModel } from "./model/stub";
 import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/types";
@@ -160,11 +161,38 @@ export async function askAgent(input: {
   const plan = await metProjectdoelen(ruwPlan, resolved.locationCode);
   await stap("PLAN", plan.reasoning || "geen toelichting", { intent: plan.intent, tools: plan.toolCalls.map((c) => c.tool) });
 
+  /**
+   * De context van het scherm in elke toolaanroep.
+   *
+   * Gevonden bij de eerste lokale meting: het model riep `rosterLine` aan zonder
+   * rooster of regel mee te geven, kreeg niets terug, en schreef vervolgens dat
+   * de regel geen diensten bevat. Het scherm wist precies welk rooster open
+   * stond; dat hoorde nooit van het model af te hangen. Wat het model zelf
+   * invult, wint — het mag een ander rooster noemen dan de kiezer.
+   */
+  const gevuld = (o: Record<string, unknown>): [string, unknown][] =>
+    Object.entries(o).filter(([, v]) => v !== null && v !== undefined && v !== "");
+
+  const schermContext: Record<string, unknown> = {
+    locationCode: resolved.locationCode,
+    source: resolved.source,
+    candidateId: resolved.candidate?.id,
+    rosterCode: resolved.roster?.code,
+    lineNumber: resolved.lineNumber,
+    weekday: resolved.weekday,
+    dutyCode: resolved.duty?.code,
+  };
+
+  const metContext = (invoer: Record<string, unknown>): Record<string, unknown> =>
+    // Alleen wat het scherm werkelijk heeft: een lege waarde als `null` meesturen
+    // zou een veld met een standaardwaarde juist laten mislukken.
+    Object.fromEntries([...gevuld(schermContext), ...gevuld(invoer)]);
+
   const calls: ToolCall[] = [];
   const results: { tool: string; ok: boolean; data: unknown; sources: readonly string[]; error?: string; note?: string }[] = [];
   for (const toolStap of plan.toolCalls) {
     if (activiteit) await heartbeat(activiteit);
-    const { result, call, error } = await callTool(input.actor, toolStap.tool, toolStap.input);
+    const { result, call, error } = await callTool(input.actor, toolStap.tool, metContext(toolStap.input));
     calls.push(call);
     results.push({ tool: toolStap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error, note: call.note });
     await stap(
@@ -174,7 +202,31 @@ export async function askAgent(input: {
     );
   }
 
-  const antwoord = await model.compose({ ...verzoek, plan, results });
+  const ruwAntwoord = await model.compose({ ...verzoek, plan, results });
+
+  /**
+   * De grondingscontrole staat hier, en niet in de modeladapter.
+   *
+   * Een volgend model — groter, kleiner, van een andere makelij — komt door
+   * dezelfde poort. Wat een model belooft in zijn systeeminstructie is sturing;
+   * dit is de grendel. Een geweigerd antwoord wordt met rust gelaten: daar
+   * staan geen feiten in die gegrond hoeven te zijn.
+   */
+  const los =
+    ruwAntwoord.status === "GEWEIGERD" ? [] : ongegrondeVermeldingen(ruwAntwoord.text, gegevensTekst(results));
+  const antwoord: typeof ruwAntwoord =
+    los.length === 0
+      ? ruwAntwoord
+      : { ...ruwAntwoord, text: grondingsMelding(los), status: "NIET_VAST_TE_STELLEN" };
+  if (los.length > 0) {
+    // De oorspronkelijke tekst gaat niet verloren: hij hoort in het
+    // activiteitenlog thuis, waar hij te onderzoeken is, en niet op het scherm,
+    // waar hij als feit zou worden gelezen.
+    await stap("FOUT", `Antwoord tegengehouden: ${los.map((o) => `${o.soort} ${o.waarde}`).join(", ")} staat niet in de gegevens.`, {
+      ongegrond: los,
+      tegengehoudenTekst: ruwAntwoord.text,
+    });
+  }
   await stap(antwoord.status === "GEWEIGERD" ? "WEIGERING" : "ANTWOORD", antwoord.text.length > 200 ? `${antwoord.text.slice(0, 197)}…` : antwoord.text, {
     status: antwoord.status,
     sources: antwoord.sources,

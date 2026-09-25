@@ -8,6 +8,7 @@ import { dutyKey } from "@/domain/roster-quality";
 import type { Actor } from "@/server/auth/session";
 import { recordAudit } from "@/server/audit/log";
 import { STATUS_TEKST, searchRulesMetControles } from "./knowledge";
+import { eerdereExperimenten } from "./experiments";
 import { recall } from "./memory";
 import { prisma } from "@/server/data/prisma";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
@@ -467,7 +468,43 @@ const knowledgeSearch = tool({
   },
 });
 
-export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, dutyKindPerLine, rosterHours, ruleLookup, ruleSearch, qualityReport, nightStructure, knowledgeSearch] as const;
+const experimentHistory = tool({
+  name: "experimentHistory",
+  description: "Eerder voorgestelde en gemeten experimenten met de zoekmachine, met de oorspronkelijke conclusie en poortuitslagen.",
+  permission: PERMISSIONS.ROSTER_READ,
+  input: z.object({ hypothesis: z.string().nullish(), locationCode: z.string().default("DDR"), limit: z.number().int().min(1).max(20).default(5) }),
+  run: async (_actor, input) => {
+    const eerder = await eerdereExperimenten({
+      locationCode: input.locationCode,
+      hypothesis: input.hypothesis ?? null,
+      limit: input.limit,
+    });
+    return {
+      data: {
+        implemented: true,
+        count: eerder.length,
+        experiments: eerder.map((e) => ({
+          id: e.id,
+          hypothesis: e.hypothesis,
+          variant: e.variant,
+          status: e.status,
+          // Letterlijk zoals hij destijds is vastgelegd. Een nette hervertelling
+          // zou de reden kunnen veranderen zonder dat iemand dat merkt.
+          conclusion: e.conclusion,
+          failedGates: e.gates.filter((g) => !g.gehaald).map((g) => ({ naam: g.naam, waarde: g.waarde, grens: g.grens })),
+          createdAt: e.createdAt.toISOString(),
+          matchedOn: e.overeenkomst,
+        })),
+        note:
+          "Een afgewezen experiment blijft staan met de reden van toen. Een zelfde voorstel " +
+          "opnieuw doen kan, maar dan met een argument waarom die reden nu niet meer geldt.",
+      },
+      sources: [`experimenten ${input.locationCode}`],
+    };
+  },
+});
+
+export const AGENT_TOOLS = [rosterProject, rosterLine, dutyInstance, dutyKindCounts, dutyKindPerLine, rosterHours, ruleLookup, ruleSearch, qualityReport, nightStructure, knowledgeSearch, experimentHistory] as const;
 
 export type ToolName = (typeof AGENT_TOOLS)[number]["name"];
 

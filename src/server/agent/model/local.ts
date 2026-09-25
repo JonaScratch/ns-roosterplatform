@@ -96,6 +96,23 @@ function systeeminstructie(request: PlanRequest): string {
     "",
     `Beschikbare tools: ${tools.map((t) => `${t.name} (${t.description})`).join("; ")}.`,
     "",
+    // Gevonden bij de eerste lokale meting: het model koos ruleSearch op een
+    // vraag over de nachtstructuur. Een korte kaart van vraagsoort naar tool
+    // kost weinig en scheelt een verkeerde bron. Sturing, geen grendel — welke
+    // tools écht mogen, bepaalt de rechtencontrole hierboven.
+    "Kies je tool bij de vraag:",
+    "- wat staat er op deze regel / welke diensten op een dag → rosterLine",
+    "- hoe laat begint of eindigt dienst X → dutyInstance",
+    "- hoeveel nachten/vroege/late/rangeerdiensten → dutyKindCounts",
+    "- op welke regels staan die diensten → dutyKindPerLine",
+    "- uren, contractnorm, te veel of te weinig → rosterHours",
+    "- nachten en hun opeenvolging in een basisrooster → nightStructure",
+    "- mag dit wel volgens de regels / hoeveel rust is verplicht → ruleSearch, of ruleLookup als je het regelnummer al weet",
+    "- hoe goed is deze kandidaat → qualityReport",
+    "- wat is hier eerder over afgesproken → knowledgeSearch",
+    "",
+    "De standplaats, het basisrooster, de regel en de weekdag van het scherm worden door de server in elke toolaanroep gezet; je hoeft ze niet te herhalen. Vraagt de gebruiker om een ánder rooster of een andere regel, zet die dan wél zelf in de invoer.",
+    "",
     `Context van het scherm: standplaats ${request.context.locationCode}, bron ${request.context.source}` +
       (request.context.rosterCode ? `, basisrooster ${request.context.rosterCode}` : "") +
       (request.context.lineNumber ? `, regel ${request.context.lineNumber}` : "") +

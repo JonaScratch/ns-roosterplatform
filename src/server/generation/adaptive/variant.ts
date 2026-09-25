@@ -108,7 +108,15 @@ const PROFIELEN: Readonly<Record<string, Omit<EngineVariant, "profile" | "overri
   },
 };
 
-const TOEGESTAAN = new Set(["humanRhythm", "nightExitScale", "guards", "worstCase", "nightExitRepair", "nightFirst", "operational", "qualityModel", "preferenceScale"]);
+/**
+ * Welke velden een variant mag overschrijven.
+ *
+ * Geëxporteerd omdat de experimenteerlaag een voorstel moet kunnen afwijzen
+ * vóórdat er iets draait: een experiment dat een onbekend veld noemt, is geen
+ * experiment maar een typefout, en dat hoort bij het voorstel te blijken en
+ * niet pas bij het starten van de zoekmachine.
+ */
+export const VARIANT_VELDEN = new Set(["humanRhythm", "nightExitScale", "guards", "worstCase", "nightExitRepair", "nightFirst", "operational", "qualityModel", "preferenceScale"]);
 
 export function engineVariant(env: Readonly<Record<string, string | undefined>> = process.env): EngineVariant {
   const profiel = env.NS_ENGINE_PROFILE ?? "machinist";
@@ -119,9 +127,9 @@ export function engineVariant(env: Readonly<Record<string, string | undefined>> 
   let overrides: Record<string, unknown> | null = null;
   if (env.NS_ENGINE_VARIANT) {
     overrides = JSON.parse(env.NS_ENGINE_VARIANT) as Record<string, unknown>;
-    const onbekend = Object.keys(overrides).filter((k) => !TOEGESTAAN.has(k));
+    const onbekend = Object.keys(overrides).filter((k) => !VARIANT_VELDEN.has(k));
     if (onbekend.length > 0) {
-      throw new Error(`NS_ENGINE_VARIANT kent ${onbekend.join(", ")} niet; toegestaan: ${[...TOEGESTAAN].join(", ")}.`);
+      throw new Error(`NS_ENGINE_VARIANT kent ${onbekend.join(", ")} niet; toegestaan: ${[...VARIANT_VELDEN].join(", ")}.`);
     }
   }
   // Het kwaliteitsmodel komt als versienaam binnen ("quality-model-v3").
