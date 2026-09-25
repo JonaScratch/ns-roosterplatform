@@ -9,6 +9,7 @@ import { localConfigFromEnv, localModel } from "./model/local";
 import { stubModel } from "./model/stub";
 import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/types";
 import { projectGoals } from "./project-goals";
+import { geldendeGeheugenDoelen } from "./promotion";
 import { type ToolCall, callTool, toolCatalogue } from "./tools";
 
 /**
@@ -219,19 +220,33 @@ export async function askAgent(input: {
 async function metProjectdoelen(plan: AgentPlan, locationCode: string): Promise<AgentPlan> {
   if (!plan.proposal) return plan;
   const doelen = await projectGoals(locationCode);
-  if (doelen.length === 0) return plan;
+  // Wat het leergeheugen bijdraagt: alleen goedgekeurde items met een doel dat
+  // een mens eraan heeft gehangen. Een NS-breed voorstel dat nog niet is
+  // goedgekeurd, komt hier niet uit.
+  const uitGeheugen = await geldendeGeheugenDoelen(locationCode);
+  if (doelen.length === 0 && uitGeheugen.length === 0) return plan;
 
   const bestaand = Array.isArray(plan.proposal.goals) ? (plan.proposal.goals as string[]) : [];
-  const samen = [...new Set([...bestaand, ...doelen.map((d) => d.goal)])];
+  const samen = [...new Set([...bestaand, ...doelen.map((d) => d.goal), ...uitGeheugen.map((g) => g.goal)])];
+  const toelichting = [
+    doelen.length > 0 ? `extra doelen van de commissie: ${doelen.map((d) => d.label).join(", ")}` : null,
+    uitGeheugen.length > 0 ? `uit het leergeheugen: ${uitGeheugen.map((g) => g.goal).join(", ")}` : null,
+  ]
+    .filter(Boolean)
+    .join("; ");
+
   return {
     ...plan,
     proposal: {
       ...plan.proposal,
       goals: samen,
       layerTwoGoals: doelen.map((d) => ({ goal: d.goal, label: d.label, note: d.note })),
-      note: `${String(plan.proposal.note ?? "")} (met de extra doelen van de commissie: ${doelen.map((d) => d.label).join(", ")})`.trim(),
+      // De herkomst gaat mee tot in de opdracht: bij het starten wordt
+      // vastgelegd dat dit item een beslissing heeft geraakt.
+      memoryGoals: uitGeheugen.map((g) => ({ itemId: g.itemId, goal: g.goal, scope: g.scope, statement: g.statement })),
+      note: `${String(plan.proposal.note ?? "")} (${toelichting})`.trim(),
     },
-    reasoning: `${plan.reasoning}; laag 2 toegevoegd: ${doelen.map((d) => d.goal).join(", ")}`,
+    reasoning: `${plan.reasoning}; ${toelichting}`,
   };
 }
 

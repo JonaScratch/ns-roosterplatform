@@ -9,6 +9,7 @@ import { prisma } from "@/server/data/prisma";
 import { createRunCore } from "@/server/services/generation-service";
 import { SCENARIOS } from "@/server/services/simulation-service";
 import { recordEvent, startActivity } from "./activity";
+import { noteApplication } from "./memory";
 import { AGENT_CAPABILITIES, type AgentGrant, AgentCapabilityError, assertAgentMay } from "./capabilities";
 
 /**
@@ -47,6 +48,18 @@ export const jobProposalSchema = z.object({
   parentCandidateId: z.string().min(1).nullable(),
   /** Wat de agent denkt te gaan doen, in gewone taal. */
   note: z.string().min(2).max(400),
+  /**
+   * Geheugenitems die aan dit voorstel hebben bijgedragen.
+   *
+   * Ze gaan mee tot in de opdracht, zodat bij het starten geteld kan worden
+   * dat dit item werkelijk een beslissing heeft geraakt. Een item dat nooit
+   * iets heeft beinvloed, telt volgens de benchmarkmethodiek niet mee als
+   * vooruitgang — en dat is alleen vol te houden als het echt wordt geteld.
+   */
+  memoryGoals: z
+    .array(z.object({ itemId: z.string().min(1), goal: z.string().min(2).max(40), scope: z.string().max(20).optional(), statement: z.string().max(500).optional() }))
+    .max(20)
+    .optional(),
   locationCode: z.string().min(1).max(8),
 });
 
@@ -164,6 +177,18 @@ export async function startProposedJob(input: {
   });
 
   await prisma.agentActivity.update({ where: { id: activiteit.id }, data: { generationRunId: runId } });
+
+  // Nu pas telt een geheugenitem als toegepast: niet toen het werd gelezen,
+  // maar nu het daadwerkelijk een opdracht stuurt. Dat onderscheid is de hele
+  // reden dat toepassingen geteld worden en niet geschat.
+  for (const item of proposal.memoryGoals ?? []) {
+    await noteApplication({
+      itemId: item.itemId,
+      context: `opdracht ${proposal.kind.toLowerCase()} · ${proposal.note}`,
+      generationRunId: runId,
+      effect: `doel ${item.goal} meegegeven aan de zoekmachine`,
+    });
+  }
   await recordEvent({
     activity: activiteit,
     locationCode: proposal.locationCode,

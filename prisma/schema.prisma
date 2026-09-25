@@ -1947,6 +1947,11 @@ model AgentMemoryItem {
   /// Verwijzingen naar kandidaten, metingen of feedback.
   evidence     Json?
 
+  /// Waarop dit item de zoekmachine laat sturen, als een mens dat heeft
+  /// aangegeven. Zonder doel blijft het item informatief: de agent gokt niet
+  /// zelf wat een zin voor de optimizer betekent.
+  optimisationGoal String?
+
   status       MemoryStatus @default(PROPOSED)
   /// Kwam dit voorstel van de agent of van een mens?
   proposedByAgent Boolean @default(false)

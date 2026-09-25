@@ -4,8 +4,9 @@ import "dotenv/config";
 // een lokaal model is ingesteld. Anders meet hij twee dingen tegelijk.
 process.env.NS_AGENT_FORCE_STUB = "1";
 import { askAgent } from "@/server/agent/agent";
-import { currentGrant, levelOf, setAgentLevel } from "@/server/agent/capabilities";
+import { AGENT_CAPABILITIES, AGENT_LEVELS, currentGrant, levelOf, setAgentLevel } from "@/server/agent/capabilities";
 import { correctMemory, decideMemory, proposeMemory, recall, withdrawMemory } from "@/server/agent/memory";
+import { geldendeGeheugenDoelen, promotieKandidaten, stelLandelijkVoor } from "@/server/agent/promotion";
 import type { Actor } from "@/server/auth/session";
 import { prisma } from "@/server/data/prisma";
 
@@ -21,6 +22,7 @@ import { prisma } from "@/server/data/prisma";
  * - TEST 13 Een correctie voorkomt dat de oude lezing opnieuw actief wordt.
  * - TEST 21 Een voorkeur uit een ouder dienstenpakket wordt niet blind
  *           toegepast op een nieuw pakket.
+ * - TEST 11 Een gedeelde voorkeur kan NS-breed worden voorgesteld.
  * - TEST 25 Intrekken kan zonder de geschiedenis te vernietigen.
  *
  * Alles wat dit script aanmaakt, ruimt het ook weer op: het geheugen van de
@@ -215,6 +217,92 @@ async function main(): Promise<void> {
       where: { objectType: "AgentMemoryItem", occurredAt: { gte: new Date(Date.now() - 10 * 60_000) } },
     });
     toets("elke stap staat in het auditlogboek", auditRegels >= 6, `${auditRegels} regels`);
+
+    // ── TEST 11 ─────────────────────────────────────────────────────────────
+    console.log("\nTEST 11 — een gedeelde voorkeur kan NS-breed worden voorgesteld");
+    // Twee standplaatsen met hetzelfde optimalisatiedoel. Het doel is door een
+    // mens aan het item gehangen; de agent leidt het niet uit de zin af.
+    const ddrNacht = await proposeMemory({
+      actor, grant, scope: "LOCATION", kind: "PREFERENCE", locationCode: "DDR",
+      statement: "Dordrecht: nachten het liefst in reeksen van vijf.",
+      rationale: "Uit de kwartaalfeedback.", byAgent: false,
+    });
+    opgeruimd.push(ddrNacht);
+    const rtdNacht = await proposeMemory({
+      actor, grant, scope: "LOCATION", kind: "PREFERENCE", locationCode: "RTD",
+      statement: "Rotterdam: ook hier liever lange nachtreeksen dan losse nachten.",
+      rationale: "Uit het overleg van deze periode.", byAgent: false,
+    });
+    opgeruimd.push(rtdNacht);
+    for (const id of [ddrNacht, rtdNacht]) {
+      await decideMemory({ actor, itemId: id, approve: true });
+      await prisma.agentMemoryItem.update({ where: { id }, data: { optimisationGoal: "NIGHT_CLUSTERING" } });
+    }
+
+    // Voorkeuren voorstellen is een aparte bevoegdheid en zit bewust niet in
+    // niveau A, B of C: een commissie kent hem apart toe. Hier gebeurt dat
+    // expliciet, anders meet de toets alleen dat de bevoegdheid ontbreekt.
+    const huidigeToekenning = await prisma.agentCapabilityGrant.findFirst({
+      where: { locationCode: "DDR", revokedAt: null },
+      orderBy: { grantedAt: "desc" },
+      select: { id: true, capabilities: true },
+    });
+    if (huidigeToekenning) {
+      await prisma.agentCapabilityGrant.update({
+        where: { id: huidigeToekenning.id },
+        data: { capabilities: [...new Set([...huidigeToekenning.capabilities, "agent:preference:propose"])] },
+      });
+    }
+    const grantMetVoorstelrecht = await currentGrant("DDR");
+    toets(
+      "voorkeuren voorstellen is een aparte bevoegdheid",
+      !AGENT_LEVELS.C.includes(AGENT_CAPABILITIES.PREFERENCE_PROPOSE),
+      "zit niet in niveau C",
+    );
+
+    const kandidaten = await promotieKandidaten(2);
+    const nachtKandidaat = kandidaten.find((k) => k.goal === "NIGHT_CLUSTERING");
+    toets("twee standplaatsen met hetzelfde doel worden opgemerkt", Boolean(nachtKandidaat), `${kandidaten.length} kandidaat/kandidaten`);
+    toets(
+      "beide standplaatsen staan als onderbouwing in het voorstel",
+      (nachtKandidaat?.locations ?? []).includes("DDR") && (nachtKandidaat?.locations ?? []).includes("RTD"),
+      (nachtKandidaat?.locations ?? []).join(", "),
+    );
+
+    if (nachtKandidaat) {
+      const landelijkId = await stelLandelijkVoor({
+        actor, grant: grantMetVoorstelrecht, kandidaat: nachtKandidaat,
+        statement: "NS-breed: nachten bij voorkeur in aaneengesloten reeksen.",
+        byAgent: true,
+      });
+      opgeruimd.push(landelijkId);
+      const landelijk = await prisma.agentMemoryItem.findUnique({
+        where: { id: landelijkId },
+        select: { status: true, scope: true, evidence: true, proposedByAgent: true },
+      });
+      toets("het voorstel staat er als PROPOSED en niet als geldend", landelijk?.status === "PROPOSED", `status ${landelijk?.status}`);
+      toets("het draagt de bronitems als onderbouwing", JSON.stringify(landelijk?.evidence ?? {}).includes(ddrNacht), "");
+
+      // ── TEST 12 ───────────────────────────────────────────────────────────
+      console.log("\nTEST 12 — een niet-goedgekeurde NS-brede voorkeur stuurt niets");
+      const voorGoedkeuringDoelen = await geldendeGeheugenDoelen("DDR");
+      toets(
+        "het NS-brede voorstel telt niet mee in de optimalisatiedoelen",
+        !voorGoedkeuringDoelen.some((d) => d.itemId === landelijkId),
+        `${voorGoedkeuringDoelen.length} geldende doelen`,
+      );
+      // Het lokale Dordtse item is wél goedgekeurd en telt dus wel mee: zonder
+      // dat verschil meet deze toets niets.
+      toets(
+        "het goedgekeurde lokale item telt wél mee",
+        voorGoedkeuringDoelen.some((d) => d.itemId === ddrNacht),
+        "",
+      );
+
+      await decideMemory({ actor, itemId: landelijkId, approve: true });
+      const naGoedkeuring = await geldendeGeheugenDoelen("DDR");
+      toets("na goedkeuring telt het NS-brede item wel mee", naGoedkeuring.some((d) => d.itemId === landelijkId), "");
+    }
   } finally {
     // Opruimen: eerst de opvolgers losmaken, anders blokkeert de verwijzing.
     await prisma.agentMemoryItem.updateMany({ where: { id: { in: opgeruimd } }, data: { supersededById: null } });
@@ -224,7 +312,7 @@ async function main(): Promise<void> {
   }
 
   console.log(`\n${geslaagd} geslaagd, ${mislukt} mislukt`);
-  console.log("Niet gemeten: TEST 11 (een gedeelde voorkeur NS-breed voorstellen) hoort bij fase 7.");
+  console.log("Alle geheugenscenario's uit de werkopdracht (8, 9, 10, 11, 12, 13, 21, 25) zijn hier gemeten.");
   if (mislukt > 0) process.exitCode = 1;
 }
 
