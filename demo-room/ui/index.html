@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<title>Lyra Demo Room</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root { --bg:#0a1e3d; --panel:#0f2647; --accent:#1f5fd0; --text:#e7edf7; --muted:#9fb0c9; --good:#2e9e5b; --bad:#c0392b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, Segoe UI, Arial, sans-serif; background:#f3f5f9; color:#12223c; }
+  header { background:var(--bg); color:var(--text); padding:16px 24px; }
+  header h1 { margin:0; font-size:20px; }
+  header p { margin:4px 0 0; color:var(--muted); font-size:13px; }
+  nav { display:flex; gap:4px; background:var(--panel); padding:0 24px; }
+  nav button { background:none; border:none; color:var(--muted); padding:10px 14px; cursor:pointer; font-size:14px; border-bottom:3px solid transparent; }
+  nav button.active { color:#fff; border-bottom-color:var(--accent); }
+  main { padding:20px 24px; max-width:1000px; margin:0 auto; }
+  section { display:none; }
+  section.active { display:block; }
+  .card { background:#fff; border:1px solid #dde3ee; border-radius:8px; padding:16px; margin-bottom:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid #eef1f6; }
+  th { color:var(--muted); font-weight:600; }
+  code { background:#eef1f6; padding:1px 5px; border-radius:4px; font-size:12px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 7px; border-radius:10px; background:#eef1f6; color:#455; margin-left:4px; }
+  .tag.good { background:#e4f6ea; color:var(--good); }
+  .tag.bad { background:#fbe6e3; color:var(--bad); }
+  #log { font-family: ui-monospace, monospace; font-size:12px; background:#0f172a; color:#d6e2f0; padding:12px; border-radius:8px; max-height:400px; overflow:auto; white-space:pre-wrap; }
+  #handoff { white-space:pre-wrap; font-size:13px; line-height:1.5; }
+  button.run { background:var(--accent); color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Lyra Demo Room</h1>
+  <p>Autonoom lokaal evaluatie-, experimenteer- en verbeterlaboratorium — leest en start alleen via de bestaande, bevoegdheid-gecontroleerde koppelingen van het hoofdplatform.</p>
+</header>
+<nav>
+  <button data-tab="dashboard" class="active">Dashboard</button>
+  <button data-tab="challenges">Challenges</button>
+  <button data-tab="run">Huidige run</button>
+  <button data-tab="results">Resultaten</button>
+</nav>
+<main>
+  <section id="dashboard" class="active">
+    <div class="card">
+      <h3>Status</h3>
+      <table>
+        <tr><th>Meest recente run</th><td id="s-run">—</td></tr>
+        <tr><th>Aantal experimenten (alle runs)</th><td id="s-experiments">—</td></tr>
+        <tr><th>Laatst bekende journaalentry</th><td id="s-journal">—</td></tr>
+      </table>
+      <p style="color:var(--muted); font-size:12px;">Dit dashboard is puur lezend. Runs starten gebeurt via de CLI (<code>npx tsx --conditions=react-server demo-room/src/cli.ts ...</code>) — zie het README.</p>
+    </div>
+    <div class="card">
+      <h3>HANDOFF.md (plak dit in een nieuwe Claude/ChatGPT-chat)</h3>
+      <div id="handoff">wordt geladen…</div>
+    </div>
+  </section>
+
+  <section id="challenges">
+    <div class="card">
+      <h3>Beschikbare challenges</h3>
+      <table id="challenge-table">
+        <thead><tr><th>ID</th><th>Naam</th><th>Categorie</th><th>Spoor</th><th>Niveau</th><th>Budget</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="run">
+    <div class="card">
+      <h3>Laatste run — eventlog</h3>
+      <div id="log">geen actieve run geladen</div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="card">
+      <h3>Laatste rapport</h3>
+      <pre id="report" style="white-space:pre-wrap; font-size:12px;">nog geen rapport</pre>
+    </div>
+  </section>
+</main>
+<script>
+  const tabs = document.querySelectorAll("nav button");
+  tabs.forEach((b) => b.addEventListener("click", () => {
+    tabs.forEach((x) => x.classList.remove("active"));
+    document.querySelectorAll("main section").forEach((s) => s.classList.remove("active"));
+    b.classList.add("active");
+    document.getElementById(b.dataset.tab).classList.add("active");
+  }));
+
+  async function j(url) { const r = await fetch(url); return r.json(); }
+
+  async function loadDashboard() {
+    const [runs, experiments, handoff] = await Promise.all([j("/api/runs"), j("/api/experiments"), j("/api/handoff")]);
+    document.getElementById("s-run").textContent = runs[0] ?? "(nog geen run)";
+    document.getElementById("s-experiments").textContent = experiments.length;
+    document.getElementById("s-journal").textContent = experiments[experiments.length - 1]?.id ?? "—";
+    document.getElementById("handoff").textContent = handoff.markdown;
+  }
+
+  async function loadChallenges() {
+    const list = await j("/api/challenges");
+    const tbody = document.querySelector("#challenge-table tbody");
+    tbody.innerHTML = "";
+    for (const c of list) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td><code>${c.id}</code></td><td>${c.name}</td><td>${c.category}</td><td>${c.track}</td><td>L${c.difficulty}</td><td>${c.computeBudgetMinutes} min</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  async function loadRun() {
+    const data = await j("/api/runs/latest-events");
+    const log = document.getElementById("log");
+    if (!data.runId) { log.textContent = "geen run gevonden — start er een via de CLI"; return; }
+    log.textContent = data.events.map((e) => `[${e.timestamp}] ${e.decision} — ${e.hypothesis}${e.failureReason ? "\n  " + e.failureReason : ""}`).join("\n\n");
+  }
+
+  async function loadResults() {
+    const report = await j("/api/latest-report");
+    document.getElementById("report").textContent = report ? JSON.stringify(report, null, 2) : "nog geen journaalentry geschreven";
+  }
+
+  async function refresh() {
+    await Promise.all([loadDashboard(), loadChallenges(), loadRun(), loadResults()]);
+  }
+  refresh();
+  setInterval(refresh, 4000);
+</script>
+</body>
+</html>

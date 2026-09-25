@@ -73,8 +73,14 @@ export async function askAgent(input: {
   readonly sessionId?: string | null;
   /** Zonder opslag: voor de benchmark, die geen gesprekken hoort achter te laten. */
   readonly persist?: boolean;
+  /**
+   * Alleen voor gecontroleerde experimenten (Demo Room): een ander model dan
+   * het productiemodel, dezelfde keten eromheen. Geen enkele productieaanroep
+   * zet dit veld; zonder dit veld is het gedrag exact zoals het was.
+   */
+  readonly modelOverride?: ChatModel;
 }): Promise<AskResult> {
-  const model = modelForRequest();
+  const model = input.modelOverride ?? modelForRequest();
   const ctx = uiContextSchema.parse(input.uiContext);
   const resolved = await resolveContext(ctx);
   const grant = await currentGrant(resolved.locationCode, ctx.candidateId ? null : null);

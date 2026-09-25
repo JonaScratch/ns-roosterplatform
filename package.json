@@ -60,6 +60,8 @@
     "verify:crash-recovery": "tsx --conditions=react-server scripts/verify-crash-recovery.ts",
     "outbox:flush": "tsx --conditions=react-server scripts/flush-outbox.ts",
     "verify:rule-coverage": "tsx --conditions=react-server scripts/verify-rule-coverage.ts",
+    "demo-room": "tsx --conditions=react-server demo-room/src/cli.ts",
+    "demo-room:dashboard": "tsx --conditions=react-server demo-room/src/server.ts",
     "verify:e2e": "tsx --conditions=react-server scripts/verify-e2e.ts",
     "verify:beoordeling": "tsx --conditions=react-server scripts/verify-beoordeling.ts",
     "verify:agent": "tsx --conditions=react-server scripts/verify-agent.ts",

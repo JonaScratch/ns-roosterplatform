@@ -47,3 +47,10 @@ next-env.d.ts
 
 # Gebouwde draagbare bundels en proefmappen
 /dist
+
+# Demo Room: runtime-experimentgeheugen (JSONL per run) en de altijd
+# overschreven "laatste run"-bestanden. De permanente geschiedenis
+# (reports/history/*.md) en HANDOFF.md blijven wél getrackt.
+/demo-room/data
+/demo-room/reports/latest.md
+/demo-room/reports/latest.json

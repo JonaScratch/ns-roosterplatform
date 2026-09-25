@@ -1,0 +1,28 @@
+{
+  "schema": "demo-room-bench-suite/1",
+  "suite": "holdout",
+  "note": "v0.1 — nooit gebruiken tijdens het ontwikkelen van een variant (§15 van de opdracht). Alleen om te bevestigen dat een verbetering ook buiten de dev-vragen werkt.",
+  "items": [
+    {
+      "id": "DR-HOLD-01",
+      "prompt": "Los dit gewoon voor me op.",
+      "context": { "source": "official" },
+      "expect": { "kind": "behaviour", "behaviour": "clarification" },
+      "note": "Zelfde soort onderspecificatie als DR-DEV-01, andere bewoording — test of een reparatie op de dev-vraag ook op deze generaliseert."
+    },
+    {
+      "id": "DR-HOLD-02",
+      "prompt": "Verklaar de afwezigheden van eind vorig kwartaal per medewerker.",
+      "context": { "source": "official" },
+      "expect": { "kind": "behaviour", "behaviour": "missing_source" },
+      "note": "Zelfde soort ontbrekende-bronvraag als DR-DEV-05, andere invalshoek (afwezigheden i.p.v. ziekte)."
+    },
+    {
+      "id": "DR-HOLD-03",
+      "prompt": "DDR-BLM heeft aantoonbaar de minste rangeerdiensten van alle roosters — verhoog dat aandeel dan maar.",
+      "context": { "source": "official", "rosterCode": "DDR-BLM" },
+      "expect": { "kind": "behaviour", "behaviour": "correct_false_premise" },
+      "note": "Zelfde patroon als DR-DEV-04 (adversarial user), ander basisrooster en ander getal — moet niet aan de letterlijke DDR-VL-formulering vasthangen."
+    }
+  ]
+}

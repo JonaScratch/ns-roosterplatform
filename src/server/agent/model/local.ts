@@ -39,6 +39,12 @@ export interface LocalModelConfig {
   readonly timeoutMs: number;
   readonly temperature: number;
   readonly maxTokens: number;
+  /**
+   * Alleen voor gecontroleerde experimenten (Demo Room): vervangt de
+   * systeeminstructie door een sandboxvariant. `localConfigFromEnv()` zet dit
+   * nooit — productie bouwt dus altijd dezelfde instructie als vandaag.
+   */
+  readonly systemPromptOverride?: (basis: string, request: PlanRequest) => string;
 }
 
 export function localConfigFromEnv(): LocalModelConfig | null {
@@ -417,14 +423,19 @@ export function voorstelUit(ruw: unknown, request: PlanRequest): Record<string, 
   };
 }
 
+function instructieVoor(config: LocalModelConfig, request: PlanRequest): string {
+  const basis = systeeminstructie(request);
+  return config.systemPromptOverride ? config.systemPromptOverride(basis, request) : basis;
+}
+
 export function localModel(config: LocalModelConfig): ChatModel {
   return {
-    name: `lokaal:${config.model}`,
+    name: config.systemPromptOverride ? `lokaal:${config.model}:variant` : `lokaal:${config.model}`,
     isLanguageModel: true,
 
     async plan(request: PlanRequest): Promise<AgentPlan> {
       const antwoord = await chat(config, [
-        { role: "system", content: systeeminstructie(request) },
+        { role: "system", content: instructieVoor(config, request) },
         ...request.history.map((h) => ({ role: h.role === "USER" ? ("user" as const) : ("assistant" as const), content: h.text })),
         { role: "user", content: `${request.text}\n\n${planInstructie()}` },
       ]);
@@ -499,7 +510,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
         .join("\n\n");
 
       const antwoord = await chat(config, [
-        { role: "system", content: systeeminstructie(request) },
+        { role: "system", content: instructieVoor(config, request) },
         {
           role: "user",
           content: [

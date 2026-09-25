@@ -5,6 +5,7 @@ import { prisma } from "@/server/data/prisma";
 import { askAgent } from "./agent";
 import { currentGrant, levelOf, setAgentLevel } from "./capabilities";
 import { decideMemory, proposeMemory, withdrawMemory } from "./memory";
+import type { ChatModel } from "./model/types";
 
 /**
  * De ingang voor de intelligentiebenchmark.
@@ -234,7 +235,14 @@ export function beoordeelGeheugen(item: Json, antwoord: Json): { status: string;
     : { status: "FOUT", detail: `ontbreekt in het antwoord: ${ontbreekt.join(", ")}` };
 }
 
-export async function benchAnswer(item: Json): Promise<Json> {
+export async function benchAnswer(
+  item: Json,
+  /**
+   * Alleen voor gecontroleerde experimenten (Demo Room): dezelfde meting,
+   * een ander model. Geen enkele bestaande aanroep zet dit veld.
+   */
+  options?: { readonly modelOverride?: ChatModel },
+): Promise<Json> {
   const rollen: Role[] = item.context?.actorRole === "EMPLOYEE" ? (["EMPLOYEE"] as Role[]) : (["ROSTER_COMMITTEE"] as Role[]);
   const actor = await actorMet(rollen);
   if (!actor) return { status: "FOUT", detail: `geen actief account met rol ${rollen.join("+")}` };
@@ -253,6 +261,7 @@ export async function benchAnswer(item: Json): Promise<Json> {
       actor,
       text: beurt,
       persist: false,
+      modelOverride: options?.modelOverride,
       uiContext: {
         source: item.context?.source === "candidate" ? "candidate" : "official",
         candidateId,
