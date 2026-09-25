@@ -260,7 +260,11 @@ export async function eerdereExperimenten(input: {
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .split(/\s+/)
-    .filter((w) => w.length >= 5);
+    // Vier letters, niet vijf: "rust" en "duur" zijn hier echte zoekwoorden, en
+    // met een drempel van vijf viel "is meer rust eerder geprobeerd?" terug op
+    // alleen "geprobeerd" — dat matcht met geen enkele hypothese, en dan meldt
+    // de agent dat er niets is geprobeerd terwijl er van alles ligt.
+    .filter((w) => w.length >= 4);
   const velden = new Set(input.variantVelden ?? []);
 
   const beoordeeld = rijen.map((r) => {

@@ -51,7 +51,10 @@ const PATRONEN: readonly { readonly soort: string; readonly regex: RegExp }[] = 
   // Dienstnummers in dit pakket: drie cijfers.
   { soort: "dienstnummer", regex: /\b[0-9]{3}\b/g },
   // Roostercodes.
-  { soort: "roostercode", regex: /\b[A-Z]{3}-[A-Z0-9]+\b/g },
+  // De grenzen houden "CAO-NS-2024-2025" buiten de deur: dat zou als
+  // roostercode worden gelezen en, omdat de gegevens "CAO NS 2024-2025" met
+  // spaties schrijven, ten onrechte als verzonnen worden aangemerkt.
+  { soort: "roostercode", regex: /(?<![A-Z0-9-])[A-Z]{3}-[A-Z0-9]{1,4}(?![A-Z0-9-])/g },
 ];
 
 /**

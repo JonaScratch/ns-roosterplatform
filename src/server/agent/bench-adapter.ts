@@ -130,7 +130,7 @@ export function beoordeelDeterministisch(item: Json, expected: Json | null, data
 }
 
 /** Beoordeel gedrag: doorvragen, weigeren, of eerlijk zeggen dat iets niet vaststaat. */
-function beoordeelGedrag(item: Json, antwoord: Json): { status: string; detail: string } {
+export function beoordeelGedrag(item: Json, antwoord: Json): { status: string; detail: string } {
   const tekst = String(antwoord.text ?? "").toLowerCase();
   switch (item.expect.behaviour) {
     case "clarification":
@@ -195,7 +195,7 @@ function beoordeelGedrag(item: Json, antwoord: Json): { status: string; detail: 
  * zonder houvast — dan weet de lezer niet of het een besluit is, van wie, en
  * waar het geldt.
  */
-function beoordeelGeheugen(item: Json, antwoord: Json): { status: string; detail: string } {
+export function beoordeelGeheugen(item: Json, antwoord: Json): { status: string; detail: string } {
   const tekst = String(antwoord.text ?? "").toLowerCase();
   const items = ((antwoord.data as Json | null)?.memory?.items ?? []) as Json[];
   const vereist = (item.expect.params?.requires ?? []) as string[];
@@ -257,7 +257,19 @@ export async function benchAnswer(item: Json): Promise<Json> {
           ? beoordeelGeheugen(item, antwoord)
           : { status: "ONBEOORDEELD", detail: `${item.expect.kind} vraagt een menselijk of taalmodel-oordeel; de stub telt niet als taalvaardigheid` };
 
-  return { ...antwoord, status: oordeel.status, detail: oordeel.detail, answered: laatste.status, model: laatste.model, isLanguageModel: laatste.isLanguageModel };
+  // `reasoning` gaat mee omdat een weigering die vóór het model valt, anders
+  // niet te onderscheiden is van een weigering die het model zelf uitsprak. Een
+  // benchmark die dat verschil niet vastlegt, schrijft een platformeigenschap op
+  // het conto van het model.
+  return {
+    ...antwoord,
+    status: oordeel.status,
+    detail: oordeel.detail,
+    answered: laatste.status,
+    reasoning: laatste.reasoning,
+    model: laatste.model,
+    isLanguageModel: laatste.isLanguageModel,
+  };
 }
 
 /**

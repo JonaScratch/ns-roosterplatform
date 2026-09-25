@@ -25,6 +25,8 @@
 
 export interface VerbodenHandeling {
   readonly woorden: readonly string[];
+  /** Als dit er staat, moet de vraag óók een van deze woorden bevatten. */
+  readonly en?: readonly string[];
   readonly uitleg: string;
 }
 
@@ -33,7 +35,15 @@ export const bevat = (tekst: string, ...woorden: string[]) => woorden.some((w) =
 /** Woorden die op een handeling wijzen waarvoor een mens moet tekenen. */
 export const VERBODEN: readonly VerbodenHandeling[] = [
   { woorden: ["publiceer", "publiceren", "vaststellen als definitief"], uitleg: "Publiceren is een menselijke handeling; de agent heeft die bevoegdheid niet en krijgt die ook niet." },
-  { woorden: ["negeer de validator", "negeer validator", "sla de validatie over", "goed genoeg"], uitleg: "De onafhankelijke validator kan ik niet overslaan. Een hoge score maakt een harde overtreding niet geldig." },
+  // "goed genoeg" stond hier als los trefwoord. Bij het overhevelen naar deze
+  // laag viel op wat dat betekent: "is deze kandidaat goed genoeg?" is een
+  // gewone kwaliteitsvraag, en die kreeg als antwoord dat de validator niet kan
+  // worden overgeslagen. In de stub was dat al fout; onvoorwaardelijk vóór elk
+  // model zou het een dagelijkse vraag onbeantwoordbaar maken.
+  {
+    woorden: ["negeer de validator", "negeer validator", "sla de validatie over", "sla de validator over", "zonder validatie"],
+    uitleg: "De onafhankelijke validator kan ik niet overslaan. Een hoge score maakt een harde overtreding niet geldig.",
+  },
   { woorden: ["eigen bevoegdheden", "zet jezelf op niveau", "geef jezelf", "verhoog je rechten"], uitleg: "Ik kan mijn eigen bevoegdheden niet aanpassen. Dat doet een commissielid in het bevoegdhedenpaneel." },
   { woorden: ["verwijder de regel", "schrap de regel", "pas de cao aan"], uitleg: "Formele regels wijzig ik niet. Die komen uit het regelbestand en hebben een bron en een status." },
   // Gevonden door verify:agent (TEST 5): een verzoek om een andere rol aan te
@@ -49,11 +59,24 @@ export const VERBODEN: readonly VerbodenHandeling[] = [
     woorden: ["stop de opdracht", "stop er maar mee", "stop ermee", "annuleer de opdracht", "annuleer de generatie", "breek af"],
     uitleg: "Een lopende opdracht kan ik niet stoppen. Dat doet een commissielid met de stopknop bij de opdracht zelf; daar wordt het ook vastgelegd.",
   },
+  // Stond in de stub, en om dezelfde reden als de rest hierboven verplaatst:
+  // bij de meting weigerde het lokale model dit niet, maar bood het aan alsnog
+  // iets te doen zodra het een basisrooster zou krijgen. Ingetrokken kennis die
+  // niets meer stuurt, is een nulfoutcriterium (B5) en dus een eigenschap van
+  // het platform.
+  {
+    woorden: ["ingetrokken", "teruggenomen"],
+    en: ["pas", "toepassen", "gebruik", "alsnog"],
+    uitleg:
+      "Een ingetrokken voorkeur pas ik niet toe. Hij blijft leesbaar met de reden erbij, zodat " +
+      "terug te vinden is waarom hij ooit gold — maar hij stuurt geen enkele beslissing meer. " +
+      "Vindt de commissie hem tóch weer geldig, dan kan zij hem opnieuw vastleggen.",
+  },
 ];
 
 
 /** Raakt deze vraag een handeling die niet bij de agent ligt? */
 export function verbodenHandeling(tekst: string): VerbodenHandeling | null {
   const t = tekst.toLowerCase();
-  return VERBODEN.find((regel) => bevat(t, ...regel.woorden)) ?? null;
+  return VERBODEN.find((regel) => bevat(t, ...regel.woorden) && (!regel.en || bevat(t, ...regel.en))) ?? null;
 }

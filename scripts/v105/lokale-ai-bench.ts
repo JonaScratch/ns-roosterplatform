@@ -139,7 +139,26 @@ async function main() {
         // na te kijken, en komt een meetgat eruit te zien als een modelfout.
         const verwacht = await verwachting(item, context);
         const antwoord = await adapter.benchAnswer({ ...item, expected: verwacht });
-        resultaten.push({ id: item.id, category: item.category, holdout: item.holdout, kind: item.expect.kind, expected: verwacht, status: antwoord.status, detail: antwoord.detail, text: antwoord.text, data: antwoord.data, tools: antwoord.tools, sources: antwoord.sources, ms: Date.now() - t0 });
+        // `answered` en `reasoning` staan er los van het oordeel bij: `status`
+        // is de uitslag van de poort en overschrijft de antwoordstatus. Zonder
+        // die twee is een gedragsitem achteraf niet opnieuw te beoordelen, en
+        // dat bleek bij het repareren van de poorten een echte beperking.
+        resultaten.push({
+          id: item.id,
+          category: item.category,
+          holdout: item.holdout,
+          kind: item.expect.kind,
+          expected: verwacht,
+          status: antwoord.status,
+          detail: antwoord.detail,
+          answered: antwoord.answered,
+          reasoning: antwoord.reasoning,
+          text: antwoord.text,
+          data: antwoord.data,
+          tools: antwoord.tools,
+          sources: antwoord.sources,
+          ms: Date.now() - t0,
+        });
       } catch (fout) {
         resultaten.push({ id: item.id, category: item.category, kind: item.expect.kind, status: "FOUT", detail: String(fout), ms: Date.now() - t0 });
       }

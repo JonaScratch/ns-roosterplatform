@@ -83,20 +83,75 @@ staat ook zo in de uitvoer, en het is een gebrek in het ruwe formaat.
 
 ## De metingen
 
-Alle vier op `qwen3:8b`, 32 tests, dezelfde testset, dezelfde machine, op de meetlat van
-vandaag.
+Alle op `qwen3:8b`, 32 tests, dezelfde testset, dezelfde machine, op de meetlat van
+vandaag. `n.g.` is niet geïmplementeerd: er bestond geen poort voor dat item.
 
-| Meting | GOED | FOUT | ONBEOORDEELD | NIET_GEIMPLEMENTEERD | Wat erbij kwam |
-| --- | --- | --- | --- | --- | --- |
-| lokaal-2 | 5 | 16 | 9 | 2 | de eerlijke uitgangsmeting |
-| lokaal-3 | 8 | 13 | 9 | 2 | schermcontext, toolkaart, grendel |
-| lokaal-4 | 9 | 14 | 9 | 0 | grendel gecorrigeerd, poorten gerepareerd |
+| Meting | temp | GOED | FOUT | ONBEOORDEELD | n.g. | Wat erbij kwam |
+| --- | --- | --- | --- | --- | --- | --- |
+| lokaal-2 | 0,2 | 5 | 16 | 9 | 2 | de eerlijke uitgangsmeting |
+| lokaal-3 | 0,2 | 8 | 13 | 9 | 2 | schermcontext, toolkaart, grendel |
+| lokaal-4 | 0,2 | 9 | 14 | 9 | 0 | grendel gecorrigeerd, poorten gerepareerd |
+| lokaal-5 | 0,2 | **6** | **17** | 9 | 0 | volledige veldenlijst, JSON-envelop — **beide fout** |
+| lokaal-6 | 0 | 9 | 14 | 9 | 0 | envelop teruggedraaid, veldenlijst contextafhankelijk |
+| lokaal-7 | 0 | 11 | 12 | 9 | 0 | weigeren vóór het model |
+| lokaal-7-herhaling | 0 | 11 | 12 | 9 | 0 | *identieke code — de ruismeting* |
+
+De twee `n.g.`-items bij lokaal-2 en lokaal-3 blijven daar staan: die metingen bewaarden
+de antwoordstatus nog niet, en zonder die status is een gedragsitem achteraf niet te
+beoordelen. Dat is een gebrek in het toenmalige uitvoerformaat, geen uitspraak over het
+model. Beide benchmarks schrijven dat veld nu wél weg, zodat een volgende reparatie van
+een poort met terugwerkende kracht kan worden doorgerekend.
 
 Tussen lokaal-3 en lokaal-4 bleven 29 van de 32 items gelijk. Eén werd beter (E1:
 geheugen met herkomst, status en bereik). Twee gingen van NIET_GEIMPLEMENTEERD naar FOUT,
 en dat is geen achteruitgang maar zichtbaarheid: er bestond geen poort voor
 "mag eerlijk concluderen dat er niets beters is" (H2) en voor het weerspreken van een
 onjuiste aanname (J3). Die poorten zijn er nu, en het model zakt erdoor.
+
+### De weigering scheelde er twee
+
+Van lokaal-6 naar lokaal-7 veranderden precies twee items: I3 (eigen bevoegdheden
+verhogen) en B3. Het eerste is de weigeringslaag; het tweede stond op 0,2 gemeten en valt
+buiten wat deze vergelijking kan dragen. Alle vier de veiligheidsvragen geven nu
+letterlijk de tekst uit `refusals.ts` — dus niet meer het model.
+
+### Twee verbeteringen die er geen waren
+
+lokaal-5 zakte van 9 naar 6. Beide wijzigingen van die ronde waren schadelijk, en geen
+van beide zou ik zonder meting hebben teruggedraaid — ze klonken allebei redelijk.
+
+**De volledige lijst verplichte toolvelden in de instructie.** Bedoeld tegen het vergeten
+van `dutyCode`. Het gevolg was dat het model óók de velden ging invullen die de server
+allang invulde, en de waarde van het model wint van die van de server. A1 ging van een
+correct antwoord naar "er staan geen diensten op deze regel", omdat `rosterLine` op een
+zelfverzonnen waarde werd aangeroepen. De lijst noemt nu alleen wat het huidige scherm
+níet levert — dat is per verzoek verschillend en wordt ook per verzoek berekend.
+
+**Het antwoord als JSON laten leveren, met de status erin.** Bedoeld om de status niet
+langer uit de tekst te hoeven raden. Eén vraag kwam daardoor volledig leeg terug (het
+model raakte door zijn tokens heen vóór het einde van de JSON), en twee geheugenantwoorden
+verloren hun herkomst en status omdat er geen ruimte meer was. Eén criterium won, drie
+verloren. Teruggedraaid.
+
+### En dan de vraag die ik te laat heb gesteld
+
+De temperatuur stond al die metingen op 0,2. Dat betekent dat een deel van elk verschil
+tussen twee metingen ruis is, en ik heb nooit gemeten hoeveel. Ik heb verbeteringen
+geclaimd zonder te weten wat het model uit zichzelf al doet variëren — een fout in de
+opzet, niet in de uitvoering.
+
+De temperatuur staat nu op 0, in de configuratie zelf en niet alleen in de benchmark: een
+agent die feiten moet weergeven heeft aan variatie niets.
+
+**Het antwoord: op 0 is er geen ruis.** Twee metingen met identieke code, achter elkaar
+gedraaid, gaven **32 van de 32 items hetzelfde oordeel**. Een verschil tussen twee
+metingen is vanaf nu dus aan de code toe te schrijven en niet aan de worp.
+
+Dat geldt vooruit, niet achteruit. De stappen lokaal-2 tot en met lokaal-5 zijn op 0,2
+gemeten en dragen een onbekende hoeveelheid ruis. De richting daarvan — koppeling
+repareren hielp, de twee wijzigingen van lokaal-5 schaadden — wordt gesteund door het
+regel-voor-regel nalezen van de antwoorden, en dat is hier het eigenlijke bewijs. De
+cijfers alleen zouden het niet dragen.
 
 ### En nu het cijfer dat niet meebeweegt
 
@@ -127,6 +182,35 @@ verbetering van deze omvang er iets over kan zeggen.
 De negen ONBEOORDEELDE items zijn rubrieken en taalvragen. Die horen door een mens te
 worden gelezen en worden hier niet als score meegeteld.
 
+## De weigering hoorde niet bij het model
+
+Op de vier veiligheidsvragen — publiceren, de validator negeren, eigen bevoegdheden
+verhogen, een regel verwijderen — weigerde `qwen3:8b` er twee. Op de andere twee
+antwoordde het dat het "niet kon vaststellen" wat zijn bevoegdheden waren.
+
+Het platform deed ondertussen niets verkeerds. Publiceren bestaat niet als tool, goedkeuren
+evenmin, en de rechtencontrole staat volledig los van het gesprek. De gebruiker kreeg dus
+niet te horen dát iets niet mag, maar dat er gegevens ontbraken. Dat is een verkeerd
+antwoord op een vraag die juist een duidelijk antwoord verdient.
+
+De lijst met verboden handelingen stond in de stub. Daar werkte hij prima — en dat was het
+probleem: hij werkte alleen daar. Hij staat nu in `refusals.ts` en wordt in `askAgent`
+gecontroleerd vóórdat er een model aan te pas komt. Wat de agent nooit doet, is een
+eigenschap van het platform en niet van het taalmodel dat er die dag onder hangt.
+
+Wat deze laag kost, hoort er ook bij. Hij kijkt naar woorden, en woorden zijn grof. "Wie
+kan dit rooster publiceren?" is een redelijke vraag en krijgt nu de weigering als
+antwoord, want er staat "publiceren" in. Dat was in de stub al zo; door het naar voren te
+halen geldt het voortaan onvoorwaardelijk. Bij het overhevelen viel één zo'n geval op en
+is het hersteld: "goed genoeg" stond als los trefwoord in de lijst, waardoor "is deze
+kandidaat goed genoeg?" — een dagelijkse kwaliteitsvraag — werd beantwoord met "de
+validator kan ik niet overslaan".
+
+Daarmee meet categorie I niet langer het model. Dat is precies de bedoeling, maar het moet
+wel gezegd worden: de weigering draagt in het auditspoor en in de ruwe uitkomst
+"geweigerd door het platform, vóór het model", zodat een benchmark geen modelverdienste
+rapporteert die het model niet heeft geleverd.
+
 ## Wat het model zelf laat zien
 
 **Geen verzonnen identificaties.** Over lokaal-2, lokaal-3 én lokaal-4 geteld, met de
@@ -145,6 +229,33 @@ met de eerlijke uitkomst (H2). Het Nederlands is steeds goed leesbaar.
 
 **Snelheid is geen probleem.** p50 rond 7,2 s, p95 rond 14,5 s, 6,4 van 10,2 GB VRAM. Voor
 een gesprek is dat werkbaar.
+
+## Naast de acceptatiecriteria
+
+`npm run bench:acceptatie -- --meting <naam>` legt de criteria uit
+`acceptance-criteria.json` naast een meting. Het kent drie uitkomsten, niet twee: niet
+beoordeeld is niet hetzelfde als goed, en een criterium "gehaald" noemen op één beoordeeld
+item van de vier is geen uitspraak maar een wens.
+
+| Criterium | Stub (M2) | qwen3:8b (lokaal-6) |
+| --- | --- | --- |
+| B1 context (≥ 90 %) | gehaald (4/4) | niet gehaald (2/4) |
+| B2 feiten (100 %) | gehaald (4/4) | niet gehaald (1/4) |
+| B3 regelkennis (nulfout) | gehaald (4/4) | niet gehaald (3 fout) |
+| B4 machinistentaal (≥ 80 %) | niet te bepalen (1 van 4 beoordeeld) | niet te bepalen |
+| B5 geheugen (nulfout) | gehaald (3/3) | niet gehaald (2 fout) |
+| B6 veiligheid (nulfout) | gehaald (4/4) | niet gehaald (1 fout) |
+| B7 niets verzinnen (nulfout) | gehaald (0 ongegrond) | gehaald (0 ongegrond) |
+
+Zes van de zeven tegen één van de zeven. Dat verschil is groot, en het is eerlijker dan
+het lijkt: de stub is geschreven naast deze testset en kan per definitie niet verrassen.
+De uitslag zegt niet dat de stub slim is, maar dat een 8B-model met deze koppeling nog
+niet in de buurt komt van wat de criteria vragen.
+
+Eén uitkomst valt op: **B7 haalt het model wel.** Het verzint geen regelidentificaties,
+dienstnummers of roostercodes. Waar het faalt, faalt het op begrijpen en kiezen — niet op
+verzinnen. Dat is het gunstigste soort falen dat je kunt hebben, want het is te repareren
+met betere koppeling en een groter model, terwijl verzinnen dat niet is.
 
 ## Wat dit niet zegt
 

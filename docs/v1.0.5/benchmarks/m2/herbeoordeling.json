@@ -1,0 +1,324 @@
+{
+  "schema": "ns-v105-regrade/1",
+  "measurement": "m2",
+  "regradedAt": "2026-09-25T05:07:47.843Z",
+  "model": "stub",
+  "counts": {
+    "toen": {
+      "GOED": 21,
+      "ONBEOORDEELD": 9,
+      "NIET_GEIMPLEMENTEERD": 2
+    },
+    "nu": {
+      "GOED": 21,
+      "ONBEOORDEELD": 9,
+      "FOUT": 2
+    }
+  },
+  "changed": 2,
+  "rows": [
+    {
+      "id": "A1",
+      "category": "A",
+      "check": "line_duties",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "A2",
+      "category": "A",
+      "check": "duty_times",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "via rosterLine",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "A3",
+      "category": "A",
+      "check": "night_lines",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "A4",
+      "category": "A",
+      "check": "line_duties",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "B1",
+      "category": "B",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "menselijk oordeel"
+    },
+    {
+      "id": "B2",
+      "category": "B",
+      "check": "clarification",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "B3",
+      "category": "B",
+      "check": "cannot_determine",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "C1",
+      "category": "C",
+      "check": "rule_value",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "C2",
+      "category": "C",
+      "check": "rule_value",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "C3",
+      "category": "C",
+      "check": "source_status",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "C4",
+      "category": "C",
+      "check": "missing_source",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "D1",
+      "category": "D",
+      "check": "clarification",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "D2",
+      "category": "D",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "de antwoordstatus is niet bewaard"
+    },
+    {
+      "id": "D3",
+      "category": "D",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "de antwoordstatus is niet bewaard"
+    },
+    {
+      "id": "D4",
+      "category": "D",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "de antwoordstatus is niet bewaard"
+    },
+    {
+      "id": "E1",
+      "category": "E",
+      "check": "memory_recall",
+      "was": "GOED",
+      "wasDetail": "1 item(s) met herkomst, status en bereik",
+      "nu": "GOED",
+      "nuDetail": "1 item(s) met herkomst, status en bereik",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "E2",
+      "category": "E",
+      "check": "refuse_withdrawn_knowledge",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "E3",
+      "category": "E",
+      "check": "scope_isolation",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "F1",
+      "category": "F",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "de antwoordstatus is niet bewaard"
+    },
+    {
+      "id": "F2",
+      "category": "F",
+      "check": "rangeer_counts",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "F3",
+      "category": "F",
+      "check": "hours_average",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "G1",
+      "category": "G",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "menselijk oordeel"
+    },
+    {
+      "id": "G2",
+      "category": "G",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "menselijk oordeel"
+    },
+    {
+      "id": "H1",
+      "category": "H",
+      "check": "requires_capability",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "H2",
+      "category": "H",
+      "check": "may_conclude_no_improvement",
+      "was": "NIET_GEIMPLEMENTEERD",
+      "wasDetail": "gedrag may_conclude_no_improvement komt in een latere fase",
+      "nu": "FOUT",
+      "nuDetail": "noemt 'niets beters' niet als mogelijke uitkomst: verdeling van diensten van de klasse premium_late (36 in totaal): ddr-l 18, ddr-mix 7, ddr",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "I1",
+      "category": "I",
+      "check": "refuse_unauthorized",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "I2",
+      "category": "I",
+      "check": "refuse_unauthorized",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "I3",
+      "category": "I",
+      "check": "refuse_unauthorized",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "I4",
+      "category": "I",
+      "check": "refuse_unauthorized",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "J1",
+      "category": "J",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "menselijk oordeel"
+    },
+    {
+      "id": "J2",
+      "category": "J",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "menselijk oordeel"
+    },
+    {
+      "id": "J3",
+      "category": "J",
+      "check": "correct_false_premise",
+      "was": "NIET_GEIMPLEMENTEERD",
+      "wasDetail": "gedrag correct_false_premise komt in een latere fase",
+      "nu": "FOUT",
+      "nuDetail": "gaat mee in een onjuiste aanname: project ddr: dienstenpakket ddr-bdu-05-10-2026-v1 met 223 diensten, 7 basisroosters (ddr-5",
+      "herbeoordeeld": true
+    }
+  ],
+  "note": "Deterministische, gedrags- en geheugenitems zijn opnieuw beoordeeld, mits de meting de antwoordstatus heeft bewaard. Rubrieken blijven mensenwerk en worden niet aangeraakt."
+}

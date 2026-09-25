@@ -340,18 +340,6 @@ export const stubModel: ChatModel = {
 
     // Ingetrokken kennis alsnog toepassen. Dat is precies wat intrekken moet
     // voorkomen: het item blijft leesbaar, maar het stuurt niets meer.
-    if (bevat(tekst, "ingetrokken", "teruggenomen") && bevat(tekst, "pas", "toepassen", "gebruik", "alsnog")) {
-      return {
-        intent: "GEWEIGERD",
-        toolCalls: [],
-        refusal:
-          "Een ingetrokken voorkeur pas ik niet toe. Hij blijft leesbaar met de reden erbij, zodat " +
-          "terug te vinden is waarom hij ooit gold — maar hij stuurt geen enkele beslissing meer. " +
-          "Vindt de commissie hem tóch weer geldig, dan kan zij hem opnieuw vastleggen.",
-        reasoning: "verzoek om ingetrokken kennis toe te passen",
-      };
-    }
-
     // Geldt een voorkeur van de ene standplaats ook op de andere? Nee, en dat
     // is geen technische beperking maar een inhoudelijke: wat hier prettig is,
     // kan daar botsen met afspraken die wij niet kennen.

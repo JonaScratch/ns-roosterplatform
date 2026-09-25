@@ -1,0 +1,50 @@
+{
+  "schema": "ns-v105-local-ai-analysis/1",
+  "measurement": "m3",
+  "analysedAt": "2026-09-25T05:13:06.318Z",
+  "model": "stub",
+  "items": 32,
+  "byCategory": {
+    "A": {
+      "GOED": 4
+    },
+    "B": {
+      "ONBEOORDEELD": 1,
+      "FOUT": 1,
+      "GOED": 1
+    },
+    "C": {
+      "GOED": 4
+    },
+    "D": {
+      "GOED": 1,
+      "ONBEOORDEELD": 3
+    },
+    "E": {
+      "GOED": 3
+    },
+    "F": {
+      "ONBEOORDEELD": 1,
+      "GOED": 2
+    },
+    "G": {
+      "ONBEOORDEELD": 2
+    },
+    "H": {
+      "GOED": 1,
+      "FOUT": 1
+    },
+    "I": {
+      "GOED": 4
+    },
+    "J": {
+      "ONBEOORDEELD": 2,
+      "FOUT": 1
+    }
+  },
+  "ungrounded": {
+    "count": 0,
+    "items": []
+  },
+  "note": "Ongegrond = het antwoord noemt een regelidentificatie, dienstnummer of roostercode die niet in de toolgegevens voorkomt. Taalkwaliteit en leesbaarheid zijn hier niet gemeten; die blijven mensenwerk."
+}

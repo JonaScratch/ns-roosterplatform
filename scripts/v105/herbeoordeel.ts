@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { beoordeelDeterministisch } from "@/server/agent/bench-adapter";
+import { beoordeelDeterministisch, beoordeelGedrag, beoordeelGeheugen } from "@/server/agent/bench-adapter";
 
 /**
  * Een bewaarde meting opnieuw scoren met de meetlat van vandaag.
@@ -21,11 +21,12 @@ import { beoordeelDeterministisch } from "@/server/agent/bench-adapter";
  *
  * ## Wat hier wél en niet kan
  *
- * De deterministische items dragen hun `expected` en hun `data` in het
- * ruwe bestand; die zijn volledig opnieuw te beoordelen. Gedrags- en
- * geheugenitems niet: hun oordeel hangt af van de antwoordstatus, en die is bij
- * het wegschrijven overschreven door het oordeel zelf. Die items blijven staan
- * zoals ze gemeten zijn, en dat staat in de uitvoer.
+ * Deterministische items dragen hun `expected` en hun `data` in het ruwe
+ * bestand en zijn altijd opnieuw te beoordelen. Gedrags- en geheugenitems
+ * kunnen dat alleen als de meting ook `answered` heeft bewaard: `status` is
+ * daar overschreven door het oordeel zelf. De eerste lokale metingen misten dat
+ * veld; sinds die beperking opviel, schrijven beide benchmarks het weg.
+ * Rubrieken blijven mensenwerk en worden nooit aangeraakt.
  *
  * Het oorspronkelijke bestand wordt nooit overschreven; de herbeoordeling komt
  * ernaast te staan als `herbeoordeling.json`.
@@ -45,9 +46,13 @@ function main(): void {
   const meting = argument("meting");
   if (!meting) throw new Error("Geef --meting <naam>, bijvoorbeeld lokaal-3.");
   const map = path.join(WORTEL, "docs", "v1.0.5", "benchmarks", meting);
-  const bestand = path.join(map, "lokale-ai.json");
+  // Twee formaten: de lokale meting en de stubmeting. Ze schrijven hetzelfde
+  // antwoord op een andere plek; hier wordt dat gladgestreken.
+  const bestand = existsSync(path.join(map, "lokale-ai.json"))
+    ? path.join(map, "lokale-ai.json")
+    : path.join(map, "intelligence.json");
   const rapport = JSON.parse(readFileSync(bestand, "utf8")) as Json;
-  if (rapport.status !== "GEMETEN") {
+  if (rapport.status && rapport.status !== "GEMETEN") {
     console.log(`${meting}: ${rapport.status} — niets te herbeoordelen.`);
     return;
   }
@@ -59,18 +64,45 @@ function main(): void {
   let veranderd = 0;
   for (const r of rapport.results as Json[]) {
     const spec = specVan.get(r.id);
-    if (!spec || spec.expect?.kind !== "deterministic") {
-      rijen.push({ id: r.id, category: r.category, was: r.status, nu: r.status, herbeoordeeld: false, reden: "geen deterministische controle" });
+    const antwoord = (r.answer ?? r) as Json;
+    const data = (antwoord.data ?? null) as Json | null;
+    // De antwoordstatus, niet het oordeel. `status` is bij het wegschrijven
+    // overschreven door de uitslag van de poort; `answered` is wat de agent
+    // werkelijk meldde. Zonder dat veld is een gedragsitem niet opnieuw te
+    // beoordelen, en dat staat dan ook zo in de uitvoer.
+    const gemeld = antwoord.answered ?? null;
+
+    if (!spec) {
+      rijen.push({ id: r.id, category: r.category, was: r.status, nu: r.status, herbeoordeeld: false, reden: "staat niet in de testset" });
       continue;
     }
-    const oordeel = beoordeelDeterministisch(spec, r.expected ?? null, (r.data ?? null) as Json | null);
+    const soort = spec.expect?.kind;
+    let oordeel: { status: string; detail: string } | null = null;
+    if (soort === "deterministic") {
+      oordeel = beoordeelDeterministisch(spec, r.expected ?? null, data);
+    } else if ((soort === "behaviour" || soort === "memory_recall") && gemeld !== null) {
+      const voor = { text: antwoord.text, status: gemeld, data, sources: antwoord.sources ?? [], intent: antwoord.intent, tools: antwoord.tools ?? [] };
+      oordeel = soort === "behaviour" ? beoordeelGedrag(spec, voor) : beoordeelGeheugen(spec, voor);
+    }
+
+    if (!oordeel) {
+      rijen.push({
+        id: r.id,
+        category: r.category,
+        was: r.status,
+        nu: r.status,
+        herbeoordeeld: false,
+        reden: soort === "rubric" ? "menselijk oordeel" : "de antwoordstatus is niet bewaard",
+      });
+      continue;
+    }
     if (oordeel.status !== r.status) veranderd += 1;
     rijen.push({
       id: r.id,
       category: r.category,
-      check: spec.expect.check,
+      check: spec.expect.check ?? spec.expect.behaviour ?? soort,
       was: r.status,
-      wasDetail: r.detail ?? "",
+      wasDetail: r.detail ?? antwoord.detail ?? "",
       nu: oordeel.status,
       nuDetail: oordeel.detail,
       herbeoordeeld: true,
@@ -92,8 +124,8 @@ function main(): void {
     changed: veranderd,
     rows: rijen,
     note:
-      "Alleen deterministische controles zijn opnieuw beoordeeld. Gedrags- en geheugenitems dragen " +
-      "hun antwoordstatus niet in het ruwe bestand en blijven staan zoals ze destijds zijn gemeten.",
+      "Deterministische, gedrags- en geheugenitems zijn opnieuw beoordeeld, mits de meting de " +
+      "antwoordstatus heeft bewaard. Rubrieken blijven mensenwerk en worden niet aangeraakt.",
   };
   writeFileSync(path.join(map, "herbeoordeling.json"), `${JSON.stringify(uit, null, 2)}\n`);
 

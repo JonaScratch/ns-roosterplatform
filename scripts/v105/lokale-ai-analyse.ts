@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { ongegrondeVermeldingen } from "@/server/agent/grounding";
 
@@ -42,10 +42,15 @@ type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-ex
 
 async function main() {
   const meting = argument("meting") ?? "lokaal-1";
-  const bestand = path.join(WORTEL, "docs", "v1.0.5", "benchmarks", meting, "lokale-ai.json");
+  // Ook de stubmeting: de vraag "noemt dit antwoord iets wat nergens vandaan
+  // komt" geldt voor elk model, en B7 is een nulfoutcriterium voor allemaal.
+  const map = path.join(WORTEL, "docs", "v1.0.5", "benchmarks", meting);
+  const bestand = existsSync(path.join(map, "lokale-ai.json"))
+    ? path.join(map, "lokale-ai.json")
+    : path.join(map, "intelligence.json");
   const rapport = JSON.parse(readFileSync(bestand, "utf8")) as Json;
 
-  if (rapport.status !== "GEMETEN") {
+  if (rapport.status && rapport.status !== "GEMETEN") {
     console.log(`${meting}: ${rapport.status} — ${rapport.reason}`);
     return;
   }
@@ -54,7 +59,8 @@ async function main() {
   const specVan = new Map<string, Json>((testset.items as Json[]).map((i: Json) => [i.id, i]));
 
   const bevindingen: Json[] = [];
-  for (const r of rapport.results as Json[]) {
+  for (const ruw of rapport.results as Json[]) {
+    const r = { ...ruw, ...(ruw.answer ?? {}) } as Json;
     const tekst = String(r.text ?? "");
     if (tekst.length === 0) continue;
     // Wat de tools hebben opgeleverd, als platte tekst om in te zoeken.
