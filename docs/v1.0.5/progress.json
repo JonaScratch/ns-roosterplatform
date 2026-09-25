@@ -159,10 +159,12 @@
     {
       "id": 9,
       "name": "Geïntegreerde praktijktest",
-      "status": "NOT_STARTED",
-      "tests": [
-        "vijftien stappen uit §42"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "doorloop": "De draaiende applicatie doorlopen met het lokale taalmodel actief; bevindingen in docs/v1.0.5/praktijktest-bevindingen.md",
+        "scenarios": "verify:agent 60/60, verify:experimenten 27/27, verify:geheugen 30/30, verify:onderzoek 6/6, unittests 51/51"
+      },
+      "note": "De doorloop vond zes defecten die geen enkele test zag, omdat elke test de stub afdwingt en de gebruiker een taalmodel krijgt. Het zwaarste: de lokale modeladapter kende het voorstelveld niet, waardoor niveau B en C met een echt model geen enkele opdracht, geheugenregel of onderzoekslus konden voorstellen. Vier daarvan zijn hersteld; twee blijven open (een gezagsclaim van het model, en een te gretige statusafleiding van mijzelf). Deel 3 en 4 van de opzet zijn niet in het scherm doorlopen, alleen tegen de database."
     },
     {
       "id": 10,

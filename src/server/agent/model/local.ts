@@ -1,4 +1,7 @@
 import "server-only";
+import { REBUILD_GOAL_LABELS } from "@/server/optimizer/objective-weights";
+import { STRATEGIE_VOOR_DOEL, doelenLijst, isDoel, strategieLabel } from "../doelen";
+import { beschrijfVoorstel } from "../voorstel-tekst";
 import { DATA_SLEUTEL } from "./types";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
@@ -50,7 +53,12 @@ export function localConfigFromEnv(): LocalModelConfig | null {
     // meten: twee metingen van dezelfde code verschilden op zeven van de
     // 32 items. Dan meet je de dobbelsteen en niet de verbetering.
     temperature: Number(process.env.NS_LOCAL_LLM_TEMPERATURE ?? 0),
-    maxTokens: Number(process.env.NS_LOCAL_LLM_MAX_TOKENS ?? 800),
+    // Ruim, en dat is geen luxe: qwen3 denkt hardop voordat het antwoordt, en
+    // dat denken telt mee. Op 800 liep het plan van een rekenverzoek halverwege
+    // de JSON leeg, en kwam er "het model leverde geen leesbaar plan" uit — wat
+    // eruitziet als een model dat de instructie niet snapt, terwijl het gewoon
+    // door zijn tokens heen was. Gevonden bij de doorloop van fase 9.
+    maxTokens: Number(process.env.NS_LOCAL_LLM_MAX_TOKENS ?? 2000),
   };
 }
 
@@ -161,6 +169,17 @@ function planInstructie(): string {
     ' "refusal":"leg uit waarom dit niet mag, anders weglaten",',
     ' "reasoning":"één zin over wat je gaat doen"}',
     "Gebruik alleen tools uit de lijst. Bij twijfel over de bedoeling: doorvragen in plaats van gokken.",
+    "",
+    // Zonder dit blok kan een taalmodel geen opdracht voorstellen, en dan is
+    // niveau B onbereikbaar zodra er een echt model onder hangt. Dat was zo tot
+    // de doorloop van fase 9 het aan het licht bracht: elke test draaide op de
+    // stub, en de stub kon het wél.
+    "Vraagt iemand om te rékenen — laten uitrekenen, een nieuwe kandidaat, zoeken naar een betere verdeling — dan is dat geen toolvraag maar een voorstel. Zet er dan dit bij, naast of in plaats van toolCalls:",
+    ' "proposal":{"kind":"GENERATE|REBUILD|RESEARCH","goals":["DOELCODE"],"searchMode":"FAST|NORMAL|DEEP|EXTENSIVE","note":"één zin over wat je gaat doen"}',
+    `Toegestane doelcodes: ${doelenLijst()}.`,
+    "REBUILD is een bestaande kandidaat verbeteren, GENERATE een nieuwe reeks, RESEARCH meerdere rondes achter elkaar.",
+    "Noem alleen doelen uit die lijst. Past het gevraagde doel er niet bij, laat proposal dan weg en vraag door: de zoekmachine kan er niet op sturen.",
+    "Je voert niets uit. Een mens bevestigt het voorstel, en de server controleert het daarna opnieuw tegen de bevoegdheden.",
   ].join("\n");
 }
 
@@ -192,15 +211,57 @@ async function chat(config: LocalModelConfig, berichten: readonly ChatBericht[])
  */
 export function jsonUit(tekst: string): Record<string, unknown> | null {
   const zonderFence = tekst.replace(/```(?:json)?/gi, "").trim();
-  const begin = zonderFence.indexOf("{");
-  const eind = zonderFence.lastIndexOf("}");
-  if (begin < 0 || eind <= begin) return null;
-  try {
-    const gelezen = JSON.parse(zonderFence.slice(begin, eind + 1)) as unknown;
-    return typeof gelezen === "object" && gelezen !== null ? (gelezen as Record<string, unknown>) : null;
-  } catch {
-    return null;
+
+  // Alle objecten op het buitenste niveau, elk op zichzelf gelezen.
+  //
+  // Gevonden bij de doorloop van fase 9: qwen3 leverde het plan in twee
+  // objecten achter elkaar — het intentie-object en, na een komma, een object
+  // met alleen `proposal`. Allebei geldig JSON. De oude lezing pakte alles van
+  // de eerste accolade tot de laatste en probeerde dat als één object te
+  // lezen; dat faalde, en de agent meldde "het model leverde geen leesbaar
+  // plan". Het model had zich keurig uitgedrukt, ik las het verkeerd.
+  const stukken: Record<string, unknown>[] = [];
+  let diepte = 0;
+  let begin = -1;
+  let inTekst = false;
+  let ontsnapt = false;
+  for (let i = 0; i < zonderFence.length; i += 1) {
+    const teken = zonderFence[i];
+    if (inTekst) {
+      if (ontsnapt) ontsnapt = false;
+      else if (teken === "\\") ontsnapt = true;
+      else if (teken === '"') inTekst = false;
+      continue;
+    }
+    if (teken === '"') inTekst = true;
+    else if (teken === "{") {
+      if (diepte === 0) begin = i;
+      diepte += 1;
+    } else if (teken === "}") {
+      diepte -= 1;
+      if (diepte === 0 && begin >= 0) {
+        try {
+          const gelezen = JSON.parse(zonderFence.slice(begin, i + 1)) as unknown;
+          if (typeof gelezen === "object" && gelezen !== null) stukken.push(gelezen as Record<string, unknown>);
+        } catch {
+          // Een stuk dat niet te lezen is, slaan we over; de rest kan nog kloppen.
+        }
+        begin = -1;
+      }
+    }
   }
+
+  if (stukken.length === 0) return null;
+  // Samenvoegen, waarbij een later stuk een leeg veld uit een eerder stuk niet
+  // overschrijft: het tweede object vulde juist aan wat in het eerste ontbrak.
+  const uit: Record<string, unknown> = {};
+  for (const stuk of stukken) {
+    for (const [sleutel, waarde] of Object.entries(stuk)) {
+      if (waarde === null || waarde === undefined || waarde === "") continue;
+      if (uit[sleutel] === undefined) uit[sleutel] = waarde;
+    }
+  }
+  return uit;
 }
 
 /**
@@ -225,6 +286,85 @@ export function zegtHetNietTeWeten(tekst: string): boolean {
   ].some((zin) => t.includes(zin));
 }
 
+/**
+ * Een voorstel van het model omzetten naar een voorstel dat de server kent.
+ *
+ * Het model mag zeggen wát iemand wil: welk soort opdracht, welke doelen, hoe
+ * lang. Het mag niet zeggen wélke strategie, welk roosterjaar of welke
+ * kandidaat — dat zijn gegevens van het platform, en een model dat ze invult,
+ * vult ze vroeg of laat verkeerd in. Alles wat hier niet herkend wordt, valt
+ * weg; blijft er geen doel over, dan is er geen voorstel.
+ *
+ * Wat hier doorkomt is nog steeds maar een voorstel. `startProposedJob`
+ * controleert het daarna opnieuw tegen de toekenning: de bevoegdheid, de
+ * toegestane strategieën, het rekenbudget en de beschermde roosters.
+ */
+/**
+ * Een voorstel dat het model in woorden gaf in plaats van in velden.
+ *
+ * Gevonden bij de doorloop van fase 9. Op "laat uitrekenen of de
+ * rangeerdiensten eerlijker verdeeld kunnen worden" zette qwen3:8b de intentie
+ * goed (OPTIMALISATIEVERZOEK) en schreef het in zijn toelichting letterlijk
+ * "wat onder de doelcode SHUNTING_FAIRNESS valt" — maar het veld `proposal`
+ * bleef leeg. Dan is er een voorstel bedacht en niet opgeschreven, en de
+ * gebruiker krijgt niets.
+ *
+ * Dit is een toegift aan kleine modellen, en bewust een smalle: het doel moet
+ * er letterlijk staan als geldige code, en de intentie moet al op een
+ * rekenverzoek staan. Er wordt niets geraden — wat het model niet noemt, komt
+ * er ook niet in.
+ */
+function uitDeToelichting(plan: Record<string, unknown>): Record<string, unknown> | undefined {
+  if (String(plan.intent ?? "").toUpperCase() !== "OPTIMALISATIEVERZOEK") return undefined;
+  const tekst = [plan.reasoning, plan.clarification, plan.cannotDetermine]
+    .filter((x): x is string => typeof x === "string")
+    .join(" ");
+  const doelen = Object.keys(REBUILD_GOAL_LABELS).filter((code) => tekst.includes(code));
+  if (doelen.length === 0) return undefined;
+  return { kind: "GENERATE", goals: doelen, searchMode: "NORMAL", note: typeof plan.reasoning === "string" ? plan.reasoning : "" };
+}
+export function voorstelUit(ruw: unknown, request: PlanRequest): Record<string, unknown> | undefined {
+  if (!ruw || typeof ruw !== "object") return undefined;
+  const v = ruw as Record<string, unknown>;
+
+  const soort = String(v.kind ?? "").toUpperCase();
+  if (soort !== "GENERATE" && soort !== "REBUILD" && soort !== "RESEARCH") return undefined;
+
+  const doelen = [...new Set((Array.isArray(v.goals) ? v.goals : []).filter(isDoel))];
+  if (doelen.length === 0) return undefined;
+
+  const modus = String(v.searchMode ?? "").toUpperCase();
+  const searchMode = modus === "FAST" || modus === "NORMAL" || modus === "DEEP" || modus === "EXTENSIVE" ? modus : "NORMAL";
+
+  const strategie = STRATEGIE_VOOR_DOEL[doelen[0]];
+  const opKandidaat = request.context.source === "candidate" && Boolean(request.context.candidateId);
+
+  // Twee correcties op wat het model voorstelt, allebei om te voorkomen dat er
+  // iets wordt aangeboden dat daarna wordt geweigerd:
+  //
+  //   1. Een herbouw zonder kandidaat bestaat niet; dan is het een nieuwe reeks.
+  //   2. Een onderzoekslus is niveau C. Stelt het model er een voor terwijl die
+  //      bevoegdheid uitstaat, dan zou de gebruiker pas ná het bevestigen te
+  //      horen krijgen dat het niet mag. De stub doet dit al zo; bij de doorloop
+  //      stelde het lokale model een RESEARCH voor op niveau B.
+  const magRondes = request.capabilities.includes("agent:autonomous");
+  const gevraagd = soort === "REBUILD" && !opKandidaat ? "GENERATE" : soort;
+  const kind = gevraagd === "RESEARCH" && !magRondes ? (opKandidaat ? "REBUILD" : "GENERATE") : gevraagd;
+
+  return {
+    kind,
+    strategy: strategie,
+    strategyLabel: strategieLabel(strategie),
+    // Het roosterjaar komt van het platform en niet uit een zin.
+    rosterYear: new Date().getFullYear() + 1,
+    searchMode,
+    goals: doelen,
+    parentCandidateId: kind === "REBUILD" ? (request.context.candidateId ?? null) : null,
+    note: typeof v.note === "string" && v.note.trim().length > 1 ? v.note.trim().slice(0, 400) : `gericht op ${doelen.join(", ")}`,
+    locationCode: request.context.locationCode,
+  };
+}
+
 export function localModel(config: LocalModelConfig): ChatModel {
   return {
     name: `lokaal:${config.model}`,
@@ -236,6 +376,13 @@ export function localModel(config: LocalModelConfig): ChatModel {
         ...request.history.map((h) => ({ role: h.role === "USER" ? ("user" as const) : ("assistant" as const), content: h.text })),
         { role: "user", content: `${request.text}\n\n${planInstructie()}` },
       ]);
+
+      // Met NS_LOCAL_LLM_DEBUG=1 komt het ruwe antwoord in de serverlog. Zonder
+      // dat is "het model leverde geen leesbaar plan" een doodlopend spoor: je
+      // ziet dát het misging en nooit waaróm.
+      if (process.env.NS_LOCAL_LLM_DEBUG === "1") {
+        console.log("[lokaal model] ruw plan:", antwoord.slice(0, 1500));
+      }
 
       const plan = jsonUit(antwoord);
       if (!plan) {
@@ -258,6 +405,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
         toolCalls: calls
           .filter((c) => typeof c.tool === "string" && toegestaan.has(c.tool))
           .map((c) => ({ tool: String(c.tool), input: (c.input ?? {}) as Record<string, unknown> })),
+        proposal: voorstelUit(plan.proposal ?? uitDeToelichting(plan), request),
         clarification: typeof plan.clarification === "string" ? plan.clarification : undefined,
         cannotDetermine: typeof plan.cannotDetermine === "string" ? plan.cannotDetermine : undefined,
         refusal: typeof plan.refusal === "string" ? plan.refusal : undefined,
@@ -270,6 +418,20 @@ export function localModel(config: LocalModelConfig): ChatModel {
         return { text: request.plan.refusal, data: null, sources: [], status: "GEWEIGERD" };
       }
       const bronnen = [...new Set(request.results.flatMap((r) => r.sources))];
+
+      // Een voorstel is geen tekst die het model nog moet schrijven: het staat
+      // al vast in het plan, en het scherm hangt er een bevestigingsknop aan.
+      // Zonder deze tak plande het model netjes een opdracht die daarna in de
+      // antwoordstap werd weggegooid — en dan is niveau B onbereikbaar zodra er
+      // een echt model onder hangt.
+      if (request.plan.proposal) {
+        return {
+          text: beschrijfVoorstel(request.plan.proposal),
+          data: { proposal: request.plan.proposal },
+          sources: bronnen,
+          status: "VOORSTEL",
+        };
+      }
       const geweigerd = request.results.find((r) => !r.ok && r.note === "geen recht");
       if (geweigerd) {
         return {

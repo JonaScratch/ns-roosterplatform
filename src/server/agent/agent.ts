@@ -255,13 +255,47 @@ export async function askAgent(input: {
   // dat keurig "DDR-L regel 4" noemde werd tegengehouden omdat dutyInstance de
   // roostercode niet teruggeeft. De kiezer wéét welk rooster open staat; dat is
   // geen bewering van het model maar een gegeven van het scherm.
+  /**
+   * Een feitelijke bewering zonder één geraadpleegde bron gaat niet door.
+   *
+   * Gevonden bij de doorloop van fase 9. Op de vraag of de nachten van DDR-MIX
+   * beter geclusterd konden worden, riep het model géén tool aan en antwoordde
+   * het dat dit rooster geen nachten heeft — een feit uit een eerdere beurt, over
+   * een ánder rooster. Een minuut eerder had het over hetzelfde rooster nog twee
+   * nachtblokken van vijf opgesomd.
+   *
+   * De grondingscontrole hieronder ving dat niet: die kijkt of genoemde
+   * identificaties in de gegevens staan, en hier stond er niets in de gegevens om
+   * mee te vergelijken. Precies daarom is dit een aparte controle: een antwoord
+   * dat nergens op steunt, is erger dan een antwoord dat één ding te veel noemt.
+   *
+   * Een weigering, een wedervraag, een voorstel of een eerlijk "ik weet het niet"
+   * heeft geen bron nodig — die beweren ook niets over het rooster.
+   */
+  const gelukt = results.filter((r) => r.ok);
+  const zonderBron = ruwAntwoord.status === "BEANTWOORD" && gelukt.length === 0;
+  if (zonderBron) {
+    await stap("FOUT", "Antwoord tegengehouden: beantwoord zonder één geraadpleegde bron.", {
+      tegengehoudenTekst: ruwAntwoord.text,
+      intent: plan.intent,
+    });
+  }
+
   const los =
     ruwAntwoord.status === "GEWEIGERD"
       ? []
       : ongegrondeVermeldingen(ruwAntwoord.text, `${gegevensTekst(results)}
 ${Object.values(schermContext).join(" ")}`);
-  const antwoord: typeof ruwAntwoord =
-    los.length === 0
+  const antwoord: typeof ruwAntwoord = zonderBron
+    ? {
+        ...ruwAntwoord,
+        text:
+          "Ik hield mijn eigen antwoord tegen: ik heb hier geen enkele bron voor geraadpleegd. " +
+          "Wat ik dan opschrijf komt uit het gesprek of uit mijzelf, en niet uit de roostergegevens. " +
+          "Stel de vraag opnieuw, dan zoek ik het op.",
+        status: "NIET_VAST_TE_STELLEN",
+      }
+    : los.length === 0
       ? ruwAntwoord
       : { ...ruwAntwoord, text: grondingsMelding(los), status: "NIET_VAST_TE_STELLEN" };
   if (los.length > 0) {

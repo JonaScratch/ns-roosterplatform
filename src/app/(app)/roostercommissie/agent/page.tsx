@@ -246,9 +246,9 @@ export default async function Roosteragent({
           </WidgetCard>
 
           <Alert tone="neutral" title="Wat hier nog niet zit">
-            Het permanente activiteitenpaneel, het leergeheugen en het laten rekenen van kandidaten
-            komen in de volgende fasen. Wat op dit scherm staat, werkt; wat er niet staat, bestaat
-            nog niet.
+            De agent publiceert niet, keurt niets goed en wijzigt geen regels; dat blijft
+            mensenwerk. Experimenten met de zoekmachine lopen buiten dit scherm om. Wat hier staat,
+            werkt — en wat de agent niet mag, zegt hij hardop in plaats van het stil te laten.
           </Alert>
         </div>
       </div>

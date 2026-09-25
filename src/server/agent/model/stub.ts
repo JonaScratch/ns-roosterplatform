@@ -2,6 +2,8 @@ import "server-only";
 import { SCENARIO_PROFILES } from "@/server/optimizer/cpsat-optimizer";
 import { REBUILD_GOAL_LABELS, type RebuildGoal } from "@/server/optimizer/objective-weights";
 import { DAG_NAMEN } from "../context";
+import { STRATEGIE_VOOR_DOEL, strategieLabel } from "../doelen";
+import { beschrijfVoorstel } from "../voorstel-tekst";
 import { bevat, verbodenHandeling } from "../refusals";
 import { begripIn } from "../vocabulary";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
@@ -233,10 +235,10 @@ function rekenverzoek(request: PlanRequest, tekst: string, ctx: PlanRequest["con
     toolCalls: [],
     proposal: {
       kind: isKandidaat ? "REBUILD" : "GENERATE",
-      strategy: gevonden[0].strategie,
+      strategy: STRATEGIE_VOOR_DOEL[gevonden[0].goal as RebuildGoal],
       // Het label komt uit de motor zelf, zodat er in het scherm geen tweede
       // naam voor dezelfde strategie ontstaat.
-      strategyLabel: SCENARIO_PROFILES.find((p) => p.key === gevonden[0].strategie)?.label ?? gevonden[0].strategie,
+      strategyLabel: strategieLabel(STRATEGIE_VOOR_DOEL[gevonden[0].goal as RebuildGoal]),
       rosterYear: new Date().getFullYear() + 1,
       // Een voorstel begint kort. Wie meer rekentijd wil, kiest die zelf; de
       // toekenning bepaalt wat er maximaal mag.
@@ -572,43 +574,8 @@ export const stubModel: ChatModel = {
     // Een voorstel is nog geen opdracht: er staat wat het gaat doen, wat het
     // kost aan rekentijd, en wat het níet doet. Iemand drukt daarna op start.
     if (plan.proposal) {
-      const p = plan.proposal as { kind: string; strategyLabel: string; searchMode: string; goals: string[]; note: string };
-      // Wat de gebruiker vroeg en wat de commissie er als laag 2 bij heeft
-      // gezet, zijn twee verschillende dingen. Ze op één hoop gooien zou de
-      // strategie de eer geven van een doel dat ergens anders vandaan komt.
-      const laag2 = ((p as { layerTwoGoals?: { goal: string; label: string }[] }).layerTwoGoals ?? []).map((g) => g.label);
-      const laag2Codes = new Set(((p as { layerTwoGoals?: { goal: string }[] }).layerTwoGoals ?? []).map((g) => g.goal));
-      const doelen = p.goals.filter((g) => !laag2Codes.has(g)).map((g) => REBUILD_GOAL_LABELS[g as RebuildGoal] ?? g);
-      const minuten = { FAST: 2, NORMAL: 5, DEEP: 15, EXTENSIVE: 30 }[p.searchMode] ?? 5;
       return {
-        text:
-          (p.kind === "RESEARCH"
-            ? // Niveau C: geen losse opdracht maar een reeks rondes, met een
-              // budget en een conclusie. Dat verschil hoort in de zin te staan.
-              `Voorstel: ik ga hier zelfstandig aan rekenen, gericht op ${doelen.join(" en ")}. ` +
-              "Na elke ronde meet ik of het beter is geworden en beslis ik of een volgende ronde zin heeft. " +
-              "Ik stop vanzelf bij het rondebudget of zodra twee rondes niets opleveren, en zeg dan wat ik heb gevonden — " +
-              "ook als dat is dat er niets beters is."
-            : p.kind === "REBUILD"
-            ? `Voorstel: deze kandidaat herbouwen met de nadruk op ${doelen.join(" en ")}.`
-            : // Bij een nieuwe generatie stuurt de strategie, niet een los doel.
-              // Dat verschil hoort er te staan: anders belooft het voorstel een
-              // knop die er niet is.
-              `Voorstel: een nieuwe reeks kandidaten laten maken met strategie "${p.strategyLabel}"` +
-              (doelen.length > 0
-                ? `. Die strategie stuurt op ${doelen.join(" en ")}; bij een nieuwe generatie gaat dat via de strategie en niet via een apart doel.`
-                : ".")) +
-          (laag2.length > 0
-            ? ` Daarbij gelden de extra doelen die de commissie voor dit project heeft gezet: ${laag2.join(" en ")}.`
-            : "") +
-          ` Dat kost ongeveer ${minuten} minuten rekentijd. Er wordt niets vervangen en niets gepubliceerd:` +
-          " het resultaat komt als kandidaat naast de bestaande te staan, en de validator beoordeelt hem onafhankelijk." +
-          // Een voorstel dat alleen succes beschrijft, wekt een verwachting die
-          // de zoekmachine niet kan waarmaken. Bij doelen die elkaar tegenspreken
-          // is "niets beters" de eerlijke uitkomst, en die hoort vooraf genoemd
-          // te worden en niet pas als teleurstelling achteraf.
-          " Het kan ook zijn dat er niets beters uitkomt dan wat er nu ligt; dan is dat de uitkomst, en niet een mislukking." +
-          " Zal ik dat doen?",
+        text: beschrijfVoorstel(plan.proposal),
         data: { proposal: plan.proposal },
         sources: bronnen,
         status: "VOORSTEL",
