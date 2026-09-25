@@ -212,8 +212,15 @@ export async function askAgent(input: {
    * dit is de grendel. Een geweigerd antwoord wordt met rust gelaten: daar
    * staan geen feiten in die gegrond hoeven te zijn.
    */
+  // De schermcontext hoort bij de gegevens. Gevonden bij lokaal-3: een antwoord
+  // dat keurig "DDR-L regel 4" noemde werd tegengehouden omdat dutyInstance de
+  // roostercode niet teruggeeft. De kiezer wéét welk rooster open staat; dat is
+  // geen bewering van het model maar een gegeven van het scherm.
   const los =
-    ruwAntwoord.status === "GEWEIGERD" ? [] : ongegrondeVermeldingen(ruwAntwoord.text, gegevensTekst(results));
+    ruwAntwoord.status === "GEWEIGERD"
+      ? []
+      : ongegrondeVermeldingen(ruwAntwoord.text, `${gegevensTekst(results)}
+${Object.values(schermContext).join(" ")}`);
   const antwoord: typeof ruwAntwoord =
     los.length === 0
       ? ruwAntwoord

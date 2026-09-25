@@ -50,12 +50,24 @@ async function main() {
     return;
   }
 
+  const testset = JSON.parse(readFileSync(path.join(WORTEL, "docs", "v1.0.5", "intelligence-testset.json"), "utf8")) as Json;
+  const specVan = new Map<string, Json>((testset.items as Json[]).map((i: Json) => [i.id, i]));
+
   const bevindingen: Json[] = [];
   for (const r of rapport.results as Json[]) {
     const tekst = String(r.text ?? "");
     if (tekst.length === 0) continue;
     // Wat de tools hebben opgeleverd, als platte tekst om in te zoeken.
-    const gegevens = JSON.stringify(r.data ?? {}) + JSON.stringify(r.tools ?? []) + JSON.stringify(r.sources ?? []);
+    // Dezelfde korf als de grendel tijdens het draaien: toolresultaten én de
+    // context van het scherm. Zonder die tweede helft telt "DDR-L" als verzonnen
+    // terwijl de kiezer erop stond — dat was precies de valse melding die bij
+    // lokaal-3 zeven van de zeven bevindingen opleverde.
+    const context = specVan.get(r.id)?.context ?? {};
+    const gegevens =
+      JSON.stringify(r.data ?? {}) +
+      JSON.stringify(r.tools ?? []) +
+      JSON.stringify(r.sources ?? []) +
+      Object.values(context).join(" ");
     const los = ongegrondeVermeldingen(tekst, gegevens);
     if (los.length > 0) bevindingen.push({ id: r.id, category: r.category, status: r.status, ongegrond: los, text: tekst.slice(0, 220) });
   }

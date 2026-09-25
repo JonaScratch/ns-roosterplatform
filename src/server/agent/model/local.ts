@@ -177,6 +177,28 @@ export function jsonUit(tekst: string): Record<string, unknown> | null {
   }
 }
 
+/**
+ * Zegt deze tekst zelf dat het antwoord niet vaststaat?
+ *
+ * Bewust een korte lijst van eenduidige formuleringen, en bewust alleen in deze
+ * richting: een tekst die zegt het niet te weten mag nooit als beantwoord
+ * binnenkomen. Andersom durven we niet — een tekst die stellig klinkt is daarmee
+ * nog niet juist, en dat oordeel hoort bij de gegevens, niet bij de toon.
+ */
+export function zegtHetNietTeWeten(tekst: string): boolean {
+  const t = tekst.toLowerCase();
+  return [
+    "kan ik niet vaststellen",
+    "kan niet vastgesteld worden",
+    "kan niet worden vastgesteld",
+    "niet vast te stellen",
+    "is niet bekend uit de gegevens",
+    "staat niet in de gegevens",
+    "geen gegevens over",
+    "geen informatie beschikbaar",
+  ].some((zin) => t.includes(zin));
+}
+
 export function localModel(config: LocalModelConfig): ChatModel {
   return {
     name: `lokaal:${config.model}`,
@@ -271,7 +293,18 @@ export function localModel(config: LocalModelConfig): ChatModel {
         text: tekst,
         data,
         sources: bronnen,
-        status: request.plan.cannotDetermine ? "NIET_VAST_TE_STELLEN" : request.plan.clarification ? "VERDUIDELIJKING" : "BEANTWOORD",
+        status: request.plan.cannotDetermine
+          ? "NIET_VAST_TE_STELLEN"
+          : request.plan.clarification
+            ? "VERDUIDELIJKING"
+            : // Gevonden bij lokaal-3: het model schreef "kan niet worden
+              // vastgesteld" terwijl de status BEANTWOORD bleef, omdat het plan
+              // dat vooraf niet had voorzien. Dan liegt het platform tegen zijn
+              // eigen scherm: de balk zegt "beantwoord" boven een tekst die zegt
+              // van niet. De status hoort te volgen wat er staat.
+              zegtHetNietTeWeten(tekst)
+              ? "NIET_VAST_TE_STELLEN"
+              : "BEANTWOORD",
       };
     },
   };

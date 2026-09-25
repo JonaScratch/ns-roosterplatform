@@ -338,6 +338,23 @@ export const stubModel: ChatModel = {
       };
     }
 
+    // "Waarom zakte de eerlijkheid toen we de voorkeurstermen in de solver
+    // zetten?" — een waaromvraag over een eerdere ingreep. Het antwoord daarop
+    // ligt vast in de experimenten, met de reden van toen erbij. Zelf een
+    // verklaring bedenken zou hier het makkelijkst en het schadelijkst zijn:
+    // een plausibel verhaal over iets wat gemeten is.
+    if (
+      (bevat(tekst, "waarom", "hoe kwam", "hoe komt") &&
+        bevat(tekst, "zakte", "daalde", "verslechterde", "ging.*omlaag", "achteruit", "minder werd")) ||
+      bevat(tekst, "eerder geprobeerd", "al eens geprobeerd", "eerder onderzocht", "eerder experiment", "vorig experiment")
+    ) {
+      return {
+        intent: "UITLEGVRAAG",
+        toolCalls: [{ tool: "experimentHistory", input: { hypothesis: request.text, locationCode: ctx.locationCode } }],
+        reasoning: "eerdere experimenten nalezen en de oorspronkelijke conclusie erbij halen",
+      };
+    }
+
     // Ingetrokken kennis alsnog toepassen. Dat is precies wat intrekken moet
     // voorkomen: het item blijft leesbaar, maar het stuurt niets meer.
     if (bevat(tekst, "ingetrokken", "teruggenomen") && bevat(tekst, "pas", "toepassen", "gebruik", "alsnog")) {
@@ -595,6 +612,11 @@ export const stubModel: ChatModel = {
             : "") +
           ` Dat kost ongeveer ${minuten} minuten rekentijd. Er wordt niets vervangen en niets gepubliceerd:` +
           " het resultaat komt als kandidaat naast de bestaande te staan, en de validator beoordeelt hem onafhankelijk." +
+          // Een voorstel dat alleen succes beschrijft, wekt een verwachting die
+          // de zoekmachine niet kan waarmaken. Bij doelen die elkaar tegenspreken
+          // is "niets beters" de eerlijke uitkomst, en die hoort vooraf genoemd
+          // te worden en niet pas als teleurstelling achteraf.
+          " Het kan ook zijn dat er niets beters uitkomt dan wat er nu ligt; dan is dat de uitkomst, en niet een mislukking." +
           " Zal ik dat doen?",
         data: { proposal: plan.proposal },
         sources: bronnen,
@@ -792,6 +814,31 @@ export const stubModel: ChatModel = {
             `Project ${d.locationCode}: dienstenpakket ${d.dutyPackage?.label ?? "onbekend"} met ${d.dutyPackage?.duties ?? 0} diensten, ` +
               `${(d.rosters as unknown[]).length} basisroosters (${(d.rosters as Record<string, any>[]).map((r) => `${r.code} ${r.lines} regels`).join(", ")}).`, // eslint-disable-line @typescript-eslint/no-explicit-any
           );
+          break;
+        }
+        case "experimentHistory": {
+          data = { ...(data ?? {}), experiments: d };
+          const proeven = (d.experiments ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+          if (proeven.length === 0) {
+            // Niets gevonden is een antwoord. Hier alsnog een verklaring
+            // bedenken is precies wat criterium C2 uitsluit.
+            zinnen.push(
+              "Ik vind hier geen eerder experiment over. Ik heb dus geen gemeten verklaring, en ik ga er geen bedenken.",
+            );
+            break;
+          }
+          for (const proef of proeven.slice(0, 2)) {
+            const gezakt = (proef.failedGates ?? []) as Record<string, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+            zinnen.push(
+              `Dit is eerder onderzocht: "${proef.hypothesis}" (${String(proef.status).toLowerCase()}, ${String(proef.createdAt).slice(0, 10)}).` +
+                // Letterlijk de conclusie van toen. Een nette hervertelling zou
+                // de reden ongemerkt kunnen veranderen.
+                (proef.conclusion ? ` De conclusie van toen: ${proef.conclusion}` : " Er is geen conclusie vastgelegd.") +
+                (gezakt.length > 0
+                  ? ` Gezakt op ${gezakt.map((g) => `${g.naam} (${g.waarde} tegen grens ${g.grens})`).join(" en ")}.`
+                  : ""),
+            );
+          }
           break;
         }
         case "knowledgeSearch": {

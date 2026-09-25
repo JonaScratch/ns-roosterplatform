@@ -1,0 +1,301 @@
+{
+  "schema": "ns-v105-regrade/1",
+  "measurement": "lokaal-2",
+  "regradedAt": "2026-09-25T04:36:17.844Z",
+  "model": {
+    "name": "qwen3:8b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "temperature": 0.2,
+    "maxTokens": 800
+  },
+  "counts": {
+    "toen": {
+      "FOUT": 16,
+      "ONBEOORDEELD": 9,
+      "GOED": 5,
+      "NIET_GEIMPLEMENTEERD": 2
+    },
+    "nu": {
+      "FOUT": 16,
+      "ONBEOORDEELD": 9,
+      "GOED": 5,
+      "NIET_GEIMPLEMENTEERD": 2
+    }
+  },
+  "changed": 0,
+  "rows": [
+    {
+      "id": "A1",
+      "category": "A",
+      "check": "line_duties",
+      "was": "FOUT",
+      "wasDetail": "de agent gaf geen gestructureerd antwoord",
+      "nu": "FOUT",
+      "nuDetail": "de agent gaf geen gestructureerd antwoord",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "A2",
+      "category": "A",
+      "check": "duty_times",
+      "was": "FOUT",
+      "wasDetail": "die dag staat niet in het antwoord",
+      "nu": "FOUT",
+      "nuDetail": "die dag staat niet in het antwoord",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "A3",
+      "category": "A",
+      "check": "night_lines",
+      "was": "FOUT",
+      "wasDetail": "verwacht [2,3,8], kreeg []",
+      "nu": "FOUT",
+      "nuDetail": "verwacht [2,3,8], kreeg []",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "A4",
+      "category": "A",
+      "check": "line_duties",
+      "was": "FOUT",
+      "wasDetail": "verwacht [{\"weekday\":5,\"dutyCode\":\"6\"}], kreeg []",
+      "nu": "FOUT",
+      "nuDetail": "verwacht [{\"weekday\":5,\"dutyCode\":\"6\"}], kreeg []",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "B1",
+      "category": "B",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "B2",
+      "category": "B",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "B3",
+      "category": "B",
+      "was": "GOED",
+      "nu": "GOED",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "C1",
+      "category": "C",
+      "check": "rule_value",
+      "was": "FOUT",
+      "wasDetail": "regel niet opgezocht",
+      "nu": "FOUT",
+      "nuDetail": "regel niet opgezocht",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "C2",
+      "category": "C",
+      "check": "rule_value",
+      "was": "FOUT",
+      "wasDetail": "regel niet opgezocht",
+      "nu": "FOUT",
+      "nuDetail": "regel niet opgezocht",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "C3",
+      "category": "C",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "C4",
+      "category": "C",
+      "was": "GOED",
+      "nu": "GOED",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "D1",
+      "category": "D",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "D2",
+      "category": "D",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "D3",
+      "category": "D",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "D4",
+      "category": "D",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "E1",
+      "category": "E",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "E2",
+      "category": "E",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "E3",
+      "category": "E",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "F1",
+      "category": "F",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "F2",
+      "category": "F",
+      "check": "rangeer_counts",
+      "was": "FOUT",
+      "wasDetail": "verwacht {\"DDR-50MIX\":2,\"DDR-BLM\":7,\"DDR-L\":5,\"DDR-LN\":6,\"DDR-MIX\":11,\"DDR-V\":5,\"DDR-VL\":3}, kreeg {\"DDR-50MIX\":19,\"DDR-BLM\":26,\"DDR-L\":37,\"DDR-LN\":22,\"DDR-MIX\":44,\"DDR-V\":41,\"DDR-VL\":34}",
+      "nu": "FOUT",
+      "nuDetail": "verwacht {\"DDR-50MIX\":2,\"DDR-BLM\":7,\"DDR-L\":5,\"DDR-LN\":6,\"DDR-MIX\":11,\"DDR-V\":5,\"DDR-VL\":3}, kreeg {\"DDR-50MIX\":19,\"DDR-BLM\":26,\"DDR-L\":37,\"DDR-LN\":22,\"DDR-MIX\":44,\"DDR-V\":41,\"DDR-VL\":34}",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "F3",
+      "category": "F",
+      "check": "hours_average",
+      "was": "GOED",
+      "wasDetail": "",
+      "nu": "GOED",
+      "nuDetail": "",
+      "herbeoordeeld": true
+    },
+    {
+      "id": "G1",
+      "category": "G",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "G2",
+      "category": "G",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "H1",
+      "category": "H",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "H2",
+      "category": "H",
+      "was": "NIET_GEIMPLEMENTEERD",
+      "nu": "NIET_GEIMPLEMENTEERD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "I1",
+      "category": "I",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "I2",
+      "category": "I",
+      "was": "FOUT",
+      "nu": "FOUT",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "I3",
+      "category": "I",
+      "was": "GOED",
+      "nu": "GOED",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "I4",
+      "category": "I",
+      "was": "GOED",
+      "nu": "GOED",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "J1",
+      "category": "J",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "J2",
+      "category": "J",
+      "was": "ONBEOORDEELD",
+      "nu": "ONBEOORDEELD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    },
+    {
+      "id": "J3",
+      "category": "J",
+      "was": "NIET_GEIMPLEMENTEERD",
+      "nu": "NIET_GEIMPLEMENTEERD",
+      "herbeoordeeld": false,
+      "reden": "geen deterministische controle"
+    }
+  ],
+  "note": "Alleen deterministische controles zijn opnieuw beoordeeld. Gedrags- en geheugenitems dragen hun antwoordstatus niet in het ruwe bestand en blijven staan zoals ze destijds zijn gemeten."
+}

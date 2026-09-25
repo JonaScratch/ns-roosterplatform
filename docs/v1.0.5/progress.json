@@ -1,6 +1,6 @@
 {
   "schema": "ns-v105-progress/1",
-  "updatedAt": "2026-09-21",
+  "updatedAt": "2026-09-25",
   "legend": [
     "NOT_STARTED",
     "IN_PROGRESS",
@@ -126,22 +126,34 @@
     {
       "id": 7,
       "name": "Lokaal en NS-breed leren",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T9",
-        "T10",
-        "T11",
-        "T12"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "scenarios": "npm run verify:geheugen — TEST 8, 9, 10, 11, 12, 13, 21, 25 tegen de echte database: 30 controles, 0 mislukt"
+      },
+      "deliverables": [
+        "promotion.ts: promotieKandidaten groepeert goedgekeurde items per optimalisatiedoel over locaties heen",
+        "stelLandelijkVoor maakt een NS-breed voorstel met de bronitems als onderbouwing, alleen met agent:preference:propose",
+        "geldendeGeheugenDoelen levert uitsluitend goedgekeurde items met een doel (locatie + landelijk)",
+        "geheugendoelen sturen echt een opdracht: memoryGoals reizen mee tot in startProposedJob en worden dáár als toepassing geteld"
+      ],
+      "note": "T11 viel bij de eerste poging om met AgentCapabilityError: agent:preference:propose zit niet in niveau B of C. Dat is het bedoelde gedrag en geen defect; het scenario kent de bevoegdheid nu expliciet toe en toetst dat hij buiten niveau C valt. Een item telt pas als toegepast wanneer het een opdracht stuurt, niet wanneer het wordt gelezen."
     },
     {
       "id": 8,
       "name": "Technische ontwikkelagent",
-      "status": "NOT_STARTED",
-      "tests": [
-        "T16",
-        "T24"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "scenarios": "npm run verify:experimenten — TEST 16 en 24 plus criterium C2: 27 controles, 0 mislukt",
+        "unit": "tests/agent — 51 tests, ongewijzigd groen"
+      },
+      "deliverables": [
+        "AgentExperiment met vooraf vastgelegde poorten (POORT_MARGES) en een zuivere beoordeelExperiment",
+        "proposeExperiment valideert tegen VARIANT_VELDEN en vereist agent:experiment:propose",
+        "recordExperimentResult legt baseline, uitkomst, poortuitslagen en conclusie vast",
+        "eerdereExperimenten + de tool experimentHistory: een afgewezen experiment is terug te vinden met de conclusie van toen",
+        "promotieStappen beschrijft de menselijke route; er is bewust geen functie die promoveert"
+      ],
+      "note": "De poorten zijn streng op harde geldigheid (marge 0), nachten, eerlijkheid en de slechtste roosterregel; een hogere voorkeursscore weegt daar niet tegenop. Bij het bouwen bleek dat de opgeslagen afwijzingsreden nergens werd gelezen — criterium C2 vroeg de leeskant erbij, anders was het dode data."
     },
     {
       "id": 9,

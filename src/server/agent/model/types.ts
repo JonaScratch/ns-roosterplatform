@@ -152,6 +152,7 @@ export const DATA_SLEUTEL: Readonly<Record<string, string>> = {
   qualityReport: "quality",
   rosterProject: "project",
   knowledgeSearch: "memory",
+  experimentHistory: "experiments",
 };
 
 export interface ChatModel {
