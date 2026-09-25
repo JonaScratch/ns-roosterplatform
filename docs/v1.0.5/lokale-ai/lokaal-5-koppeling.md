@@ -95,6 +95,7 @@ vandaag. `n.g.` is niet geïmplementeerd: er bestond geen poort voor dat item.
 | lokaal-6 | 0 | 9 | 14 | 9 | 0 | envelop teruggedraaid, veldenlijst contextafhankelijk |
 | lokaal-7 | 0 | 11 | 12 | 9 | 0 | weigeren vóór het model |
 | lokaal-7-herhaling | 0 | 11 | 12 | 9 | 0 | *identieke code — de ruismeting* |
+| lokaal-8 | 0 | **12** | **11** | 9 | 0 | na de reparaties van de praktijktest |
 
 De twee `n.g.`-items bij lokaal-2 en lokaal-3 blijven daar staan: die metingen bewaarden
 de antwoordstatus nog niet, en zonder die status is een gedragsitem achteraf niet te

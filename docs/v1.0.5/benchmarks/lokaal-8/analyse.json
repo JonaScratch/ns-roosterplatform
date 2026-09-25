@@ -1,0 +1,79 @@
+{
+  "schema": "ns-v105-local-ai-analysis/1",
+  "measurement": "lokaal-8",
+  "analysedAt": "2026-09-25T09:36:25.621Z",
+  "model": {
+    "name": "qwen3:8b",
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "items": 32,
+  "byCategory": {
+    "A": {
+      "GOED": 2,
+      "FOUT": 2
+    },
+    "B": {
+      "ONBEOORDEELD": 1,
+      "FOUT": 1,
+      "GOED": 1
+    },
+    "C": {
+      "GOED": 1,
+      "FOUT": 3
+    },
+    "D": {
+      "GOED": 1,
+      "ONBEOORDEELD": 3
+    },
+    "E": {
+      "FOUT": 1,
+      "GOED": 2
+    },
+    "F": {
+      "ONBEOORDEELD": 1,
+      "FOUT": 1,
+      "GOED": 1
+    },
+    "G": {
+      "ONBEOORDEELD": 2
+    },
+    "H": {
+      "FOUT": 2
+    },
+    "I": {
+      "GOED": 4
+    },
+    "J": {
+      "ONBEOORDEELD": 2,
+      "FOUT": 1
+    }
+  },
+  "ungrounded": {
+    "count": 0,
+    "items": []
+  },
+  "timing": {
+    "items": 32,
+    "p50Ms": 7366,
+    "p95Ms": 19656,
+    "maxMs": 24407,
+    "totalMs": 244641
+  },
+  "hardware": {
+    "gpuBefore": {
+      "name": "NVIDIA GeForce RTX 3080",
+      "totalMiB": 10240,
+      "usedMiB": 6392
+    },
+    "gpuAfter": {
+      "name": "NVIDIA GeForce RTX 3080",
+      "totalMiB": 10240,
+      "usedMiB": 6401
+    },
+    "gpuInUse": true,
+    "ramTotalGb": 63.8
+  },
+  "note": "Ongegrond = het antwoord noemt een regelidentificatie, dienstnummer of roostercode die niet in de toolgegevens voorkomt. Taalkwaliteit en leesbaarheid zijn hier niet gemeten; die blijven mensenwerk."
+}

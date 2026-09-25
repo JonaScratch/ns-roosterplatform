@@ -169,11 +169,17 @@
     {
       "id": 10,
       "name": "Acceptatie en oplevering",
-      "status": "NOT_STARTED",
-      "tests": [
-        "volledige batterij",
-        "§53"
-      ]
+      "status": "TESTED",
+      "tests": {
+        "acceptatie": "M3: 5 van de 7 agentcriteria gehaald, B4 niet te bepalen, B7 niet gehaald op holdoutvraag J3; alle vier de harde criteria gehaald",
+        "batterij": "verify:agent 60/60, verify:experimenten 27/27, verify:geheugen 30/30, verify:onderzoek 6/6, unittests 51/51"
+      },
+      "deliverables": [
+        "docs/v1.0.5/eindrapport.md",
+        "bench:acceptatie over M2, M3 en lokaal-8",
+        "bench:herbeoordeel voor vergelijkbaarheid over meetlatwijzigingen heen"
+      ],
+      "note": "Oordeel: gedeeltelijk voltooid. Eén nulfoutcriterium (B7) is niet gehaald en één (B4) is niet te bepalen, dus staat geen enkele fase op ACCEPTED. De §42- en §53-verwijzingen uit de oorspronkelijke werkopdracht ontbreken in de repository; de praktijktest is gereconstrueerd en het rapport toetst tegen acceptance-criteria.json. Dat verschil staat expliciet in beide documenten."
     }
   ],
   "openDecisions": [
