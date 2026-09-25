@@ -170,42 +170,65 @@ export default async function Roosteragent({
             {actorHasPermission(actor, PERMISSIONS.AGENT_GRANT) && (
               <Niveaukiezer huidig={niveau} locationCode={locationCode} />
             )}
-            <ul className="divide-y divide-line py-1">
-              {Object.values(AGENT_CAPABILITIES).map((cap) => {
-                const toegekend = grant.capabilities.includes(cap);
-                const recht = actorHasPermission(actor, cap as Permission);
-                return (
-                  <li key={cap} className="flex items-start justify-between gap-3 py-2">
-                    <span className="min-w-0 text-[12.5px] text-ink">{CAPABILITY_TEKST[cap] ?? cap}</span>
-                    <span className="shrink-0">
-                      {toegekend && recht ? (
-                        <Badge tone="ok">aan</Badge>
-                      ) : !recht ? (
-                        <Badge tone="neutral">geen recht</Badge>
-                      ) : (
-                        <Badge tone="neutral">uit</Badge>
-                      )}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            <p className="pb-3 text-[11px] text-ink-faint">
-              De agent kan deze schakelaars niet zelf omzetten. Publiceren staat er niet bij: dat
-              blijft een handeling van een mens.
-            </p>
+            {/*
+              §5.1/§16 van v1.0.6: dit was een permanent zichtbare lijst van
+              negen bevoegdheden onder elk gesprek, ook voor wie alleen een
+              vraag wil stellen. De negen rijen blijven bestaan — dit is
+              audittechnisch nog steeds volledig, alleen niet meer de eerste
+              blik — maar staan nu achter een <details>, met het aantal
+              actieve bevoegdheden zichtbaar zonder open te klikken.
+            */}
+            <details className="group">
+              <summary className="cursor-pointer list-none py-2 text-[12px] text-ink-muted marker:content-none hover:text-ink">
+                <span className="inline-flex items-center gap-1.5">
+                  <span aria-hidden className="inline-block transition-transform group-open:rotate-90">›</span>
+                  {Object.values(AGENT_CAPABILITIES).filter((c) => grant.capabilities.includes(c) && actorHasPermission(actor, c as Permission)).length} van de {Object.values(AGENT_CAPABILITIES).length} bevoegdheden aan — bekijk welke
+                </span>
+              </summary>
+              <ul className="divide-y divide-line py-1">
+                {Object.values(AGENT_CAPABILITIES).map((cap) => {
+                  const toegekend = grant.capabilities.includes(cap);
+                  const recht = actorHasPermission(actor, cap as Permission);
+                  return (
+                    <li key={cap} className="flex items-start justify-between gap-3 py-2">
+                      <span className="min-w-0 text-[12.5px] text-ink">{CAPABILITY_TEKST[cap] ?? cap}</span>
+                      <span className="shrink-0">
+                        {toegekend && recht ? (
+                          <Badge tone="ok">aan</Badge>
+                        ) : !recht ? (
+                          <Badge tone="neutral">geen recht</Badge>
+                        ) : (
+                          <Badge tone="neutral">uit</Badge>
+                        )}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="pb-3 text-[11px] text-ink-faint">
+                De agent kan deze schakelaars niet zelf omzetten. Publiceren staat er niet bij: dat
+                blijft een handeling van een mens.
+              </p>
+            </details>
           </WidgetCard>
 
           <WidgetCard title="Waar de antwoorden vandaan komen" subtitle={`${tools.length} bronnen die de agent mag lezen`}>
-            <ul className="space-y-1.5 py-2">
-              {tools.map((t) => (
-                <li key={t.name} className="text-[12px] leading-snug">
-                  <span className="font-mono text-[11.5px] text-accent-rc">{t.name}</span>
-                  <span className="text-ink-muted"> — {t.description}</span>
-                  {!t.allowed && <span className="text-state-warn"> (jij hebt hier geen recht op)</span>}
-                </li>
-              ))}
-            </ul>
+            {/* Zelfde reden als hierboven: waardevol om na te slaan, niet om
+                bij elke vraag mee te lezen. */}
+            <details>
+              <summary className="cursor-pointer list-none py-2 text-[12px] text-ink-muted marker:content-none hover:text-ink">
+                Bekijk de {tools.length} tools
+              </summary>
+              <ul className="space-y-1.5 py-2">
+                {tools.map((t) => (
+                  <li key={t.name} className="text-[12px] leading-snug">
+                    <span className="font-mono text-[11.5px] text-accent-rc">{t.name}</span>
+                    <span className="text-ink-muted"> — {t.description}</span>
+                    {!t.allowed && <span className="text-state-warn"> (jij hebt hier geen recht op)</span>}
+                  </li>
+                ))}
+              </ul>
+            </details>
           </WidgetCard>
 
           <WidgetCard

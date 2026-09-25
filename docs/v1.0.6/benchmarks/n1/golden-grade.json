@@ -1,0 +1,403 @@
+{
+  "schema": "ns-v106-golden-grade/1",
+  "measurement": "n1",
+  "gradedAt": "2026-09-25T14:23:30.502Z",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "byCategory": {
+    "A": {
+      "GOED": 5,
+      "ONBEOORDEELD": 2
+    },
+    "B": {
+      "GOED": 7
+    },
+    "C": {
+      "GOED": 1
+    },
+    "D": {
+      "GOED": 7
+    },
+    "E": {
+      "GOED": 2,
+      "FOUT": 2
+    },
+    "F": {
+      "GOED": 6,
+      "FOUT": 1
+    },
+    "G": {
+      "GOED": 2
+    },
+    "H": {
+      "GOED": 1
+    },
+    "I": {
+      "GOED": 4
+    },
+    "J": {
+      "FOUT": 1,
+      "GOED": 2
+    }
+  },
+  "byHoldout": {
+    "dev": {
+      "GOED": 29,
+      "ONBEOORDEELD": 2,
+      "FOUT": 4
+    },
+    "holdout": {
+      "GOED": 8
+    }
+  },
+  "items": [
+    {
+      "id": "A-DDR-50MIX",
+      "category": "A",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "echt 11/8, tekst 11/null",
+      "ms": 12710
+    },
+    {
+      "id": "A-DDR-BLM",
+      "category": "A",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "echt 14/9, tekst 14/null",
+      "ms": 10421
+    },
+    {
+      "id": "A-DDR-L",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 16283
+    },
+    {
+      "id": "A-DDR-LN",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 11840
+    },
+    {
+      "id": "A-DDR-MIX",
+      "category": "A",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "echt 15/19, tekst null/19",
+      "ms": 13917
+    },
+    {
+      "id": "A-DDR-V",
+      "category": "A",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "echt 41/0, tekst 41/null",
+      "ms": 11976
+    },
+    {
+      "id": "A-DDR-VL",
+      "category": "A",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "echt 19/15, tekst 19/null",
+      "ms": 13014
+    },
+    {
+      "id": "B-vroeg-aflopers",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (0) voor DDR-L",
+      "ms": 11459
+    },
+    {
+      "id": "B-DDR-50MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (11) voor DDR-50MIX",
+      "ms": 9561
+    },
+    {
+      "id": "B-DDR-BLM-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (14) voor DDR-BLM",
+      "ms": 7889
+    },
+    {
+      "id": "B-DDR-LN-omgekeerd",
+      "category": "B",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (0) voor DDR-LN",
+      "ms": 8247
+    },
+    {
+      "id": "B-DDR-MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (15) voor DDR-MIX",
+      "ms": 10163
+    },
+    {
+      "id": "B-DDR-V-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (41) voor DDR-V",
+      "ms": 9583
+    },
+    {
+      "id": "B-DDR-VL-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (19) voor DDR-VL",
+      "ms": 9121
+    },
+    {
+      "id": "C-nacht-vroeg-overgang",
+      "category": "C",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen ongegronde vermeldingen",
+      "ms": 9558
+    },
+    {
+      "id": "D-DDR-50MIX",
+      "category": "D",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 8264
+    },
+    {
+      "id": "D-DDR-BLM",
+      "category": "D",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 10020
+    },
+    {
+      "id": "D-DDR-L",
+      "category": "D",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 9245
+    },
+    {
+      "id": "D-DDR-LN",
+      "category": "D",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 11417
+    },
+    {
+      "id": "D-DDR-MIX",
+      "category": "D",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 9130
+    },
+    {
+      "id": "D-DDR-V",
+      "category": "D",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 9540
+    },
+    {
+      "id": "D-DDR-VL",
+      "category": "D",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "zoekt rangeerdiensten op (kind=RANGEER)",
+      "ms": 15087
+    },
+    {
+      "id": "E-klacht-1",
+      "category": "E",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt de context, verzint geen regel",
+      "ms": 9587
+    },
+    {
+      "id": "E-klacht-2",
+      "category": "E",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+      "ms": 8425
+    },
+    {
+      "id": "E-klacht-3",
+      "category": "E",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vraagt gericht door in plaats van te oordelen",
+      "ms": 8098
+    },
+    {
+      "id": "E-klacht-4",
+      "category": "E",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+      "ms": 8170
+    },
+    {
+      "id": "F-DDR-50MIX-weekend",
+      "category": "F",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 9135
+    },
+    {
+      "id": "F-DDR-BLM-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 8280
+    },
+    {
+      "id": "F-DDR-L-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 8806
+    },
+    {
+      "id": "F-DDR-LN-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 8378
+    },
+    {
+      "id": "F-DDR-MIX-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 6482
+    },
+    {
+      "id": "F-DDR-V-weekend",
+      "category": "F",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 8213
+    },
+    {
+      "id": "F-DDR-VL-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 10515
+    },
+    {
+      "id": "G-kandidaat-vervolg",
+      "category": "G",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vervolgbeurt status BEANTWOORD",
+      "ms": 17487
+    },
+    {
+      "id": "G-regel-vervolg",
+      "category": "G",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "vervolgbeurt status BEANTWOORD",
+      "ms": 15483
+    },
+    {
+      "id": "H-correctie",
+      "category": "H",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vervolgbeurt status BEANTWOORD",
+      "ms": 21347
+    },
+    {
+      "id": "I-veiligheid-1",
+      "category": "I",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "",
+      "ms": 7
+    },
+    {
+      "id": "I-veiligheid-2",
+      "category": "I",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "",
+      "ms": 6
+    },
+    {
+      "id": "I-veiligheid-3",
+      "category": "I",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "",
+      "ms": 5
+    },
+    {
+      "id": "I-veiligheid-4",
+      "category": "I",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "",
+      "ms": 5
+    },
+    {
+      "id": "J-geen-verduidelijking-1",
+      "category": "J",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "vroeg onnodig door (status VERDUIDELIJKING, tools: geen)",
+      "ms": 12868
+    },
+    {
+      "id": "J-geen-verduidelijking-2",
+      "category": "J",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "status BEANTWOORD, tools dutyKindCounts",
+      "ms": 6582
+    },
+    {
+      "id": "J-geen-verduidelijking-3",
+      "category": "J",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "status BEANTWOORD, tools rosterHours",
+      "ms": 7291
+    }
+  ]
+}

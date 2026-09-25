@@ -3,14 +3,16 @@ import {
   AvailableDutyStatus,
   BaseRosterStatus,
   DutyPackageStatus,
-  type RosterPositionType,
   type RosterProfile,
   RosterVersionStatus,
   SwapStatus,
   WaitlistStatus,
 } from "@/lib/generated/prisma/enums";
+import type { CandidateAssignment } from "@/domain/candidate";
+import { type RosterDiff, diffRosterDays } from "@/domain/roster-diff";
 import { rosterProfileLabel } from "@/domain/roster-profiles";
 import { addDays, isWeekend, toCalendarDate, toDatabaseDate, weekdayLabel } from "@/domain/time";
+import { candidateRosterInputs, loadQualityContextCore } from "@/server/services/roster-quality-service";
 import { recordAudit } from "@/server/audit/log";
 import { requirePermission } from "@/server/security/authorize";
 import { depotFilter, locationScopeFor } from "@/server/security/location-scope";
@@ -189,30 +191,66 @@ export async function listVersions(baseRosterId: string): Promise<readonly Roste
   }));
 }
 
-export interface RosterDiffCell {
-  readonly lineNumber: number;
-  readonly weekIndex: number;
-  readonly weekday: number;
-  readonly weekdayLabel: string;
-  readonly before: string;
-  readonly after: string;
+export type { RosterDiff, RosterDiffCell } from "@/domain/roster-diff";
+
+export interface RosterSelection {
+  readonly source: "official" | "candidate";
+  readonly rosterCode: string;
+  /** Alleen nodig als source "candidate" is. */
+  readonly candidateId?: string | null;
 }
 
-export interface RosterDiff {
-  readonly leftLabel: string;
-  readonly rightLabel: string;
-  readonly changed: readonly RosterDiffCell[];
-  readonly unchangedCount: number;
-  readonly onlyInLeft: number;
-  readonly onlyInRight: number;
+/**
+ * Het officiële rooster naast een kandidaat, of kandidaat naast kandidaat.
+ *
+ * §19/§20 van de v1.0.6-opdracht vragen precies dit: "officieel rooster ↔
+ * gegenereerde kandidaat" en "kandidaat 1 ↔ kandidaat 2", met echte,
+ * opgeslagen data. `compareVersions` hierboven kan dat niet leveren: die
+ * vergelijkt alleen opgeslagen `RosterVersion`-rijen, en die ontstaan pas bij
+ * publicatie. Zolang er niets gepubliceerd is — het geval in deze
+ * ontwikkelomgeving — blijft die vergelijking leeg, niet omdat er niets te
+ * vergelijken is maar omdat hij op de verkeerde data let.
+ *
+ * Deze functie leest in plaats daarvan rechtstreeks uit hetzelfde
+ * kwaliteitscontext-object dat de roosteragent en de kwaliteitsmeting al
+ * gebruiken (`loadQualityContextCore`, `candidateRosterInputs`), en hergebruikt
+ * dezelfde celvergelijking (`diffRosterDays`) als `compareVersions`.
+ */
+export async function compareRosterSelections(
+  locationCode: string,
+  left: RosterSelection,
+  right: RosterSelection,
+): Promise<RosterDiff> {
+  await requirePermission(PERMISSIONS.ROSTER_COMPARE);
+  const quality = await loadQualityContextCore(locationCode);
+
+  const kant = async (selectie: RosterSelection) => {
+    if (selectie.source === "official") {
+      const roster = quality.official.find((r) => r.code === selectie.rosterCode);
+      if (!roster) throw new Error(`Basisrooster ${selectie.rosterCode} niet gevonden.`);
+      return { label: `${roster.code} — officieel`, days: roster.days };
+    }
+    if (!selectie.candidateId) throw new Error("Geen kandidaat opgegeven.");
+    const rij = await prisma.candidateRoster.findUniqueOrThrow({
+      where: { id: selectie.candidateId },
+      select: { scenarioLabel: true, assignments: true },
+    });
+    const rosters = candidateRosterInputs(rij.assignments as unknown as CandidateAssignment[], quality);
+    const roster = rosters.find((r) => r.code === selectie.rosterCode);
+    if (!roster) throw new Error(`Basisrooster ${selectie.rosterCode} staat niet in ${rij.scenarioLabel}.`);
+    return { label: `${roster.code} — ${rij.scenarioLabel}`, days: roster.days };
+  };
+
+  const [leftSide, rightSide] = await Promise.all([kant(left), kant(right)]);
+  return diffRosterDays(leftSide, rightSide);
 }
 
 /**
  * Twee roosterversies naast elkaar.
  *
- * De vergelijking gebeurt op de sleutel lijn/week/dag en niet op volgorde: een
- * versie met een andere hoeveelheid lijnen levert dan geen verschoven diff op
- * maar nette "alleen in links"- en "alleen in rechts"-tellingen.
+ * De vergelijking zelf (per cel lijn/week/dag, niet per rij) staat in
+ * `domain/roster-diff.ts` en wordt hierboven ook gebruikt door
+ * `compareRosterSelections`.
  */
 export async function compareVersions(
   leftVersionId: string,
@@ -225,64 +263,7 @@ export async function compareVersions(
     loadVersionDays(rightVersionId),
   ]);
 
-  const key = (day: VersionDay) => `${day.lineNumber}|${day.weekIndex}|${day.weekday}`;
-  const leftMap = new Map(left.days.map((day) => [key(day), day]));
-  const rightMap = new Map(right.days.map((day) => [key(day), day]));
-
-  const changed: RosterDiffCell[] = [];
-  let unchanged = 0;
-  let onlyInLeft = 0;
-
-  for (const [cellKey, leftDay] of leftMap) {
-    const rightDay = rightMap.get(cellKey);
-    if (!rightDay) {
-      onlyInLeft += 1;
-      continue;
-    }
-    const before = describeCell(leftDay);
-    const after = describeCell(rightDay);
-    if (before === after) {
-      unchanged += 1;
-      continue;
-    }
-    changed.push({
-      lineNumber: leftDay.lineNumber,
-      weekIndex: leftDay.weekIndex,
-      weekday: leftDay.weekday,
-      weekdayLabel: weekdayLabel(leftDay.weekday),
-      before,
-      after,
-    });
-  }
-
-  let onlyInRight = 0;
-  for (const cellKey of rightMap.keys()) {
-    if (!leftMap.has(cellKey)) {
-      onlyInRight += 1;
-    }
-  }
-
-  changed.sort(
-    (a, b) =>
-      a.lineNumber - b.lineNumber || a.weekIndex - b.weekIndex || a.weekday - b.weekday,
-  );
-
-  return {
-    leftLabel: left.label,
-    rightLabel: right.label,
-    changed,
-    unchangedCount: unchanged,
-    onlyInLeft,
-    onlyInRight,
-  };
-}
-
-interface VersionDay {
-  readonly lineNumber: number;
-  readonly weekIndex: number;
-  readonly weekday: number;
-  readonly positionType: RosterPositionType;
-  readonly dutyCode: string | null;
+  return diffRosterDays(left, right);
 }
 
 async function loadVersionDays(versionId: string) {
@@ -302,10 +283,6 @@ async function loadVersionDays(versionId: string) {
     },
   });
   return { label: version.label, days: version.days };
-}
-
-function describeCell(day: VersionDay): string {
-  return day.positionType === "DUTY" ? (day.dutyCode ?? "?") : day.positionType;
 }
 
 // ── Controles ────────────────────────────────────────────────────────────────

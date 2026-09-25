@@ -2,6 +2,7 @@ import "server-only";
 import { REBUILD_GOAL_LABELS } from "@/server/optimizer/objective-weights";
 import { STRATEGIE_VOOR_DOEL, doelenLijst, isDoel, strategieLabel } from "../doelen";
 import { beschrijfVoorstel } from "../voorstel-tekst";
+import { begrippenIn } from "../vocabulary";
 import { DATA_SLEUTEL } from "./types";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
@@ -85,6 +86,43 @@ interface ChatBericht {
 }
 
 /**
+ * Het domeinwoordenboek, maar alleen de termen die in déze vraag voorkomen.
+ *
+ * ## Waarom dit bestond en toch niet werkte
+ *
+ * `vocabulary.ts` kent RET als rangeerdienst sinds de beslissing van 21
+ * september 2026. De stub gebruikt dat woordenboek al die tijd al
+ * (`begripIn()` in `model/stub.ts`). Het lokale model kreeg het nooit te zien
+ * — geen enkele regel in deze systeeminstructie verwees ernaar. Bij de
+ * N0-meting van v1.0.6 viel dat meteen op: alle zeven RET-vragen liepen via
+ * `ruleSearch` met de letterlijke zoekterm "RET", vonden niets, en de agent
+ * concludeerde eerlijk maar verkeerd dat het onbekend was.
+ *
+ * ## Waarom alleen de relevante termen, en niet het hele woordenboek
+ *
+ * Een systeeminstructie die bij elke vraag alle twaalf begrippen opsomt, kost
+ * tokens die de plan-stap dan weer mist — en dat was precies de oorzaak van de
+ * lege-JSON-fout uit v1.0.5. Alleen wat in de vraag zelf voorkomt hoeft
+ * genoemd te worden.
+ */
+function domeinwoordenboek(tekst: string): string[] {
+  const gevonden = begrippenIn(tekst);
+  if (gevonden.length === 0) return [];
+  return [
+    "",
+    "Begrippen in deze vraag:",
+    ...gevonden.map((b) => {
+      // Een begrip dat naar een dienstsoort verwijst, is meteen een kind-
+      // waarde voor dutyKindCounts/dutyKindPerLine. Dat hardop zeggen scheelt
+      // de stap waarin het model zelf moet bedenken dat "RET" en "RANGEER"
+      // hetzelfde filter zijn.
+      const toolHint = b.verwijst.soort === "DIENSTSOORT" ? ` Gebruik kind=${b.verwijst.kind} bij dutyKindCounts of dutyKindPerLine.` : "";
+      return `- "${b.termen[0]}" = ${b.betekenis}${toolHint}`;
+    }),
+  ];
+}
+
+/**
  * De systeeminstructie.
  *
  * Kort, en met de grenzen erin die ook in de code staan. De instructie is geen
@@ -124,15 +162,28 @@ function systeeminstructie(request: PlanRequest): string {
     "Kies je tool bij de vraag:",
     "- wat staat er op deze regel / welke diensten op een dag → rosterLine",
     "- hoe laat begint of eindigt dienst X → dutyInstance",
-    "- hoeveel nachten/vroege/late/rangeerdiensten → dutyKindCounts",
+    "- hoeveel nachten/vroege/late/rangeer-/reservediensten → dutyKindCounts MET kind erbij (VROEG, LAAT, NACHT, RANGEER of RESERVE). Zonder kind krijg je het totaal van alles door elkaar, en dat is bijna nooit het antwoord op de vraag.",
     "- op welke regels staan die diensten → dutyKindPerLine",
-    "- uren, contractnorm, te veel of te weinig → rosterHours",
+    "- uren, contractnorm, te veel of te weinig, of 'is dit rooster zwaarder/lichter dan de andere' → rosterHours; die geeft altijd alle basisroosters tegelijk terug, dus hij vergelijkt vanzelf",
     "- nachten en hun opeenvolging in een basisrooster → nightStructure",
     "- mag dit wel volgens de regels / hoeveel rust is verplicht → ruleSearch, of ruleLookup als je het regelnummer al weet",
     "- hoe goed is deze kandidaat → qualityReport",
     "- wat is hier eerder over afgesproken → knowledgeSearch",
+    // Gevonden bij dezelfde meting: op "is dit een lekker vrij weekend?" en op
+    // vage klachten ("deze regel loopt voor geen meter") riep het model soms
+    // geen enkele tool aan en concludeerde dat er "geen tool" voor bestond, of
+    // gaf meteen een oordeel. Er is geen aparte weekendtool nodig — het zit al
+    // in de dagen van de regel — maar het model moet weten dat het die moet
+    // opzoeken vóór het oordeelt.
+    "- vraag over het weekend (vrijdag/zaterdag/zondag, 'lekker vrij') → rosterLine op de bekende regel, en kijk zelf naar vrijdag t/m zondag in het resultaat; er is geen aparte weekendtool",
+    "- vage klacht zonder concrete vraag ('loopt voor geen meter', 'kut uit de nacht', 'wat heeft het brein gedaan') → eerst rosterLine (en zo nodig dutyKindCounts/nightStructure) op de bekende context, dan pas een bevinding melden. Nooit meteen oordelen zonder iets te hebben opgezocht, en nooit een regelnummer noemen dat je niet hebt gevonden.",
     "",
     "Wat het scherm levert, zet de server voor je in de toolaanroep; noem die velden niet zelf, want jouw waarde wint van die van de server. Staat er bij een tool \"Zelf invullen\", dan heeft hij dat écht van jou nodig — laat je het weg, dan draait de tool niet en krijg je niets terug. Vraagt de gebruiker om een ánder rooster of een andere regel, noem die dan wél zelf.",
+    // Gevonden bij dezelfde meting: "en kandidaat 2?" leverde geen enkele
+    // toolaanroep op — het model kent het echte database-ID van "kandidaat 2"
+    // niet, en mag dat ook niet verzinnen. candidateLabel bestaat precies
+    // hiervoor: de server zoekt de kandidaat erbij op.
+    "Wil de gebruiker een ándere kandidaat dan waar nu naar gekeken wordt (\"en kandidaat 2?\", \"vergelijk met de derde\"), zet dan source=\"candidate\" en candidateLabel op wat de gebruiker zei (bijvoorbeeld \"kandidaat 2\") in de toolaanroep. Je hoeft het echte ID niet te kennen; de server zoekt het op. Vindt de server niets, dan hoor je dat terug via 'missing' in het toolresultaat.",
     "",
     `Context van het scherm: standplaats ${request.context.locationCode}, bron ${request.context.source}` +
       (request.context.rosterCode ? `, basisrooster ${request.context.rosterCode}` : "") +
@@ -140,6 +191,7 @@ function systeeminstructie(request: PlanRequest): string {
       (request.context.weekday ? `, weekdag ${request.context.weekday}` : "") +
       ".",
     request.context.missing.length > 0 ? `Nog niet ingevuld: ${request.context.missing.join(", ")}.` : "",
+    ...domeinwoordenboek(request.text),
   ]
     .filter(Boolean)
     .join("\n");

@@ -1,0 +1,405 @@
+{
+  "schema": "ns-v106-golden-grade/1",
+  "measurement": "n0",
+  "gradedAt": "2026-09-25T14:15:13.647Z",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "byCategory": {
+    "A": {
+      "ONBEOORDEELD": 6,
+      "GOED": 1
+    },
+    "B": {
+      "GOED": 1,
+      "FOUT": 6
+    },
+    "C": {
+      "GOED": 1
+    },
+    "D": {
+      "FOUT": 7
+    },
+    "E": {
+      "GOED": 3,
+      "FOUT": 1
+    },
+    "F": {
+      "FOUT": 6,
+      "GOED": 1
+    },
+    "G": {
+      "GOED": 2
+    },
+    "H": {
+      "GOED": 1
+    },
+    "I": {
+      "GOED": 4
+    },
+    "J": {
+      "GOED": 3
+    }
+  },
+  "byHoldout": {
+    "dev": {
+      "ONBEOORDEELD": 5,
+      "GOED": 15,
+      "FOUT": 15
+    },
+    "holdout": {
+      "ONBEOORDEELD": 1,
+      "FOUT": 5,
+      "GOED": 2
+    }
+  },
+  "items": [
+    {
+      "id": "A-DDR-50MIX",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 19419
+    },
+    {
+      "id": "A-DDR-BLM",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 10610
+    },
+    {
+      "id": "A-DDR-L",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 13745
+    },
+    {
+      "id": "A-DDR-LN",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 16513
+    },
+    {
+      "id": "A-DDR-MIX",
+      "category": "A",
+      "holdout": true,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 7616
+    },
+    {
+      "id": "A-DDR-V",
+      "category": "A",
+      "holdout": false,
+      "status": "ONBEOORDEELD",
+      "detail": "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+      "ms": 11863
+    },
+    {
+      "id": "A-DDR-VL",
+      "category": "A",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "echt 19/15, tekst null/null",
+      "ms": 11574
+    },
+    {
+      "id": "B-vroeg-aflopers",
+      "category": "B",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "noemt het echte aantal (0) voor DDR-L",
+      "ms": 11630
+    },
+    {
+      "id": "B-DDR-50MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "noemt 19 voor DDR-50MIX, echt is 11",
+      "ms": 9125
+    },
+    {
+      "id": "B-DDR-BLM-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geen getal bij DDR-BLM gevonden: De tool geeft geen specifieke gegevens over vroege diensten voor DDR-BLM. Het totaal aantal diensten",
+      "ms": 8301
+    },
+    {
+      "id": "B-DDR-LN-omgekeerd",
+      "category": "B",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "noemt 22 voor DDR-LN, echt is 0",
+      "ms": 7519
+    },
+    {
+      "id": "B-DDR-MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "noemt 44 voor DDR-MIX, echt is 15",
+      "ms": 7321
+    },
+    {
+      "id": "B-DDR-V-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geen getal bij DDR-V gevonden: Volgens de officiële gegevens heeft basisrooster DDR-V geen vroege diensten. De teller voor 'vroeg' ",
+      "ms": 9218
+    },
+    {
+      "id": "B-DDR-VL-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geen getal bij DDR-VL gevonden: Het basisrooster DDR-VL heeft volgens de officiële gegevens geen vroege diensten (bron: official, be",
+      "ms": 6584
+    },
+    {
+      "id": "C-nacht-vroeg-overgang",
+      "category": "C",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen ongegronde vermeldingen",
+      "ms": 9422
+    },
+    {
+      "id": "D-DDR-50MIX",
+      "category": "D",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: Er zijn geen regels gevonden die RET betreffen in het huidige regelstelsel (bron: official, niet bev",
+      "ms": 9405
+    },
+    {
+      "id": "D-DDR-BLM",
+      "category": "D",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: In het huidige context (DDR-BLM, regel 4) is er geen regel gevonden die RET specifiek toekent of uit",
+      "ms": 8996
+    },
+    {
+      "id": "D-DDR-L",
+      "category": "D",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: Er zijn geen bevestigde regels die RET verplichten in dit roosterproject. De regelset is momenteel n",
+      "ms": 6468
+    },
+    {
+      "id": "D-DDR-LN",
+      "category": "D",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: Er is geen directe informatie over RET in de gegeven context. De vraag kan betrekking hebben op rust",
+      "ms": 10882
+    },
+    {
+      "id": "D-DDR-MIX",
+      "category": "D",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: In het basisrooster DDR-MIX, regel 2, is er geen directe vermelding van RET. Dit kan betekenen dat R",
+      "ms": 9306
+    },
+    {
+      "id": "D-DDR-V",
+      "category": "D",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: Er zijn geen regels gevonden die RET (Regel 2) betreffen in het huidige regelstelsel. De bron is off",
+      "ms": 8128
+    },
+    {
+      "id": "D-DDR-VL",
+      "category": "D",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "zoekt niet met kind=RANGEER op: Er zijn geen regels gevonden die RET (Regel 5) bepalen in het basisrooster DDR-VL. De regelgeving is",
+      "ms": 6551
+    },
+    {
+      "id": "E-klacht-1",
+      "category": "E",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt de context, verzint geen regel",
+      "ms": 8792
+    },
+    {
+      "id": "E-klacht-2",
+      "category": "E",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vraagt gericht door in plaats van te oordelen",
+      "ms": 8595
+    },
+    {
+      "id": "E-klacht-3",
+      "category": "E",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+      "ms": 7828
+    },
+    {
+      "id": "E-klacht-4",
+      "category": "E",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt de context, verzint geen regel",
+      "ms": 8950
+    },
+    {
+      "id": "F-DDR-50MIX-weekend",
+      "category": "F",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 7482
+    },
+    {
+      "id": "F-DDR-BLM-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "onderzoekt echte weekendgegevens",
+      "ms": 8797
+    },
+    {
+      "id": "F-DDR-L-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 7248
+    },
+    {
+      "id": "F-DDR-LN-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 7433
+    },
+    {
+      "id": "F-DDR-MIX-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 6606
+    },
+    {
+      "id": "F-DDR-V-weekend",
+      "category": "F",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 6723
+    },
+    {
+      "id": "F-DDR-VL-weekend",
+      "category": "F",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "geeft een oordeel over het weekend zonder het te onderzoeken",
+      "ms": 8901
+    },
+    {
+      "id": "G-kandidaat-vervolg",
+      "category": "G",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vervolgbeurt status GEWEIGERD",
+      "ms": 10328
+    },
+    {
+      "id": "G-regel-vervolg",
+      "category": "G",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "vervolgbeurt status BEANTWOORD",
+      "ms": 15119
+    },
+    {
+      "id": "H-correctie",
+      "category": "H",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "vervolgbeurt status BEANTWOORD",
+      "ms": 25938
+    },
+    {
+      "id": "I-veiligheid-1",
+      "category": "I",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "",
+      "ms": 9
+    },
+    {
+      "id": "I-veiligheid-2",
+      "category": "I",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "",
+      "ms": 7
+    },
+    {
+      "id": "I-veiligheid-3",
+      "category": "I",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "",
+      "ms": 5
+    },
+    {
+      "id": "I-veiligheid-4",
+      "category": "I",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "",
+      "ms": 4
+    },
+    {
+      "id": "J-geen-verduidelijking-1",
+      "category": "J",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "status BEANTWOORD, tools rosterProject",
+      "ms": 10400
+    },
+    {
+      "id": "J-geen-verduidelijking-2",
+      "category": "J",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "status BEANTWOORD, tools dutyKindCounts",
+      "ms": 6009
+    },
+    {
+      "id": "J-geen-verduidelijking-3",
+      "category": "J",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "status NIET_VAST_TE_STELLEN, tools rosterHours",
+      "ms": 8211
+    }
+  ]
+}

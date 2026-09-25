@@ -170,9 +170,11 @@ const dutyInstance = tool({
 
 const dutyKindCounts = tool({
   name: "dutyKindCounts",
-  description: "Hoeveel diensten van een soort of klasse elk basisrooster heeft (bijvoorbeeld rangeer, nacht of echte aflopers).",
+  description:
+    "Hoeveel diensten van één soort (VROEG, LAAT, NACHT, RANGEER of RESERVE) elk basisrooster heeft. " +
+    "Geef altijd 'kind' mee — zonder kind telt deze tool ALLE diensten bij elkaar op, niet één soort.",
   permission: PERMISSIONS.ROSTER_READ,
-  input: uiContextSchema.extend({ kind: z.string().nullish(), dutyClass: z.string().nullish() }),
+  input: uiContextSchema.extend({ kind: z.enum(["VROEG", "LAAT", "NACHT", "RANGEER", "RESERVE"]).nullish(), dutyClass: z.string().nullish() }),
   run: async (_actor, input) => {
     const ctx = await resolveContext(input as UiContext);
     const perRooster: Record<string, number> = {};
@@ -191,7 +193,22 @@ const dutyKindCounts = tool({
       totaal += n;
     }
     return {
-      data: { kind: input.kind ?? null, dutyClass: input.dutyClass ?? null, perRoster: perRooster, total: totaal, source: ctx.source },
+      data: {
+        kind: input.kind ?? null,
+        dutyClass: input.dutyClass ?? null,
+        perRoster: perRooster,
+        total: totaal,
+        source: ctx.source,
+        // Gevonden bij de N0-meting van v1.0.6: zonder `kind` telt deze tool
+        // ALLE diensten, en het lokale model las dat getal een paar keer
+        // gewoon als "aantal vroege diensten". Nu staat het er expliciet bij,
+        // op de plek waar het antwoord vandaan komt en niet alleen in de
+        // toolbeschrijving — die leest het model niet bij elk antwoord terug.
+        note:
+          input.kind === null || input.kind === undefined
+            ? "Geen 'kind' opgegeven: dit is het totaal van ALLE diensten per rooster, niet gefilterd op vroeg, laat, nacht, rangeer of reserve."
+            : `Gefilterd op kind=${input.kind}.`,
+      },
       sources: [ctx.candidate ? `kandidaat ${ctx.candidate.id.slice(0, 8)}` : "officieel rooster"],
     };
   },

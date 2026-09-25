@@ -1,0 +1,6243 @@
+{
+  "schema": "ns-v106-n0-manifest/1",
+  "recordedAt": "2026-09-25T11:48:23.414Z",
+  "purpose": "De stand van het platform bij de start van v1.0.6, vastgelegd vóór functionele code voor deze ronde is geschreven. §1 van de opdracht vraagt deze vastlegging expliciet; hij komt bovenop de v1.0.5-baseline en vervangt haar niet.",
+  "git": {
+    "headCommit": "0bf910f18508ddc84d33dc6aae3a70a8c312762f",
+    "headSubject": "Fase 10: eindrapport v1.0.5 — gedeeltelijk voltooid, met de reden erbij",
+    "headDate": "2026-09-25T11:37:15+02:00",
+    "branch": "v1.0.5",
+    "uncommittedPaths": 1
+  },
+  "v105EindrapportOordeel": "gedeeltelijk voltooid — zie docs/v1.0.5/eindrapport.md",
+  "v105Baseline": {
+    "headCommit": "cf8a0e39c949de0fd72ba54b71fb2c52aac67956",
+    "note": "ongewijzigd; zie docs/v1.0.5/baseline-manifest.json"
+  },
+  "dutyPackage": {
+    "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+    "label": "DDR-BDU-05-10-2026-V1",
+    "sourceChecksum": "425b37902bf70752fd9f9ca7f5326f823516ce212c3024bbe7afcec883fe3d83",
+    "duties": [
+      {
+        "id": "8b073366-50e5-48a8-afb7-c392b0fdc26e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "108",
+        "numericCode": 108,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 788,
+        "endMinute": 1301,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "108|08:33|13:08 - 21:41",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:33",
+          "regel": 1
+        },
+        "weekday": 1
+      },
+      {
+        "id": "ad7fe321-b463-43d9-8b51-0f7ca8b4dd81",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "111",
+        "numericCode": 111,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 594,
+        "endMinute": 1091,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "111|08:17|09:54 - 18:11",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:17",
+          "regel": 1
+        },
+        "weekday": 6
+      },
+      {
+        "id": "bd9c4c56-a38d-4764-9a9b-69e992ddaf6e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "6",
+        "numericCode": 6,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 613,
+        "endMinute": 1048,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "6|07:15|10:13 - 17:28",
+          "blad": "50+ mix 1.pdf",
+          "duur": "07:15",
+          "regel": 1
+        },
+        "weekday": 7
+      },
+      {
+        "id": "5772587f-25cb-4c10-996c-f4a66bc77744",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "116",
+        "numericCode": 116,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 739,
+        "endMinute": 1154,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "116|06:55|12:19 - 19:14",
+          "blad": "50+ mix 1.pdf",
+          "duur": "06:55",
+          "regel": 2
+        },
+        "weekday": 1
+      },
+      {
+        "id": "a1610770-9994-4c3c-bc50-0ef40b5075b3",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "111",
+        "numericCode": 111,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 707,
+        "endMinute": 1228,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "111|08:41|11:47 - 20:28",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:41",
+          "regel": 2
+        },
+        "weekday": 3
+      },
+      {
+        "id": "47f3344e-de44-4573-9b48-8746f484f7b3",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "10",
+        "numericCode": 10,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 666,
+        "endMinute": 1064,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "10|06:38|11:06 - 17:44",
+          "blad": "50+ mix 1.pdf",
+          "duur": "06:38",
+          "regel": 2
+        },
+        "weekday": 4
+      },
+      {
+        "id": "f6696ab0-212f-4415-959d-1064f1f2d446",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "10",
+        "numericCode": 10,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 467,
+        "endMinute": 988,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "10|08:41|07:47 - 16:28",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:41",
+          "regel": 3
+        },
+        "weekday": 2
+      },
+      {
+        "id": "e54027f3-d896-4e5f-b6a1-810d70c1652e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "9",
+        "numericCode": 9,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 559,
+        "endMinute": 1022,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "9|07:43|09:19 - 17:02",
+          "blad": "50+ mix 1.pdf",
+          "duur": "07:43",
+          "regel": 3
+        },
+        "weekday": 4
+      },
+      {
+        "id": "69de37e4-a293-46dd-9e57-244e32c89fea",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "10",
+        "numericCode": 10,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 477,
+        "endMinute": 988,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "10|08:31|07:57 - 16:28",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:31",
+          "regel": 3
+        },
+        "weekday": 5
+      },
+      {
+        "id": "f3853880-4b55-4850-a48f-5c484ce007d2",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "12",
+        "numericCode": 12,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 608,
+        "endMinute": 1044,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "12|07:16|10:08 - 17:24",
+          "blad": "50+ mix 1.pdf",
+          "duur": "07:16",
+          "regel": 4
+        },
+        "weekday": 3
+      },
+      {
+        "id": "696553ac-12ad-4baf-811c-94a38faaeb10",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "112",
+        "numericCode": 112,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 739,
+        "endMinute": 1228,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "112|08:09|12:19 - 20:28",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:09",
+          "regel": 4
+        },
+        "weekday": 4
+      },
+      {
+        "id": "cd71f054-34d7-4602-9d3a-acda0178cd24",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "112",
+        "numericCode": 112,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 712,
+        "endMinute": 1177,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "112|07:45|11:52 - 19:37",
+          "blad": "50+ mix 1.pdf",
+          "duur": "07:45",
+          "regel": 5
+        },
+        "weekday": 1
+      },
+      {
+        "id": "331249ff-5771-4e42-8e02-5bc6f40bd20a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 529,
+        "endMinute": 1001,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "7|07:52|08:49 - 16:41",
+          "blad": "50+ mix 1.pdf",
+          "duur": "07:52",
+          "regel": 5
+        },
+        "weekday": 4
+      },
+      {
+        "id": "12069665-bfe9-4628-b486-1f0b83f71966",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "11",
+        "numericCode": 11,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 527,
+        "endMinute": 1052,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "11|08:45|08:47 - 17:32",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:45",
+          "regel": 6
+        },
+        "weekday": 3
+      },
+      {
+        "id": "e0b8a819-4683-4aed-9bec-96a487d8b0c5",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "108",
+        "numericCode": 108,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 747,
+        "endMinute": 1267,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "108|08:40|12:27 - 21:07",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:40",
+          "regel": 6
+        },
+        "weekday": 6
+      },
+      {
+        "id": "026943b9-eb06-4c6c-aad1-b131360b0c15",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 497,
+        "endMinute": 1014,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "70|08:37|08:17 - 16:54",
+          "blad": "BLM 1.pdf",
+          "duur": "08:37",
+          "regel": 1
+        },
+        "weekday": 2
+      },
+      {
+        "id": "a604416f-6c53-4594-8490-20f7edcad77b",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 338,
+        "endMinute": 774,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "70|07:16|05:38 - 12:54",
+          "blad": "BLM 1.pdf",
+          "duur": "07:16",
+          "regel": 1
+        },
+        "weekday": 5
+      },
+      {
+        "id": "301a6b23-7f9c-4505-8d0f-eb4c90bb5df0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 327,
+        "endMinute": 834,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "70|08:27|05:27 - 13:54",
+          "blad": "BLM 1.pdf",
+          "duur": "08:27",
+          "regel": 1
+        },
+        "weekday": 6
+      },
+      {
+        "id": "e98ef08e-3028-46a8-8742-488dc37f5b20",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "71",
+        "numericCode": 71,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 338,
+        "endMinute": 791,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "71|07:33|05:38 - 13:11",
+          "blad": "BLM 1.pdf",
+          "duur": "07:33",
+          "regel": 2
+        },
+        "weekday": 1
+      },
+      {
+        "id": "1d2aa15a-9951-4635-abfd-b678d7c72c03",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "71",
+        "numericCode": 71,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 458,
+        "endMinute": 974,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "71|08:36|07:38 - 16:14",
+          "blad": "BLM 1.pdf",
+          "duur": "08:36",
+          "regel": 2
+        },
+        "weekday": 4
+      },
+      {
+        "id": "81ec4762-0d77-450b-a91b-eee98896d874",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "72",
+        "numericCode": 72,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 442,
+        "endMinute": 868,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "72|07:06|07:22 - 14:28",
+          "blad": "BLM 1.pdf",
+          "duur": "07:06",
+          "regel": 2
+        },
+        "weekday": 5
+      },
+      {
+        "id": "31742363-ece7-47b9-9319-b18747f99004",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "71",
+        "numericCode": 71,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 357,
+        "endMinute": 852,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "71|08:15|05:57 - 14:12",
+          "blad": "BLM 1.pdf",
+          "duur": "08:15",
+          "regel": 2
+        },
+        "weekday": 6
+      },
+      {
+        "id": "36dc489e-e828-49a1-9e4a-49ad8060e92e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 459,
+        "endMinute": 988,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "70|08:49|07:39 - 16:28",
+          "blad": "BLM 1.pdf",
+          "duur": "08:49",
+          "regel": 2
+        },
+        "weekday": 7
+      },
+      {
+        "id": "e84d8188-7f43-4038-86c1-19c24df7d289",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 297,
+        "endMinute": 658,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "70|06:01|04:57 - 10:58",
+          "blad": "BLM 1.pdf",
+          "duur": "06:01",
+          "regel": 3
+        },
+        "weekday": 1
+      },
+      {
+        "id": "eb01538d-db2b-4890-976e-712c2f8727ea",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 297,
+        "endMinute": 672,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "70|06:15|04:57 - 11:12",
+          "blad": "BLM 1.pdf",
+          "duur": "06:15",
+          "regel": 3
+        },
+        "weekday": 3
+      },
+      {
+        "id": "f418fcbc-cf78-4a3c-8b5e-fc62ebc0d7c0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "70",
+        "numericCode": 70,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 347,
+        "endMinute": 774,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "70|07:07|05:47 - 12:54",
+          "blad": "BLM 1.pdf",
+          "duur": "07:07",
+          "regel": 3
+        },
+        "weekday": 4
+      },
+      {
+        "id": "e7eb7078-e446-496f-b1ab-689c6420a77c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "71",
+        "numericCode": 71,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 338,
+        "endMinute": 838,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "71|08:20|05:38 - 13:58",
+          "blad": "BLM 1.pdf",
+          "duur": "08:20",
+          "regel": 3
+        },
+        "weekday": 5
+      },
+      {
+        "id": "e25f0ba3-7d6a-45e7-8f79-0ffcc7666480",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "170",
+        "numericCode": 170,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1012,
+        "endMinute": 1468,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "170|07:36|16:52 - 00:28",
+          "blad": "BLM 1.pdf",
+          "duur": "07:36",
+          "regel": 4
+        },
+        "weekday": 1
+      },
+      {
+        "id": "4e8aee5b-c077-4a65-91c8-dbabd140e92d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1860,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "761|08:00|23:00 - 07:00",
+          "blad": "BLM 1.pdf",
+          "duur": "08:00",
+          "regel": 4
+        },
+        "weekday": 2
+      },
+      {
+        "id": "e4149fc3-0505-4522-9a9b-fbdbcc4324dc",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1830,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "761|07:30|23:00 - 06:30",
+          "blad": "BLM 1.pdf",
+          "duur": "07:30",
+          "regel": 4
+        },
+        "weekday": 3
+      },
+      {
+        "id": "04f5fbd3-9616-42d3-ae5e-5aab7fd84e40",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1320,
+        "endMinute": 1800,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "760|08:00|22:00 - 06:00",
+          "blad": "BLM 1.pdf",
+          "duur": "08:00",
+          "regel": 4
+        },
+        "weekday": 4
+      },
+      {
+        "id": "2d74d814-b549-44fa-a24b-a2bb0a7f1e90",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "171",
+        "numericCode": 171,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 807,
+        "endMinute": 1242,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "171|07:15|13:27 - 20:42",
+          "blad": "BLM 1.pdf",
+          "duur": "07:15",
+          "regel": 5
+        },
+        "weekday": 1
+      },
+      {
+        "id": "28e75baa-b090-4abf-9f54-e2126aa372a8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "170",
+        "numericCode": 170,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 936,
+        "endMinute": 1348,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "170|06:52|15:36 - 22:28",
+          "blad": "BLM 1.pdf",
+          "duur": "06:52",
+          "regel": 5
+        },
+        "weekday": 2
+      },
+      {
+        "id": "375be697-5033-4f24-912f-e7eb549411e9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "170",
+        "numericCode": 170,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 897,
+        "endMinute": 1422,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "170|08:45|14:57 - 23:42",
+          "blad": "BLM 1.pdf",
+          "duur": "08:45",
+          "regel": 5
+        },
+        "weekday": 3
+      },
+      {
+        "id": "ba6e04d4-3dc9-418a-b676-955f31c14421",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "170",
+        "numericCode": 170,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 807,
+        "endMinute": 1344,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "170|08:57|13:27 - 22:24",
+          "blad": "BLM 1.pdf",
+          "duur": "08:57",
+          "regel": 5
+        },
+        "weekday": 6
+      },
+      {
+        "id": "1be81b40-2a25-4f89-ae80-bd06506eb0ba",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "171",
+        "numericCode": 171,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 729,
+        "endMinute": 1212,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "171|08:03|12:09 - 20:12",
+          "blad": "BLM 1.pdf",
+          "duur": "08:03",
+          "regel": 6
+        },
+        "weekday": 3
+      },
+      {
+        "id": "e4e12617-d7b2-46c4-a574-cb0293300754",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "170",
+        "numericCode": 170,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 622,
+        "endMinute": 1124,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "170|08:22|10:22 - 18:44",
+          "blad": "BLM 1.pdf",
+          "duur": "08:22",
+          "regel": 6
+        },
+        "weekday": 4
+      },
+      {
+        "id": "d403ffb0-7872-4f6d-b934-2cb274dc2b3b",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 876,
+        "endMinute": 1318,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "107|07:22|14:36 - 21:58",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:22",
+          "regel": 1
+        },
+        "weekday": 1
+      },
+      {
+        "id": "b6ca3f69-b0be-469f-9ad6-6953555e1f1a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 769,
+        "endMinute": 1288,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "109|08:39|12:49 - 21:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:39",
+          "regel": 1
+        },
+        "weekday": 4
+      },
+      {
+        "id": "0bf9b0b5-94f4-47e0-878c-f184bf7a68a2",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "114",
+        "numericCode": 114,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 867,
+        "endMinute": 1378,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "114|08:31|14:27 - 22:58",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:31",
+          "regel": 1
+        },
+        "weekday": 5
+      },
+      {
+        "id": "0c263748-931d-4a49-9cf1-0ffde725dbe0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "104",
+        "numericCode": 104,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 938,
+        "endMinute": 1468,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "104|08:50|15:38 - 00:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:50",
+          "regel": 2
+        },
+        "weekday": 5
+      },
+      {
+        "id": "8eee8fff-c98a-41f2-b52f-7e303084089e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1088,
+        "endMinute": 1524,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "101|07:16|18:08 - 01:24",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:16",
+          "regel": 2
+        },
+        "weekday": 7
+      },
+      {
+        "id": "7e6e438c-0fcf-4ac8-b3f4-88d29c34a5f8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "112",
+        "numericCode": 112,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 742,
+        "endMinute": 1154,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "112|06:52|12:22 - 19:14",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "06:52",
+          "regel": 3
+        },
+        "weekday": 2
+      },
+      {
+        "id": "775c738d-d4e6-468e-a993-73e16fb4e66a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 987,
+        "endMinute": 1524,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "101|08:57|16:27 - 01:24",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:57",
+          "regel": 3
+        },
+        "weekday": 6
+      },
+      {
+        "id": "b1089609-3ff3-4e57-abff-7393b203e781",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "106",
+        "numericCode": 106,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 894,
+        "endMinute": 1422,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "106|08:48|14:54 - 23:42",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:48",
+          "regel": 3
+        },
+        "weekday": 7
+      },
+      {
+        "id": "31dbd8c9-f724-49a3-a76c-9ba9d81515db",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "112",
+        "numericCode": 112,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 717,
+        "endMinute": 1121,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "112|06:44|11:57 - 18:41",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "06:44",
+          "regel": 4
+        },
+        "weekday": 3
+      },
+      {
+        "id": "134b76ec-598b-4075-af52-8948c35276e7",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 823,
+        "endMinute": 1348,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "107|08:45|13:43 - 22:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:45",
+          "regel": 4
+        },
+        "weekday": 4
+      },
+      {
+        "id": "e02e35e9-fa83-4417-8193-d778eff61ff0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 987,
+        "endMinute": 1507,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "102|08:40|16:27 - 01:07",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:40",
+          "regel": 5
+        },
+        "weekday": 1
+      },
+      {
+        "id": "14b3ba73-e38d-4466-9732-8f74ef196263",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1009,
+        "endMinute": 1511,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "102|08:22|16:49 - 01:11",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:22",
+          "regel": 5
+        },
+        "weekday": 2
+      },
+      {
+        "id": "fd5e000c-f052-40a6-8d8b-b05bf11d6f5e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 846,
+        "endMinute": 1288,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "109|07:22|14:06 - 21:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:22",
+          "regel": 5
+        },
+        "weekday": 3
+      },
+      {
+        "id": "e5738971-5ec3-4d0e-bb17-fa5d1d768996",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "103",
+        "numericCode": 103,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1056,
+        "endMinute": 1468,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "103|06:52|17:36 - 00:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "06:52",
+          "regel": 5
+        },
+        "weekday": 4
+      },
+      {
+        "id": "6f2bad74-1c28-4ecc-98da-ea44cb69034b",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "117",
+        "numericCode": 117,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 726,
+        "endMinute": 1181,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "117|07:35|12:06 - 19:41",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:35",
+          "regel": 6
+        },
+        "weekday": 2
+      },
+      {
+        "id": "3135a3ce-7e1c-4e9a-a7bc-542338fbc88b",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 793,
+        "endMinute": 1267,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "107|07:54|13:13 - 21:07",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:54",
+          "regel": 6
+        },
+        "weekday": 3
+      },
+      {
+        "id": "d4847474-ad26-4106-94ed-1531d6457358",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "106",
+        "numericCode": 106,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 879,
+        "endMinute": 1348,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "106|07:49|14:39 - 22:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:49",
+          "regel": 7
+        },
+        "weekday": 2
+      },
+      {
+        "id": "f90ba60c-9fb2-4c94-9843-ba9f58246e5d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "113",
+        "numericCode": 113,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 774,
+        "endMinute": 1258,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "113|08:04|12:54 - 20:58",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:04",
+          "regel": 7
+        },
+        "weekday": 5
+      },
+      {
+        "id": "7cfbe42f-a62b-4587-83c3-34fe6a37a564",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "113",
+        "numericCode": 113,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 669,
+        "endMinute": 1142,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "113|07:53|11:09 - 19:02",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:53",
+          "regel": 8
+        },
+        "weekday": 1
+      },
+      {
+        "id": "15e79024-9cee-414a-8cd8-6a665b35d458",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "113",
+        "numericCode": 113,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 717,
+        "endMinute": 1122,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "113|06:45|11:57 - 18:42",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "06:45",
+          "regel": 8
+        },
+        "weekday": 2
+      },
+      {
+        "id": "ad8593eb-ac95-458f-82a2-431be8513728",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "104",
+        "numericCode": 104,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1017,
+        "endMinute": 1482,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "104|07:45|16:57 - 00:42",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:45",
+          "regel": 8
+        },
+        "weekday": 6
+      },
+      {
+        "id": "f2138c34-38c2-44fc-95f7-7e771ae1fb1c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 867,
+        "endMinute": 1348,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "109|08:01|14:27 - 22:28",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:01",
+          "regel": 8
+        },
+        "weekday": 7
+      },
+      {
+        "id": "981cea77-3b98-4a47-b511-11cae0e868dc",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 763,
+        "endMinute": 1301,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "109|08:58|12:43 - 21:41",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:58",
+          "regel": 9
+        },
+        "weekday": 1
+      },
+      {
+        "id": "0c9abb71-314f-4a5b-abcb-0d9357bf17df",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1003,
+        "endMinute": 1509,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "102|08:26|16:43 - 01:09",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:26",
+          "regel": 9
+        },
+        "weekday": 4
+      },
+      {
+        "id": "6bf19762-a394-4f9e-a41e-ca8231cad683",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1074,
+        "endMinute": 1542,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "101|07:48|17:54 - 01:42",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:48",
+          "regel": 9
+        },
+        "weekday": 5
+      },
+      {
+        "id": "b30a2ab3-2582-4a07-b926-594d2b8197a8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "105",
+        "numericCode": 105,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1028,
+        "endMinute": 1473,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "105|07:25|17:08 - 00:33",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:25",
+          "regel": 9
+        },
+        "weekday": 7
+      },
+      {
+        "id": "1da75c48-3249-41d9-b2bd-b9fefad4c316",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "115",
+        "numericCode": 115,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1039,
+        "endMinute": 1509,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "115|07:50|17:19 - 01:09",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:50",
+          "regel": 10
+        },
+        "weekday": 2
+      },
+      {
+        "id": "51752340-8f10-4feb-8d67-8b60ddca5ae8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "105",
+        "numericCode": 105,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 867,
+        "endMinute": 1374,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "105|08:27|14:27 - 22:54",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:27",
+          "regel": 10
+        },
+        "weekday": 3
+      },
+      {
+        "id": "3294cd5a-cf22-4597-9f5f-8308b3fe79db",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1029,
+        "endMinute": 1507,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "102|07:58|17:09 - 01:07",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:58",
+          "regel": 11
+        },
+        "weekday": 3
+      },
+      {
+        "id": "b3920708-12b9-42ed-9649-3d79f3c79b70",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "104",
+        "numericCode": 104,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 969,
+        "endMinute": 1482,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "104|08:33|16:09 - 00:42",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:33",
+          "regel": 12
+        },
+        "weekday": 2
+      },
+      {
+        "id": "c64a7c11-0d22-43db-b6f1-11c8012dd9a0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1003,
+        "endMinute": 1524,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "102|08:41|16:43 - 01:24",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:41",
+          "regel": 12
+        },
+        "weekday": 5
+      },
+      {
+        "id": "8c3721e6-5e67-4078-b60c-41c1860d7991",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 973,
+        "endMinute": 1512,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "102|08:59|16:13 - 01:12",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:59",
+          "regel": 12
+        },
+        "weekday": 7
+      },
+      {
+        "id": "ab58ef31-51ee-4a92-85ec-20f4273a1e12",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "111",
+        "numericCode": 111,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 807,
+        "endMinute": 1228,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "111|07:01|13:27 - 20:28",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:01",
+          "regel": 1
+        },
+        "weekday": 5
+      },
+      {
+        "id": "7663d05a-f14d-4a2d-b6a0-b0b660e46c2e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "111",
+        "numericCode": 111,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 729,
+        "endMinute": 1241,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "111|08:32|12:09 - 20:41",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:32",
+          "regel": 2
+        },
+        "weekday": 1
+      },
+      {
+        "id": "aba462cd-813b-4ee2-9954-efe81e735d30",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1860,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "761|08:00|23:00 - 07:00",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:00",
+          "regel": 2
+        },
+        "weekday": 5
+      },
+      {
+        "id": "b91042c2-d818-40ca-b89b-9716928f3ec6",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1860,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "761|08:00|23:00 - 07:00",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:00",
+          "regel": 2
+        },
+        "weekday": 6
+      },
+      {
+        "id": "195db78c-affb-41d0-b1eb-99ce6d0728bb",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1320,
+        "endMinute": 1800,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "760|08:00|22:00 - 06:00",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:00",
+          "regel": 2
+        },
+        "weekday": 7
+      },
+      {
+        "id": "c7dcc8ba-9571-4bf7-888d-e1b110b8341e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "201",
+        "numericCode": 201,
+        "period": "NACHT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "NACHT"
+        ],
+        "startMinute": 1284,
+        "endMinute": 1781,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "201|08:17|21:24 - 05:41",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:17",
+          "regel": 3
+        },
+        "weekday": 1
+      },
+      {
+        "id": "edf9641d-b049-4f39-a13d-331f3fb1375a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "201",
+        "numericCode": 201,
+        "period": "NACHT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "NACHT"
+        ],
+        "startMinute": 1284,
+        "endMinute": 1781,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "201|08:17|21:24 - 05:41",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:17",
+          "regel": 3
+        },
+        "weekday": 2
+      },
+      {
+        "id": "464af872-156d-463e-a028-153d42097fc3",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1320,
+        "endMinute": 1800,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "760|08:00|22:00 - 06:00",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:00",
+          "regel": 3
+        },
+        "weekday": 3
+      },
+      {
+        "id": "7dafbd37-2ef9-446d-bb4c-e40bc139ec48",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "105",
+        "numericCode": 105,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 837,
+        "endMinute": 1348,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "105|08:31|13:57 - 22:28",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:31",
+          "regel": 3
+        },
+        "weekday": 6
+      },
+      {
+        "id": "8fafde3e-b9ad-4a44-8536-572c4575cb47",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "114",
+        "numericCode": 114,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 957,
+        "endMinute": 1451,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "114|08:14|15:57 - 00:11",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:14",
+          "regel": 3
+        },
+        "weekday": 7
+      },
+      {
+        "id": "437597f6-8d62-473a-b96b-636ea83a9e60",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "110",
+        "numericCode": 110,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 793,
+        "endMinute": 1267,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "110|07:54|13:13 - 21:07",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:54",
+          "regel": 4
+        },
+        "weekday": 5
+      },
+      {
+        "id": "8f84f0e4-0283-470d-99aa-be80944e2fd3",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "110",
+        "numericCode": 110,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 797,
+        "endMinute": 1254,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "110|07:37|13:17 - 20:54",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:37",
+          "regel": 5
+        },
+        "weekday": 2
+      },
+      {
+        "id": "f3ac2f4c-3a8a-4d26-80f0-a5132fd4412a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "106",
+        "numericCode": 106,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 789,
+        "endMinute": 1301,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "106|08:32|13:09 - 21:41",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:32",
+          "regel": 5
+        },
+        "weekday": 3
+      },
+      {
+        "id": "a6d1d175-bb8d-45af-ac02-5a4502e4d825",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "105",
+        "numericCode": 105,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 939,
+        "endMinute": 1451,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "105|08:32|15:39 - 00:11",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:32",
+          "regel": 5
+        },
+        "weekday": 4
+      },
+      {
+        "id": "5c9d192d-7a1a-47fc-ad68-fce35d111368",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 818,
+        "endMinute": 1288,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "109|07:50|13:38 - 21:28",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:50",
+          "regel": 5
+        },
+        "weekday": 5
+      },
+      {
+        "id": "3172e24b-c19a-4cd6-8846-966b37830226",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 777,
+        "endMinute": 1314,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "109|08:57|12:57 - 21:54",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:57",
+          "regel": 6
+        },
+        "weekday": 2
+      },
+      {
+        "id": "48dbe2c5-6b0c-4120-b202-d45b1608d1c7",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "113",
+        "numericCode": 113,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 703,
+        "endMinute": 1087,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "113|06:24|11:43 - 18:07",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "06:24",
+          "regel": 6
+        },
+        "weekday": 3
+      },
+      {
+        "id": "7a8c4d64-9fd4-4a6d-b441-b137bacd5696",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "110",
+        "numericCode": 110,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 816,
+        "endMinute": 1331,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "110|08:35|13:36 - 22:11",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:35",
+          "regel": 6
+        },
+        "weekday": 4
+      },
+      {
+        "id": "5a5b44da-f2ff-4b5f-8537-edc6c6a22ec9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "102",
+        "numericCode": 102,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 969,
+        "endMinute": 1507,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "102|08:58|16:09 - 01:07",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "08:58",
+          "regel": 6
+        },
+        "weekday": 6
+      },
+      {
+        "id": "2c4fb635-7d0c-47e7-959b-4a02145ce572",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 987,
+        "endMinute": 1451,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "107|07:44|16:27 - 00:11",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:44",
+          "regel": 6
+        },
+        "weekday": 7
+      },
+      {
+        "id": "be58e7f3-202e-4599-965c-7a2232b57601",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 373,
+        "endMinute": 902,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "7|08:49|06:13 - 15:02",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:49",
+          "regel": 1
+        },
+        "weekday": 2
+      },
+      {
+        "id": "94a05542-384e-464e-ab1d-0a70865668f7",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "3",
+        "numericCode": 3,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 302,
+        "endMinute": 722,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "3|07:00|05:02 - 12:02",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:00",
+          "regel": 2
+        },
+        "weekday": 1
+      },
+      {
+        "id": "8e901b21-b05f-498a-8cf3-66f5d298fa82",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "12",
+        "numericCode": 12,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 347,
+        "endMinute": 852,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "12|08:25|05:47 - 14:12",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:25",
+          "regel": 2
+        },
+        "weekday": 2
+      },
+      {
+        "id": "caaff53d-267f-4677-b9c7-a65bf107f3d9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "201",
+        "numericCode": 201,
+        "period": "NACHT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "NACHT"
+        ],
+        "startMinute": 1377,
+        "endMinute": 1812,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "201|07:15|22:57 - 06:12",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:15",
+          "regel": 2
+        },
+        "weekday": 4
+      },
+      {
+        "id": "7936259f-76ef-415c-bd4d-42a6c70b2858",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "201",
+        "numericCode": 201,
+        "period": "NACHT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "NACHT"
+        ],
+        "startMinute": 1407,
+        "endMinute": 1828,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "201|07:01|23:27 - 06:28",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:01",
+          "regel": 2
+        },
+        "weekday": 5
+      },
+      {
+        "id": "fb9fa8b9-98b3-4470-a996-181dcb21127d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1260,
+        "endMinute": 1740,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "760|08:00|21:00 - 05:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:00",
+          "regel": 2
+        },
+        "weekday": 6
+      },
+      {
+        "id": "304b97a7-c04a-4ce3-bb7e-244107238308",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1830,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "761|07:30|23:00 - 06:30",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:30",
+          "regel": 2
+        },
+        "weekday": 7
+      },
+      {
+        "id": "545d2868-53a6-440d-9a08-6996982a4e05",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1320,
+        "endMinute": 1800,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "760|08:00|22:00 - 06:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:00",
+          "regel": 3
+        },
+        "weekday": 1
+      },
+      {
+        "id": "dde25a8a-8101-42c1-8655-b6e9b31756e4",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1069,
+        "endMinute": 1525,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "101|07:36|17:49 - 01:25",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:36",
+          "regel": 3
+        },
+        "weekday": 4
+      },
+      {
+        "id": "d09303f2-4e63-441c-989e-002b749b44ad",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "103",
+        "numericCode": 103,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 954,
+        "endMinute": 1481,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "103|08:47|15:54 - 00:41",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:47",
+          "regel": 3
+        },
+        "weekday": 5
+      },
+      {
+        "id": "53ce1d89-0da6-4a0d-adf2-77b67ef3f0ad",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "109",
+        "numericCode": 109,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 927,
+        "endMinute": 1391,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "109|07:44|15:27 - 23:11",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:44",
+          "regel": 3
+        },
+        "weekday": 6
+      },
+      {
+        "id": "874cbdd8-790c-4b01-97fb-f0ead84a8108",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "103",
+        "numericCode": 103,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 969,
+        "endMinute": 1507,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "103|08:58|16:09 - 01:07",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:58",
+          "regel": 3
+        },
+        "weekday": 7
+      },
+      {
+        "id": "325e0988-1ec6-4f3f-bf73-ecbb83b73ee1",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "108",
+        "numericCode": 108,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 739,
+        "endMinute": 1228,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "108|08:09|12:19 - 20:28",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:09",
+          "regel": 4
+        },
+        "weekday": 3
+      },
+      {
+        "id": "a3761fb9-ac75-4435-bab9-8b7f1569b473",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 834,
+        "endMinute": 1348,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "107|08:34|13:54 - 22:28",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:34",
+          "regel": 4
+        },
+        "weekday": 5
+      },
+      {
+        "id": "06daf501-b477-4fc9-ae6e-ea3ceb91d8e9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "104",
+        "numericCode": 104,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 909,
+        "endMinute": 1434,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "104|08:45|15:09 - 23:54",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:45",
+          "regel": 5
+        },
+        "weekday": 1
+      },
+      {
+        "id": "2aec767e-e35a-4cb9-9e84-ce3dd645b448",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 763,
+        "endMinute": 1271,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "107|08:28|12:43 - 21:11",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:28",
+          "regel": 5
+        },
+        "weekday": 2
+      },
+      {
+        "id": "e9ae8287-4197-4219-b1f4-61001e214b1e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "2",
+        "numericCode": 2,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 297,
+        "endMinute": 700,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "2|06:43|04:57 - 11:40",
+          "blad": "Mix 1 A.pdf",
+          "duur": "06:43",
+          "regel": 5
+        },
+        "weekday": 6
+      },
+      {
+        "id": "2cfc0f6d-6d5b-40d1-834c-ee6c606a9b2e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "115",
+        "numericCode": 115,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 747,
+        "endMinute": 1242,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "115|08:15|12:27 - 20:42",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:15",
+          "regel": 6
+        },
+        "weekday": 7
+      },
+      {
+        "id": "77619f77-a624-4731-8a0a-28d376c19b13",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "106",
+        "numericCode": 106,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 849,
+        "endMinute": 1374,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "106|08:45|14:09 - 22:54",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:45",
+          "regel": 7
+        },
+        "weekday": 1
+      },
+      {
+        "id": "ffd7b7db-e6f2-4495-91f1-d7dc46b0eba0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1003,
+        "endMinute": 1525,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "101|08:42|16:43 - 01:25",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:42",
+          "regel": 7
+        },
+        "weekday": 3
+      },
+      {
+        "id": "3577926b-3f6c-4f7b-bcf5-980c5df2fe4b",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "106",
+        "numericCode": 106,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 859,
+        "endMinute": 1357,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "106|08:18|14:19 - 22:37",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:18",
+          "regel": 7
+        },
+        "weekday": 4
+      },
+      {
+        "id": "5877800e-2371-49d8-9440-cc286576ba5a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "105",
+        "numericCode": 105,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 883,
+        "endMinute": 1404,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "105|08:41|14:43 - 23:24",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:41",
+          "regel": 7
+        },
+        "weekday": 5
+      },
+      {
+        "id": "b858ff84-f0f2-4890-a16f-79fc28bc7eb5",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1830,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "761|07:30|23:00 - 06:30",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:30",
+          "regel": 8
+        },
+        "weekday": 1
+      },
+      {
+        "id": "9c6d504e-155b-4e14-9c6f-3c49e37c8cac",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1320,
+        "endMinute": 1800,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "760|08:00|22:00 - 06:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:00",
+          "regel": 8
+        },
+        "weekday": 2
+      },
+      {
+        "id": "5a604782-a1a2-4708-8508-ff4d35d55a8e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "201",
+        "numericCode": 201,
+        "period": "NACHT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "NACHT"
+        ],
+        "startMinute": 1359,
+        "endMinute": 1841,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "201|08:02|22:39 - 06:41",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:02",
+          "regel": 8
+        },
+        "weekday": 3
+      },
+      {
+        "id": "601cc840-a871-41b8-8608-d0e79d564f52",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "761",
+        "numericCode": 761,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1380,
+        "endMinute": 1830,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "761|07:30|23:00 - 06:30",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:30",
+          "regel": 8
+        },
+        "weekday": 4
+      },
+      {
+        "id": "9a134f2f-fdbd-450b-8c9f-d74c74d4ff5d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "760",
+        "numericCode": 760,
+        "period": "NACHT",
+        "workType": "RANGEER",
+        "kinds": [
+          "NACHT",
+          "RANGEER"
+        ],
+        "startMinute": 1320,
+        "endMinute": 1800,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "760|08:00|22:00 - 06:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:00",
+          "regel": 8
+        },
+        "weekday": 5
+      },
+      {
+        "id": "f79d9c59-9747-44c9-bdb3-c25912bb3d40",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 1039,
+        "endMinute": 1524,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "101|08:05|17:19 - 01:24",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:05",
+          "regel": 9
+        },
+        "weekday": 1
+      },
+      {
+        "id": "1c008742-a349-4b93-9e69-cc17f975dd27",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "101",
+        "numericCode": 101,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 999,
+        "endMinute": 1524,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "101|08:45|16:39 - 01:24",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:45",
+          "regel": 9
+        },
+        "weekday": 2
+      },
+      {
+        "id": "4c5aeeb8-6371-4f56-b87b-84e5a9615e95",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "110",
+        "numericCode": 110,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 597,
+        "endMinute": 1121,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "110|08:44|09:57 - 18:41",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:44",
+          "regel": 9
+        },
+        "weekday": 6
+      },
+      {
+        "id": "63c1bcc6-8cfa-4dd3-b77f-67627638299d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "6",
+        "numericCode": 6,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 343,
+        "endMinute": 813,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "6|07:50|05:43 - 13:33",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:50",
+          "regel": 10
+        },
+        "weekday": 2
+      },
+      {
+        "id": "85ea02b5-a531-4c81-90c4-3bcf09b79152",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "6",
+        "numericCode": 6,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 379,
+        "endMinute": 872,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "6|08:13|06:19 - 14:32",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:13",
+          "regel": 10
+        },
+        "weekday": 3
+      },
+      {
+        "id": "5b79882e-6761-41d3-ad6d-437f40ce5937",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "11",
+        "numericCode": 11,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 267,
+        "endMinute": 632,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "11|06:05|04:27 - 10:32",
+          "blad": "Mix 1 A.pdf",
+          "duur": "06:05",
+          "regel": 10
+        },
+        "weekday": 4
+      },
+      {
+        "id": "c18fa68f-377e-4313-afd0-39c7a4d6f061",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "105",
+        "numericCode": 105,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 859,
+        "endMinute": 1378,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "105|08:39|14:19 - 22:58",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:39",
+          "regel": 11
+        },
+        "weekday": 1
+      },
+      {
+        "id": "77bfc55f-f7cd-4833-b82e-5c7e94611696",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "108",
+        "numericCode": 108,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 818,
+        "endMinute": 1331,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "108|08:33|13:38 - 22:11",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:33",
+          "regel": 11
+        },
+        "weekday": 4
+      },
+      {
+        "id": "1c13832f-39bc-462c-b8cf-c45498cf5222",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 368,
+        "endMinute": 804,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "8|07:16|06:08 - 13:24",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:16",
+          "regel": 12
+        },
+        "weekday": 2
+      },
+      {
+        "id": "d5098f93-942a-4a29-9401-16f4fa7f9798",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "4",
+        "numericCode": 4,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 338,
+        "endMinute": 812,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "4|07:54|05:38 - 13:32",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:54",
+          "regel": 12
+        },
+        "weekday": 3
+      },
+      {
+        "id": "30e4a655-f48b-439e-9477-8084b7249c76",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "2",
+        "numericCode": 2,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 299,
+        "endMinute": 697,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "2|06:38|04:59 - 11:37",
+          "blad": "Mix 1 A.pdf",
+          "duur": "06:38",
+          "regel": 12
+        },
+        "weekday": 4
+      },
+      {
+        "id": "984d8618-41af-4674-ad67-b965918d1c97",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 597,
+        "endMinute": 1061,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "8|07:44|09:57 - 17:41",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:44",
+          "regel": 12
+        },
+        "weekday": 7
+      },
+      {
+        "id": "f6ec22db-4bcf-4c9d-a6d7-4b72823e5825",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "4",
+        "numericCode": 4,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 327,
+        "endMinute": 752,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "4|07:05|05:27 - 12:32",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:05",
+          "regel": 1
+        },
+        "weekday": 2
+      },
+      {
+        "id": "3d4061cc-5d2d-4317-b369-e55a9bf6c418",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "13",
+        "numericCode": 13,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 537,
+        "endMinute": 1001,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "13|07:44|08:57 - 16:41",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:44",
+          "regel": 1
+        },
+        "weekday": 3
+      },
+      {
+        "id": "90399b29-ff12-4a44-beca-2a095c12f29f",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 387,
+        "endMinute": 911,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "5|08:44|06:27 - 15:11",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:44",
+          "regel": 1
+        },
+        "weekday": 4
+      },
+      {
+        "id": "12800361-d3c6-413e-aaf1-2cb1c2466326",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "6",
+        "numericCode": 6,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 373,
+        "endMinute": 898,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "6|08:45|06:13 - 14:58",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:45",
+          "regel": 1
+        },
+        "weekday": 5
+      },
+      {
+        "id": "c13b0d62-2032-45d3-a6d3-2bddea5e5b39",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "11",
+        "numericCode": 11,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 529,
+        "endMinute": 1052,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "11|08:43|08:49 - 17:32",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:43",
+          "regel": 2
+        },
+        "weekday": 1
+      },
+      {
+        "id": "dbd772ed-aaae-4bcc-86a6-a3187f4989c9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "9",
+        "numericCode": 9,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 379,
+        "endMinute": 907,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "9|08:48|06:19 - 15:07",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:48",
+          "regel": 2
+        },
+        "weekday": 2
+      },
+      {
+        "id": "69f98c94-3e58-4a81-93e7-a989f38e8780",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 263,
+        "endMinute": 654,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "1|06:31|04:23 - 10:54",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:31",
+          "regel": 2
+        },
+        "weekday": 6
+      },
+      {
+        "id": "e922c136-17b6-4db6-831b-f08b7fb38b14",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 289,
+        "endMinute": 688,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "1|06:39|04:49 - 11:28",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:39",
+          "regel": 2
+        },
+        "weekday": 7
+      },
+      {
+        "id": "65e1a4d7-0222-46fe-80fd-e0300d038748",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 519,
+        "endMinute": 1052,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "8|08:53|08:39 - 17:32",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:53",
+          "regel": 3
+        },
+        "weekday": 4
+      },
+      {
+        "id": "1d156093-6618-4752-9a33-dbf56fed79d0",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 384,
+        "endMinute": 877,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "7|08:13|06:24 - 14:37",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:13",
+          "regel": 3
+        },
+        "weekday": 5
+      },
+      {
+        "id": "ee883e46-e0d5-43cc-98ae-06b43af1b681",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 387,
+        "endMinute": 911,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "7|08:44|06:27 - 15:11",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:44",
+          "regel": 3
+        },
+        "weekday": 6
+      },
+      {
+        "id": "604e1136-9a46-42b5-bb4a-e41e097ba0f2",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 567,
+        "endMinute": 1048,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "7|08:01|09:27 - 17:28",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:01",
+          "regel": 3
+        },
+        "weekday": 7
+      },
+      {
+        "id": "dc71a8a5-d343-4ba4-ab96-450349788a0a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 338,
+        "endMinute": 701,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "1|06:03|05:38 - 11:41",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:03",
+          "regel": 4
+        },
+        "weekday": 4
+      },
+      {
+        "id": "b31ff1aa-2cab-4205-a329-732e7d77aeb5",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "10",
+        "numericCode": 10,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 523,
+        "endMinute": 1048,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "10|08:45|08:43 - 17:28",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:45",
+          "regel": 5
+        },
+        "weekday": 1
+      },
+      {
+        "id": "1fd7bfb4-922e-466f-9a4f-e76ccca31acb",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 409,
+        "endMinute": 933,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "8|08:44|06:49 - 15:33",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:44",
+          "regel": 5
+        },
+        "weekday": 3
+      },
+      {
+        "id": "207c9078-960c-49dc-8057-60b3afbbee1e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "9",
+        "numericCode": 9,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 428,
+        "endMinute": 958,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "9|08:50|07:08 - 15:58",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:50",
+          "regel": 6
+        },
+        "weekday": 6
+      },
+      {
+        "id": "f83db4da-ae29-43f4-9582-ba05e38d0a58",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 553,
+        "endMinute": 1018,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "5|07:45|09:13 - 16:58",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:45",
+          "regel": 6
+        },
+        "weekday": 7
+      },
+      {
+        "id": "9fc0bf72-21b3-4f9a-a0ae-de34412e18d8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 343,
+        "endMinute": 752,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "7|06:49|05:43 - 12:32",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:49",
+          "regel": 8
+        },
+        "weekday": 1
+      },
+      {
+        "id": "8ff11c4e-89f9-4730-8174-5a072af9714f",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "2",
+        "numericCode": 2,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 297,
+        "endMinute": 704,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "2|06:47|04:57 - 11:44",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:47",
+          "regel": 8
+        },
+        "weekday": 2
+      },
+      {
+        "id": "05c34126-8d56-4403-91b7-e9d328df0c94",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 417,
+        "endMinute": 940,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "8|08:43|06:57 - 15:40",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:43",
+          "regel": 8
+        },
+        "weekday": 5
+      },
+      {
+        "id": "441480d3-8ac9-4046-a6c2-f8b317291cf5",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "3",
+        "numericCode": 3,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 428,
+        "endMinute": 967,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "3|08:59|07:08 - 16:07",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:59",
+          "regel": 8
+        },
+        "weekday": 7
+      },
+      {
+        "id": "63840a90-1595-430a-9863-329a194937e6",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "13",
+        "numericCode": 13,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 489,
+        "endMinute": 1023,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "13|08:54|08:09 - 17:03",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:54",
+          "regel": 9
+        },
+        "weekday": 2
+      },
+      {
+        "id": "59b25a0e-e7e6-445f-97b9-1b0c85bfd3d2",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "11",
+        "numericCode": 11,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 519,
+        "endMinute": 1031,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "11|08:32|08:39 - 17:11",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:32",
+          "regel": 9
+        },
+        "weekday": 5
+      },
+      {
+        "id": "4db1d65a-baf1-4647-a34f-2a54665d51ce",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 412,
+        "endMinute": 944,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "8|08:52|06:52 - 15:44",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:52",
+          "regel": 10
+        },
+        "weekday": 1
+      },
+      {
+        "id": "3fbf882d-c081-49a1-9d49-649c82ffdcf5",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "7",
+        "numericCode": 7,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 373,
+        "endMinute": 894,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "7|08:41|06:13 - 14:54",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:41",
+          "regel": 10
+        },
+        "weekday": 3
+      },
+      {
+        "id": "ed58dc14-15b0-454d-a6dc-150b2603226f",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "13",
+        "numericCode": 13,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 373,
+        "endMinute": 864,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "13|08:11|06:13 - 14:24",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:11",
+          "regel": 10
+        },
+        "weekday": 4
+      },
+      {
+        "id": "59038e48-4c6a-456a-a8d2-a93f15d1d3c4",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 347,
+        "endMinute": 812,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "5|07:45|05:47 - 13:32",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:45",
+          "regel": 11
+        },
+        "weekday": 1
+      },
+      {
+        "id": "ea920b21-38aa-4422-8a6f-b392196fcad6",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "3",
+        "numericCode": 3,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 357,
+        "endMinute": 718,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "3|06:01|05:57 - 11:58",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:01",
+          "regel": 11
+        },
+        "weekday": 2
+      },
+      {
+        "id": "90d0b2a7-b796-4b28-97e4-2f3dd174fbcc",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 267,
+        "endMinute": 662,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "1|06:35|04:27 - 11:02",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:35",
+          "regel": 11
+        },
+        "weekday": 3
+      },
+      {
+        "id": "66093fcc-0b1e-4066-9899-3405b20355d8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "4",
+        "numericCode": 4,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 343,
+        "endMinute": 822,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "4|07:59|05:43 - 13:42",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:59",
+          "regel": 11
+        },
+        "weekday": 6
+      },
+      {
+        "id": "166ea132-dff7-4097-9004-98c318bf4614",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "6",
+        "numericCode": 6,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 387,
+        "endMinute": 851,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "6|07:44|06:27 - 14:11",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:44",
+          "regel": 12
+        },
+        "weekday": 1
+      },
+      {
+        "id": "33c88cd0-a107-4d00-8ba9-062df2b10291",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "10",
+        "numericCode": 10,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 456,
+        "endMinute": 962,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "10|08:26|07:36 - 16:02",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:26",
+          "regel": 12
+        },
+        "weekday": 3
+      },
+      {
+        "id": "3b375847-9f5c-4614-b00f-454336c233b7",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "3",
+        "numericCode": 3,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 343,
+        "endMinute": 842,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "3|08:19|05:43 - 14:02",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:19",
+          "regel": 12
+        },
+        "weekday": 4
+      },
+      {
+        "id": "253ecd8b-9baf-463a-9f62-75dbbeb24a0f",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "13",
+        "numericCode": 13,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 474,
+        "endMinute": 881,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 12",
+        "sourceRow": 12,
+        "sourceValues": {
+          "cel": "13|06:47|07:54 - 14:41",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "06:47",
+          "regel": 12
+        },
+        "weekday": 5
+      },
+      {
+        "id": "9cb90b9a-7237-408d-86b9-513889631348",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 267,
+        "endMinute": 667,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "1|06:40|04:27 - 11:07",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:40",
+          "regel": 1
+        },
+        "weekday": 1
+      },
+      {
+        "id": "db22b345-d68a-4eee-a65b-0e6afe863870",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 267,
+        "endMinute": 667,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "1|06:40|04:27 - 11:07",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:40",
+          "regel": 1
+        },
+        "weekday": 2
+      },
+      {
+        "id": "55fd5d53-086e-4514-97d7-85630bddc847",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "3",
+        "numericCode": 3,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 327,
+        "endMinute": 752,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "3|07:05|05:27 - 12:32",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:05",
+          "regel": 1
+        },
+        "weekday": 3
+      },
+      {
+        "id": "10401e00-3489-4f54-a6e1-5308add21805",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 338,
+        "endMinute": 752,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "5|06:54|05:38 - 12:32",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:54",
+          "regel": 2
+        },
+        "weekday": 2
+      },
+      {
+        "id": "ae6f94e5-f2e5-41fb-a5d6-f88be6d4f364",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 343,
+        "endMinute": 782,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "5|07:19|05:43 - 13:02",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:19",
+          "regel": 2
+        },
+        "weekday": 3
+      },
+      {
+        "id": "b5379461-09e7-4d7e-b464-bd4cae0eb7c7",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 343,
+        "endMinute": 760,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "5|06:57|05:43 - 12:40",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:57",
+          "regel": 2
+        },
+        "weekday": 5
+      },
+      {
+        "id": "5a882a1e-6acc-4687-b59e-9f1e5d3dda06",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "115",
+        "numericCode": 115,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 916,
+        "endMinute": 1421,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "115|08:25|15:16 - 23:41",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:25",
+          "regel": 3
+        },
+        "weekday": 1
+      },
+      {
+        "id": "fc5ce135-a23b-4fc9-8039-1e20284461c4",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "108",
+        "numericCode": 108,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 772,
+        "endMinute": 1288,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "108|08:36|12:52 - 21:28",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:36",
+          "regel": 3
+        },
+        "weekday": 2
+      },
+      {
+        "id": "930071d9-7943-47f3-80e3-8de56472b612",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "103",
+        "numericCode": 103,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 954,
+        "endMinute": 1481,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "103|08:47|15:54 - 00:41",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:47",
+          "regel": 3
+        },
+        "weekday": 6
+      },
+      {
+        "id": "71fc0532-773d-4c32-924d-4a9b82d54321",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "108",
+        "numericCode": 108,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 849,
+        "endMinute": 1378,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "108|08:49|14:09 - 22:58",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:49",
+          "regel": 3
+        },
+        "weekday": 7
+      },
+      {
+        "id": "8c272b4a-8174-4f7b-ba0d-83a5e6937087",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "103",
+        "numericCode": 103,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 949,
+        "endMinute": 1468,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "103|08:39|15:49 - 00:28",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:39",
+          "regel": 4
+        },
+        "weekday": 2
+      },
+      {
+        "id": "9d6512ce-4865-48d3-b34a-e00cc8aed06c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "103",
+        "numericCode": 103,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 939,
+        "endMinute": 1464,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "103|08:45|15:39 - 00:24",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:45",
+          "regel": 4
+        },
+        "weekday": 3
+      },
+      {
+        "id": "a5c253d9-f945-43ea-99da-a05d52800d2a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "104",
+        "numericCode": 104,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 947,
+        "endMinute": 1468,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "104|08:41|15:47 - 00:28",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:41",
+          "regel": 4
+        },
+        "weekday": 4
+      },
+      {
+        "id": "988996ca-be6b-4a3e-87ab-34ea97d9de8a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "106",
+        "numericCode": 106,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 879,
+        "endMinute": 1391,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "106|08:32|14:39 - 23:11",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:32",
+          "regel": 4
+        },
+        "weekday": 5
+      },
+      {
+        "id": "3e70be99-4b87-4f72-ac01-a175cef96d5a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "111",
+        "numericCode": 111,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 709,
+        "endMinute": 1241,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "111|08:52|11:49 - 20:41",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:52",
+          "regel": 5
+        },
+        "weekday": 2
+      },
+      {
+        "id": "8a3c4177-2984-4fe9-8886-ecc4ba4a61bd",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "8",
+        "numericCode": 8,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 403,
+        "endMinute": 942,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "8|08:59|06:43 - 15:42",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:59",
+          "regel": 5
+        },
+        "weekday": 6
+      },
+      {
+        "id": "d60e7d20-073f-4d20-8f82-c859d6248562",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "2",
+        "numericCode": 2,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 403,
+        "endMinute": 877,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "2|07:54|06:43 - 14:37",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:54",
+          "regel": 5
+        },
+        "weekday": 7
+      },
+      {
+        "id": "22c6aa0e-f7f2-411d-be2a-7c42dbd31144",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "9",
+        "numericCode": 9,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 379,
+        "endMinute": 903,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "9|08:44|06:19 - 15:03",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:44",
+          "regel": 6
+        },
+        "weekday": 1
+      },
+      {
+        "id": "c26e8e7d-4fb9-4436-911c-8f9f5112fd7c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "2",
+        "numericCode": 2,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 297,
+        "endMinute": 701,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "2|06:44|04:57 - 11:41",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:44",
+          "regel": 6
+        },
+        "weekday": 5
+      },
+      {
+        "id": "5b01675e-585e-40b5-b535-8e397a980e48",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "5",
+        "numericCode": 5,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 327,
+        "endMinute": 774,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "5|07:27|05:27 - 12:54",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:27",
+          "regel": 6
+        },
+        "weekday": 6
+      },
+      {
+        "id": "a9f6c568-e605-4961-9535-14009bfac31d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "114",
+        "numericCode": 114,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 609,
+        "endMinute": 1121,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "114|08:32|10:09 - 18:41",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:32",
+          "regel": 7
+        },
+        "weekday": 4
+      },
+      {
+        "id": "75261375-b08e-4c9b-9979-25ad677f389d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "112",
+        "numericCode": 112,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 670,
+        "endMinute": 1177,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 7",
+        "sourceRow": 7,
+        "sourceValues": {
+          "cel": "112|08:27|11:10 - 19:37",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:27",
+          "regel": 7
+        },
+        "weekday": 5
+      },
+      {
+        "id": "13a9d54f-99ad-455f-bccf-2a77c21c1e71",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "14",
+        "numericCode": 14,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 327,
+        "endMinute": 734,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "14|06:47|05:27 - 12:14",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:47",
+          "regel": 8
+        },
+        "weekday": 4
+      },
+      {
+        "id": "a6146daf-2f25-4ec9-bf23-5c6c741ad9c6",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "107",
+        "numericCode": 107,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 758,
+        "endMinute": 1288,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "107|08:50|12:38 - 21:28",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:50",
+          "regel": 8
+        },
+        "weekday": 6
+      },
+      {
+        "id": "5a9e0054-38d4-42ed-9ebb-7d80eb5c6d1e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "104",
+        "numericCode": 104,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 987,
+        "endMinute": 1511,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "104|08:44|16:27 - 01:11",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:44",
+          "regel": 8
+        },
+        "weekday": 7
+      },
+      {
+        "id": "0916c139-6509-4599-a59c-84696e099c27",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "115",
+        "numericCode": 115,
+        "period": "LAAT",
+        "workType": "RIJDEND",
+        "kinds": [
+          "LAAT"
+        ],
+        "startMinute": 587,
+        "endMinute": 1091,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "115|08:24|09:47 - 18:11",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:24",
+          "regel": 9
+        },
+        "weekday": 4
+      },
+      {
+        "id": "3d93c933-bf2c-4965-b0c3-30811dbe77d6",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "11",
+        "numericCode": 11,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 488,
+        "endMinute": 1000,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "11|08:32|08:08 - 16:40",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:32",
+          "regel": 9
+        },
+        "weekday": 6
+      },
+      {
+        "id": "2f52291e-b738-46f5-89c0-aa41dafb5d16",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "9",
+        "numericCode": 9,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 368,
+        "endMinute": 792,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "9|07:04|06:08 - 13:12",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:04",
+          "regel": 10
+        },
+        "weekday": 3
+      },
+      {
+        "id": "ce62b69b-6f08-49bc-b23c-12d0a4e83146",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "1",
+        "numericCode": 1,
+        "period": "VROEG",
+        "workType": "RIJDEND",
+        "kinds": [
+          "VROEG"
+        ],
+        "startMinute": 267,
+        "endMinute": 654,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "1|06:27|04:27 - 10:54",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "06:27",
+          "regel": 10
+        },
+        "weekday": 5
+      },
+      {
+        "id": "025b187b-b8da-4ae1-8111-d659c060ae77",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "730",
+        "numericCode": 730,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 780,
+        "endMinute": 1260,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "730|08:00|13:00 - 21:00",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:00",
+          "regel": 1
+        },
+        "weekday": 3
+      },
+      {
+        "id": "04976762-2cdf-4974-be10-b99d6f9898f9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 300,
+        "endMinute": 720,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "701|07:00|05:00 - 12:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:00",
+          "regel": 4
+        },
+        "weekday": 5
+      },
+      {
+        "id": "125b5318-4b7e-4e4b-9a06-9ef2a02726ee",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "732",
+        "numericCode": 732,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 1080,
+        "endMinute": 1500,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "732|07:00|18:00 - 01:00",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:00",
+          "regel": 4
+        },
+        "weekday": 1
+      },
+      {
+        "id": "15a273b9-b734-4cd4-b5cd-343531033863",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "702",
+        "numericCode": 702,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 301,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "702|07:59|05:01 - 13:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:59",
+          "regel": 3
+        },
+        "weekday": 1
+      },
+      {
+        "id": "2552ec2f-8f3d-4525-bc53-5d00171d49f9",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 301,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "701|07:59|05:01 - 13:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:59",
+          "regel": 2
+        },
+        "weekday": 3
+      },
+      {
+        "id": "31a67230-c864-4f69-9600-250e41e4280a",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "731",
+        "numericCode": 731,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 660,
+        "endMinute": 1140,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "731|08:00|11:00 - 19:00",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:00",
+          "regel": 1
+        },
+        "weekday": 5
+      },
+      {
+        "id": "3e92f33e-c4ff-4b4c-ba60-228b6852d56c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "731",
+        "numericCode": 731,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 780,
+        "endMinute": 1260,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "731|08:00|13:00 - 21:00",
+          "blad": "BLM 1.pdf",
+          "duur": "08:00",
+          "regel": 6
+        },
+        "weekday": 2
+      },
+      {
+        "id": "42344810-14df-47d3-b654-d04c6504554d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 330,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "701|07:30|05:30 - 13:00",
+          "blad": "BLM 1.pdf",
+          "duur": "07:30",
+          "regel": 1
+        },
+        "weekday": 1
+      },
+      {
+        "id": "47672c7c-a193-441f-b6a2-2ed94ef1d572",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "703",
+        "numericCode": 703,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 420,
+        "endMinute": 870,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "703|07:30|07:00 - 14:30",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:30",
+          "regel": 6
+        },
+        "weekday": 3
+      },
+      {
+        "id": "4f645f50-0ea8-46df-ba4f-46cd037d7a61",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "730",
+        "numericCode": 730,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 1080,
+        "endMinute": 1560,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 3",
+        "sourceRow": 3,
+        "sourceValues": {
+          "cel": "730|08:00|18:00 - 02:00",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:00",
+          "regel": 3
+        },
+        "weekday": 5
+      },
+      {
+        "id": "5c910bb6-aaf1-4c23-8b63-c5cbed3f1d7c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:00",
+          "regel": 4
+        },
+        "weekday": 3
+      },
+      {
+        "id": "5ca47d67-843d-4155-8931-692143acaf49",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 9",
+        "sourceRow": 9,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:00",
+          "regel": 9
+        },
+        "weekday": 7
+      },
+      {
+        "id": "6e731334-20a1-4644-9df5-ecf4635e069b",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 301,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "701|07:59|05:01 - 13:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:59",
+          "regel": 1
+        },
+        "weekday": 4
+      },
+      {
+        "id": "792f7127-b8ac-4f85-b74c-5f36e628bc4e",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "702",
+        "numericCode": 702,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 300,
+        "endMinute": 720,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 10",
+        "sourceRow": 10,
+        "sourceValues": {
+          "cel": "702|07:00|05:00 - 12:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "07:00",
+          "regel": 10
+        },
+        "weekday": 5
+      },
+      {
+        "id": "824123d2-9042-425d-bfaa-2081624f6352",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "08:00",
+          "regel": 6
+        },
+        "weekday": 5
+      },
+      {
+        "id": "8631c6b3-a8bd-4af1-801a-1a5b531a6584",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "730",
+        "numericCode": 730,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 1080,
+        "endMinute": 1560,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "730|08:00|18:00 - 02:00",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:00",
+          "regel": 11
+        },
+        "weekday": 4
+      },
+      {
+        "id": "8b7b25a6-bfc4-4ed0-a4c9-5ead8777addb",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 330,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 11",
+        "sourceRow": 11,
+        "sourceValues": {
+          "cel": "701|07:30|05:30 - 13:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:30",
+          "regel": 11
+        },
+        "weekday": 7
+      },
+      {
+        "id": "9235eaf5-e894-4dcf-a89a-76dbe5b1b6e2",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 301,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 8",
+        "sourceRow": 8,
+        "sourceValues": {
+          "cel": "701|07:59|05:01 - 13:00",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:59",
+          "regel": 8
+        },
+        "weekday": 2
+      },
+      {
+        "id": "938c150f-51c0-4dfb-821c-09da9f8c5e30",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "701",
+        "numericCode": 701,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 330,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg 1 VA.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "701|07:30|05:30 - 13:00",
+          "blad": "Vroeg 1 VA.pdf",
+          "duur": "07:30",
+          "regel": 5
+        },
+        "weekday": 6
+      },
+      {
+        "id": "add853cc-ae24-48f1-af94-c643edb533b4",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "703",
+        "numericCode": 703,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 420,
+        "endMinute": 870,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "703|07:30|07:00 - 14:30",
+          "blad": "50+ mix 1.pdf",
+          "duur": "07:30",
+          "regel": 4
+        },
+        "weekday": 2
+      },
+      {
+        "id": "b8608220-500f-4506-9ff2-aa1d8e2f56c8",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:00",
+          "regel": 2
+        },
+        "weekday": 4
+      },
+      {
+        "id": "be4b0810-7ad5-4b31-a584-53215d894ff3",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "732",
+        "numericCode": 732,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 1080,
+        "endMinute": 1500,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 2",
+        "sourceRow": 2,
+        "sourceValues": {
+          "cel": "732|07:00|18:00 - 01:00",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "07:00",
+          "regel": 2
+        },
+        "weekday": 2
+      },
+      {
+        "id": "c750aa9a-4121-4f47-b396-5a19de3d9a0c",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "730",
+        "numericCode": 730,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 780,
+        "endMinute": 1260,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "730|08:00|13:00 - 21:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:00",
+          "regel": 6
+        },
+        "weekday": 6
+      },
+      {
+        "id": "cf0818f6-ed16-40a6-acd9-5a5918f77d79",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "732",
+        "numericCode": 732,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 1080,
+        "endMinute": 1500,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat Nacht 1 C.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "732|07:00|18:00 - 01:00",
+          "blad": "Laat Nacht 1 C.pdf",
+          "duur": "07:00",
+          "regel": 1
+        },
+        "weekday": 3
+      },
+      {
+        "id": "d545c3b3-745a-4fc6-b600-7bf0de0f8bbd",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "702",
+        "numericCode": 702,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 301,
+        "endMinute": 780,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "702|07:59|05:01 - 13:00",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "07:59",
+          "regel": 1
+        },
+        "weekday": 4
+      },
+      {
+        "id": "debeb64d-769e-4728-b9f0-a63c12c948fe",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "730",
+        "numericCode": 730,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 780,
+        "endMinute": 1260,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Vroeg Laat 1 B.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "730|08:00|13:00 - 21:00",
+          "blad": "Vroeg Laat 1 B.pdf",
+          "duur": "08:00",
+          "regel": 5
+        },
+        "weekday": 1
+      },
+      {
+        "id": "e31adaff-d1ef-4711-993e-0f7d220de648",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "731",
+        "numericCode": 731,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 780,
+        "endMinute": 1260,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Laat 1 LA.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "731|08:00|13:00 - 21:00",
+          "blad": "Laat 1 LA.pdf",
+          "duur": "08:00",
+          "regel": 6
+        },
+        "weekday": 4
+      },
+      {
+        "id": "e4287d39-35c5-4f8f-b282-abc94f9d5509",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "Mix 1 A.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "Mix 1 A.pdf",
+          "duur": "08:00",
+          "regel": 1
+        },
+        "weekday": 1
+      },
+      {
+        "id": "edaab2e6-fa52-4fef-b0aa-d8b1a913662d",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 6",
+        "sourceRow": 6,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:00",
+          "regel": 6
+        },
+        "weekday": 2
+      },
+      {
+        "id": "f29730ab-3128-41df-8155-4d24776c0ff7",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "601",
+        "numericCode": 601,
+        "period": "VROEG",
+        "workType": "RESERVE",
+        "kinds": [
+          "VROEG",
+          "RESERVE"
+        ],
+        "startMinute": 480,
+        "endMinute": 960,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "50+ mix 1.pdf regel 4",
+        "sourceRow": 4,
+        "sourceValues": {
+          "cel": "601|08:00|08:00 - 16:00",
+          "blad": "50+ mix 1.pdf",
+          "duur": "08:00",
+          "regel": 4
+        },
+        "weekday": 6
+      },
+      {
+        "id": "f3dda280-49a6-4b2f-9424-b89d09a620df",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "730",
+        "numericCode": 730,
+        "period": "LAAT",
+        "workType": "RANGEER",
+        "kinds": [
+          "LAAT",
+          "RANGEER"
+        ],
+        "startMinute": 840,
+        "endMinute": 1320,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 5",
+        "sourceRow": 5,
+        "sourceValues": {
+          "cel": "730|08:00|14:00 - 22:00",
+          "blad": "BLM 1.pdf",
+          "duur": "08:00",
+          "regel": 5
+        },
+        "weekday": 7
+      },
+      {
+        "id": "f69b165b-51e6-4c01-938a-895ea3ece149",
+        "packageId": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+        "code": "702",
+        "numericCode": 702,
+        "period": "VROEG",
+        "workType": "RANGEER",
+        "kinds": [
+          "VROEG",
+          "RANGEER"
+        ],
+        "startMinute": 360,
+        "endMinute": 840,
+        "depot": "DDR",
+        "breakMinutes": null,
+        "overtimeMinutes": 0,
+        "requiredQualifications": [],
+        "weight": 3,
+        "description": "BLM 1.pdf regel 1",
+        "sourceRow": 1,
+        "sourceValues": {
+          "cel": "702|08:00|06:00 - 14:00",
+          "blad": "BLM 1.pdf",
+          "duur": "08:00",
+          "regel": 1
+        },
+        "weekday": 7
+      }
+    ]
+  },
+  "localModel": {
+    "configured": true,
+    "url": "http://127.0.0.1:11434/v1",
+    "model": "qwen3:8b",
+    "temperature": 0,
+    "maxTokens": 2000,
+    "timeoutMs": 120000,
+    "reachable": true,
+    "detail": "1 model(len) beschikbaar",
+    "ollamaVersion": "ollama version is 0.34.4",
+    "gpu": "NVIDIA GeForce RTX 3080, 10240 MiB"
+  },
+  "agentCapabilities": {
+    "all": [
+      "agent:chat",
+      "agent:job:create",
+      "agent:autonomous",
+      "agent:memory:write",
+      "agent:preference:propose",
+      "agent:preference:approve",
+      "agent:crosslocation:read",
+      "agent:experiment:propose",
+      "agent:experiment:run"
+    ],
+    "levels": {
+      "A": [
+        "agent:chat"
+      ],
+      "B": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write"
+      ],
+      "C": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write",
+        "agent:autonomous"
+      ]
+    },
+    "currentGrantDDR": {
+      "capabilities": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write"
+      ],
+      "maxRounds": 0,
+      "maxSolverSeconds": 300,
+      "allowedStrategies": [],
+      "protectedRosters": [],
+      "suspendedAt": null
+    }
+  },
+  "toolCatalogue": [
+    {
+      "name": "rosterProject",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "rosterLine",
+      "allowed": true,
+      "requires": [
+        "lineNumber"
+      ]
+    },
+    {
+      "name": "dutyInstance",
+      "allowed": true,
+      "requires": [
+        "dutyCode"
+      ]
+    },
+    {
+      "name": "dutyKindCounts",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "dutyKindPerLine",
+      "allowed": true,
+      "requires": [
+        "kind"
+      ]
+    },
+    {
+      "name": "rosterHours",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "ruleLookup",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "ruleSearch",
+      "allowed": true,
+      "requires": [
+        "query"
+      ]
+    },
+    {
+      "name": "qualityReport",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "nightStructure",
+      "allowed": true,
+      "requires": [
+        "rosterCode"
+      ]
+    },
+    {
+      "name": "knowledgeSearch",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "experimentHistory",
+      "allowed": true,
+      "requires": []
+    }
+  ],
+  "chatImplementation": {
+    "screen": "src/app/(app)/roostercommissie/agent/",
+    "files": [
+      "page.tsx",
+      "gesprek.tsx",
+      "acties.ts"
+    ],
+    "note": "Vaste regelkiezer + weekkiezer boven het gesprek, permanent activiteitenpaneel en bevoegdhedenpaneel rechts, geen streaming, geen pin/recent-onderscheid, één AI-werkruimte-chat naast de hoofdchat op /roostercommissie/genereren. Dit is het uitgangspunt voor de UI-vereenvoudiging in §5, §12 t/m §18."
+  },
+  "existingBenchmarkAssets": {
+    "intelligenceTestset": "docs/v1.0.5/intelligence-testset.json (32 items, versie 2)",
+    "benchmarkMethodology": "docs/v1.0.5/benchmark-methodology.md",
+    "acceptanceCriteria": "docs/v1.0.5/acceptance-criteria.json",
+    "localAiBench": "scripts/v105/lokale-ai-bench.ts",
+    "acceptatie": "scripts/v105/acceptatie.ts",
+    "herbeoordeel": "scripts/v105/herbeoordeel.ts",
+    "note": "Deze golden set blijft in gebruik voor deterministische en gedragscontroles. Ze wordt hier niet vervangen maar aangevuld: §3 vraagt een aparte, grotere 'golden conversation suite' gericht op gespreksgedrag (multi-turn, foutieve aannames, machinistentaal), niet op geïsoleerde feiten."
+  },
+  "openIssuesFromV105Report": [
+    "B7: foutieve gebruikersaanname wordt niet betrouwbaar weersproken (J3, holdout, nulfoutcriterium NIET_GEHAALD)",
+    "B4: machinistentaal niet te bepalen — te weinig menselijk beoordeelde items",
+    "statusafleiding zet soms 'niet vast te stellen' boven een overigens juist antwoord (één zin triggert de regel)",
+    "model hangt soms een ongefundeerde gezagsclaim aan gegevens ('en zijn bevestigd')",
+    "deel 3 en 4 van de praktijktest alleen tegen de database gemeten, niet door het scherm doorlopen",
+    "geen bewijs dat geheugen tot betere roosterbeslissingen leidt",
+    "niveau B/C werkten aanvankelijk niet met een echt taalmodel: inmiddels hersteld, maar de kwetsbaarheid dat elke test de stub afdwingt blijft een structureel risico voor v1.0.6."
+  ]
+}

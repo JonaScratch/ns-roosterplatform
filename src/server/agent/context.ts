@@ -27,6 +27,19 @@ export const uiContextSchema = z.object({
   /** Het officiële rooster of een kandidaat. Zonder opgave: het officiële. */
   source: z.enum(["official", "candidate"]).default("official"),
   candidateId: z.string().min(1).nullish(),
+  /**
+   * Een kandidaat aangewezen in gewone taal, bijvoorbeeld "kandidaat 2".
+   *
+   * Het scherm levert altijd een candidateId (of niets). Een taalmodel dat
+   * "en kandidaat 2?" hoort, kent dat ID niet en kan het ook niet verzinnen —
+   * dat zou precies het soort aanname zijn die deze agent niet mag doen.
+   * `candidateLabel` is de uitzondering: het model mag hier wél een
+   * mensentaal-verwijzing invullen, en de server zoekt het echte kandidaat
+   * erbij op. Wordt er niets of niets eenduidigs gevonden, dan verandert er
+   * niets aan de context — geen gok, geen wedervraag hier, dat doet de tool
+   * die het uiteindelijk gebruikt.
+   */
+  candidateLabel: z.string().min(1).nullish(),
   rosterCode: z.string().min(1).nullish(),
   lineNumber: z.number().int().positive().nullish(),
   weekday: z.number().int().min(1).max(7).nullish(),
@@ -51,6 +64,50 @@ export interface ResolvedContext {
   readonly missing: readonly string[];
 }
 
+/**
+ * Zoekt de kandidaat die bij een mensentaal-verwijzing hoort, bijvoorbeeld
+ * "kandidaat 2" of "de tweede kandidaat".
+ *
+ * ## Gevonden bij de N0-meting van v1.0.6
+ *
+ * "En hoe zit dat in kandidaat 2?" leverde géén toolaanroep op: het model wist
+ * niet welk database-ID bij "kandidaat 2" hoort, kon dat ook niet weten, en
+ * gaf het antwoord dat de vraag "buiten de beschikbare gegevens en tools"
+ * viel. Dat is eerlijk — het verzon geen ID — maar het is ook precies de
+ * onnodige wedervraag die §6 en §7 van de opdracht willen wegnemen. Deze
+ * functie doet het opzoekwerk dat het model niet kan doen.
+ *
+ * ## Waarom op een rangnummer, en niet op de vrije tekst van het label
+ *
+ * `scenarioLabel` is een strategienaam plus "— kandidaat N"
+ * (bijvoorbeeld "Optimale totaalbalans — kandidaat 2"), en die strategienaam
+ * verschilt per project en kan veranderen. Het rangnummer is het enige deel
+ * waarvan zeker is dat een gebruiker het zo noemt.
+ */
+async function vindKandidaatOpNaam(locationCode: string, label: string) {
+  const NEDERLANDSE_RANGGETALLEN: Readonly<Record<string, number>> = {
+    eerste: 1,
+    tweede: 2,
+    derde: 3,
+    vierde: 4,
+    vijfde: 5,
+  };
+  const laag = label.toLowerCase();
+  const cijfer = laag.match(/\d+/)?.[0];
+  const rangnummer = cijfer ? Number(cijfer) : (NEDERLANDSE_RANGGETALLEN[Object.keys(NEDERLANDSE_RANGGETALLEN).find((w) => laag.includes(w)) ?? ""] ?? null);
+  if (rangnummer === null) return null;
+
+  // De nieuwste generatieronde eerst: "kandidaat 2" bedoelt bijna altijd de
+  // kandidaat uit de ronde waar het gesprek nu over gaat, niet een oude ronde
+  // met hetzelfde rangnummer.
+  const rij = await prisma.candidateRoster.findFirst({
+    where: { locationCode, scenarioLabel: { endsWith: `kandidaat ${rangnummer}`, mode: "insensitive" } },
+    orderBy: { generatedAt: "desc" },
+    select: { id: true, scenarioLabel: true, validationState: true, assignments: true, locationCode: true },
+  });
+  return rij;
+}
+
 /** Zet een verwijzing uit het scherm om in echte roosterobjecten. */
 export async function resolveContext(input: UiContext): Promise<ResolvedContext> {
   const ctx = uiContextSchema.parse(input);
@@ -62,9 +119,11 @@ export async function resolveContext(input: UiContext): Promise<ResolvedContext>
   if (ctx.source === "candidate") {
     const rij = ctx.candidateId
       ? await prisma.candidateRoster.findUnique({ where: { id: ctx.candidateId }, select: { id: true, scenarioLabel: true, validationState: true, assignments: true, locationCode: true } })
-      : null;
+      : ctx.candidateLabel
+        ? await vindKandidaatOpNaam(ctx.locationCode, ctx.candidateLabel)
+        : null;
     if (!rij) {
-      missing.push("kandidaat");
+      missing.push(ctx.candidateLabel ? `kandidaat "${ctx.candidateLabel}" (niet gevonden)` : "kandidaat");
     } else {
       candidate = { id: rij.id, label: rij.scenarioLabel, validationState: rij.validationState };
       rosters = candidateRosterInputs(rij.assignments as unknown as CandidateAssignment[], quality);
