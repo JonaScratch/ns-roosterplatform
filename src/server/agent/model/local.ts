@@ -1,4 +1,5 @@
 import "server-only";
+import { readFileSync } from "node:fs";
 import { REBUILD_GOAL_LABELS } from "@/server/optimizer/objective-weights";
 import { STRATEGIE_VOOR_DOEL, doelenLijst, isDoel, strategieLabel } from "../doelen";
 import { beschrijfVoorstel } from "../voorstel-tekst";
@@ -41,10 +42,40 @@ export interface LocalModelConfig {
   readonly maxTokens: number;
   /**
    * Alleen voor gecontroleerde experimenten (Demo Room): vervangt de
-   * systeeminstructie door een sandboxvariant. `localConfigFromEnv()` zet dit
-   * nooit — productie bouwt dus altijd dezelfde instructie als vandaag.
+   * systeeminstructie door een sandboxvariant. Door Demo Room gezet voor een
+   * benchmark-/experimentaanroep; nooit door `localConfigFromEnv()` zelf.
    */
   readonly systemPromptOverride?: (basis: string, request: PlanRequest) => string;
+}
+
+/**
+ * De gepubliceerde productievariant, als die er is.
+ *
+ * ## Waarom een bestand, en geen omgevingsvariabele met de tekst zelf
+ *
+ * `NS_PRODUCTION_PROMPT_FILE` wijst naar een bestandspad; de INHOUD van dat
+ * bestand wordt bij élke aanvraag opnieuw gelezen, niet één keer bij het
+ * opstarten. Publiceren en terugdraaien (Demo Room, "safe publish") wordt
+ * daarmee het schrijven van een bestand — geen herstart, geen deploy, geen
+ * codewijziging. Ontbreekt het bestand, staat de variabele niet, of is het
+ * bestand onleesbaar, dan geldt gewoon de standaardinstructie: er is hier
+ * geen foutpad dat de agent kan laten uitvallen.
+ *
+ * Standaard staat `NS_PRODUCTION_PROMPT_FILE` nergens — dit is dus additief
+ * en uit tenzij een mens (via Demo Room's publiceerknop, nooit automatisch)
+ * het aanzet.
+ */
+function productionOverrideFromDisk(): ((basis: string, request: PlanRequest) => string) | undefined {
+  const file = process.env.NS_PRODUCTION_PROMPT_FILE?.trim();
+  if (!file) return undefined;
+  let toevoeging: string;
+  try {
+    toevoeging = readFileSync(file, "utf8").trim();
+  } catch {
+    return undefined;
+  }
+  if (toevoeging.length === 0) return undefined;
+  return (basis: string) => `${basis}\n\n${toevoeging}`;
 }
 
 export function localConfigFromEnv(): LocalModelConfig | null {
@@ -54,6 +85,7 @@ export function localConfigFromEnv(): LocalModelConfig | null {
   return {
     baseUrl: baseUrl.replace(/\/$/, ""),
     model,
+    systemPromptOverride: productionOverrideFromDisk(),
     timeoutMs: Number(process.env.NS_LOCAL_LLM_TIMEOUT_MS ?? 120_000),
     // Nul, en dat is een keuze: dit model moet feiten weergeven en tools
     // kiezen, niet formuleren. Het stond op 0,2, en dat bleek duur bij het

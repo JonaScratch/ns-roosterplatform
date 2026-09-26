@@ -29,6 +29,8 @@ describe("Demo Room — HANDOFF.md", () => {
     const md = renderHandoff({
       generatedAt: "2026-09-25T12:00:00.000Z",
       bestSandboxVariant: null,
+      bestSandboxDiff: null,
+      bestSandboxWhyBetter: null,
       productionVariant: "lokaal:qwen3",
       unpromotedExperiments: [],
       bestBenchmarkScore: null,
@@ -49,6 +51,8 @@ describe("Demo Room — HANDOFF.md", () => {
     const md = renderHandoff({
       generatedAt: "2026-09-25T12:00:00.000Z",
       bestSandboxVariant: "exp-cand",
+      bestSandboxDiff: { passRate: 12.4 },
+      bestSandboxWhyBetter: "duidelijkere toolhint",
       productionVariant: "lokaal:qwen3",
       unpromotedExperiments: [kandidaat],
       bestBenchmarkScore: 84.2,
@@ -68,6 +72,8 @@ describe("Demo Room — HANDOFF.md", () => {
     const md = renderHandoff({
       generatedAt: "2026-09-25T12:00:00.000Z",
       bestSandboxVariant: null,
+      bestSandboxDiff: null,
+      bestSandboxWhyBetter: null,
       productionVariant: "lokaal:qwen3",
       unpromotedExperiments: [],
       bestBenchmarkScore: null,

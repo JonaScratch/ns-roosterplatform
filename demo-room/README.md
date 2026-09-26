@@ -1,13 +1,13 @@
-# Lyra Demo Room v0.1
+# Lyra Demo Room v0.2
 
 Een apart, lokaal laboratorium naast het NS Roosterplatform, om de ingebouwde
 roosteragent (in deze codebase "de agent" genoemd — er staat nergens de naam
 "Lyra" in de hoofdapp; deze Demo Room gebruikt die naam zoals de opdracht die
-gaf) hard te testen, te benchmarken en — alleen in sandbox, nooit automatisch
-in productie — te verbeteren.
+gaf) hard te testen, te benchmarken en — via een veilige, met een klik
+bevestigde publicatiepijplijn, nooit automatisch — te verbeteren.
 
 Zie ook: `docs/ARCHITECTURE.md`, `docs/SAFETY-BOUNDARIES.md`,
-`docs/CHALLENGE-FORMAT.md`, `docs/BENCHMARK-FORMAT.md`.
+`docs/CHALLENGE-FORMAT.md`, `docs/BENCHMARK-FORMAT.md`, `docs/SAFE-PUBLISH.md`.
 
 ## Wat dit WEL en NIET is
 
@@ -18,6 +18,26 @@ Zie ook: `docs/ARCHITECTURE.md`, `docs/SAFETY-BOUNDARIES.md`,
 - **Niet**: een tweede roosterplatform, een kopie van de regels/validator/
   optimizer, of een weg om productie buiten de bestaande bevoegdhedenlaag om
   te wijzigen. Zie `docs/SAFETY-BOUNDARIES.md` voor de harde grenzen.
+
+## v0.2 in het kort
+
+Twee dingen zijn toegevoegd bovenop v0.1, in deze volgorde omdat de tweede op
+de eerste voortbouwt:
+
+1. **Proof-of-value** (`demo-room/src/proof/`): bewijst — vóór er ooit een
+   lange autonome run wordt aanbevolen — dat de meet-wijzig-hermeet-lus zelf
+   werkt: `production Lyra → PRE → sandboxvariant → POST (dezelfde bevroren
+   set) → PRE-holdout → holdout → regressiecontrole → besluit`. Meet Lyra-
+   agentkwaliteit (contextresolutie, multi-turn, machinistentaal, toolkeuze,
+   false-premise correction, grounding, causale claims, onnodige
+   verduidelijkingsvragen, latency) en roosteronderzoekskwaliteit apart —
+   een beter antwoordmodel is niet hetzelfde als een beter rooster.
+2. **Safe publish + rollback** (`demo-room/src/publish/`): een klein,
+   herhaalbaar versiebeheer voor "Production Lyra" (`lyra-prod-YYYY-MM-DD-NN`),
+   met een verplichte pijplijn (preflight → backup → toepassen → typecheck →
+   smoke benchmark → grondingscontrole → succes/automatische rollback) en een
+   losse, met een klik bevestigde "Herstel"-actie naar elke eerdere versie.
+   Demo Room experimenteert en beveelt aan; **Jonathan publiceert.**
 
 ## Vereisten
 
@@ -39,9 +59,22 @@ Zet in `.env` (naast wat de hoofdapp al nodig heeft):
 DEMO_ROOM_ACTOR_EMPLOYEE_NUMBER=990001   # een actief ADMIN-account (bijv. de ontwikkelseed)
 DEMO_ROOM_LOCATION_CODE=DDR              # standaard DDR
 DEMO_ROOM_PORT=4173                      # dashboardpoort, optioneel
+
+# Alleen als je een variant hebt gepubliceerd (zie docs/SAFE-PUBLISH.md) —
+# safePublish.ts schrijft en beheert dit bestand zelf, jij hoeft alleen het
+# PAD hier één keer te zetten:
+NS_PRODUCTION_PROMPT_FILE=demo-room/data/lyra-versions/current-prompt.txt
 ```
 
-## Starten (LOCAL REQUIRED — dit kan niet vanuit de cloud-sessie worden gedraaid)
+## Starten — de eenvoudige weg (Windows, zo min mogelijk terminal)
+
+Dubbelklik **`demo-room/Start Demo Room.bat`**. Dat script controleert Node,
+`node_modules`, `.env`, de database en Ollama, en opent daarna automatisch
+`http://localhost:4173` in je browser. Runs, publiceren en herstellen doe je
+daarna volledig via het dashboard — de knoppen daar roepen exact dezelfde
+commando's aan als hieronder.
+
+## Starten — handmatig (LOCAL REQUIRED — dit kan niet vanuit de cloud-sessie worden gedraaid)
 
 ```bash
 # 1. Ollama starten (apart, buiten dit project)
@@ -52,57 +85,83 @@ npm run db:up
 npm run db:deploy
 npm run db:seed          # eenmalig, of als de database leeg is
 
-# 3. Demo Room-dashboard starten
-npx tsx --conditions=react-server demo-room/src/server.ts
+# 3. Demo Room-dashboard starten (dit proces zelf heeft GEEN react-server nodig —
+#    het spawnt de CLI voor elke actie, zie docs/ARCHITECTURE.md)
+npm run demo-room:dashboard
 
 # 4. Open http://localhost:4173
 ```
 
-Challenges en runs start je via de CLI (het dashboard is bewust puur
-lezend — zie `docs/SAFETY-BOUNDARIES.md` voor waarom):
+Alles is ook via de CLI te doen, zonder het dashboard:
 
 ```bash
 # Beschikbare challenges tonen
-npx tsx --conditions=react-server demo-room/src/cli.ts list-challenges
+npm run demo-room -- list-challenges
 
 # Eén challenge draaien (spoor A: chatbot, of spoor B: onderzoeker — de CLI kiest zelf het juiste pad)
-npx tsx --conditions=react-server demo-room/src/cli.ts run-challenge --id L1-nacht-vroeg-overgangen
+npm run demo-room -- run-challenge --id L1-nacht-vroeg-overgangen
 
 # Benchmark: dev/holdout/hidden, met herhalingen voor run-variance (§17)
-npx tsx --conditions=react-server demo-room/src/cli.ts benchmark --suite dev --runs 3
+npm run demo-room -- benchmark --suite dev --runs 3
+
+# PROOF OF VALUE — draai dit eerst, vóór een lange autonome run (zie hieronder)
+npm run demo-room -- proof-of-value --variant variant-a-tool-hint
 
 # Autonome onderzoeksrun: 10 / 30 / 60 minuten, of aangepast
-npx tsx --conditions=react-server demo-room/src/cli.ts autonomous --minutes 60 --goal "Zoek de grootste kwaliteitsverbetering" --goals KEEP_GOOD_PARTS
+npm run demo-room -- autonomous --minutes 60 --goal "Zoek de grootste kwaliteitsverbetering" --goals KEEP_GOOD_PARTS
+
+# Versies bekijken, publiceren, herstellen (zie docs/SAFE-PUBLISH.md)
+npm run demo-room -- versions
+npm run demo-room -- publish --experiment-id <id> --confirm
+npm run demo-room -- rollback --version-id <id> --confirm
 
 # HANDOFF.md en het dashboard bijwerken op basis van alle vastgelegde experimenten
-npx tsx --conditions=react-server demo-room/src/cli.ts report
+npm run demo-room -- report
 ```
 
 Na een run staat het volledige verslag in:
 
-- `demo-room/reports/latest.md` — het meest recente journaal, leesbaar.
-- `demo-room/reports/latest.json` — dezelfde inhoud, machineleesbaar.
+- `demo-room/reports/latest.md` / `.json` — het meest recente journaal.
 - `demo-room/reports/history/DR-*.md` — de permanente geschiedenis, nooit overschreven.
+- `demo-room/reports/improvements/<experiment-id>-{jonathan,technisch,machine}.{md,json}` —
+  automatisch bij elke `PROMOTION_CANDIDATE`, in drie leesniveaus.
 - `demo-room/HANDOFF.md` — plak dit in een nieuwe Claude- of ChatGPT-chat.
+
+## De acceptatietest, in deze volgorde (niet overslaan)
+
+1. `npm run demo-room -- proof-of-value` — moet écht PRE/POST/holdout meten
+   met het lokale model, en een eerlijke `PROMOTION_CANDIDATE`, `REJECTED` of
+   `KEEP_TESTING` opleveren.
+2. Bekijk het dashboard: grafieken tonen deze echte cijfers (geen
+   dummydata), het journaal en `HANDOFF.md` zijn bijgewerkt.
+3. Pas dáárna: een korte challenge (§ hierboven) en een korte autonome
+   smoke-run (10 minuten).
+4. Pas als die stabiel eindigt: een langere autonome run (30/60 min of meer).
+
+Dit is bewust dezelfde volgorde als Jonathan expliciet vroeg: **geen
+60-minutenrun voordat proof-of-value aantoont dat de verbeterlus werkt.**
 
 ## Tests
 
 ```bash
-npm test -- demo-room     # draait alleen de Demo Room-tests (vitest --testNamePattern of pad-filter)
+npm test -- demo-room     # draait alleen de Demo Room-tests (padfilter)
 ```
 
 De tests raken bewust geen database — net als de rest van de hoofdapp-suite
 (zie `vitest.config.mts`). Wat hier getoetst wordt: veiligheidsgrenzen,
-duplicaatdetectie, budgetbewaking, Pareto-analyse, journaal-/HANDOFF-opmaak.
-De end-to-end-paden (challenge draaien, autonome run, benchmark tegen een echt
-lokaal model) hebben een draaiende database en Ollama nodig en zijn dus
-**LOCAL REQUIRED** — zie `docs/SAFETY-BOUNDARIES.md` en het eindrapport voor
-de exacte commando's om ze lokaal te draaien.
+duplicaatdetectie, budgetbewaking, Pareto-analyse, het promotiecriterium
+(`decision.ts`), versienummering/-store, journaal-/HANDOFF-opmaak. De
+end-to-end-paden (challenge draaien, autonome run, proof-of-value, publish
+tegen een echt lokaal model) hebben een draaiende database en Ollama nodig en
+zijn dus **LOCAL REQUIRED**. Het dashboard zélf (alle lees-schermen en de
+run-besturing/spawn-mechaniek) is in deze sessie wél echt getest — zie het
+eindrapport.
 
-## Status v0.1 — wat werkt, wat niet, en waarom
+## Status — wat werkt, wat niet, en waarom
 
-Zie het eindrapport dat bij de eerste oplevering hoort (in het antwoord van
-deze sessie) voor een volledig overzicht: wat gebouwd is, wat hergebruikt is
-uit de hoofdapp (er bleek al veel meer te bestaan dan verwacht — zie
-`docs/ARCHITECTURE.md` §"Wat al bestond"), en wat expliciet **LOCAL
-REQUIRED** blijft omdat deze cloud-sessie geen Postgres en geen Ollama heeft.
+Zie `docs/ARCHITECTURE.md` §"Wat bewust niet is gebouwd" voor de eerlijke
+lijst met v0.2-grenzen, en het eindrapport van deze sessie voor wat
+daadwerkelijk in de cloud-sessie is uitgevoerd en geverifieerd (het
+dashboard, inclusief de run-spawn-mechaniek, draaide en werd getest) versus
+wat **LOCAL REQUIRED** blijft (alles wat een echt lokaal taalmodel of een
+draaiende Postgres nodig heeft).

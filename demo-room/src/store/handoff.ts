@@ -14,6 +14,10 @@ export interface HandoffState {
   readonly generatedAt: string;
   readonly bestSandboxVariant: string | null;
   readonly productionVariant: string;
+  /** §aanvulling: expliciet "Verschil" tussen Production en Best Sandbox Lyra. */
+  readonly bestSandboxDiff: Record<string, number> | null;
+  /** §aanvulling: expliciet "Waarom beter". */
+  readonly bestSandboxWhyBetter: string | null;
   readonly unpromotedExperiments: readonly ExperimentRecord[];
   readonly bestBenchmarkScore: number | null;
   readonly knownWeaknesses: readonly string[];
@@ -37,11 +41,13 @@ export function renderHandoff(state: HandoffState): string {
     "> Plak dit bestand in een nieuwe Claude- of ChatGPT-chat om direct te weten waar dit project staat.",
     "",
     "## Stand van zaken",
-    `- Beste sandboxvariant: **${state.bestSandboxVariant ?? "(nog geen — er is nog geen variant die de controle versloeg)"}**`,
-    `- Huidige productievariant: **${state.productionVariant}**`,
+    `- Production Lyra: **${state.productionVariant}**`,
+    `- Best Sandbox Lyra: **${state.bestSandboxVariant ?? "(nog geen — er is nog geen variant die de controle versloeg)"}**`,
+    `- Verschil: ${state.bestSandboxDiff && Object.keys(state.bestSandboxDiff).length > 0 ? Object.entries(state.bestSandboxDiff).map(([k, v]) => `${k} ${v > 0 ? "+" : ""}${v.toFixed(1)}pp`).join(", ") : "(geen — Best Sandbox is gelijk aan of nog niet gemeten tegen Production)"}`,
+    `- Waarom beter: ${state.bestSandboxWhyBetter ?? "(n.v.t.)"}`,
     `- Beste benchmarkscore tot nu toe: ${state.bestBenchmarkScore !== null ? state.bestBenchmarkScore.toFixed(1) : "(nog niet gemeten)"}`,
     "",
-    "## Nog niet gepromoveerde experimenten",
+    "## Nog niet gepubliceerde verbeteringen",
     state.unpromotedExperiments.length > 0
       ? state.unpromotedExperiments.map((e) => `- \`${e.id}\` (${e.decision}) — ${e.hypothesis}`).join("\n")
       : "_geen_",

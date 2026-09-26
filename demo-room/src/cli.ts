@@ -6,6 +6,9 @@ import { runChatbotChallenge } from "./challenges/engine";
 import { startAutonomousRun, awaitAutonomousRun } from "./research/autonomousRun";
 import type { RebuildGoal } from "@/server/optimizer/objective-weights";
 import { runSuite, runSuiteWithVariance } from "./benchmark/run";
+import { runProofOfValue } from "./proof/proofOfValue";
+import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
+import { listVersions } from "./publish/versions";
 import { writeHandoff } from "./store/handoff";
 import { readAllExperiments } from "./store/runlog";
 import { writeJournalEntry } from "./store/journal";
@@ -94,6 +97,49 @@ async function cmdBenchmark(): Promise<void> {
   }
 }
 
+async function cmdProofOfValue(): Promise<void> {
+  const variantId = arg("variant");
+  console.log("Proof-of-value gestart: production Lyra → PRE → sandboxvariant → POST (zelfde bevroren set) → holdout → regressiecontrole → besluit.");
+  const result = await runProofOfValue({ variantId });
+  console.log(JSON.stringify(result, null, 2));
+  console.log(`\nBesluit: ${result.decision}\n${result.reasoning}`);
+  if (!result.executed) console.log(`\nLOCAL REQUIRED: ${result.notExecutedReason}`);
+}
+
+async function cmdVersions(): Promise<void> {
+  const huidig = currentProductionVersionLabel();
+  console.log(`Huidige productieversie: ${huidig}\n`);
+  for (const v of listVersions()) {
+    console.log(`${v.id}\t${v.status}\t${v.variantId ?? "(baseline)"}\t${v.createdAt}`);
+  }
+}
+
+async function cmdPublish(): Promise<void> {
+  const experimentId = arg("experiment-id");
+  if (!experimentId) throw new Error("publish heeft --experiment-id nodig (zie 'demo-room report' of het dashboard voor promotion candidates).");
+  console.log(`Publiceren van experiment ${experimentId}...`);
+  console.log("LET OP: dit voert de veilige publicatiepijplijn uit (preflight → backup → toepassen → typecheck → smoke benchmark → grondingscontrole).");
+  console.log("Bevestig dat je dit wilt door --confirm mee te geven.");
+  if (!process.argv.includes("--confirm")) {
+    console.log("Geannuleerd: geen --confirm. Demo Room publiceert nooit zonder expliciete bevestiging.");
+    return;
+  }
+  const result = await publishExperiment(experimentId);
+  for (const stap of result.steps) console.log(`[${stap.step}] ${stap.status} — ${stap.detail}`);
+  console.log(`\nUitkomst: ${result.outcome} (${result.fromVersionId} → ${result.toVersionId})`);
+}
+
+async function cmdRollback(): Promise<void> {
+  const versionId = arg("version-id");
+  if (!versionId) throw new Error("rollback heeft --version-id nodig (zie 'demo-room versions').");
+  if (!process.argv.includes("--confirm")) {
+    console.log("Geannuleerd: geen --confirm. Herstel vereist expliciete bevestiging (zie demo-room/README.md).");
+    return;
+  }
+  const { fromVersionId, toVersionId } = await rollbackTo(versionId);
+  console.log(`Hersteld: ${fromVersionId} → ${toVersionId}.`);
+}
+
 async function cmdJournal(): Promise<void> {
   const runId = arg("run-id");
   const problem = arg("problem");
@@ -134,7 +180,9 @@ async function cmdReport(): Promise<void> {
   writeHandoff({
     generatedAt: new Date().toISOString(),
     bestSandboxVariant: kandidaten[0]?.id ?? null,
-    productionVariant: "lokaal:qwen3 (productie-instructie, ongewijzigd — zie model/local.ts)",
+    productionVariant: currentProductionVersionLabel(),
+    bestSandboxDiff: kandidaten[0]?.comparisonWithBaseline ?? null,
+    bestSandboxWhyBetter: kandidaten[0]?.nextRecommendation ?? null,
     unpromotedExperiments: alles.filter((e) => e.decision !== "REJECTED"),
     bestBenchmarkScore: null,
     knownWeaknesses: zwaktes,
@@ -152,6 +200,10 @@ async function main(): Promise<void> {
     "list-challenges": cmdListChallenges,
     "run-challenge": cmdRunChallenge,
     autonomous: cmdAutonomous,
+    "proof-of-value": cmdProofOfValue,
+    versions: cmdVersions,
+    publish: cmdPublish,
+    rollback: cmdRollback,
     benchmark: cmdBenchmark,
     journal: cmdJournal,
     report: cmdReport,

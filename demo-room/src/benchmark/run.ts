@@ -14,10 +14,10 @@ import type { BenchmarkRunResult, BenchmarkVariance } from "../types";
  * hoofdapp zelf gebruikt.
  */
 
-type Suite = "dev" | "holdout" | "hidden";
-type Json = Record<string, unknown>;
+export type Suite = "dev" | "holdout" | "hidden";
+export type Json = Record<string, unknown>;
 
-function loadSuite(suite: Suite): { readonly note: string; readonly items: readonly Json[] } {
+export function loadSuite(suite: Suite): { readonly note: string; readonly items: readonly Json[] } {
   const file = path.join(DEMO_ROOM_ROOT, "src", "benchmark", "questions", `${suite}.json`);
   const parsed = JSON.parse(readFileSync(file, "utf8")) as { note: string; items: Json[] };
   return parsed;

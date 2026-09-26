@@ -16,15 +16,18 @@ ns-roosterplatform/
 └── demo-room/            ← dit laboratorium
     ├── src/
     │   ├── config.ts, safety.ts, actor.ts        ← grenzen en toegang
-    │   ├── store/                                 ← journaal, HANDOFF, experimentgeheugen
+    │   ├── store/                                 ← journaal, HANDOFF, experimentgeheugen, benchmarkgeschiedenis
     │   ├── challenges/                             ← Challenge Engine (spoor A + B)
-    │   ├── benchmark/                               ← dev/holdout/hidden, Pareto
+    │   ├── benchmark/                               ← dev/holdout/hidden, agent-/roosterkwaliteit, Pareto
     │   ├── variants/                                 ← sandbox-promptvarianten
-    │   ├── research/                                  ← "run N minuten" (spoor B)
-    │   ├── promotion/                                  ← promotion proposals
-    │   ├── report/                                      ← mens-/machineleesbaar rapport
-    │   ├── cli.ts, server.ts                             ← de twee ingangen
-    └── ui/index.html                                      ← het dashboard (puur lezend)
+    │   ├── research/                                  ← "run N minuten" (spoor B) + compute-budget
+    │   ├── proof/                                      ← v0.2: proof-of-value (PRE→variant→POST→holdout→besluit)
+    │   ├── publish/                                     ← v0.2: versiestore + veilige publicatiepijplijn
+    │   ├── promotion/                                    ← (v0.1) generieke promotion-proposaltekst
+    │   ├── report/                                        ← mens-/technisch/machineleesbaar rapport
+    │   ├── runControl.ts                                   ← v0.2: spawnt cli.ts voor het dashboard, géén hoofdapp-import
+    │   ├── cli.ts, server.ts                                ← de twee ingangen
+    └── ui/index.html                                         ← het dashboard (leest + start/stop/publiceer/herstel via runControl)
 ```
 
 ## Wat al bestond (Fase A-onderzoek — belangrijk voor wie dit doorontwikkelt)
@@ -73,27 +76,38 @@ bestaan, ruim vóór verwacht:
    (`demo-room/src/benchmark/questions/*.json`), in hetzelfde
    `benchAnswer()`-formaat maar met een eigen naamgeving.
 
-## De drie minimale, gecontroleerde koppelpunten in de hoofdapp
+## De vier minimale, gecontroleerde koppelpunten in de hoofdapp
 
 De opdracht staat toe de hoofdapp *minimaal* te wijzigen waar een
-gecontroleerde koppeling nodig is. Dit zijn de enige drie wijzigingen, elk
-additief en optioneel (geen enkele bestaande aanroep verandert van gedrag):
+gecontroleerde koppeling nodig is. Dit zijn de enige vier wijzigingen, elk
+additief en optioneel (geen enkele bestaande aanroep verandert van gedrag
+zonder dat iets — Demo Room, of een gepubliceerd bestand — dat expliciet
+aanvraagt):
 
 1. **`src/server/agent/agent.ts`** — `askAgent()` krijgt een optioneel
    `modelOverride?: ChatModel`. Zonder dit veld (elke bestaande aanroep) is
    het gedrag identiek aan vandaag.
 2. **`src/server/agent/model/local.ts`** — `LocalModelConfig` krijgt een
    optioneel `systemPromptOverride?: (basis, request) => string`. Zonder dit
-   veld (`localConfigFromEnv()` zet het nooit) bouwt `localModel()` exact
-   dezelfde systeeminstructie als vandaag.
+   veld bouwt `localModel()` exact dezelfde systeeminstructie als vandaag.
 3. **`src/server/agent/bench-adapter.ts`** — `benchAnswer(item, options?)`
    krijgt een optioneel tweede argument `{ modelOverride }`, doorgegeven aan
    `askAgent()`. Bestaande aanroepen (`scripts/v105/*.ts`) geven dit niet mee.
+4. **(v0.2) `src/server/agent/model/local.ts`** — `localConfigFromEnv()` vult
+   `systemPromptOverride` voortaan automatisch met
+   `productionOverrideFromDisk()`, die de inhoud van het bestand achter
+   `NS_PRODUCTION_PROMPT_FILE` bij elke aanvraag opnieuw leest. Staat de
+   omgevingsvariabele niet (de standaardsituatie op elke installatie die nog
+   nooit iets publiceerde via Demo Room), dan verandert er niets. Dit is het
+   enige punt waar een Demo Room-publicatie ooit echte productie raakt — zie
+   `docs/SAFE-PUBLISH.md`.
 
-Deze drie punten zijn wat `demo-room/src/variants/` gebruikt om een
+Punten 1-3 zijn wat `demo-room/src/variants/` gebruikt om een
 sandbox-promptvariant *door exact dezelfde keten* te sturen als productie
 (context, rechten, tools, grondingscontrole) — alleen de systeeminstructie
-verschilt. Zie `demo-room/src/variants/promptVariants.ts`.
+verschilt. Punt 4 is wat die sandboxvariant, ná een expliciete menselijke
+publicatiebevestiging, daadwerkelijk productie laat worden. Zie
+`demo-room/src/variants/promptVariants.ts` en `demo-room/src/publish/`.
 
 ## Wat in v0.1 bewust NIET is gebouwd
 

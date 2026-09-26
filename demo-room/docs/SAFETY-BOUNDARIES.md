@@ -7,6 +7,14 @@ opdracht). Alles wat schrijft, gaat door de bestaande bevoegdhedenlaag van de
 hoofdapp — dezelfde laag die de Roostercommissie gebruikt — en nooit
 daaromheen.
 
+**v0.2-nuance:** het dashboard is niet langer alléén lezend — het kan runs
+starten/stoppen en (ná expliciete bevestiging) publiceren/herstellen. Dat
+verandert dit uitgangspunt niet: elke actie loopt door dezelfde
+`safety.ts`-controles en dezelfde bevoegdhedenlaag als wanneer je de CLI zelf
+zou typen (het dashboard spawnt letterlijk `cli.ts`, zie
+`demo-room/src/runControl.ts`) — er is geen tweede, soepeler uitvoeringspad
+"omdat het via de webinterface gaat". Zie ook `docs/SAFE-PUBLISH.md`.
+
 ## Wat de Demo Room WEL mag
 
 - Data, regels, kennis, kandidaten en historische benchmarks lezen.
@@ -28,9 +36,13 @@ daaromheen.
 
 ## Wat de Demo Room NOOIT automatisch doet
 
-- Productieprompts wijzigen. Een variant leeft uitsluitend in het geheugen van
-  het Demo Room-proces tijdens een benchmarkrun; er is geen schrijfpad naar
-  `model/local.ts`'s standaardinstructie.
+- Productieprompts wijzigen **zonder expliciete menselijke bevestiging**.
+  Tijdens een benchmarkrun leeft een variant uitsluitend in het geheugen van
+  het Demo Room-proces; het enige schrijfpad naar wat productie leest
+  (`NS_PRODUCTION_PROMPT_FILE`) loopt via `safePublish.publishExperiment()`,
+  en die functie wordt nergens automatisch aangeroepen — alleen door een
+  mens die `--confirm` typt of de publiceerknop in het dashboard bevestigt
+  ná het reviewscherm. Zie `docs/SAFE-PUBLISH.md`.
 - Formele regels veranderen. `refusals.ts` (hoofdapp) weigert dit al vóór het
   model; `demo-room/src/safety.ts`'s `NOOIT_TOEGESTAAN`-lijst is een tweede,
   onafhankelijke controle op hetzelfde punt.

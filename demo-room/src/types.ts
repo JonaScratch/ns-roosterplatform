@@ -108,6 +108,127 @@ export interface JournalEntry {
   readonly humanSummary: string;
 }
 
+/**
+ * De negen dimensies van "Lyra als chatbot"-kwaliteit (v0.2, §1 van de
+ * aanvullende opdracht). Elke waarde is een percentage (0-100) van geslaagde
+ * items in die categorie, behalve `latencyMs`.
+ */
+export interface AgentQualityCategory {
+  readonly contextResolution: number | null;
+  readonly multiTurnContext: number | null;
+  readonly machinistTaal: number | null;
+  readonly toolChoice: number | null;
+  readonly falsePremiseCorrection: number | null;
+  readonly grounding: number | null;
+  readonly causalClaims: number | null;
+  readonly unnecessaryClarifications: number | null;
+  readonly latencyMs: { readonly p50: number; readonly p95: number } | null;
+}
+
+/**
+ * De tien dimensies van roosteronderzoekskwaliteit (v0.2, §1). `null` bij een
+ * dimensie betekent: niet gemeten voor deze variantcategorie (bijvoorbeeld
+ * een systeemprompt-variant raakt de optimizer niet) — nooit een verzonnen 0.
+ */
+export interface RosterQualityCategory {
+  readonly validity: number | null;
+  readonly packageQuality: number | null;
+  readonly profileFit: number | null;
+  readonly restRecovery: number | null;
+  readonly fairness: number | null;
+  readonly weekends: number | null;
+  readonly nightBlocks: number | null;
+  readonly rangeerDistribution: number | null;
+  readonly worstLineQuality: number | null;
+  readonly paretoResult: ParetoResult | null;
+  /** Waarom roosterkwaliteit hier niet (volledig) gemeten is, indien van toepassing. */
+  readonly notApplicableReason: string | null;
+}
+
+export interface DualQualityMeasurement {
+  readonly agent: AgentQualityCategory;
+  readonly roster: RosterQualityCategory;
+  readonly measuredAt: string;
+}
+
+export type PromotionDecision = "PROMOTION_CANDIDATE" | "REJECTED" | "KEEP_TESTING";
+
+/**
+ * Eén proof-of-value-run: production Lyra → PRE → sandboxvariant → POST
+ * (dezelfde bevroren set) → holdout → regressiecontrole → besluit (§1-§3 van
+ * de aanvullende opdracht).
+ */
+export interface ProofOfValueResult {
+  readonly id: string;
+  readonly runId: string;
+  readonly startedAt: string;
+  readonly finishedAt: string;
+  readonly executed: boolean;
+  readonly notExecutedReason: string | null;
+  readonly variantId: string;
+  readonly variantLabel: string;
+  readonly variantCategory: "PROMPT" | "TOOL_ROUTING" | "CONTEXT_POLICY" | "ENGINE";
+  readonly frozenSetId: string;
+  /** Productie-Lyra (control) op de bevroren dev-set — de meetlat voor POST. */
+  readonly pre: DualQualityMeasurement;
+  /** Sandboxvariant op EXACT dezelfde bevroren dev-set als `pre`. */
+  readonly post: DualQualityMeasurement;
+  /** Productie-Lyra (control) op de holdout-set — de meetlat voor de holdoutvergelijking. */
+  readonly preHoldout: DualQualityMeasurement;
+  /** Sandboxvariant op de holdout-set. */
+  readonly holdout: DualQualityMeasurement;
+  readonly regressions: readonly string[];
+  readonly improvements: readonly string[];
+  readonly decision: PromotionDecision;
+  readonly reasoning: string;
+}
+
+export type LyraVersionStatus = "ACTIVE" | "SUPERSEDED" | "ROLLED_BACK" | "FAILED";
+
+/**
+ * Eén gepubliceerde (of ooit-actieve) Lyra-versie (§ aanvulling "VERPLICHT —
+ * UITLEGBARE VERBETERINGEN + SAFE PUBLISH + ROLLBACK"). `promptOverrideText:
+ * null` betekent: de kale hardcoded productie-instructie, zonder enige
+ * gepubliceerde variant — dat is versie 0, het vertrekpunt.
+ */
+export interface LyraVersion {
+  readonly id: string; // lyra-prod-YYYY-MM-DD-NN
+  readonly createdAt: string;
+  readonly status: LyraVersionStatus;
+  readonly sourceExperimentId: string | null;
+  readonly variantId: string | null;
+  readonly promptOverrideText: string | null;
+  readonly benchmarkReference: {
+    readonly pre: Record<string, number>;
+    readonly post: Record<string, number>;
+    readonly holdout: Record<string, number>;
+  } | null;
+  readonly changedFiles: readonly string[];
+  readonly knownIssues: readonly string[];
+  readonly reasonForPromotion: string;
+}
+
+export type PublishStepName = "PREFLIGHT" | "BACKUP" | "TYPECHECK" | "APPLY" | "SMOKE_BENCHMARK" | "GROUNDING_CHECK" | "CONFIRM";
+export type PublishStepStatus = "OK" | "FAILED" | "SKIPPED";
+
+export interface PublishStepResult {
+  readonly step: PublishStepName;
+  readonly status: PublishStepStatus;
+  readonly detail: string;
+  readonly at: string;
+}
+
+export interface PublishResult {
+  readonly publishId: string;
+  readonly startedAt: string;
+  readonly finishedAt: string;
+  readonly fromVersionId: string;
+  readonly toVersionId: string;
+  readonly steps: readonly PublishStepResult[];
+  readonly outcome: "PUBLISHED" | "ROLLED_BACK" | "ROLLBACK_FAILED";
+  readonly log: readonly string[];
+}
+
 export interface PromotionProposal {
   readonly id: string;
   readonly createdAt: string;
