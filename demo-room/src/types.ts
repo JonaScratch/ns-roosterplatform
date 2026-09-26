@@ -239,6 +239,7 @@ export interface LyraVersion {
  * budget/ongeldige kandidaat/mislukking (zie "GEEN STILLE ACTIES").
  */
 export type LogEventKind =
+  | "RUN_START_REQUESTED"
   | "RUN_START"
   | "RUN_END"
   | "PRODUCTION_VERSION"
@@ -329,6 +330,61 @@ export interface PublishResult {
   readonly steps: readonly PublishStepResult[];
   readonly outcome: "PUBLISHED" | "ROLLED_BACK" | "ROLLBACK_FAILED";
   readonly log: readonly string[];
+}
+
+/**
+ * De Zelfstandigheidstest / Autonomy Capability Test (finale integratieronde,
+ * §7-§13): bewijst — of ontkracht — dat de Demo Room zonder menselijke hints
+ * over de oplossing zelf een zwakte bij Lyra kan vinden, een hypothese kan
+ * formuleren, een sandboxvariant kan bouwen en testen (via dezelfde
+ * proof-of-value-pijplijn, dus dezelfde PRE/POST(≥2)/holdout/regressieregels),
+ * en daarvan kan leren. Nooit een gok: elke waarde hieronder komt uit een
+ * echte meting of een echt afgeleide teller, nooit een aanname.
+ */
+export type CapabilityVerdict = "JA" | "NEE" | "NIET_GETEST" | "NIET_GEVONDEN";
+
+export interface CapabilityScorecardEntry {
+  readonly key: string;
+  readonly label: string;
+  readonly verdict: CapabilityVerdict;
+  readonly detail: string;
+}
+
+/** §12: nooit "heeft toegang tot alles" alleen omdat een import bestaat — expliciet onderscheid. */
+export type ComponentUsage = "AVAILABLE" | "ACTUALLY_USED" | "NOT_USED" | "FAILED";
+
+export interface ComponentUsageEntry {
+  readonly component: string;
+  readonly usage: ComponentUsage;
+  readonly detail: string;
+}
+
+export type AutonomyGate = "AUTONOMY_GATE_PASSED" | "PARTIAL" | "FAILED";
+
+/** Eén onderzoekscyclus binnen de zelfstandigheidstest: één hypothese, één geteste variant. */
+export interface AutonomyCycleResult {
+  readonly cycleIndex: number;
+  readonly targetedWeakness: string;
+  readonly hypothesis: string;
+  readonly variantId: string;
+  readonly variantLabel: string;
+  readonly proof: ProofOfValueResult;
+}
+
+export interface AutonomyCapabilityTestResult {
+  readonly id: string;
+  readonly runId: string;
+  readonly startedAt: string;
+  readonly finishedAt: string;
+  readonly maxMinutes: number;
+  readonly cycles: readonly AutonomyCycleResult[];
+  readonly gate: AutonomyGate;
+  readonly gateReasons: readonly string[];
+  readonly scorecard: readonly CapabilityScorecardEntry[];
+  readonly componentUsage: readonly ComponentUsageEntry[];
+  /** §10: expliciet onderscheid tussen agentverbetering (prompt/context/config) en model-weight training/fine-tuning — nooit het laatste claimen. */
+  readonly agentImprovementNote: string;
+  readonly humanSummary: string;
 }
 
 export interface PromotionProposal {

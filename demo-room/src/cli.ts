@@ -7,6 +7,7 @@ import { startAutonomousRun, awaitAutonomousRun } from "./research/autonomousRun
 import type { RebuildGoal } from "@/server/optimizer/objective-weights";
 import { runSuite, runSuiteWithVariance } from "./benchmark/run";
 import { runProofOfValue } from "./proof/proofOfValue";
+import { runAutonomyCapabilityTest } from "./autonomy/capabilityTest";
 import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
 import { listVersions } from "./publish/versions";
 import { writeHandoff } from "./store/handoff";
@@ -207,6 +208,18 @@ async function cmdProofOfValue(): Promise<void> {
   });
 }
 
+async function cmdAutonomyTest(): Promise<void> {
+  const minutes = Number(arg("minutes", "10"));
+  const runId = nieuwRunId("AUTONOMY");
+  await withRunLogbook(runId, { kind: "autonomy-test", challengeOrGoal: "Zelfstandigheidstest: zwakte vinden, hypothese vormen, sandboxvariant testen, ervan leren." }, async () => {
+    console.log(`Zelfstandigheidstest gestart (max. ${minutes} minuten): production Lyra → zelfstandige zwakteanalyse → hypothese → sandboxvariant → PRE/POST(≥2)/holdout → besluit → (indien budget over) tweede hypothese.`);
+    const result = await runAutonomyCapabilityTest({ runId, maxMinutes: minutes });
+    console.log(JSON.stringify({ gate: result.gate, gateReasons: result.gateReasons, cycles: result.cycles.length }, null, 2));
+    console.log(`\nUitkomst: ${result.gate}\n${result.humanSummary}`);
+    if (result.gate !== "AUTONOMY_GATE_PASSED") console.log(`\nLOCAL REQUIRED / let op: ${result.gateReasons.join(" ")}`);
+  });
+}
+
 async function cmdVersions(): Promise<void> {
   const huidig = currentProductionVersionLabel();
   console.log(`Huidige productieversie: ${huidig}\n`);
@@ -307,6 +320,7 @@ async function main(): Promise<void> {
     "run-challenge": cmdRunChallenge,
     autonomous: cmdAutonomous,
     "proof-of-value": cmdProofOfValue,
+    "autonomy-test": cmdAutonomyTest,
     versions: cmdVersions,
     publish: cmdPublish,
     rollback: cmdRollback,

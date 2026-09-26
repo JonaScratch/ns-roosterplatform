@@ -84,6 +84,17 @@ describe("Demo Room — logboek (audit trail)", () => {
     expect(tekst).toContain("holdout regresseerde");
   });
 
+  it("startRun overschrijft een eerder geschreven RUN_START_REQUESTED-event niet (§ 'live logboek moet robuust zijn')", () => {
+    const runId = nieuweRunId();
+    // Simuleert server.ts: het dashboard logt dit vóórdat het CLI-proces bestaat.
+    log(runId, { kind: "RUN_START_REQUESTED", experimentId: null, message: "UI heeft een run aangevraagd (proof)." });
+    // Simuleert cli.ts's withRunLogbook(): het CLI-proces schrijft pas hierna zijn eigen RUN_START-header.
+    startRun(runId, { kind: "proof", productionVersion: "lyra-prod-baseline", sandboxParent: null, modelConfig: "lokaal:qwen3", challengeOrGoal: "proof-of-value" });
+    const events = readRunEvents(runId);
+    expect(events.map((e) => e.kind)).toEqual(["RUN_START_REQUESTED", "RUN_START"]);
+    expect(readRunText(runId)).toContain("UI heeft een run aangevraagd");
+  });
+
   it("listRunLogs vindt aangemaakte runs terug", () => {
     const runId = nieuweRunId();
     startRun(runId, { kind: "test", productionVersion: null, sandboxParent: null, modelConfig: null, challengeOrGoal: null });

@@ -1,4 +1,4 @@
-# Lyra Demo Room v0.3
+# Lyra Demo Room v0.4
 
 Een apart, lokaal laboratorium naast het NS Roosterplatform, om de ingebouwde
 roosteragent (in deze codebase "de agent" genoemd — er staat nergens de naam
@@ -66,6 +66,55 @@ Drie acceptatiepunten, bovenop v0.2:
    weggeschreven, met centrale redactie van geheimen, en een eigen tabblad
    "Logboek" (zoeken/filteren, downloaden, kopiëren voor ChatGPT/Claude,
    deep-link vanuit een experimentdetail).
+
+## v0.4 in het kort — finale integratieronde (feature freeze)
+
+1. **"Bewijs verbeterlus" repareert de root cause, niet alleen de UI**: op
+   Windows spawnde het dashboard eerder `npx` (in werkelijkheid `npx.cmd`,
+   een batchbestand) zonder een `error`-handler op het kindproces — een
+   mislukte spawn liet het hele dashboardproces crashen, waarna élke
+   volgende API-aanroep faalde en de UI permanent op "geen actieve
+   run"/"wordt geladen…" bleef hangen. `runControl.ts` start nu
+   `node <tsx-cli.mjs> ...` rechtstreeks (geen npx, geen shell, geen
+   `.cmd`-resolutie, identiek op Windows/macOS/Linux) en heeft een expliciete
+   `STARTING → RUNNING → DONE/FAILED/STOPPED`-statuslijn met een concrete
+   foutmelding + procesoutput bij een mislukking — nooit meer stil.
+2. **Live logboek robuust**: elke run-start (ook via de UI, vóórdat het
+   CLI-proces bestaat) schrijft meteen een `RUN_START_REQUESTED`-regel, dus
+   ook een spawn-fout vóór volledige CLI-initialisatie is traceerbaar. Het
+   tabblad Live run toont voortaan het echte operationele logboek van de
+   actieve run (niet langer alleen experimentrecords), en "wordt geladen…"
+   kan nergens meer permanent blijven hangen (elke deelvernieuwing is
+   geïsoleerd; een lege installatie toont expliciet "nog geen run/logboek").
+3. **NS-branding**: het bestaande `public/brand/ns-logo.svg` linksboven in de
+   header, geserveerd door het dashboard zelf; de oude ondertitel is weg.
+4. **Publish-UX**: "Publiceer naar NS Roosterprogramma" toont vóór bevestiging
+   expliciet huidige/nieuwe versie, benchmarkverschil, holdout, regressies,
+   wat gewijzigd wordt en het rollback-target — dezelfde veilige pijplijn als
+   voorheen, nu duidelijker voor Jonathan.
+5. **Lyra-versies — "Activeren"**: elke eerdere, niet-mislukte versie heeft
+   een "Activeren"-knop die dezelfde veilige rollback/publish-pijplijn
+   hergebruikt (backup → toepassen → smoke-test → succes of automatische
+   rollback) — nooit een bypass. Een ooit mislukte (`FAILED`) versie toont
+   een uitgeschakelde knop met de reden. Eén canonieke actieve-versiestatus
+   (`/api/versions/active`: version id, variant id, activated at, source
+   experiment, benchmark reference, status) is nu ook technisch uitleesbaar
+   voor een latere koppeling met het NS Roosterplatform zelf.
+6. **Zelfstandigheidstest / Autonomy Capability Test**
+   (`demo-room/src/autonomy/capabilityTest.ts`): een begrensde (standaard
+   10 minuten, max. 2 onderzoekscycli) orkestratie die zelfstandig — zonder
+   menselijke hint — een echte zwakte van production Lyra identificeert, een
+   hypothese formuleert, een bestaande sandboxvariant kiest en test via
+   dezelfde PRE/POST(≥2)/holdout/regressiepijplijn, en bij afwijzing een
+   ándere hypothese probeert binnen het budget. Levert een capability-
+   scorecard (JA/NEE/NIET_GETEST/NIET_GEVONDEN per vermogen) en een expliciet
+   onderscheid AVAILABLE/ACTUALLY_USED/NOT_USED/FAILED per hoofdapp-
+   component, plus een eindoordeel `AUTONOMY_GATE_PASSED`/`PARTIAL`/`FAILED`
+   — nooit een marketingconclusie. Claimt nergens model-weight training/
+   fine-tuning: dit test en verbetert uitsluitend agentgedrag (systeem-
+   instructie/contextbeleid) via de bestaande, additieve sandboxmechanismen.
+   Start via de knop "Start zelfstandigheidstest" op Overzicht, of
+   `npm run demo-room -- autonomy-test --minutes 10`.
 
 ## Vereisten
 
@@ -189,9 +238,15 @@ Concreet:
    een `PROMOTION_CANDIDATE`. Geen verbetering aantonen is een geldige,
    informatieve uitkomst (`KEEP_TESTING`) en geen mislukking. Publiceren
    blijft altijd een expliciete, aparte handeling van Jonathan.
-5. Pas ná deze end-to-end proof: een korte challenge (§ hierboven) en een
-   korte autonome smoke-run (10 minuten).
-6. Pas als die stabiel eindigt: een langere autonome run (30/60 min of
+5. Klik daarna op **"Start zelfstandigheidstest"** (Overzicht-tabblad,
+   naast "Bewijs verbeterlus"). Dit bewijst dat Demo Room zelfstandig — zonder
+   een hint over de oplossing — een zwakte kan vinden, een hypothese kan
+   vormen, een sandboxvariant kan testen en van een afwijzing kan leren.
+   Bekijk de capability-scorecard en het eindoordeel (`AUTONOMY_GATE_PASSED`/
+   `PARTIAL`/`FAILED`) onderaan Overzicht.
+6. Pas ná deze twee end-to-end proeven: een korte challenge (§ hierboven) en
+   een korte autonome smoke-run (10 minuten).
+7. Pas als die stabiel eindigt: een langere autonome run (30/60 min of
    meer).
 
 **Geen 60-minutenrun totdat dit lokaal end-to-end bewezen is.** Dit is

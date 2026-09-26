@@ -4,11 +4,13 @@ import { existsSync, readFileSync } from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { CHALLENGES } from "./challenges/catalogue";
-import { dashboardPort, HANDOFF_PATH, REPORTS_DIR } from "./config";
+import { dashboardPort, HANDOFF_PATH, REPO_ROOT, REPORTS_DIR } from "./config";
 import { currentRun, startCliRun, stopCurrentRun } from "./runControl";
 import { readBenchmarkHistory } from "./store/benchmarkHistory";
+import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
 import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
+import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 
 /**
@@ -127,9 +129,45 @@ function apiRosterQuality() {
 
 // ---- /api/versions & publish -------------------------------------------
 
+/**
+ * Eén bron van waarheid voor "welke Lyra-versie is nu actief" (§6 van de
+ * finale integratieronde): dezelfde velden die zowel Demo Room als, later, de
+ * production-koppeling en het NS Roosterplatform zelf technisch kunnen
+ * uitlezen — version id, variant id, activated at, source experiment,
+ * benchmark reference, status. Niets hiervan is nieuw opgeslagen; het is de
+ * bestaande `LyraVersion` uit de versiestore, hier expliciet als canoniek
+ * antwoord op "wat is actief" naar buiten gebracht.
+ */
+function apiActiveVersion() {
+  const id = currentVersionId();
+  const versie = getVersion(id);
+  return {
+    versionId: id,
+    variantId: versie?.variantId ?? null,
+    activatedAt: versie?.createdAt ?? null,
+    sourceExperimentId: versie?.sourceExperimentId ?? null,
+    benchmarkReference: versie?.benchmarkReference ?? null,
+    status: versie?.status ?? "ACTIVE",
+    isBaseline: id === BASELINE_VERSION_ID,
+  };
+}
+
+/** Waarom "Activeren" wel/niet mag (§5 van de finale integratieronde) — nooit een bypass rond de veilige pijplijn. */
+function activationEligibility(versie: ReturnType<typeof listVersions>[number], activeVersionId: string): { readonly canActivate: boolean; readonly reason: string | null } {
+  if (versie.id === activeVersionId) return { canActivate: false, reason: null };
+  if (versie.status === "FAILED") {
+    return { canActivate: false, reason: "Deze versie is ooit mislukt bij publicatie (typecheck/smoke-benchmark/groundingscontrole) en kan niet direct opnieuw geactiveerd worden." };
+  }
+  return { canActivate: true, reason: null };
+}
+
 function apiVersions() {
   const actief = currentVersionId();
-  return { activeVersionId: actief, versions: listVersions() };
+  const versies = listVersions();
+  return {
+    activeVersionId: actief,
+    versions: versies.map((v) => ({ ...v, ...activationEligibility(v, actief) })),
+  };
 }
 
 function apiPublishPreview(experimentId: string) {
@@ -137,16 +175,35 @@ function apiPublishPreview(experimentId: string) {
   if (!experiment) return { error: `Experiment ${experimentId} niet gevonden.` };
   const productieId = currentVersionId();
   const productie = getVersion(productieId);
+  const geschiedenis = readBenchmarkHistory();
+  const bijHorendeMeting = [...geschiedenis].reverse().find((h) => h.runLabel === experiment.runId);
   return {
     experiment,
     currentProduction: productie,
+    newVersionPreview: { willBeCreated: true, note: "De nieuwe versie-ID wordt pas bij publiceren zelf toegekend (lyra-prod-JJJJ-MM-DD-NN) — dat is de eerste stap van de pijplijn hieronder." },
+    benchmarkDiff: experiment.comparisonWithBaseline ?? {},
+    holdout: bijHorendeMeting
+      ? {
+          pre: flattenAgent(bijHorendeMeting.preDualQuality?.agent as unknown as Record<string, unknown> | undefined),
+          variant: flattenAgent(bijHorendeMeting.holdoutDualQuality?.agent as unknown as Record<string, unknown> | undefined),
+        }
+      : { pre: null, variant: null, note: "Geen bijbehorende holdoutmeting gevonden voor dit experiment." },
+    regressions: experiment.failureReason ? [experiment.failureReason] : [],
     warnings: [
       experiment.decision !== "PROMOTION_CANDIDATE" ? "Dit experiment is geen PROMOTION_CANDIDATE — publiceren wordt geweigerd." : null,
       experiment.soort === "ENGINE_VARIANT" ? "ENGINE_VARIANT-experimenten gaan niet via deze pijplijn (zie promotieStappen() in de hoofdapp)." : null,
     ].filter((w): w is string => w !== null),
     rollbackTarget: productieId,
     changedFiles: ["NS_PRODUCTION_PROMPT_FILE (systeeminstructie-toevoeging)"],
+    pipeline: ["PREFLIGHT", "BACKUP", "APPLY", "TYPECHECK", "SMOKE_BENCHMARK", "GROUNDING_CHECK", "CONFIRM"],
   };
+}
+
+function flattenAgent(agent: Record<string, unknown> | null | undefined): Record<string, number> | null {
+  if (!agent) return null;
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(agent)) if (k !== "latencyMs" && typeof v === "number") out[k] = v;
+  return out;
 }
 
 function apiImprovement(experimentId: string) {
@@ -199,6 +256,25 @@ function deriveProofStages(events: readonly { kind: string; message: string }[])
   });
 }
 
+/**
+ * Schrijft direct bij de klik in de UI een `RUN_START_REQUESTED`-regel in het
+ * logboek van deze run — vóórdat er ook maar een CLI-proces bestaat (§ "Maak
+ * al bij de eerste UI-startactie een RUN_START_REQUESTED-event of equivalent
+ * aan, zodat ook failures vóór volledige CLI-initialisatie traceerbaar zijn").
+ * `logbook.startRun()` (aangeroepen door het CLI-proces zelf, ná deze regel)
+ * overschrijft dit niet — zie de idempotentie-opmerking in `store/logbook.ts`.
+ * Zo blijft ook een spawn-fout die het CLI-proces nooit laat starten
+ * zichtbaar in Live run/Logboek, in plaats van stil te verdwijnen.
+ */
+function meldRunAangevraagd(runId: string, type: string, params: Readonly<Record<string, unknown>>): void {
+  logbook.log(runId, {
+    kind: "RUN_START_REQUESTED",
+    experimentId: null,
+    message: `UI heeft een run aangevraagd (${type || "onbekend"}).`,
+    data: params,
+  });
+}
+
 // ---- server ---------------------------------------------------------------
 
 const server = http.createServer((req, res) => {
@@ -207,6 +283,12 @@ const server = http.createServer((req, res) => {
   (async () => {
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       return serveFile(res, path.join(UI_DIR, "index.html"), "text/html; charset=utf-8");
+    }
+    // NS-branding (§3 van de finale integratieronde): het bestaande, echte
+    // bedrijfslogo — geen nieuw of zelf getekend logo, en geen kopie ervan
+    // onder demo-room/, gewoon rechtstreeks vanaf zijn eigen plek geserveerd.
+    if (req.method === "GET" && url.pathname === "/brand/ns-logo.svg") {
+      return serveFile(res, path.join(REPO_ROOT, "public", "brand", "ns-logo.svg"), "image/svg+xml");
     }
     if (req.method !== "GET" && req.method !== "POST") {
       res.writeHead(405);
@@ -232,7 +314,9 @@ const server = http.createServer((req, res) => {
       "/api/progress/experiment-outcomes": apiExperimentOutcomes,
       "/api/progress/roster-quality": apiRosterQuality,
       "/api/versions": apiVersions,
+      "/api/versions/active": apiActiveVersion,
       "/api/current-run": () => currentRun(),
+      "/api/autonomy/results": () => listAutonomyResults(),
     };
     if (req.method === "GET" && url.pathname in routesGet) return json(res, 200, routesGet[url.pathname]());
 
@@ -244,6 +328,11 @@ const server = http.createServer((req, res) => {
     if (req.method === "GET" && url.pathname === "/api/versions/detail") {
       const id = url.searchParams.get("id");
       const found = id ? getVersion(id) : null;
+      return json(res, found ? 200 : 404, found ?? { error: "niet gevonden" });
+    }
+    if (req.method === "GET" && url.pathname === "/api/autonomy/detail") {
+      const id = url.searchParams.get("id");
+      const found = id ? getAutonomyResult(id) : null;
       return json(res, found ? 200 : 404, found ?? { error: "niet gevonden" });
     }
     if (req.method === "GET" && url.pathname === "/api/publish/preview") {
@@ -298,11 +387,16 @@ const server = http.createServer((req, res) => {
           : type === "challenge" ? ["run-challenge", "--id", String(body.challengeId)]
           : type === "autonomous"
             ? ["autonomous", "--minutes", String(body.minutes ?? 10), "--goal", String(body.goal ?? "Zelfgekozen verbetering"), "--goals", String(body.goals ?? "KEEP_GOOD_PARTS")]
+          : type === "autonomy-test"
+            ? ["autonomy-test", "--minutes", String(body.minutes ?? 10)]
             : null;
         if (!args) return json(res, 400, { error: `onbekend runtype: ${type}` });
+        meldRunAangevraagd(runId, type, body);
         const state = startCliRun(runId, type, [...args, "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
+        meldRunAangevraagd(runId, String(body.type ?? ""), body);
+        logbook.log(runId, { kind: "ERROR", experimentId: null, message: fout instanceof Error ? fout.message : String(fout) });
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
       }
     }
@@ -313,11 +407,13 @@ const server = http.createServer((req, res) => {
       const body = await readBody(req);
       const experimentId = String(body.experimentId ?? "");
       if (!experimentId) return json(res, 400, { error: "experimentId ontbreekt" });
+      const runId = `DR-PUBLISH-${randomUUID().slice(0, 8)}`;
       try {
-        const runId = `DR-PUBLISH-${randomUUID().slice(0, 8)}`;
+        meldRunAangevraagd(runId, "publish", { experimentId });
         const state = startCliRun(runId, "publish", ["publish", "--experiment-id", experimentId, "--confirm", "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
+        logbook.log(runId, { kind: "ERROR", experimentId, message: fout instanceof Error ? fout.message : String(fout) });
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
       }
     }
@@ -325,11 +421,13 @@ const server = http.createServer((req, res) => {
       const body = await readBody(req);
       const versionId = String(body.versionId ?? "");
       if (!versionId) return json(res, 400, { error: "versionId ontbreekt" });
+      const runId = `DR-ROLLBACK-${randomUUID().slice(0, 8)}`;
       try {
-        const runId = `DR-ROLLBACK-${randomUUID().slice(0, 8)}`;
+        meldRunAangevraagd(runId, "rollback", { versionId });
         const state = startCliRun(runId, "rollback", ["rollback", "--version-id", versionId, "--confirm", "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
+        logbook.log(runId, { kind: "ERROR", experimentId: null, message: fout instanceof Error ? fout.message : String(fout) });
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
       }
     }

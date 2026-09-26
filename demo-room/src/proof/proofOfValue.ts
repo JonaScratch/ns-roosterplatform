@@ -30,7 +30,12 @@ import type { AgentQualityCategory, DualQualityMeasurement, ExperimentRecord, Jo
 
 const FROZEN_SET_ID = "dev-v0.2-frozen-1"; // dev.json's inhoud is de bevroren set; wijzig deze ID als dev.json ooit inhoudelijk verandert.
 
-async function measure(
+/**
+ * Geëxporteerd zodat de Zelfstandigheidstest (`autonomy/capabilityTest.ts`)
+ * dezelfde, echte meetweg kan gebruiken om een reële zwakte te identificeren
+ * vóórdat er een hypothese gekozen wordt — geen tweede, losse metingsroute.
+ */
+export async function measure(
   runId: string,
   label: string,
   items: readonly Record<string, unknown>[],

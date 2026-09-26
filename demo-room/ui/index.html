@@ -10,7 +10,6 @@
   body { margin:0; font-family: -apple-system, "Segoe UI", Arial, sans-serif; background:#f3f5f9; color:#12223c; }
   header { background:var(--bg); color:var(--text); padding:16px 24px; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; }
   header h1 { margin:0; font-size:20px; }
-  header p { margin:4px 0 0; color:var(--muted); font-size:13px; }
   #banner { font-size:12px; color:var(--muted); }
   nav { display:flex; gap:2px; background:var(--panel); padding:0 24px; overflow-x:auto; }
   nav button { background:none; border:none; color:var(--muted); padding:10px 14px; cursor:pointer; font-size:13px; border-bottom:3px solid transparent; white-space:nowrap; }
@@ -59,10 +58,10 @@
   .step.done { border-bottom-color:var(--good); color:var(--good); font-weight:600; }
   .step.active { border-bottom-color:var(--accent); color:var(--accent); font-weight:600; }
   .step .arrow { color:#ccd4e0; }
-  #proof-hero { background:linear-gradient(135deg, var(--bg), #123a72); color:#fff; border-radius:10px; padding:18px 20px; margin-bottom:14px; }
-  #proof-hero h3 { margin:0 0 4px; }
-  #proof-hero p { margin:0 0 12px; color:var(--muted); font-size:13px; }
-  #proof-hero button { background:#fff; color:var(--bg); border:none; padding:11px 20px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px; }
+  .hero-card { background:linear-gradient(135deg, var(--bg), #123a72); color:#fff; border-radius:10px; padding:18px 20px; margin-bottom:14px; height:100%; }
+  .hero-card h3 { margin:0 0 4px; }
+  .hero-card p { margin:0 0 12px; color:var(--muted); font-size:13px; }
+  .hero-card button { background:#fff; color:var(--bg); border:none; padding:11px 20px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px; }
   #logbook-list { max-height:240px; overflow:auto; }
   #logbook-list .run-row { padding:8px; border-bottom:1px solid #eef1f6; cursor:pointer; font-size:13px; }
   #logbook-list .run-row:hover, #logbook-list .run-row.selected { background:#f7f9fc; }
@@ -72,9 +71,9 @@
 </head>
 <body>
 <header>
-  <div>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <img src="/brand/ns-logo.svg" alt="NS" style="height:28px; width:auto;" />
     <h1>Lyra Demo Room</h1>
-    <p>Laboratorium voor de roosteragent — leest en start alleen via bestaande, bevoegdheid-gecontroleerde koppelingen.</p>
   </div>
   <div id="banner"></div>
 </header>
@@ -91,12 +90,33 @@
 <main>
 
   <section id="overzicht" class="active">
-    <div id="proof-hero">
-      <h3>Bewijs verbeterlus</h3>
-      <p>Production Lyra → PRE → sandboxvariant → 2× POST (dezelfde bevroren set) → holdout → regressiecontrole → beslissing. Voer dit eerst uit, vóór elke langere autonome run.</p>
-      <button id="btn-proof-of-value">Bewijs verbeterlus starten</button>
+    <div class="row">
+      <div class="col">
+        <div class="hero-card">
+          <h3>Bewijs verbeterlus</h3>
+          <p>Production Lyra → PRE → sandboxvariant → 2× POST (dezelfde bevroren set) → holdout → regressiecontrole → beslissing. Voer dit eerst uit, vóór elke langere autonome run.</p>
+          <button id="btn-proof-of-value">Bewijs verbeterlus starten</button>
+        </div>
+      </div>
+      <div class="col">
+        <div class="hero-card">
+          <h3>Zelfstandigheidstest</h3>
+          <p>Test of Demo Room zelfstandig Lyra kan onderzoeken en verbeteren — zonder menselijke hint over de oplossing. Begrensd (standaard 10 min).</p>
+          <button id="btn-autonomy-test">Start zelfstandigheidstest</button>
+        </div>
+      </div>
     </div>
     <div class="grid" id="overzicht-cards"></div>
+    <div class="card" id="autonomy-card" style="display:none;">
+      <h3>Zelfstandigheidstest — laatste resultaat <span class="tag" id="autonomy-gate-tag"></span></h3>
+      <p class="sub" id="autonomy-summary"></p>
+      <p class="sub" id="autonomy-note" style="font-style:italic;"></p>
+      <table><thead><tr><th>Capability</th><th>Verdict</th><th>Toelichting</th></tr></thead><tbody id="autonomy-scorecard"></tbody></table>
+      <details style="margin-top:10px;"><summary>Welke hoofdapp-onderdelen zijn echt gebruikt?</summary>
+        <table><thead><tr><th>Component</th><th>Status</th><th>Toelichting</th></tr></thead><tbody id="autonomy-components"></tbody></table>
+      </details>
+      <details style="margin-top:10px;"><summary>Onderzoekscycli</summary><div id="autonomy-cycles" style="font-size:13px;"></div></details>
+    </div>
   </section>
 
   <section id="vooruitgang">
@@ -124,6 +144,7 @@
       <label>Type</label>
       <select id="run-type">
         <option value="proof">Proof test (bewijs verbeterlus)</option>
+        <option value="autonomy-test">Zelfstandigheidstest</option>
         <option value="challenge">Challenge</option>
         <option value="autonomous">Autonomous research</option>
       </select>
@@ -150,6 +171,11 @@
   </section>
 
   <section id="liverun">
+    <div class="card" id="liverun-error-card" style="display:none; border-color:var(--bad); background:#fdf2f1;">
+      <h3 style="color:var(--bad); margin-top:0;">Run mislukt</h3>
+      <p id="liverun-error-message" style="margin:0 0 8px;"></p>
+      <details><summary>Bekijk foutdetails</summary><pre id="liverun-error-details" style="white-space:pre-wrap; font-size:12px; background:#0f172a; color:#d6e2f0; padding:10px; border-radius:6px; max-height:300px; overflow:auto;"></pre></details>
+    </div>
     <div class="card" id="proof-stepper-card" style="display:none;">
       <h3>Voortgang: PRE → sandboxvariant → POST → holdout → regressiecontrole → beslissing</h3>
       <div class="stepper" id="proof-stepper"></div>
@@ -157,8 +183,8 @@
     </div>
     <div class="grid" id="liverun-cards"></div>
     <div class="card" style="margin-top:14px;">
-      <h3>Eventlog <button class="ghost" id="btn-liverun-to-logboek">Open volledig logboek</button></h3>
-      <div id="log">geen actieve run geladen</div>
+      <h3>Operationeel logboek van deze run <button class="ghost" id="btn-liverun-to-logboek">Open volledig logboek</button></h3>
+      <div id="log">Nog geen run gestart in deze installatie.</div>
     </div>
   </section>
 
@@ -171,6 +197,11 @@
   </section>
 
   <section id="versies">
+    <div class="card">
+      <h3>Canonieke actieve versie</h3>
+      <p class="sub" style="margin:0 0 8px;">Eén bron van waarheid voor "welke Lyra-versie is nu actief" — technisch uitleesbaar via <code>/api/versions/active</code>, voor Demo Room, de production-koppeling en later het NS Roosterplatform.</p>
+      <div id="active-version-info" class="grid"></div>
+    </div>
     <div class="card">
       <h3>Productie- en sandboxversies</h3>
       <table id="versions-table"><thead><tr><th>Versie</th><th>Status</th><th>Variant</th><th>Aangemaakt</th><th></th></tr></thead><tbody></tbody></table>
@@ -215,22 +246,22 @@
 
 <div class="modal-backdrop" id="publish-modal">
   <div class="modal">
-    <h2>Publiceren naar Lyra</h2>
+    <h2>Publiceer naar NS Roosterprogramma</h2>
     <div id="publish-modal-body"></div>
     <div class="actions">
       <button class="ghost" id="publish-cancel">Annuleren</button>
-      <button class="primary" id="publish-confirm">Publiceren</button>
+      <button class="primary" id="publish-confirm">Bevestig en publiceer</button>
     </div>
   </div>
 </div>
 
 <div class="modal-backdrop" id="rollback-modal">
   <div class="modal">
-    <h2>Herstel naar eerdere versie</h2>
+    <h2>Activeer versie</h2>
     <div id="rollback-modal-body"></div>
     <div class="actions">
       <button class="ghost" id="rollback-cancel">Annuleren</button>
-      <button class="danger" id="rollback-confirm">Herstellen</button>
+      <button class="danger" id="rollback-confirm">Activeren</button>
     </div>
   </div>
 </div>
@@ -326,7 +357,7 @@ async function loadOverzicht() {
     { label: "Beste sandboxvariant", value: o.bestSandboxVariant ? o.bestSandboxVariant.experimentId.slice(0, 12) : "—", sub: o.bestSandboxVariant ? o.bestSandboxVariant.hypothesis.slice(0, 40) : "nog geen kandidaat" },
     { label: "Laatste benchmark", value: o.latestBenchmark ? o.latestBenchmark.passRate.toFixed(1) + "%" : "—", sub: o.latestBenchmark ? o.latestBenchmark.label : "nog niet gemeten" },
     { label: "Beste benchmark ooit", value: o.bestBenchmarkEver !== null ? o.bestBenchmarkEver.toFixed(1) + "%" : "—", sub: "" },
-    { label: "Actieve run", value: o.activeRun && o.activeRun.status === "RUNNING" ? o.activeRun.kind : "geen", sub: o.activeRun ? o.activeRun.status : "" },
+    { label: "Actieve run", value: o.activeRun && (o.activeRun.status === "RUNNING" || o.activeRun.status === "STARTING") ? o.activeRun.kind : "geen", sub: o.activeRun ? (STATUS_LABELS[o.activeRun.status] || o.activeRun.status) : "" },
     { label: "Experimenten", value: o.counts.experiments, sub: "" },
     { label: "Promotion candidates", value: o.counts.promotionCandidates, sub: "" },
     { label: "Verworpen experimenten", value: o.counts.rejected, sub: "" },
@@ -413,29 +444,75 @@ document.getElementById("btn-proof-of-value").addEventListener("click", async ()
   switchTab("liverun");
   refresh();
 });
+document.getElementById("btn-autonomy-test").addEventListener("click", async () => {
+  const result = await post("/api/runs/start", { type: "autonomy-test", minutes: 10 });
+  if (result.error) { alert(`Kon niet starten: ${result.error}`); return; }
+  switchTab("liverun");
+  refresh();
+});
+
+const GATE_TAG_CLASS = { AUTONOMY_GATE_PASSED: "good", PARTIAL: "warn", FAILED: "bad" };
+async function loadAutonomyCard() {
+  const results = await j("/api/autonomy/results");
+  const card = document.getElementById("autonomy-card");
+  if (!results || results.length === 0) { card.style.display = "none"; return; }
+  const laatste = results[0];
+  card.style.display = "block";
+  const tag = document.getElementById("autonomy-gate-tag");
+  tag.textContent = laatste.gate;
+  tag.className = `tag ${GATE_TAG_CLASS[laatste.gate] || ""}`;
+  document.getElementById("autonomy-summary").textContent = `${laatste.humanSummary} — reden(en): ${laatste.gateReasons.join(" ")}`;
+  document.getElementById("autonomy-note").textContent = laatste.agentImprovementNote;
+  document.getElementById("autonomy-scorecard").innerHTML = laatste.scorecard.map((s) => `
+    <tr><td>${s.label}</td><td><span class="tag ${s.verdict === "JA" ? "good" : s.verdict === "NEE" ? "bad" : "warn"}">${s.verdict}</span></td><td style="font-size:12px;color:#556;">${s.detail}</td></tr>
+  `).join("");
+  document.getElementById("autonomy-components").innerHTML = laatste.componentUsage.map((c) => `
+    <tr><td>${c.component}</td><td><span class="tag ${c.usage === "ACTUALLY_USED" ? "good" : c.usage === "FAILED" ? "bad" : ""}">${c.usage}</span></td><td style="font-size:12px;color:#556;">${c.detail}</td></tr>
+  `).join("");
+  document.getElementById("autonomy-cycles").innerHTML = laatste.cycles.map((c) => `
+    <p><b>Cyclus ${c.cycleIndex + 1}</b> — zwakte: ${c.targetedWeakness}<br/>${c.hypothesis}<br/>Variant: ${c.variantLabel} → besluit: <span class="tag ${c.proof.decision === "PROMOTION_CANDIDATE" ? "good" : c.proof.decision === "REJECTED" ? "bad" : "warn"}">${c.proof.decision}</span><br/>${c.proof.reasoning}</p>
+  `).join("") || "<p class=\"empty\">Geen cyclus kon starten.</p>";
+}
 
 // ---- Live run ----
+const STATUS_LABELS = { STARTING: "wordt gestart…", RUNNING: "loopt", DONE: "afgerond", FAILED: "mislukt", STOPPED: "gestopt" };
 async function loadLiveRun() {
   const run = await j("/api/current-run");
-  const events = await j("/api/runlog");
+  const log = document.getElementById("log");
+  const stepperCard = document.getElementById("proof-stepper-card");
+  const errorCard = document.getElementById("liverun-error-card");
+
+  if (!run) {
+    document.getElementById("liverun-cards").innerHTML = `<div class="stat"><div class="label">Status</div><div class="value">Nog geen run</div></div>`;
+    log.textContent = "Nog geen run gestart in deze installatie. Start eerst 'Bewijs verbeterlus' op het Overzicht-tabblad.";
+    stepperCard.style.display = "none";
+    errorCard.style.display = "none";
+    return;
+  }
+
+  const logboek = await j(`/api/logbook/events?runId=${encodeURIComponent(run.runId)}`);
+  const tekst = await j(`/api/logbook/text?runId=${encodeURIComponent(run.runId)}`);
   const cards = [
-    { label: "Verstreken tijd", value: run ? Math.round((Date.now() - new Date(run.startedAt)) / 60000) + " min" : "—" },
-    { label: "Status", value: run ? run.status : "geen actieve run" },
-    { label: "Experimenten (deze run)", value: events.events?.length ?? 0 },
-    { label: "Geldige kandidaten", value: events.events?.filter((e) => e.validatorResult === "VALID").length ?? 0 },
-    { label: "Huidige beste score", value: (() => { const met = events.events?.filter((e) => e.qualityMetrics?.robust !== undefined); return met?.length ? Math.max(...met.map((e) => e.qualityMetrics.robust)).toFixed(1) : "—"; })() },
-    { label: "Laatste verbetering", value: [...(events.events ?? [])].reverse().find((e) => e.decision === "PROMOTION_CANDIDATE")?.id?.slice(0, 10) ?? "—" },
+    { label: "Status", value: STATUS_LABELS[run.status] || run.status },
+    { label: "Type", value: run.kind },
+    { label: "Gestart", value: new Date(run.startedAt).toLocaleTimeString("nl-NL") },
+    { label: "Verstreken tijd", value: Math.round((Date.now() - new Date(run.startedAt)) / 60000) + " min" },
+    { label: "Logboekregels", value: (logboek.events || []).length },
   ];
   document.getElementById("liverun-cards").innerHTML = cards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div></div>`).join("");
-  const log = document.getElementById("log");
-  if (!events.events || events.events.length === 0) { log.textContent = "geen events voor deze run"; }
-  else log.textContent = events.events.map((e) => `[${e.timestamp}] ${e.decision} — ${e.hypothesis}${e.failureReason ? "\n  " + e.failureReason : ""}${e.nextRecommendation ? "\n  → " + e.nextRecommendation : ""}`).join("\n\n");
-  if (run && run.tailOutput) log.textContent += "\n\n--- procesoutput ---\n" + run.tailOutput;
+
+  if (run.status === "FAILED") {
+    errorCard.style.display = "block";
+    document.getElementById("liverun-error-message").textContent = run.errorMessage || "Run mislukt (geen verdere details vastgelegd).";
+    document.getElementById("liverun-error-details").textContent = run.tailOutput || "(geen procesoutput vastgelegd)";
+  } else {
+    errorCard.style.display = "none";
+  }
+
+  log.textContent = tekst.text || (run.status === "STARTING" ? "Run wordt gestart…" : "(nog geen logboekregels)");
 
   // Voortgangsstepper: alleen tonen bij een proof-of-value-run (§v0.3 punt 1).
-  const stepperCard = document.getElementById("proof-stepper-card");
-  if (run && run.kind === "proof") {
-    const logboek = await j(`/api/logbook/events?runId=${encodeURIComponent(run.runId)}`);
+  if (run.kind === "proof") {
     stepperCard.style.display = "block";
     document.getElementById("proof-stepper").innerHTML = (logboek.stages || [])
       .map((s, i) => `${i > 0 ? '<span class="arrow">→</span>' : ""}<div class="step ${s.status}">${s.label}</div>`)
@@ -479,7 +556,7 @@ function showExperimentDetail(e) {
     ${e.failureReason ? `<p><b>Regressie(s):</b> ${e.failureReason}</p>` : ""}
     <table><thead><tr><th>Verschil t.o.v. baseline</th><th></th></tr></thead><tbody>${diffRows || "<tr><td colspan=2>geen</td></tr>"}</tbody></table>
     <div style="margin-top:12px;">
-      ${e.decision === "PROMOTION_CANDIDATE" ? `<button class="primary" id="btn-publish-${e.id}">Publish naar Lyra</button> <button class="ghost" id="btn-improvement-${e.id}">Bekijk volledig verslag</button>` : ""}
+      ${e.decision === "PROMOTION_CANDIDATE" ? `<button class="primary" id="btn-publish-${e.id}">Publiceer naar NS Roosterprogramma</button> <button class="ghost" id="btn-improvement-${e.id}">Bekijk volledig verslag</button>` : ""}
       <button class="ghost" id="btn-golog-${e.id}">Bekijk in logboek</button>
     </div>
     <details style="margin-top:12px;"><summary>Technische sectie (configuratie/diff)</summary><pre style="font-size:11px;">${JSON.stringify(e.configuration, null, 2)}</pre></details>
@@ -497,16 +574,28 @@ async function openImprovementReport(experimentId) {
 }
 
 // ---- Publish flow ----
+function fmtCatDiff(o) {
+  const entries = Object.entries(o || {}).filter(([, v]) => v !== null && v !== undefined);
+  if (entries.length === 0) return "—";
+  return entries.map(([k, v]) => `${k} ${typeof v === "number" && v > 0 ? "+" : ""}${typeof v === "number" ? v.toFixed(1) : v}${typeof v === "number" ? "pp" : ""}`).join(", ");
+}
 async function openPublishModal(experimentId) {
   const preview = await j(`/api/publish/preview?experimentId=${encodeURIComponent(experimentId)}`);
   const body = document.getElementById("publish-modal-body");
+  const holdoutRegel = preview.holdout && preview.holdout.pre && preview.holdout.variant
+    ? `controle ${fmtCatDiff(preview.holdout.pre)} → variant ${fmtCatDiff(preview.holdout.variant)}`
+    : (preview.holdout?.note || "geen holdoutmeting gevonden");
   body.innerHTML = `
-    <p><b>Huidige productieversie:</b> ${preview.currentProduction?.id ?? "baseline"}</p>
+    <p><b>Huidige versie:</b> <code>${preview.currentProduction?.id ?? "baseline"}</code></p>
+    <p><b>Nieuwe versie:</b> ${preview.newVersionPreview?.note || "wordt bij bevestigen aangemaakt"}</p>
     <p><b>Kandidaat:</b> ${preview.experiment.hypothesis}</p>
     <p><b>Waarom:</b> ${preview.experiment.nextRecommendation || "—"}</p>
-    <p><b>Verschil t.o.v. controle:</b> ${Object.entries(preview.experiment.comparisonWithBaseline || {}).map(([k, v]) => `${k} ${v > 0 ? "+" : ""}${v.toFixed(1)}pp`).join(", ") || "—"}</p>
-    <p><b>Gewijzigde bestanden/configs:</b> ${preview.changedFiles.join(", ")}</p>
-    <p><b>Rollback-versie die bewaard blijft:</b> <code>${preview.rollbackTarget}</code></p>
+    <p><b>Benchmarkverschil (dev, t.o.v. controle):</b> ${fmtCatDiff(preview.benchmarkDiff)}</p>
+    <p><b>Holdout:</b> ${holdoutRegel}</p>
+    <p><b>Regressies:</b> ${preview.regressions && preview.regressions.length > 0 ? preview.regressions.join("; ") : "geen bekend"}</p>
+    <p><b>Wat wordt gewijzigd:</b> ${preview.changedFiles.join(", ")}</p>
+    <p><b>Pijplijn:</b> ${preview.pipeline.join(" → ")}</p>
+    <p><b>Rollback-target (blijft bewaard, ook bij succes):</b> <code>${preview.rollbackTarget}</code></p>
     ${preview.warnings.length > 0 ? `<p style="color:#c0392b"><b>Waarschuwingen:</b> ${preview.warnings.join("; ")}</p>` : ""}
   `;
   document.getElementById("publish-confirm").disabled = preview.warnings.length > 0;
@@ -514,7 +603,9 @@ async function openPublishModal(experimentId) {
     document.getElementById("publish-confirm").disabled = true;
     const result = await post("/api/publish/execute", { experimentId });
     document.getElementById("publish-modal").classList.remove("open");
+    switchTab("liverun");
     alert(result.error ? `Fout: ${result.error}` : `Publicatie gestart (${result.runId}). Volg de voortgang op het tabblad 'Live run' — de pijplijn draait (typecheck + smoke benchmark kost een paar minuten en vergt een lokaal model/database).`);
+    refresh();
   };
   document.getElementById("publish-modal").classList.add("open");
 }
@@ -522,23 +613,43 @@ document.getElementById("publish-cancel").addEventListener("click", () => docume
 
 // ---- Lyra-versies ----
 async function loadVersies() {
+  const actief = await j("/api/versions/active");
+  document.getElementById("active-version-info").innerHTML = [
+    { label: "Version ID", value: actief.isBaseline ? "baseline" : actief.versionId },
+    { label: "Variant ID", value: actief.variantId || "(baseline)" },
+    { label: "Activated at", value: actief.activatedAt ? new Date(actief.activatedAt).toLocaleString("nl-NL") : "—" },
+    { label: "Source experiment", value: actief.sourceExperimentId ? actief.sourceExperimentId.slice(0, 12) : "—" },
+    { label: "Status", value: actief.status },
+    { label: "Benchmark reference", value: actief.benchmarkReference ? "aanwezig" : "geen" },
+  ].map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value" style="font-size:15px;">${c.value}</div></div>`).join("");
+
   const data = await j("/api/versions");
   const tbody = document.querySelector("#versions-table tbody");
   tbody.innerHTML = "";
   for (const v of data.versions) {
     const tr = document.createElement("tr");
     const isActief = v.id === data.activeVersionId;
-    tr.innerHTML = `<td>${v.id}${isActief ? " ← huidig" : ""}</td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.variantId || "(baseline)"}</td><td>${new Date(v.createdAt).toLocaleString("nl-NL")}</td><td>${isActief ? "" : `<button class="ghost" data-rollback="${v.id}">Herstel</button>`}</td>`;
+    const knop = isActief
+      ? `<span class="tag good">ACTIEF</span>`
+      : v.canActivate
+        ? `<button class="ghost" data-activate="${v.id}">Activeren</button>`
+        : `<button class="ghost" disabled title="${v.reason || ""}">Activeren</button>`;
+    tr.innerHTML = `<td>${v.id}</td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.variantId || "(baseline)"}</td><td>${new Date(v.createdAt).toLocaleString("nl-NL")}</td><td>${knop}${!isActief && !v.canActivate && v.reason ? `<div class="sub" style="font-size:11px;color:var(--bad);max-width:220px;">${v.reason}</div>` : ""}</td>`;
     tbody.appendChild(tr);
   }
-  tbody.querySelectorAll("[data-rollback]").forEach((btn) => btn.addEventListener("click", () => openRollbackModal(btn.dataset.rollback)));
+  tbody.querySelectorAll("[data-activate]").forEach((btn) => btn.addEventListener("click", () => openRollbackModal(btn.dataset.activate)));
 }
 function openRollbackModal(versionId) {
-  document.getElementById("rollback-modal-body").innerHTML = `<p>Weet je zeker dat je wilt herstellen naar <code>${versionId}</code>? De huidige versie blijft bewaard en is later weer terug te halen.</p>`;
+  document.getElementById("rollback-modal-body").innerHTML = `
+    <p>Weet je zeker dat je versie <code>${versionId}</code> wilt activeren?</p>
+    <p class="sub">Verloopt via dezelfde veilige pijplijn als publiceren: huidige actieve versie → backup → ${versionId} toepassen → smoke-test → succes, of automatische rollback naar de huidige versie. De huidige versie blijft altijd bewaard en herstelbaar.</p>
+  `;
   document.getElementById("rollback-confirm").onclick = async () => {
     const result = await post("/api/rollback/execute", { versionId });
     document.getElementById("rollback-modal").classList.remove("open");
-    alert(result.error ? `Fout: ${result.error}` : `Herstel gestart (${result.runId}). Volg de voortgang op 'Live run'.`);
+    switchTab("liverun");
+    alert(result.error ? `Fout: ${result.error}` : `Activering gestart (${result.runId}). Volg de voortgang op 'Live run'.`);
+    refresh();
   };
   document.getElementById("rollback-modal").classList.add("open");
 }
@@ -567,6 +678,10 @@ async function loadLogboekList() {
   logbookRuns = await j("/api/logbook/runs");
   renderLogbookList();
   if (!selectedLogbookRun && logbookRuns.length > 0) selectLogbookRun(logbookRuns[0].runId);
+  else if (logbookRuns.length === 0) {
+    document.getElementById("logbook-title").textContent = "Live log";
+    document.getElementById("logbook-text").textContent = "Nog geen logboek beschikbaar — er is nog geen run gestart in deze installatie.";
+  }
 }
 function renderLogbookList() {
   const filter = (document.getElementById("logbook-filter").value || "").toLowerCase();
@@ -607,11 +722,28 @@ async function loadBanner() {
   document.getElementById("banner").textContent = run && run.status === "RUNNING" ? `● loopt: ${run.kind} (${run.runId})` : "geen actieve run";
 }
 
+// Eén trage/mislukte deelvernieuwing mag de rest van het dashboard nooit
+// permanent op "wordt geladen…" laten hangen (§ Definition of Done).
+async function veilig(naam, fn) {
+  try { await fn(); } catch (fout) { console.error(`refresh(${naam}) mislukt:`, fout); }
+}
 async function refresh() {
-  await Promise.all([loadBanner(), loadOverzicht(), loadVooruitgang(), loadLiveRun(), loadExperimenten(), loadVersies(), loadRapporten(), loadLogboekList()]);
+  await Promise.all([
+    veilig("banner", loadBanner),
+    veilig("overzicht", loadOverzicht),
+    veilig("autonomy", loadAutonomyCard),
+    veilig("vooruitgang", loadVooruitgang),
+    veilig("liverun", loadLiveRun),
+    veilig("experimenten", loadExperimenten),
+    veilig("versies", loadVersies),
+    veilig("rapporten", loadRapporten),
+    veilig("logboek", loadLogboekList),
+  ]);
   // Houd een geselecteerde run die nog loopt live bijgewerkt.
-  const actief = await j("/api/current-run");
-  if (actief && selectedLogbookRun === actief.runId) selectLogbookRun(actief.runId);
+  try {
+    const actief = await j("/api/current-run");
+    if (actief && selectedLogbookRun === actief.runId) await selectLogbookRun(actief.runId);
+  } catch (fout) { console.error("refresh(actief) mislukt:", fout); }
 }
 refresh();
 setInterval(refresh, 5000);

@@ -86,6 +86,14 @@ export interface StartRunMeta {
   readonly challengeOrGoal: string | null;
 }
 
+/**
+ * Schrijft het RUN_START-blok. Idempotent met betrekking tot een eerder
+ * geschreven bestand: als het dashboard al een `RUN_START_REQUESTED`-event
+ * schreef (§ "live logboek moet robuust zijn" — vóórdat het CLI-proces zelf
+ * live was), wordt dat NIET overschreven — dit voegt alleen het echte
+ * RUN_START-blok eraan toe. Zonder dashboard (losse terminal-aanroep) is dit
+ * bestand nog leeg en wordt het gewoon vers aangemaakt.
+ */
 export function startRun(runId: string, meta: StartRunMeta): void {
   mkdirSync(LOGS_DIR, { recursive: true });
   const header = [
@@ -97,8 +105,12 @@ export function startRun(runId: string, meta: StartRunMeta): void {
     `Challenge/doel: ${meta.challengeOrGoal ?? "n.v.t."}`,
     "",
   ].join("\n");
-  writeFileSync(txtPath(runId), header, "utf8");
-  writeFileSync(jsonlPath(runId), "", "utf8");
+  if (!existsSync(txtPath(runId))) {
+    writeFileSync(txtPath(runId), header, "utf8");
+    writeFileSync(jsonlPath(runId), "", "utf8");
+  } else {
+    appendFileSync(txtPath(runId), `${header}\n`, "utf8");
+  }
   log(runId, { kind: "RUN_START", message: `Run gestart (${meta.kind}).`, experimentId: null, data: meta as unknown as Record<string, unknown> });
 }
 
