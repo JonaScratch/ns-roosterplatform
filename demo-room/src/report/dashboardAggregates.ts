@@ -36,13 +36,28 @@ export interface VersionPerformancePoint {
   readonly isActive: boolean;
 }
 
+/**
+ * Weergavenaam voor een versie, chronologisch genummerd (§ UI-aanvulling
+ * "Versiebeheer aanpassen: start bij v1.0.0 en daarna per 0.1"): de
+ * basisversie (oudste, `createdAt` het vroegst) is v1.0.0, elke volgende
+ * gepubliceerde/geactiveerde versie telt de derde plek met 1 op — v1.0.1,
+ * v1.0.2, enzovoort. Dit raakt uitsluitend de WEERGAVE; de technische
+ * versie-ID (`lyra-prod-YYYY-MM-DD-NN`/`lyra-prod-baseline`) blijft
+ * ongewijzigd, zodat al bestaande, lokaal opgeslagen versiebestanden van
+ * een eerdere installatie geldig blijven — er is dus geen destructieve
+ * migratie nodig.
+ */
+function displayNameForIndex(i: number): string {
+  return `v1.0.${i}`;
+}
+
 /** Chronologisch (oudste eerst) — alleen versies die ooit gepubliceerd/geactiveerd zijn, dus met een echte meting eromheen. */
 export function versionPerformanceSeries(): readonly VersionPerformancePoint[] {
   const actief = listVersions().find((v) => v.status === "ACTIVE")?.id ?? null;
   const chronologisch = [...listVersions()].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   return chronologisch.map((v, i) => ({
     versionId: v.id,
-    displayName: `Lyra v${i + 1}`,
+    displayName: displayNameForIndex(i),
     status: v.status,
     createdAt: v.createdAt,
     score: aggregateScore(v.benchmarkReference?.post ?? null),
@@ -234,3 +249,8 @@ export function latestFindings(limit = 6): readonly Finding[] {
 }
 
 export type AgentDimensionKey = Exclude<keyof AgentQualityCategory, "latencyMs">;
+
+/** Weergavenaam (v1.0.x) voor een technische versie-ID — `null` als de versie onbekend is. */
+export function displayNameForVersionId(versionId: string): string | null {
+  return versionPerformanceSeries().find((p) => p.versionId === versionId)?.displayName ?? null;
+}

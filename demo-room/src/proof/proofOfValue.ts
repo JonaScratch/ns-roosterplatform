@@ -96,9 +96,18 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
   const variantCategory: ProofOfValueResult["variantCategory"] = variant.category;
   const aantalPostRuns = Math.max(1, options.postRuns ?? MIN_POST_RUNS);
 
+  // §"config geladen/DB/model/actor checks": expliciet, vóórdat er iets gemeten wordt — zodat een
+  // ontbrekende dependency traceerbaar is als een eigen stap, niet alleen als een generieke ERROR verderop.
+  logbook.log(runId, {
+    kind: "PRECHECK",
+    experimentId: null,
+    message: `Configuratie gecontroleerd voor run ${runId}: lokaal model=${process.env.NS_LOCAL_LLM_URL && process.env.NS_LOCAL_LLM_MODEL ? "geconfigureerd" : "ontbreekt"}, database=${process.env.DATABASE_URL ? "geconfigureerd" : "ontbreekt"}, actor=${process.env.DEMO_ROOM_ACTOR_EMPLOYEE_NUMBER ? "geconfigureerd" : "ontbreekt"}.`,
+  });
+
   const dev = loadSuite("dev");
   const holdout = loadSuite("holdout");
   logbook.log(runId, { kind: "SANDBOX_VARIANT", experimentId: null, message: `Sandboxvariant gekozen: ${variant.label} (${variant.category}).`, data: { variantId: variant.id } });
+  logbook.log(runId, { kind: "HYPOTHESIS", experimentId: null, message: variant.description });
 
   let executed = true;
   let notExecutedReason: string | null = null;

@@ -11,7 +11,7 @@ import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
 import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
 import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults";
-import { compareVersions, latestFindings, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
+import { compareVersions, displayNameForVersionId, latestFindings, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 
 /**
@@ -144,6 +144,7 @@ function apiActiveVersion() {
   const versie = getVersion(id);
   return {
     versionId: id,
+    displayName: displayNameForVersionId(id) ?? id,
     variantId: versie?.variantId ?? null,
     activatedAt: versie?.createdAt ?? null,
     sourceExperimentId: versie?.sourceExperimentId ?? null,
@@ -167,7 +168,7 @@ function apiVersions() {
   const versies = listVersions();
   return {
     activeVersionId: actief,
-    versions: versies.map((v) => ({ ...v, ...activationEligibility(v, actief) })),
+    versions: versies.map((v) => ({ ...v, displayName: displayNameForVersionId(v.id) ?? v.id, ...activationEligibility(v, actief) })),
   };
 }
 

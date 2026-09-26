@@ -242,6 +242,7 @@ export interface LyraVersion {
  */
 export type LogEventKind =
   | "RUN_START_REQUESTED"
+  | "PRECHECK"
   | "RUN_START"
   | "RUN_END"
   | "PRODUCTION_VERSION"

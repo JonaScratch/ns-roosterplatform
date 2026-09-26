@@ -50,6 +50,18 @@
   .h3-icon.purple { background:#ece7fb; color:#6d4fc9; }
   .h3-icon.navy { background:#eef2fa; color:var(--bg); }
   .btn-icon svg { width:100%; height:100%; }
+  .tag.info { background:#e7effd; color:var(--accent); }
+  .tag.benchmark { background:#ece7fb; color:#6d4fc9; }
+  .tag.variant { background:#fdf1de; color:#c8791a; }
+  .tag.decision { background:#eef2fa; color:var(--bg); }
+  .tag.publish { background:#e4f6ea; color:var(--good); }
+  .tag.rollback { background:#fbe6e3; color:var(--bad); }
+  .log-row { display:flex; gap:8px; padding:3px 0; align-items:baseline; border-bottom:1px solid #1c2c48; }
+  .log-row:last-child { border-bottom:none; }
+  .log-time { color:#7f93b8; flex-shrink:0; }
+  .log-kind { color:#7f93b8; flex-shrink:0; font-size:11px; }
+  .log-msg { flex:1; word-break:break-word; }
+  .log-row .tag { flex-shrink:0; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
   th, td { text-align:left; padding:9px 8px; border-bottom:1px solid #eef1f6; vertical-align:top; }
   th { color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.02em; }
@@ -127,6 +139,7 @@
     </div>
   </div>
   <div class="chrome">
+    <span class="tag good" id="header-active-version" title="Actieve productie-Lyra-versie">—</span>
     <div id="banner"></div>
     <div class="help-icon" title="Hulp">?</div>
     <div class="user-chip"><div class="user-avatar">👤</div>Demo gebruiker</div>
@@ -140,7 +153,6 @@
   <button data-tab="liverun">Live run</button>
   <button data-tab="experimenten">Experimenten</button>
   <button data-tab="versies">Lyra-versies</button>
-  <button data-tab="rapporten">Rapporten</button>
   <button data-tab="logboek">Logboek</button>
 </nav>
 <main>
@@ -400,17 +412,6 @@
     </div>
   </section>
 
-  <section id="rapporten">
-    <div class="card">
-      <h3>HANDOFF.md <button class="ghost" id="btn-copy-handoff">Kopieer HANDOFF</button></h3>
-      <div id="handoff">wordt geladen…</div>
-    </div>
-    <div class="card">
-      <h3>Laatste journaalentry (latest.json)</h3>
-      <pre id="report" style="white-space:pre-wrap; font-size:12px;">nog geen rapport</pre>
-    </div>
-  </section>
-
   <section id="logboek">
     <div class="row">
       <div class="col" style="max-width:280px;">
@@ -628,7 +629,7 @@ async function loadOverzicht() {
   const bestOoit = perf.filter((p) => p.score !== null).reduce((best, p) => (best === null || p.score > best ? p.score : best), null);
 
   document.getElementById("ov-active-icon").innerHTML = iconChip("layers", "blue", "lg");
-  document.getElementById("ov-active-version").textContent = actief.isBaseline ? "baseline" : actief.versionId;
+  document.getElementById("ov-active-version").textContent = actief.displayName;
   document.getElementById("ov-active-tag").textContent = actief.status;
   document.getElementById("ov-active-tag").className = `tag ${actief.status === "ACTIVE" ? "good" : actief.status === "FAILED" ? "bad" : "warn"}`;
   document.getElementById("ov-active-sub").textContent = actief.isBaseline
@@ -894,6 +895,50 @@ async function loadAutonomyCard() {
 
 // ---- Live run ----
 const STATUS_LABELS = { STARTING: "wordt gestart…", RUNNING: "loopt", DONE: "afgerond", FAILED: "mislukt", STOPPED: "gestopt" };
+/**
+ * Bug (§ "verstreken tijd blijft nu oplopen na afronding"): het element
+ * rekende altijd `Date.now() - startedAt` uit, ook ná afronding — elke
+ * refresh-cyclus (om de 5s) liet de teller dus doortikken, ongeacht status.
+ * Fix: zodra de run een `finishedAt` heeft (elke eindstatus zet dit),
+ * bevriest de teller op de echte totale duur; alleen zonder `finishedAt`
+ * (dus terwijl de run nog STARTING/RUNNING is) loopt hij live door.
+ */
+function elapsedMinutes(run) {
+  const eind = run.finishedAt ? new Date(run.finishedAt) : new Date();
+  return Math.round((eind - new Date(run.startedAt)) / 60000);
+}
+
+// §6/§7 UI-aanvulling: elk logboek-eventtype hoort bij één van acht badge-categorieën, zodat een lange run scanbaar blijft.
+const LOG_CATEGORY = {
+  RUN_START_REQUESTED: "INFO", RUN_START: "INFO", RUN_END: "INFO", CHALLENGE_OR_GOAL: "INFO", MODEL_CONFIG: "INFO", PRODUCTION_VERSION: "INFO", PRECHECK: "INFO", INFO: "INFO",
+  BUDGET_REACHED: "WARN", EXPERIMENT_SKIPPED: "WARN", AUTO_RETRY: "WARN", CRASH_RECOVERY: "WARN", VARIANT_REJECTED: "WARN", CANDIDATE_INVALID: "WARN", MODEL_RESPONSE_UNUSABLE: "WARN", VALIDATOR_ERROR: "WARN", KNOWN_WEAKNESSES: "WARN",
+  ERROR: "ERROR",
+  BENCHMARK_START: "BENCHMARK", BENCHMARK_RESULT: "BENCHMARK", BENCHMARK_ITEM_START: "BENCHMARK", BENCHMARK_ITEM_GRADE: "BENCHMARK", BENCHMARK_ITEM_END: "BENCHMARK", CONTEXT_BEFORE: "BENCHMARK", CONTEXT_TURN: "BENCHMARK", AGENT_EXECUTION_START: "BENCHMARK", TOOL_DECISION: "BENCHMARK", TOOL_CALL: "BENCHMARK", TOOL_RESULT: "BENCHMARK", AGENT_RESPONSE: "BENCHMARK",
+  SANDBOX_VARIANT: "VARIANT", VARIANT_CREATED: "VARIANT", HYPOTHESIS: "VARIANT", CANDIDATE_GENERATED: "VARIANT", CHANGE_APPLIED: "VARIANT",
+  COMPARISON: "DECISION", REGRESSION_FOUND: "DECISION", PROMOTION_DECISION: "DECISION", VALIDATOR_RESULT: "DECISION", OPTIMIZER_ACTION: "DECISION", VALIDATOR_ACTION: "DECISION", TOOL_ACTION: "DECISION", TEST_START: "DECISION", TEST_RESULT: "DECISION",
+  PUBLISH_ATTEMPT: "PUBLISH", BACKUP: "PUBLISH", PUBLISH_RESULT: "PUBLISH",
+  ROLLBACK: "ROLLBACK",
+};
+const LOG_CATEGORY_CLASS = { INFO: "info", WARN: "warn", ERROR: "bad", BENCHMARK: "benchmark", VARIANT: "variant", DECISION: "decision", PUBLISH: "publish", ROLLBACK: "rollback" };
+function esc(s) { return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+/** Live run + Logboek delen deze weergave: tijd, badge per categorie, event-soort, bericht — leesbaarder dan de kale platte tekst. */
+function renderLogEvents(el, events) {
+  if (!events || events.length === 0) { el.innerHTML = `<span style="color:#7f93b8;">(nog geen logboekregels)</span>`; return; }
+  el.innerHTML = events.map((e) => {
+    const cat = LOG_CATEGORY[e.kind] || "INFO";
+    const time = new Date(e.timestamp).toLocaleTimeString("nl-NL");
+    // RUN_END schrijft geen `message` maar een `summary` (zie logbook.ts#endRun) — anders lijkt de laatste regel leeg.
+    const bericht = e.kind === "RUN_END" && e.summary
+      ? `${e.summary.outcome} — ${Math.round((e.summary.totalDurationMs || 0) / 1000)}s, ${e.summary.experiments} experiment(en), ${e.summary.accepted} geaccepteerd, ${e.summary.rejected} verworpen.`
+      : e.message;
+    return `<div class="log-row">
+      <span class="log-time">${time}</span>
+      <span class="tag ${LOG_CATEGORY_CLASS[cat]}">${cat}</span>
+      <span class="log-kind">${e.kind}</span>
+      <span class="log-msg">${esc(bericht)}</span>
+    </div>`;
+  }).join("");
+}
 
 /** Gedeeld door Live run en Runs: nooit een latere stap als 'done'/'active' tonen wanneer een eerdere stap niet gehaald is (§ UI-redesign: "als een run faalt vóór PRE, kleur POST/Holdout niet groen"). `deriveProofStages` op de server bewaakt dit al zelf. */
 function renderStepper(el, stages) {
@@ -909,7 +954,7 @@ async function loadRuns() {
     document.getElementById("runs-active-status").textContent = STATUS_LABELS[actief.status] || actief.status;
     document.getElementById("runs-active-status").className = `tag ${actief.status === "RUNNING" ? "good" : "warn"}`;
     document.getElementById("runs-active-title").textContent = `${actief.kind} (${actief.runId})`;
-    document.getElementById("runs-active-meta").textContent = `Gestart ${new Date(actief.startedAt).toLocaleString("nl-NL")} · ${Math.round((Date.now() - new Date(actief.startedAt)) / 60000)} min geleden`;
+    document.getElementById("runs-active-meta").textContent = `Gestart ${new Date(actief.startedAt).toLocaleString("nl-NL")} · ${elapsedMinutes(actief)} min bezig`;
     if (actief.kind === "proof") {
       const logboek = await j(`/api/logbook/events?runId=${encodeURIComponent(actief.runId)}`);
       renderStepper(document.getElementById("runs-active-stepper"), logboek.stages);
@@ -992,19 +1037,18 @@ async function loadLiveRun() {
 
   if (!run) {
     document.getElementById("liverun-cards").innerHTML = `<div class="stat"><div class="label">Status</div><div class="value">Nog geen run</div></div>`;
-    log.textContent = "Nog geen run gestart in deze installatie. Start eerst 'Bewijs verbeterlus' op het Overzicht-tabblad.";
+    log.innerHTML = `<span style="color:#7f93b8;">Nog geen run gestart in deze installatie. Start eerst 'Bewijs verbeterlus' op het Overzicht-tabblad.</span>`;
     stepperCard.style.display = "none";
     errorCard.style.display = "none";
     return;
   }
 
   const logboek = await j(`/api/logbook/events?runId=${encodeURIComponent(run.runId)}`);
-  const tekst = await j(`/api/logbook/text?runId=${encodeURIComponent(run.runId)}`);
   const cards = [
     { label: "Status", value: STATUS_LABELS[run.status] || run.status },
     { label: "Type", value: run.kind },
     { label: "Gestart", value: new Date(run.startedAt).toLocaleTimeString("nl-NL") },
-    { label: "Verstreken tijd", value: Math.round((Date.now() - new Date(run.startedAt)) / 60000) + " min" },
+    { label: "Verstreken tijd", value: elapsedMinutes(run) + " min" + (run.finishedAt ? " (totaal)" : "") },
     { label: "Logboekregels", value: (logboek.events || []).length },
   ];
   document.getElementById("liverun-cards").innerHTML = cards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div></div>`).join("");
@@ -1017,7 +1061,8 @@ async function loadLiveRun() {
     errorCard.style.display = "none";
   }
 
-  log.textContent = tekst.text || (run.status === "STARTING" ? "Run wordt gestart…" : "(nog geen logboekregels)");
+  if (run.status === "STARTING" && (!logboek.events || logboek.events.length === 0)) log.innerHTML = `<span style="color:#7f93b8;">Run wordt gestart…</span>`;
+  else renderLogEvents(log, logboek.events);
 
   // Voortgangsstepper: alleen tonen bij een proof-of-value-run (§v0.3 punt 1).
   if (run.kind === "proof") {
@@ -1121,7 +1166,8 @@ document.getElementById("publish-cancel").addEventListener("click", () => docume
 async function loadVersies() {
   const actief = await j("/api/versions/active");
   document.getElementById("active-version-info").innerHTML = [
-    { label: "Version ID", value: actief.isBaseline ? "baseline" : actief.versionId },
+    { label: "Versie", value: actief.displayName },
+    { label: "Version ID (technisch)", value: actief.versionId },
     { label: "Variant ID", value: actief.variantId || "(baseline)" },
     { label: "Activated at", value: actief.activatedAt ? new Date(actief.activatedAt).toLocaleString("nl-NL") : "—" },
     { label: "Source experiment", value: actief.sourceExperimentId ? actief.sourceExperimentId.slice(0, 12) : "—" },
@@ -1140,7 +1186,7 @@ async function loadVersies() {
       : v.canActivate
         ? `<button class="ghost" data-activate="${v.id}">Activeren</button>`
         : `<button class="ghost" disabled title="${v.reason || ""}">Activeren</button>`;
-    tr.innerHTML = `<td>${v.id}</td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.variantId || "(baseline)"}</td><td>${new Date(v.createdAt).toLocaleString("nl-NL")}</td><td>${knop}${!isActief && !v.canActivate && v.reason ? `<div class="sub" style="font-size:11px;color:var(--bad);max-width:220px;">${v.reason}</div>` : ""}</td>`;
+    tr.innerHTML = `<td>${v.displayName}<div class="sub" style="font-size:11px;">${v.id}</div></td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.variantId || "(baseline)"}</td><td>${new Date(v.createdAt).toLocaleString("nl-NL")}</td><td>${knop}${!isActief && !v.canActivate && v.reason ? `<div class="sub" style="font-size:11px;color:var(--bad);max-width:220px;">${v.reason}</div>` : ""}</td>`;
     tbody.appendChild(tr);
   }
   tbody.querySelectorAll("[data-activate]").forEach((btn) => btn.addEventListener("click", () => openRollbackModal(btn.dataset.activate)));
@@ -1162,20 +1208,6 @@ function openRollbackModal(versionId) {
 document.getElementById("rollback-cancel").addEventListener("click", () => document.getElementById("rollback-modal").classList.remove("open"));
 
 // ---- Rapporten ----
-async function loadRapporten() {
-  const handoff = await j("/api/handoff");
-  document.getElementById("handoff").textContent = handoff.markdown;
-  const report = await j("/api/latest-report");
-  document.getElementById("report").textContent = report ? JSON.stringify(report, null, 2) : "nog geen journaalentry geschreven";
-}
-document.getElementById("btn-copy-handoff").addEventListener("click", async () => {
-  await navigator.clipboard.writeText(document.getElementById("handoff").textContent);
-  const btn = document.getElementById("btn-copy-handoff");
-  const origineel = btn.textContent;
-  btn.textContent = "Gekopieerd!";
-  setTimeout(() => (btn.textContent = origineel), 1500);
-});
-
 // ---- Logboek ----
 let logbookRuns = [];
 let selectedLogbookRun = null;
@@ -1228,6 +1260,14 @@ async function loadBanner() {
   document.getElementById("banner").textContent = run && run.status === "RUNNING" ? `● loopt: ${run.kind} (${run.runId})` : "geen actieve run";
 }
 
+// §8 UI-aanvulling: de actieve Lyra-versie moet overal zichtbaar zijn — één pill in de header, altijd aanwezig, ongeacht het tabblad.
+async function loadHeaderVersion() {
+  const actief = await j("/api/versions/active");
+  const el = document.getElementById("header-active-version");
+  el.textContent = `${actief.displayName} actief`;
+  el.className = `tag ${actief.status === "ACTIVE" ? "good" : actief.status === "FAILED" ? "bad" : "warn"}`;
+}
+
 // Eén trage/mislukte deelvernieuwing mag de rest van het dashboard nooit
 // permanent op "wordt geladen…" laten hangen (§ Definition of Done).
 async function veilig(naam, fn) {
@@ -1236,6 +1276,7 @@ async function veilig(naam, fn) {
 async function refresh() {
   await Promise.all([
     veilig("banner", loadBanner),
+    veilig("header-version", loadHeaderVersion),
     veilig("overzicht", loadOverzicht),
     veilig("autonomy", loadAutonomyCard),
     veilig("vergelijk", loadVergelijk),
@@ -1244,7 +1285,6 @@ async function refresh() {
     veilig("liverun", loadLiveRun),
     veilig("experimenten", loadExperimenten),
     veilig("versies", loadVersies),
-    veilig("rapporten", loadRapporten),
     veilig("logboek", loadLogboekList),
   ]);
   // Houd een geselecteerde run die nog loopt live bijgewerkt.
