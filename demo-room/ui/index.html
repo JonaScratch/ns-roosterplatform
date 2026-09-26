@@ -5,34 +5,82 @@
 <title>Lyra Demo Room</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-  :root { --bg:#0a1e3d; --panel:#0f2647; --accent:#1f5fd0; --orange:#c9622a; --text:#e7edf7; --muted:#9fb0c9; --good:#2e9e5b; --bad:#c0392b; --warn:#b9862c; }
+  :root { --bg:#0a1e3d; --panel:#0f2647; --accent:#1f5fd0; --orange:#c9622a; --text:#e7edf7; --muted:#9fb0c9; --good:#2e9e5b; --bad:#c0392b; --warn:#b9862c; --card-shadow: 0 1px 2px rgba(10,30,61,.06), 0 1px 8px rgba(10,30,61,.04); }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: -apple-system, "Segoe UI", Arial, sans-serif; background:#f3f5f9; color:#12223c; }
-  header { background:var(--bg); color:var(--text); padding:16px 24px; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; }
-  header h1 { margin:0; font-size:20px; }
+  body { margin:0; font-family: -apple-system, "Segoe UI", Arial, sans-serif; background:#f4f6fb; color:#12223c; }
+  header { background:var(--bg); color:var(--text); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+  header h1 { margin:0; font-size:19px; line-height:1.2; }
+  header .brand { display:flex; align-items:center; gap:12px; }
+  header .brand-icon { background:#fff; border-radius:8px; padding:6px 8px; display:flex; align-items:center; justify-content:center; }
+  header .brand-icon img { height:20px; width:auto; display:block; }
+  header .brand-sub { margin:1px 0 0; color:var(--muted); font-size:12px; }
+  header .chrome { display:flex; align-items:center; gap:14px; }
+  header .chrome .help-icon { width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.08); color:var(--muted); display:flex; align-items:center; justify-content:center; font-size:13px; }
+  header .chrome .user-chip { display:flex; align-items:center; gap:8px; color:#fff; font-size:13px; }
+  header .chrome .user-avatar { width:28px; height:28px; border-radius:50%; background:#2a4a82; display:flex; align-items:center; justify-content:center; font-size:13px; }
   #banner { font-size:12px; color:var(--muted); }
   nav { display:flex; gap:2px; background:var(--panel); padding:0 24px; overflow-x:auto; }
   nav button { background:none; border:none; color:var(--muted); padding:10px 14px; cursor:pointer; font-size:13px; border-bottom:3px solid transparent; white-space:nowrap; }
   nav button.active { color:#fff; border-bottom-color:var(--accent); }
-  main { padding:20px 24px; max-width:1100px; margin:0 auto; }
+  main { padding:20px 24px; max-width:1280px; margin:0 auto; }
   section { display:none; }
   section.active { display:block; }
-  .card { background:#fff; border:1px solid #dde3ee; border-radius:8px; padding:16px; margin-bottom:14px; }
+  .card { background:#fff; border:1px solid #eaeef5; border-radius:12px; padding:18px; margin-bottom:14px; box-shadow:var(--card-shadow); }
+  .card h3 { display:flex; align-items:center; gap:8px; }
+  .card h3 .info-icon { margin-left:auto; width:16px; height:16px; border-radius:50%; background:#eef1f6; color:var(--muted); font-size:10px; display:inline-flex; align-items:center; justify-content:center; cursor:default; font-style:normal; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:12px; }
-  .stat { background:#fff; border:1px solid #dde3ee; border-radius:8px; padding:14px; }
+  .stat { background:#fff; border:1px solid #eaeef5; border-radius:10px; padding:14px; }
+  .stat.with-icon { display:flex; gap:12px; align-items:flex-start; }
   .stat .label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
   .stat .value { font-size:22px; font-weight:600; margin-top:4px; }
   .stat .sub { font-size:12px; color:#556; margin-top:2px; }
+  .icon-chip { flex-shrink:0; width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; }
+  .icon-chip svg { width:19px; height:19px; }
+  .icon-chip.blue { background:#e7effd; color:var(--accent); }
+  .icon-chip.amber { background:#fdf1de; color:#c8791a; }
+  .icon-chip.green { background:#e4f6ea; color:var(--good); }
+  .icon-chip.purple { background:#ece7fb; color:#6d4fc9; }
+  .icon-chip.navy { background:#eef2fa; color:var(--bg); }
+  .icon-chip.lg { width:52px; height:52px; border-radius:12px; }
+  .icon-chip.lg svg { width:26px; height:26px; }
+  .h3-icon { display:inline-flex; width:26px; height:26px; border-radius:7px; align-items:center; justify-content:center; }
+  .h3-icon svg { width:14px; height:14px; }
+  .h3-icon.blue { background:#e7effd; color:var(--accent); }
+  .h3-icon.amber { background:#fdf1de; color:#c8791a; }
+  .h3-icon.purple { background:#ece7fb; color:#6d4fc9; }
+  .h3-icon.navy { background:#eef2fa; color:var(--bg); }
+  .btn-icon svg { width:100%; height:100%; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
-  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid #eef1f6; vertical-align:top; }
-  th { color:var(--muted); font-weight:600; }
+  th, td { text-align:left; padding:9px 8px; border-bottom:1px solid #eef1f6; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.02em; }
   tr.clickable { cursor:pointer; }
   tr.clickable:hover { background:#f7f9fc; }
   code { background:#eef1f6; padding:1px 5px; border-radius:4px; font-size:12px; }
-  .tag { display:inline-block; font-size:11px; padding:2px 7px; border-radius:10px; background:#eef1f6; color:#455; }
+  .tag { display:inline-block; font-size:11px; padding:2px 8px; border-radius:10px; background:#eef1f6; color:#455; font-weight:600; }
   .tag.good { background:#e4f6ea; color:var(--good); }
   .tag.bad { background:#fbe6e3; color:var(--bad); }
   .tag.warn { background:#fbf1e0; color:var(--warn); }
+  .finding-item { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid #f1f3f8; }
+  .finding-item:last-child { border-bottom:none; }
+  .finding-badge { flex-shrink:0; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .finding-badge.up { background:#e4f6ea; color:var(--good); }
+  .finding-badge.down { background:#fbe6e3; color:var(--bad); }
+  .finding-title { font-weight:600; font-size:13px; }
+  .finding-detail { font-size:12px; color:#667; margin-top:1px; }
+  .finding-basis { font-size:11px; color:var(--muted); }
+  .finding-date { font-size:11px; color:var(--muted); white-space:nowrap; margin-left:auto; padding-left:10px; }
+  .chip-select { position:relative; }
+  .chip-select-box { display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:38px; border:1px solid #ccd4e0; border-radius:6px; padding:5px 8px; cursor:text; background:#fff; }
+  .chip-select-box:focus-within { border-color:var(--accent); }
+  .chip-pill { display:flex; align-items:center; gap:5px; background:#e7effd; color:var(--accent); font-size:12px; font-weight:600; padding:3px 6px 3px 9px; border-radius:12px; }
+  .chip-pill button { background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; padding:0; line-height:1; opacity:.7; }
+  .chip-pill button:hover { opacity:1; }
+  .chip-select-dropdown { position:absolute; top:calc(100% + 4px); left:0; right:0; background:#fff; border:1px solid #dde3ee; border-radius:8px; box-shadow:0 6px 20px rgba(10,30,61,.12); max-height:220px; overflow:auto; z-index:5; display:none; }
+  .chip-select-dropdown.open { display:block; }
+  .chip-select-dropdown div { padding:8px 12px; font-size:13px; cursor:pointer; }
+  .chip-select-dropdown div:hover { background:#f7f9fc; }
+  .chip-select-dropdown div.disabled { color:var(--muted); cursor:default; }
+  .chip-select-dropdown div.disabled:hover { background:none; }
   #log { font-family: ui-monospace, monospace; font-size:12px; background:#0f172a; color:#d6e2f0; padding:12px; border-radius:8px; max-height:420px; overflow:auto; white-space:pre-wrap; }
   #handoff, #improvement-text { white-space:pre-wrap; font-size:13px; line-height:1.5; }
   button.primary { background:var(--accent); color:#fff; border:none; padding:9px 16px; border-radius:6px; cursor:pointer; font-size:13px; }
@@ -71,11 +119,18 @@
 </head>
 <body>
 <header>
-  <div style="display:flex; align-items:center; gap:12px;">
-    <img src="/brand/ns-logo.svg" alt="NS" style="height:28px; width:auto;" />
-    <h1>Lyra Demo Room</h1>
+  <div class="brand">
+    <div class="brand-icon"><img src="/brand/ns-logo.svg" alt="NS" /></div>
+    <div>
+      <h1>Lyra Demo Room</h1>
+      <p class="brand-sub">NS Roosterplatform · Laboratorium voor beter roosteren met Lyra</p>
+    </div>
   </div>
-  <div id="banner"></div>
+  <div class="chrome">
+    <div id="banner"></div>
+    <div class="help-icon" title="Hulp">?</div>
+    <div class="user-chip"><div class="user-avatar">👤</div>Demo gebruiker</div>
+  </div>
 </header>
 <nav>
   <button data-tab="overzicht" class="active">Overzicht</button>
@@ -92,42 +147,44 @@
 
   <section id="overzicht" class="active">
     <div class="row" style="align-items:stretch;">
-      <div class="col" style="max-width:340px;">
-        <div class="hero-card" style="height:100%; display:flex; flex-direction:column; justify-content:center;">
-          <div class="sub" style="color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em;">Actieve versie</div>
-          <div style="display:flex; align-items:baseline; gap:10px; margin:4px 0;">
-            <span id="ov-active-version" style="font-size:26px; font-weight:700;">—</span>
-            <span class="tag good" id="ov-active-tag">ACTIEF</span>
+      <div class="col" style="max-width:420px;">
+        <div class="card" style="height:100%; display:flex; gap:14px;">
+          <div id="ov-active-icon"></div>
+          <div>
+            <div class="sub" style="color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em; font-weight:600;">Actieve versie</div>
+            <div style="display:flex; align-items:baseline; gap:10px; margin:4px 0;">
+              <span id="ov-active-version" style="font-size:24px; font-weight:700; color:var(--bg);">—</span>
+              <span class="tag good" id="ov-active-tag">ACTIEF</span>
+            </div>
+            <p id="ov-active-sub" style="margin:0; color:#667; font-size:13px;">Momenteel actief in het NS Roosterplatform.</p>
           </div>
-          <p id="ov-active-sub" style="margin:0; color:var(--muted); font-size:13px;">Momenteel actief in het NS Roosterplatform.</p>
         </div>
       </div>
       <div class="col">
-        <div class="card" style="height:100%;">
-          <h3 style="margin-top:0;">Belangrijkste cijfers</h3>
-          <div class="grid" id="overzicht-cards"></div>
+        <div class="card" style="height:100%; display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
+          <p style="margin:0; flex:1; min-width:220px; color:#556; font-size:13px;">Production Lyra → PRE → sandboxvariant → 2× POST → holdout → beslissing. Bewijs eerst dat de verbeterlus werkt, vóór een langere autonome run.</p>
+          <button class="primary" id="btn-proof-of-value" style="display:flex; align-items:center; gap:8px; padding:11px 18px;"><span class="btn-icon" data-icon="play" style="width:13px;height:13px;display:inline-flex;"></span> Bewijs verbeterlus starten</button>
+          <button class="ghost" id="btn-autonomy-test" style="padding:11px 16px;">Start zelfstandigheidstest</button>
         </div>
       </div>
     </div>
 
-    <div class="card" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-      <b style="font-size:13px; color:#556;">Acties:</b>
-      <button class="primary" id="btn-proof-of-value" style="padding:8px 14px; font-size:13px;">Bewijs verbeterlus starten</button>
-      <button class="ghost" id="btn-autonomy-test" style="padding:8px 14px; font-size:13px;">Start zelfstandigheidstest</button>
-      <span class="sub" style="font-size:12px; color:var(--muted);">Bewijs verbeterlus: PRE → sandboxvariant → 2× POST → holdout → beslissing. Zelfstandigheidstest: begrensd, zonder menselijke hint.</span>
+    <div class="card">
+      <h3 style="margin-top:0;">Belangrijkste cijfers</h3>
+      <div class="grid" id="overzicht-cards"></div>
     </div>
 
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Prestatie per Lyra-versie</h3>
+          <h3><span class="h3-icon" data-icon="chart" data-color="blue"></span>Prestatie per Lyra-versie<span class="info-icon" title="Totale benchmarkscore per gepubliceerde versie (hoger is beter).">i</span></h3>
           <p class="sub" style="margin:0 0 8px;">Totale benchmarkscore per gepubliceerde versie (hoger is beter).</p>
           <div id="chart-version-performance"></div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <h3>Verbetering t.o.v. vorige versie</h3>
+          <h3><span class="h3-icon" data-icon="bolt" data-color="amber"></span>Verbetering t.o.v. vorige versie<span class="info-icon" title="Verschil in benchmarkscore tussen opeenvolgende versies.">i</span></h3>
           <p class="sub" style="margin:0 0 8px;">Verschil in benchmarkscore tussen opeenvolgende versies.</p>
           <div id="chart-version-deltas"></div>
         </div>
@@ -137,14 +194,14 @@
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Benchmarktrend</h3>
+          <h3><span class="h3-icon" data-icon="target" data-color="purple"></span>Benchmarktrend<span class="info-icon" title="Alleen werkelijk gemeten momenten.">i</span></h3>
           <p class="sub" style="margin:0 0 8px;">Alleen werkelijk gemeten momenten (dev/holdout door de tijd).</p>
           <div id="chart-ov-timeline"></div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <h3>Laatste bevindingen</h3>
+          <h3><span class="h3-icon" data-icon="db" data-color="navy"></span>Laatste bevindingen</h3>
           <div id="ov-findings"></div>
         </div>
       </div>
@@ -170,9 +227,12 @@
           <label>Basisversie</label>
           <select id="cmp-base"></select>
         </div>
-        <div class="col" style="max-width:280px;">
+        <div class="col" style="max-width:320px;">
           <label>Vergelijk met</label>
-          <select id="cmp-targets" multiple size="4"></select>
+          <div class="chip-select">
+            <div class="chip-select-box" id="cmp-targets-box" tabindex="0"></div>
+            <div class="chip-select-dropdown" id="cmp-targets-dropdown"></div>
+          </div>
         </div>
         <div class="col" style="max-width:200px;">
           <label>Benchmarkset</label>
@@ -194,20 +254,20 @@
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Benchmarkscore per versie</h3>
+          <h3><span class="h3-icon" data-icon="chart" data-color="blue"></span>Benchmarkscore per versie</h3>
           <div id="chart-cmp-score"></div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <h3>Sterktes en zwaktes per versie</h3>
+          <h3><span class="h3-icon" data-icon="target" data-color="purple"></span>Sterktes en zwaktes per versie</h3>
           <div id="chart-cmp-dims"></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h3>Belangrijkste veranderingen <span class="sub" id="cmp-changes-vs" style="font-weight:normal;"></span></h3>
+      <h3><span class="h3-icon" data-icon="db" data-color="navy"></span>Belangrijkste veranderingen <span class="sub" id="cmp-changes-vs" style="font-weight:normal;"></span></h3>
       <div id="cmp-changes"></div>
     </div>
 
@@ -411,7 +471,32 @@ function switchTab(name) {
 tabs.forEach((b) => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
 // ---- kleine SVG-grafiekhelpers (geen bibliotheek, vaste NS-achtige kleuren) ----
-const COLORS = { dev: "#1f5fd0", holdout: "#c9622a", pre: "#9fb0c9", post: "#1f5fd0", good: "#2e9e5b", bad: "#c0392b" };
+const COLORS = { dev: "#1f5fd0", holdout: "#c9622a", pre: "#9fb0c9", post: "#1f5fd0", good: "#2e9e5b", bad: "#c0392b", warn: "#b9862c" };
+// Reeks blauwtinten (licht → donker) voor "per versie"-grafieken, chronologisch — niet actief/inactief maar oud → nieuw.
+const VERSION_SHADES = ["#a9c6f5", "#7ba9ee", "#4a86e0", "#2468d6", "#1150ad", "#0a3a82"];
+function shadeFor(i, n) { return VERSION_SHADES[Math.min(VERSION_SHADES.length - 1, Math.round((i / Math.max(1, n - 1)) * (VERSION_SHADES.length - 1)))]; }
+
+// Kleine, vaste iconenset (inline SVG, geen icon-font/CDN nodig — Demo Room blijft volledig lokaal).
+const ICONS = {
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 8 12 14 22 8 12 2"/><polyline points="2 14 12 20 22 14"/><polyline points="2 11 12 17 22 11"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9c.2.5.7.9 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg>',
+  chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.7-8 9-4.8-1.3-8-4.5-8-9V6l8-3Z"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2"/></svg>',
+  db: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>',
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>',
+};
+function iconChip(name, color, size) { return `<div class="icon-chip ${color}${size ? " " + size : ""}">${ICONS[name] || ""}</div>`; }
+// Vult statische icoon-placeholders in de HTML (§ vaste, eenmalige decoratie — geen herhaalde re-render nodig).
+document.querySelectorAll(".h3-icon[data-icon]").forEach((el) => { el.classList.add(el.dataset.color); el.innerHTML = ICONS[el.dataset.icon] || ""; });
+document.querySelectorAll(".btn-icon[data-icon]").forEach((el) => { el.innerHTML = ICONS[el.dataset.icon] || ""; });
+function nl1(v) { return v === null || v === undefined ? "—" : v.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function nlPct(v, digits) { return v === null || v === undefined ? "—" : `${v.toLocaleString("nl-NL", { minimumFractionDigits: digits ?? 0, maximumFractionDigits: digits ?? 0 })}%`; }
 
 function emptyChart(el, message) {
   el.innerHTML = `<div class="empty">${message}</div>`;
@@ -419,7 +504,7 @@ function emptyChart(el, message) {
 
 function lineChart(el, series) {
   // series: [{ name, color, points: [{x label, y number|null}] }]
-  const w = 760, h = 200, padL = 40, padB = 24, padT = 10, padR = 10;
+  const w = 760, h = 210, padL = 34, padB = 24, padT = 10, padR = 16;
   const alle = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v !== null && v !== undefined);
   if (alle.length === 0) return emptyChart(el, "Nog geen meetgegevens");
   const maxY = Math.max(100, ...alle);
@@ -428,11 +513,15 @@ function lineChart(el, series) {
   const xAt = (i) => padL + (i / Math.max(1, n - 1)) * (w - padL - padR);
   const yAt = (v) => h - padB - ((v - minY) / (maxY - minY || 1)) * (h - padT - padB);
   let svg = `<svg class="chart" viewBox="0 0 ${w} ${h}">`;
-  svg += `<line x1="${padL}" y1="${h - padB}" x2="${w - padR}" y2="${h - padB}" stroke="#ccd4e0"/>`;
+  for (const t of [0, 25, 50, 75, 100]) {
+    if (t < minY || t > maxY) continue;
+    svg += `<line x1="${padL}" y1="${yAt(t)}" x2="${w - padR}" y2="${yAt(t)}" stroke="#eef1f6"/>`;
+    svg += `<text x="${padL - 6}" y="${yAt(t) + 3}" font-size="10" fill="#9fb0c9" text-anchor="end">${t}</text>`;
+  }
   for (const s of series) {
     const pts = s.points.map((p, i) => (p.y === null || p.y === undefined ? null : `${xAt(i)},${yAt(p.y)}`)).filter(Boolean);
-    if (pts.length > 0) svg += `<polyline points="${pts.join(" ")}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
-    s.points.forEach((p, i) => { if (p.y !== null && p.y !== undefined) svg += `<circle cx="${xAt(i)}" cy="${yAt(p.y)}" r="3" fill="${s.color}"/>`; });
+    if (pts.length > 0) svg += `<polyline points="${pts.join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.5"/>`;
+    s.points.forEach((p, i) => { if (p.y !== null && p.y !== undefined) svg += `<circle cx="${xAt(i)}" cy="${yAt(p.y)}" r="3.5" fill="${s.color}"/>`; });
   }
   svg += `</svg>`;
   el.innerHTML = svg + `<div class="chart-legend">${series.map((s) => `<span><span class="dot" style="background:${s.color}"></span>${s.name}</span>`).join("")}</div>`;
@@ -463,26 +552,32 @@ function groupedBarChart(el, categories, series) {
   el.innerHTML = svg + `<div class="chart-legend">${series.map((s) => `<span><span class="dot" style="background:${s.color}"></span>${s.name}</span>`).join("")}</div>`;
 }
 
-function simpleBarChart(el, items) {
+function simpleBarChart(el, items, decimalMode) {
   // items: [{label, value, color}]
   if (items.every((i) => !i.value)) return emptyChart(el, "Nog geen meetgegevens");
-  const w = 760, h = 180, padL = 10, padB = 30, padT = 10;
-  const max = Math.max(1, ...items.map((i) => i.value));
-  const barW = (w - padL * 2) / items.length;
+  const w = 760, h = 220, padL = 34, padB = 30, padT = 16, padR = 10;
+  const max = decimalMode ? 1 : Math.max(100, ...items.map((i) => i.value));
+  const barW = (w - padL - padR) / items.length;
   let svg = `<svg class="chart" viewBox="0 0 ${w} ${h}">`;
+  const ticks = decimalMode ? [0, .2, .4, .6, .8, 1] : [0, 25, 50, 75, 100];
+  for (const t of ticks) {
+    const ty = h - padB - (t / max) * (h - padT - padB);
+    svg += `<line x1="${padL}" y1="${ty}" x2="${w - padR}" y2="${ty}" stroke="#eef1f6"/>`;
+    svg += `<text x="${padL - 6}" y="${ty + 3}" font-size="10" fill="#9fb0c9" text-anchor="end">${decimalMode ? nl1(t) : t}</text>`;
+  }
   items.forEach((it, i) => {
     const barH = (it.value / max) * (h - padT - padB);
     const x = padL + i * barW + 8;
-    svg += `<rect x="${x}" y="${h - padB - barH}" width="${barW - 16}" height="${barH}" fill="${it.color}"/>`;
-    svg += `<text x="${x + (barW - 16) / 2}" y="${h - padB + 14}" font-size="11" fill="#556" text-anchor="middle">${it.label}</text>`;
-    svg += `<text x="${x + (barW - 16) / 2}" y="${h - padB - barH - 4}" font-size="11" fill="#223" text-anchor="middle">${it.value}</text>`;
+    svg += `<rect x="${x}" y="${h - padB - barH}" width="${barW - 16}" height="${barH}" rx="3" fill="${it.color}"/>`;
+    svg += `<text x="${x + (barW - 16) / 2}" y="${h - padB + 16}" font-size="12" fill="#556" text-anchor="middle">${it.label}</text>`;
+    svg += `<text x="${x + (barW - 16) / 2}" y="${h - padB - barH - 6}" font-size="12" font-weight="600" fill="#223" text-anchor="middle">${decimalMode ? nl1(it.value) : it.value}</text>`;
   });
   svg += `</svg>`;
   el.innerHTML = svg;
 }
 
 /** Horizontale delta-balken: positief groen naar rechts, negatief rood naar links, vanuit een middenlijn (§ UI-redesign, "Verbetering t.o.v. vorige versie"). */
-function deltaChart(el, items) {
+function deltaChart(el, items, decimalMode) {
   const metData = items.filter((i) => i.delta !== null && i.delta !== undefined);
   if (metData.length === 0) return emptyChart(el, "Nog geen meting (minstens twee gepubliceerde versies met een echte benchmarkreferentie nodig)");
   const w = 760, rowH = 34, padL = 170, padR = 60;
@@ -503,7 +598,8 @@ function deltaChart(el, items) {
     const x = it.delta >= 0 ? midX : midX - bw;
     svg += `<rect x="${x}" y="${y - 9}" width="${Math.max(2, bw)}" height="18" rx="3" fill="${it.delta >= 0 ? COLORS.good : COLORS.bad}"/>`;
     const labelX = it.delta >= 0 ? midX + bw + 8 : midX - bw - 8;
-    svg += `<text x="${labelX}" y="${y + 4}" font-size="11" fill="#223" text-anchor="${it.delta >= 0 ? "start" : "end"}">${it.delta >= 0 ? "+" : ""}${it.delta.toFixed(1)}pp</text>`;
+    const deltaLabel = decimalMode ? `${it.delta >= 0 ? "+" : ""}${nl1(it.delta)}` : `${it.delta >= 0 ? "+" : ""}${it.delta.toFixed(1)}pp`;
+    svg += `<text x="${labelX}" y="${y + 4}" font-size="11" fill="#223" text-anchor="${it.delta >= 0 ? "start" : "end"}">${deltaLabel}</text>`;
   });
   svg += `</svg>`;
   el.innerHTML = svg;
@@ -512,12 +608,14 @@ function deltaChart(el, items) {
 function renderFindings(el, findings) {
   if (!findings || findings.length === 0) { el.innerHTML = `<div class="empty">Nog geen betekenisvolle bevindingen (nog geen experiment met een aantoonbaar verschil t.o.v. de controle).</div>`; return; }
   el.innerHTML = findings.map((f) => `
-    <div style="display:flex; gap:10px; padding:9px 0; border-bottom:1px solid #eef1f6;">
-      <span style="font-size:16px;">${f.direction === "up" ? "🡅" : "🡇"}</span>
-      <div>
-        <div style="font-weight:600; font-size:13px; ${f.direction === "up" ? "color:var(--good)" : "color:var(--bad)"}">${f.title}</div>
-        <div class="sub" style="font-size:12px;">${f.detail} <span style="color:var(--muted);">— ${f.basis}</span></div>
+    <div class="finding-item">
+      <div class="finding-badge ${f.direction}">${ICONS[f.direction]}</div>
+      <div style="flex:1;">
+        <div class="finding-title" style="${f.direction === "up" ? "" : "color:var(--bad)"}">${f.title}</div>
+        <div class="finding-detail">${f.detail}</div>
+        <div class="finding-basis">${f.basis}</div>
       </div>
+      <div class="finding-date">${new Date(f.at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}</div>
     </div>
   `).join("");
 }
@@ -529,6 +627,7 @@ async function loadOverzicht() {
   const perf = await j("/api/versions/performance");
   const bestOoit = perf.filter((p) => p.score !== null).reduce((best, p) => (best === null || p.score > best ? p.score : best), null);
 
+  document.getElementById("ov-active-icon").innerHTML = iconChip("layers", "blue", "lg");
   document.getElementById("ov-active-version").textContent = actief.isBaseline ? "baseline" : actief.versionId;
   document.getElementById("ov-active-tag").textContent = actief.status;
   document.getElementById("ov-active-tag").className = `tag ${actief.status === "ACTIVE" ? "good" : actief.status === "FAILED" ? "bad" : "warn"}`;
@@ -537,20 +636,20 @@ async function loadOverzicht() {
     : `Momenteel actief in het NS Roosterplatform · variant ${actief.variantId ?? "—"} · sinds ${new Date(actief.activatedAt).toLocaleString("nl-NL")}.`;
 
   const cards = [
-    { label: "Actuele benchmark", value: o.latestBenchmark ? o.latestBenchmark.passRate.toFixed(1) + "%" : "Nog geen meting", sub: o.latestBenchmark ? o.latestBenchmark.label : "" },
-    { label: "Beste benchmark ooit", value: bestOoit !== null ? bestOoit.toFixed(1) + "%" : "Nog geen meting", sub: "over gepubliceerde versies" },
-    { label: "Laatste meting", value: o.latestBenchmark ? new Date(o.latestBenchmark.timestamp).toLocaleDateString("nl-NL") : "—", sub: o.latestBenchmark ? new Date(o.latestBenchmark.timestamp).toLocaleTimeString("nl-NL") : "" },
-    { label: "Promotion candidates", value: o.counts.promotionCandidates, sub: `${o.counts.experiments} experimenten totaal` },
+    { icon: "gear", color: "blue", label: "Actuele benchmark", value: o.latestBenchmark ? nl1(o.latestBenchmark.passRate / 100) : "Nog geen meting", sub: o.latestBenchmark ? o.latestBenchmark.label : "" },
+    { icon: "trophy", color: "amber", label: "Beste benchmark ooit", value: bestOoit !== null ? nl1(bestOoit / 100) : "Nog geen meting", sub: "over gepubliceerde versies" },
+    { icon: "chart", color: "purple", label: "Laatste meting", value: o.latestBenchmark ? new Date(o.latestBenchmark.timestamp).toLocaleDateString("nl-NL") : "—", sub: o.latestBenchmark ? new Date(o.latestBenchmark.timestamp).toLocaleTimeString("nl-NL") : "nog niet gemeten" },
+    { icon: "users", color: "green", label: "Promotion candidates", value: o.counts.promotionCandidates, sub: `${o.counts.experiments} experimenten totaal` },
   ];
   document.getElementById("overzicht-cards").innerHTML = cards.map((c) => `
-    <div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub}</div></div>
+    <div class="stat with-icon">${iconChip(c.icon, c.color)}<div><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub}</div></div></div>
   `).join("");
 
   if (perf.length < 2 || perf.every((p) => p.score === null)) emptyChart(document.getElementById("chart-version-performance"), "Nog geen meting (pas zichtbaar na publicatie van minstens één sandboxvariant)");
-  else simpleBarChart(document.getElementById("chart-version-performance"), perf.map((p) => ({ label: p.displayName, value: p.score !== null ? Number(p.score.toFixed(1)) : 0, color: p.isActive ? COLORS.dev : "#9fb0c9" })));
+  else simpleBarChart(document.getElementById("chart-version-performance"), perf.map((p, i) => ({ label: p.displayName, value: p.score !== null ? Number((p.score / 100).toFixed(2)) : 0, color: shadeFor(i, perf.length) })), true);
 
   const deltas = await j("/api/versions/deltas");
-  deltaChart(document.getElementById("chart-version-deltas"), deltas.map((d) => ({ label: `${d.toDisplayName} (t.o.v. ${d.fromDisplayName})`, delta: d.delta })));
+  deltaChart(document.getElementById("chart-version-deltas"), deltas.map((d) => ({ label: `${d.toDisplayName} (t.o.v. ${d.fromDisplayName})`, delta: d.delta !== null ? d.delta / 100 : null })), true);
 
   const timeline = await j("/api/progress/benchmark-timeline");
   lineChart(document.getElementById("chart-ov-timeline"), [
@@ -591,26 +690,63 @@ async function loadVooruitgang() {
 }
 
 // ---- Versies vergelijken ----
+let cmpAllVersions = [];
+let cmpTargetIds = [];
+const DIM_ICON = { grounding: "target", falsePremiseCorrection: "shield", toolChoice: "bolt", contextResolution: "db", causalClaims: "chart", multiTurnContext: "db", machinistTaal: "chart", unnecessaryClarifications: "gear" };
+
+function renderCmpChips() {
+  const box = document.getElementById("cmp-targets-box");
+  box.innerHTML = cmpTargetIds.map((id) => {
+    const v = cmpAllVersions.find((p) => p.versionId === id);
+    return `<span class="chip-pill">${v ? v.displayName : id}<button data-remove="${id}" type="button">✕</button></span>`;
+  }).join("") + `<span style="font-size:12px; color:var(--muted); padding:4px 2px;">${cmpTargetIds.length === 0 ? "Klik om versies toe te voegen…" : "+"}</span>`;
+  box.querySelectorAll("[data-remove]").forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    cmpTargetIds = cmpTargetIds.filter((id) => id !== btn.dataset.remove);
+    renderCmpChips();
+    runVergelijk();
+  }));
+}
+function renderCmpDropdown() {
+  const dd = document.getElementById("cmp-targets-dropdown");
+  const baseId = document.getElementById("cmp-base").value;
+  const beschikbaar = cmpAllVersions.filter((p) => p.versionId !== baseId && !cmpTargetIds.includes(p.versionId));
+  dd.innerHTML = beschikbaar.length > 0
+    ? beschikbaar.map((p) => `<div data-add="${p.versionId}">${p.displayName} (${p.versionId})${p.isActive ? " ← actief" : ""}</div>`).join("")
+    : `<div class="disabled">Geen andere versies meer beschikbaar</div>`;
+  dd.querySelectorAll("[data-add]").forEach((el) => el.addEventListener("click", () => {
+    cmpTargetIds.push(el.dataset.add);
+    dd.classList.remove("open");
+    renderCmpChips();
+    renderCmpDropdown();
+    runVergelijk();
+  }));
+}
+document.getElementById("cmp-targets-box").addEventListener("click", () => {
+  renderCmpDropdown();
+  document.getElementById("cmp-targets-dropdown").classList.toggle("open");
+});
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".chip-select")) document.getElementById("cmp-targets-dropdown")?.classList.remove("open");
+});
+
 async function loadVergelijkOptions() {
   const perf = await j("/api/versions/performance");
   const baseSel = document.getElementById("cmp-base");
-  const targetSel = document.getElementById("cmp-targets");
   const huidigeBase = baseSel.value;
-  const huidigeTargets = new Set([...targetSel.selectedOptions].map((o) => o.value));
-  const opties = perf.map((p) => `<option value="${p.versionId}">${p.displayName} (${p.versionId})${p.isActive ? " ← actief" : ""}</option>`).join("");
-  baseSel.innerHTML = opties;
-  targetSel.innerHTML = opties;
-  if (huidigeBase) baseSel.value = huidigeBase;
+  cmpAllVersions = perf;
+  baseSel.innerHTML = perf.map((p) => `<option value="${p.versionId}">${p.displayName} (${p.versionId})${p.isActive ? " ← actief" : ""}</option>`).join("");
+  if (huidigeBase && perf.some((p) => p.versionId === huidigeBase)) baseSel.value = huidigeBase;
   else if (perf.length > 0) baseSel.value = perf[0].versionId;
-  [...targetSel.options].forEach((o) => { if (huidigeTargets.has(o.value)) o.selected = true; });
-  if (huidigeTargets.size === 0 && perf.length > 1) targetSel.options[perf.length - 1].selected = true;
+  cmpTargetIds = cmpTargetIds.filter((id) => perf.some((p) => p.versionId === id) && id !== baseSel.value);
+  if (cmpTargetIds.length === 0 && perf.length > 1) cmpTargetIds = [perf[perf.length - 1].versionId];
+  renderCmpChips();
 }
-
-function fmtPct(v) { return v === null || v === undefined ? "—" : `${v.toFixed(1)}%`; }
+document.getElementById("cmp-base").addEventListener("change", () => { cmpTargetIds = cmpTargetIds.filter((id) => id !== document.getElementById("cmp-base").value); renderCmpChips(); runVergelijk(); });
 
 async function runVergelijk() {
   const base = document.getElementById("cmp-base").value;
-  const targets = [...document.getElementById("cmp-targets").selectedOptions].map((o) => o.value);
+  const targets = cmpTargetIds;
   const set = document.getElementById("cmp-set").value;
   if (!base || targets.length === 0) {
     document.getElementById("cmp-diffcards").innerHTML = `<div class="empty">Nog maar één versie beschikbaar (${base || "baseline"}) — vergelijken kan pas zodra er minstens twee versies bestaan (publiceer een sandboxvariant).</div>`;
@@ -629,35 +765,44 @@ async function runVergelijk() {
   warnEl.textContent = result.warning || "";
 
   const dims = result.comparableDimensions;
-  const baseScore = dims.length > 0 ? dims.reduce((a, k) => a + (result.base.metrics[k] ?? 0), 0) / dims.length : null;
-
-  // Compacte verschillenrij t.o.v. de basisversie (alleen dimensies met echte data).
+  const scoreOf = (v) => (dims.length > 0 && dims.some((k) => k in v.metrics) ? dims.reduce((s, k) => s + (v.metrics[k] ?? 0), 0) / dims.filter((k) => k in v.metrics).length : null);
   const laatsteTarget = result.targets[result.targets.length - 1];
-  const diffCards = dims.length === 0 || !laatsteTarget
-    ? [{ label: "Vergelijking", value: "Nog geen meting", sub: "" }]
-    : [
-        { label: "Beste versie nu", value: result.targets.reduce((b, t) => (dims.reduce((s, k) => s + (t.metrics[k] ?? 0), 0) >= dims.reduce((s, k) => s + (b.metrics[k] ?? 0), 0) ? t : b), result.targets[0]).displayName, sub: "" },
-        ...dims.slice(0, 4).map((k) => ({ label: k, value: `${((laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0) >= 0) ? "+" : ""}${((laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0)).toFixed(1)}pp`, sub: `${fmtPct(result.base.metrics[k])} → ${fmtPct(laatsteTarget.metrics[k])}` })),
-      ];
-  document.getElementById("cmp-diffcards").innerHTML = diffCards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub}</div></div>`).join("");
+
+  if (dims.length === 0 || !laatsteTarget) {
+    document.getElementById("cmp-diffcards").innerHTML = `<div class="empty">Nog geen vergelijkbare meetgegevens voor deze selectie.</div>`;
+  } else {
+    const beste = result.targets.reduce((b, t) => ((scoreOf(t) ?? -1) >= (scoreOf(b) ?? -1) ? t : b), result.targets[0]);
+    const besteDelta = scoreOf(beste) !== null && scoreOf(result.base) !== null ? scoreOf(beste) - scoreOf(result.base) : null;
+    const cards = [
+      { icon: "trophy", color: "amber", label: "Beste versie nu", value: beste.displayName, sub: besteDelta !== null ? `${besteDelta >= 0 ? "+" : ""}${nl1(besteDelta / 100)} t.o.v. ${result.base.displayName}` : "" },
+      ...dims.slice(0, 4).map((k) => {
+        const delta = (laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0);
+        return { icon: DIM_ICON[k] || "gear", color: delta >= 0 ? "green" : "amber", label: k, value: `${delta >= 0 ? "+" : ""}${nl1(delta / 100)}`, sub: `${nlPct(result.base.metrics[k], 0)} → ${nlPct(laatsteTarget.metrics[k], 0)}`, valueColor: delta >= 0 ? "var(--good)" : "var(--bad)" };
+      }),
+      { icon: "layers", color: "navy", label: "Publicatiestatus", value: laatsteTarget.isActive ? "Actief" : "Niet actief", sub: laatsteTarget.isActive ? "in productie" : "nog niet in productie" },
+    ];
+    document.getElementById("cmp-diffcards").innerHTML = cards.map((c) => `
+      <div class="stat with-icon">${iconChip(c.icon, c.color)}<div><div class="label">${c.label}</div><div class="value" style="${c.valueColor ? `color:${c.valueColor};` : ""}">${c.value}</div><div class="sub">${c.sub}</div></div></div>
+    `).join("");
+  }
 
   const alleVersies = [result.base, ...result.targets].filter(Boolean);
   if (dims.length === 0) emptyChart(document.getElementById("chart-cmp-score"), "Nog geen meetgegevens voor deze selectie");
-  else simpleBarChart(document.getElementById("chart-cmp-score"), alleVersies.map((v) => ({ label: v.displayName, value: Number((dims.reduce((s, k) => s + (v.metrics[k] ?? 0), 0) / dims.length).toFixed(1)), color: v.isActive ? COLORS.dev : "#9fb0c9" })));
+  else simpleBarChart(document.getElementById("chart-cmp-score"), alleVersies.map((v, i) => ({ label: v.displayName, value: scoreOf(v) !== null ? Number((scoreOf(v) / 100).toFixed(2)) : 0, color: shadeFor(i, alleVersies.length) })), true);
 
   if (dims.length === 0) emptyChart(document.getElementById("chart-cmp-dims"), "Nog geen meetgegevens voor deze selectie");
-  else groupedBarChart(document.getElementById("chart-cmp-dims"), dims, alleVersies.map((v, i) => ({ name: v.displayName, color: [COLORS.pre, COLORS.dev, COLORS.holdout, COLORS.good][i % 4], values: dims.map((k) => v.metrics[k] ?? null) })));
+  else groupedBarChart(document.getElementById("chart-cmp-dims"), dims, alleVersies.map((v, i) => ({ name: v.displayName, color: shadeFor(i, alleVersies.length), values: dims.map((k) => (k in v.metrics ? v.metrics[k] : null)) })));
 
   document.getElementById("cmp-changes-vs").textContent = `t.o.v. ${result.base ? result.base.displayName : "basisversie"}`;
   const changes = laatsteTarget ? dims.map((k) => ({ k, delta: (laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0) })).filter((c) => Math.abs(c.delta) >= 3) : [];
   document.getElementById("cmp-changes").innerHTML = changes.length > 0
-    ? changes.map((c) => `<p style="margin:4px 0; font-size:13px;">${c.delta > 0 ? "🡅" : "🡇"} <b>${c.k}</b> ${c.delta > 0 ? "+" : ""}${c.delta.toFixed(1)}pp</p>`).join("")
+    ? changes.map((c) => `<div class="finding-item"><div class="finding-badge ${c.delta > 0 ? "up" : "down"}">${ICONS[c.delta > 0 ? "up" : "down"]}</div><div class="finding-title" style="${c.delta > 0 ? "" : "color:var(--bad)"}">${c.k} ${c.delta > 0 ? "+" : ""}${nl1(c.delta / 100)}</div></div>`).join("")
     : `<div class="empty">Geen verschil boven de ruismarge (3pp) tussen de geselecteerde versies.</div>`;
 
   const tbody = document.querySelector("#cmp-table tbody");
   tbody.innerHTML = alleVersies.map((v) => {
-    const score = dims.length > 0 ? dims.reduce((s, k) => s + (v.metrics[k] ?? 0), 0) / dims.filter((k) => k in v.metrics).length || null : null;
-    return `<tr><td>${v.displayName}<div class="sub" style="font-size:11px;">${v.versionId}</div></td><td>${new Date(v.createdAt).toLocaleDateString("nl-NL")}</td><td>${score ? score.toFixed(1) + "%" : "—"}</td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.isActive ? "" : `<button class="ghost" data-versies-goto="${v.versionId}">Details</button>`}</td></tr>`;
+    const score = scoreOf(v);
+    return `<tr><td>${v.displayName}<div class="sub" style="font-size:11px;">${v.versionId}</div></td><td>${new Date(v.createdAt).toLocaleDateString("nl-NL")}</td><td>${score !== null ? nl1(score / 100) : "—"}</td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.isActive ? "" : `<button class="ghost" data-versies-goto="${v.versionId}">Details</button>`}</td></tr>`;
   }).join("");
   tbody.querySelectorAll("[data-versies-goto]").forEach((btn) => btn.addEventListener("click", () => switchTab("versies")));
 }
