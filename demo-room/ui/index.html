@@ -79,6 +79,7 @@
 </header>
 <nav>
   <button data-tab="overzicht" class="active">Overzicht</button>
+  <button data-tab="vergelijk">Versies vergelijken</button>
   <button data-tab="vooruitgang">Vooruitgang</button>
   <button data-tab="runs">Runs</button>
   <button data-tab="liverun">Live run</button>
@@ -90,23 +91,65 @@
 <main>
 
   <section id="overzicht" class="active">
-    <div class="row">
-      <div class="col">
-        <div class="hero-card">
-          <h3>Bewijs verbeterlus</h3>
-          <p>Production Lyra → PRE → sandboxvariant → 2× POST (dezelfde bevroren set) → holdout → regressiecontrole → beslissing. Voer dit eerst uit, vóór elke langere autonome run.</p>
-          <button id="btn-proof-of-value">Bewijs verbeterlus starten</button>
+    <div class="row" style="align-items:stretch;">
+      <div class="col" style="max-width:340px;">
+        <div class="hero-card" style="height:100%; display:flex; flex-direction:column; justify-content:center;">
+          <div class="sub" style="color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em;">Actieve versie</div>
+          <div style="display:flex; align-items:baseline; gap:10px; margin:4px 0;">
+            <span id="ov-active-version" style="font-size:26px; font-weight:700;">—</span>
+            <span class="tag good" id="ov-active-tag">ACTIEF</span>
+          </div>
+          <p id="ov-active-sub" style="margin:0; color:var(--muted); font-size:13px;">Momenteel actief in het NS Roosterplatform.</p>
         </div>
       </div>
       <div class="col">
-        <div class="hero-card">
-          <h3>Zelfstandigheidstest</h3>
-          <p>Test of Demo Room zelfstandig Lyra kan onderzoeken en verbeteren — zonder menselijke hint over de oplossing. Begrensd (standaard 10 min).</p>
-          <button id="btn-autonomy-test">Start zelfstandigheidstest</button>
+        <div class="card" style="height:100%;">
+          <h3 style="margin-top:0;">Belangrijkste cijfers</h3>
+          <div class="grid" id="overzicht-cards"></div>
         </div>
       </div>
     </div>
-    <div class="grid" id="overzicht-cards"></div>
+
+    <div class="card" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <b style="font-size:13px; color:#556;">Acties:</b>
+      <button class="primary" id="btn-proof-of-value" style="padding:8px 14px; font-size:13px;">Bewijs verbeterlus starten</button>
+      <button class="ghost" id="btn-autonomy-test" style="padding:8px 14px; font-size:13px;">Start zelfstandigheidstest</button>
+      <span class="sub" style="font-size:12px; color:var(--muted);">Bewijs verbeterlus: PRE → sandboxvariant → 2× POST → holdout → beslissing. Zelfstandigheidstest: begrensd, zonder menselijke hint.</span>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <h3>Prestatie per Lyra-versie</h3>
+          <p class="sub" style="margin:0 0 8px;">Totale benchmarkscore per gepubliceerde versie (hoger is beter).</p>
+          <div id="chart-version-performance"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Verbetering t.o.v. vorige versie</h3>
+          <p class="sub" style="margin:0 0 8px;">Verschil in benchmarkscore tussen opeenvolgende versies.</p>
+          <div id="chart-version-deltas"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <h3>Benchmarktrend</h3>
+          <p class="sub" style="margin:0 0 8px;">Alleen werkelijk gemeten momenten (dev/holdout door de tijd).</p>
+          <div id="chart-ov-timeline"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Laatste bevindingen</h3>
+          <div id="ov-findings"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="card" id="autonomy-card" style="display:none;">
       <h3>Zelfstandigheidstest — laatste resultaat <span class="tag" id="autonomy-gate-tag"></span></h3>
       <p class="sub" id="autonomy-summary"></p>
@@ -116,6 +159,61 @@
         <table><thead><tr><th>Component</th><th>Status</th><th>Toelichting</th></tr></thead><tbody id="autonomy-components"></tbody></table>
       </details>
       <details style="margin-top:10px;"><summary>Onderzoekscycli</summary><div id="autonomy-cycles" style="font-size:13px;"></div></details>
+    </div>
+  </section>
+
+  <section id="vergelijk">
+    <div class="card">
+      <h3>Versies vergelijken</h3>
+      <div class="row" style="align-items:flex-end;">
+        <div class="col" style="max-width:220px;">
+          <label>Basisversie</label>
+          <select id="cmp-base"></select>
+        </div>
+        <div class="col" style="max-width:280px;">
+          <label>Vergelijk met</label>
+          <select id="cmp-targets" multiple size="4"></select>
+        </div>
+        <div class="col" style="max-width:200px;">
+          <label>Benchmarkset</label>
+          <select id="cmp-set">
+            <option value="both">Dev + Holdout (post)</option>
+            <option value="dev">Dev</option>
+            <option value="holdout">Holdout</option>
+          </select>
+        </div>
+        <div class="col" style="max-width:160px;">
+          <button class="primary" id="btn-cmp-run" style="width:100%;">Vergelijk nu</button>
+        </div>
+      </div>
+      <p class="sub" id="cmp-warning" style="color:var(--warn); display:none;"></p>
+    </div>
+
+    <div class="grid" id="cmp-diffcards"></div>
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <h3>Benchmarkscore per versie</h3>
+          <div id="chart-cmp-score"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Sterktes en zwaktes per versie</h3>
+          <div id="chart-cmp-dims"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Belangrijkste veranderingen <span class="sub" id="cmp-changes-vs" style="font-weight:normal;"></span></h3>
+      <div id="cmp-changes"></div>
+    </div>
+
+    <div class="card">
+      <h3>Versieverschillen</h3>
+      <table id="cmp-table"><thead><tr><th>Versie</th><th>Datum</th><th>Benchmark</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
     </div>
   </section>
 
@@ -139,8 +237,43 @@
   </section>
 
   <section id="runs">
+    <div class="card" id="runs-active-card" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <span class="tag" id="runs-active-status"></span>
+          <b id="runs-active-title" style="margin-left:8px;"></b>
+          <div class="sub" id="runs-active-meta" style="margin-top:4px;"></div>
+        </div>
+        <button class="danger" id="btn-stop-run">Run stoppen</button>
+      </div>
+      <div class="stepper" id="runs-active-stepper" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="grid" id="runs-summary-cards"></div>
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <h3>Resultaten laatste runs</h3>
+          <p class="sub" style="margin:0 0 8px;">PRE vs. POST vs. Holdout (gemiddelde score) voor recente afgeronde proof-runs.</p>
+          <div id="chart-runs-results"></div>
+        </div>
+      </div>
+      <div class="col" style="max-width:340px;">
+        <div class="card">
+          <h3>Resultaatverdeling</h3>
+          <div id="runs-outcome-dist"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
-      <h3>Nieuwe run</h3>
+      <h3>Recente runs</h3>
+      <table id="runs-table"><thead><tr><th>Run</th><th>Datum/tijd</th><th>Status</th><th>Type</th><th>PRE</th><th>POST</th><th>Holdout</th><th>Δ</th><th>Beslissing</th><th>Looptijd</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card">
+      <h3>Nieuwe run (handmatig/debug)</h3>
       <label>Type</label>
       <select id="run-type">
         <option value="proof">Proof test (bewijs verbeterlus)</option>
@@ -164,7 +297,6 @@
       <p id="budget-preview" class="sub" style="margin-top:10px;color:#556;font-size:13px;"></p>
       <div style="margin-top:12px; display:flex; gap:10px;">
         <button class="primary" id="btn-start-run">Start</button>
-        <button class="danger" id="btn-stop-run">Stop</button>
       </div>
       <p class="sub" id="run-status" style="margin-top:10px;"></p>
     </div>
@@ -349,22 +481,85 @@ function simpleBarChart(el, items) {
   el.innerHTML = svg;
 }
 
+/** Horizontale delta-balken: positief groen naar rechts, negatief rood naar links, vanuit een middenlijn (§ UI-redesign, "Verbetering t.o.v. vorige versie"). */
+function deltaChart(el, items) {
+  const metData = items.filter((i) => i.delta !== null && i.delta !== undefined);
+  if (metData.length === 0) return emptyChart(el, "Nog geen meting (minstens twee gepubliceerde versies met een echte benchmarkreferentie nodig)");
+  const w = 760, rowH = 34, padL = 170, padR = 60;
+  const h = rowH * items.length + 10;
+  const maxAbs = Math.max(1, ...metData.map((i) => Math.abs(i.delta)));
+  const midX = padL + (w - padL - padR) / 2;
+  const halfW = (w - padL - padR) / 2;
+  let svg = `<svg class="chart" viewBox="0 0 ${w} ${h}" style="height:${h}px;">`;
+  svg += `<line x1="${midX}" y1="0" x2="${midX}" y2="${h}" stroke="#ccd4e0"/>`;
+  items.forEach((it, i) => {
+    const y = i * rowH + rowH / 2;
+    svg += `<text x="${padL - 12}" y="${y + 4}" font-size="11" fill="#556" text-anchor="end">${it.label}</text>`;
+    if (it.delta === null || it.delta === undefined) {
+      svg += `<text x="${midX + 8}" y="${y + 4}" font-size="11" fill="#9fb0c9" font-style="italic">Nog geen meting</text>`;
+      return;
+    }
+    const bw = (Math.abs(it.delta) / maxAbs) * (halfW - 20);
+    const x = it.delta >= 0 ? midX : midX - bw;
+    svg += `<rect x="${x}" y="${y - 9}" width="${Math.max(2, bw)}" height="18" rx="3" fill="${it.delta >= 0 ? COLORS.good : COLORS.bad}"/>`;
+    const labelX = it.delta >= 0 ? midX + bw + 8 : midX - bw - 8;
+    svg += `<text x="${labelX}" y="${y + 4}" font-size="11" fill="#223" text-anchor="${it.delta >= 0 ? "start" : "end"}">${it.delta >= 0 ? "+" : ""}${it.delta.toFixed(1)}pp</text>`;
+  });
+  svg += `</svg>`;
+  el.innerHTML = svg;
+}
+
+function renderFindings(el, findings) {
+  if (!findings || findings.length === 0) { el.innerHTML = `<div class="empty">Nog geen betekenisvolle bevindingen (nog geen experiment met een aantoonbaar verschil t.o.v. de controle).</div>`; return; }
+  el.innerHTML = findings.map((f) => `
+    <div style="display:flex; gap:10px; padding:9px 0; border-bottom:1px solid #eef1f6;">
+      <span style="font-size:16px;">${f.direction === "up" ? "🡅" : "🡇"}</span>
+      <div>
+        <div style="font-weight:600; font-size:13px; ${f.direction === "up" ? "color:var(--good)" : "color:var(--bad)"}">${f.title}</div>
+        <div class="sub" style="font-size:12px;">${f.detail} <span style="color:var(--muted);">— ${f.basis}</span></div>
+      </div>
+    </div>
+  `).join("");
+}
+
 // ---- Overzicht ----
 async function loadOverzicht() {
   const o = await j("/api/overview");
+  const actief = await j("/api/versions/active");
+  const perf = await j("/api/versions/performance");
+  const bestOoit = perf.filter((p) => p.score !== null).reduce((best, p) => (best === null || p.score > best ? p.score : best), null);
+
+  document.getElementById("ov-active-version").textContent = actief.isBaseline ? "baseline" : actief.versionId;
+  document.getElementById("ov-active-tag").textContent = actief.status;
+  document.getElementById("ov-active-tag").className = `tag ${actief.status === "ACTIVE" ? "good" : actief.status === "FAILED" ? "bad" : "warn"}`;
+  document.getElementById("ov-active-sub").textContent = actief.isBaseline
+    ? "Nog geen sandboxvariant gepubliceerd — dit is de kale productie-instructie."
+    : `Momenteel actief in het NS Roosterplatform · variant ${actief.variantId ?? "—"} · sinds ${new Date(actief.activatedAt).toLocaleString("nl-NL")}.`;
+
   const cards = [
-    { label: "Production Lyra", value: o.productionVersion.isBaseline ? "baseline" : o.productionVersion.id, sub: o.productionVersion.variantId || "" },
-    { label: "Beste sandboxvariant", value: o.bestSandboxVariant ? o.bestSandboxVariant.experimentId.slice(0, 12) : "—", sub: o.bestSandboxVariant ? o.bestSandboxVariant.hypothesis.slice(0, 40) : "nog geen kandidaat" },
-    { label: "Laatste benchmark", value: o.latestBenchmark ? o.latestBenchmark.passRate.toFixed(1) + "%" : "—", sub: o.latestBenchmark ? o.latestBenchmark.label : "nog niet gemeten" },
-    { label: "Beste benchmark ooit", value: o.bestBenchmarkEver !== null ? o.bestBenchmarkEver.toFixed(1) + "%" : "—", sub: "" },
-    { label: "Actieve run", value: o.activeRun && (o.activeRun.status === "RUNNING" || o.activeRun.status === "STARTING") ? o.activeRun.kind : "geen", sub: o.activeRun ? (STATUS_LABELS[o.activeRun.status] || o.activeRun.status) : "" },
-    { label: "Experimenten", value: o.counts.experiments, sub: "" },
-    { label: "Promotion candidates", value: o.counts.promotionCandidates, sub: "" },
-    { label: "Verworpen experimenten", value: o.counts.rejected, sub: "" },
+    { label: "Actuele benchmark", value: o.latestBenchmark ? o.latestBenchmark.passRate.toFixed(1) + "%" : "Nog geen meting", sub: o.latestBenchmark ? o.latestBenchmark.label : "" },
+    { label: "Beste benchmark ooit", value: bestOoit !== null ? bestOoit.toFixed(1) + "%" : "Nog geen meting", sub: "over gepubliceerde versies" },
+    { label: "Laatste meting", value: o.latestBenchmark ? new Date(o.latestBenchmark.timestamp).toLocaleDateString("nl-NL") : "—", sub: o.latestBenchmark ? new Date(o.latestBenchmark.timestamp).toLocaleTimeString("nl-NL") : "" },
+    { label: "Promotion candidates", value: o.counts.promotionCandidates, sub: `${o.counts.experiments} experimenten totaal` },
   ];
   document.getElementById("overzicht-cards").innerHTML = cards.map((c) => `
     <div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub}</div></div>
   `).join("");
+
+  if (perf.length < 2 || perf.every((p) => p.score === null)) emptyChart(document.getElementById("chart-version-performance"), "Nog geen meting (pas zichtbaar na publicatie van minstens één sandboxvariant)");
+  else simpleBarChart(document.getElementById("chart-version-performance"), perf.map((p) => ({ label: p.displayName, value: p.score !== null ? Number(p.score.toFixed(1)) : 0, color: p.isActive ? COLORS.dev : "#9fb0c9" })));
+
+  const deltas = await j("/api/versions/deltas");
+  deltaChart(document.getElementById("chart-version-deltas"), deltas.map((d) => ({ label: `${d.toDisplayName} (t.o.v. ${d.fromDisplayName})`, delta: d.delta })));
+
+  const timeline = await j("/api/progress/benchmark-timeline");
+  lineChart(document.getElementById("chart-ov-timeline"), [
+    { name: "dev", color: COLORS.dev, points: timeline.map((t) => ({ x: t.timestamp, y: t.dev })) },
+    { name: "holdout", color: COLORS.holdout, points: timeline.map((t) => ({ x: t.timestamp, y: t.holdout })) },
+  ]);
+
+  const findings = await j("/api/findings");
+  renderFindings(document.getElementById("ov-findings"), findings);
 }
 
 // ---- Vooruitgang ----
@@ -395,7 +590,85 @@ async function loadVooruitgang() {
   else lineChart(document.getElementById("chart-roster"), [{ name: "beste bekende kwaliteit", color: COLORS.dev, points: roster.points.map((p) => ({ x: p.timestamp, y: p.robust })) }]);
 }
 
-// ---- Runs ----
+// ---- Versies vergelijken ----
+async function loadVergelijkOptions() {
+  const perf = await j("/api/versions/performance");
+  const baseSel = document.getElementById("cmp-base");
+  const targetSel = document.getElementById("cmp-targets");
+  const huidigeBase = baseSel.value;
+  const huidigeTargets = new Set([...targetSel.selectedOptions].map((o) => o.value));
+  const opties = perf.map((p) => `<option value="${p.versionId}">${p.displayName} (${p.versionId})${p.isActive ? " ← actief" : ""}</option>`).join("");
+  baseSel.innerHTML = opties;
+  targetSel.innerHTML = opties;
+  if (huidigeBase) baseSel.value = huidigeBase;
+  else if (perf.length > 0) baseSel.value = perf[0].versionId;
+  [...targetSel.options].forEach((o) => { if (huidigeTargets.has(o.value)) o.selected = true; });
+  if (huidigeTargets.size === 0 && perf.length > 1) targetSel.options[perf.length - 1].selected = true;
+}
+
+function fmtPct(v) { return v === null || v === undefined ? "—" : `${v.toFixed(1)}%`; }
+
+async function runVergelijk() {
+  const base = document.getElementById("cmp-base").value;
+  const targets = [...document.getElementById("cmp-targets").selectedOptions].map((o) => o.value);
+  const set = document.getElementById("cmp-set").value;
+  if (!base || targets.length === 0) {
+    document.getElementById("cmp-diffcards").innerHTML = `<div class="empty">Nog maar één versie beschikbaar (${base || "baseline"}) — vergelijken kan pas zodra er minstens twee versies bestaan (publiceer een sandboxvariant).</div>`;
+    emptyChart(document.getElementById("chart-cmp-score"), "Nog geen tweede versie om te vergelijken");
+    emptyChart(document.getElementById("chart-cmp-dims"), "Nog geen tweede versie om te vergelijken");
+    document.getElementById("cmp-changes").innerHTML = `<div class="empty">Nog geen tweede versie om te vergelijken.</div>`;
+    document.querySelector("#cmp-table tbody").innerHTML = "";
+    return;
+  }
+  const params = new URLSearchParams({ base, set });
+  targets.forEach((t) => params.append("target", t));
+  const result = await j(`/api/versions/compare?${params.toString()}`);
+
+  const warnEl = document.getElementById("cmp-warning");
+  warnEl.style.display = result.warning ? "block" : "none";
+  warnEl.textContent = result.warning || "";
+
+  const dims = result.comparableDimensions;
+  const baseScore = dims.length > 0 ? dims.reduce((a, k) => a + (result.base.metrics[k] ?? 0), 0) / dims.length : null;
+
+  // Compacte verschillenrij t.o.v. de basisversie (alleen dimensies met echte data).
+  const laatsteTarget = result.targets[result.targets.length - 1];
+  const diffCards = dims.length === 0 || !laatsteTarget
+    ? [{ label: "Vergelijking", value: "Nog geen meting", sub: "" }]
+    : [
+        { label: "Beste versie nu", value: result.targets.reduce((b, t) => (dims.reduce((s, k) => s + (t.metrics[k] ?? 0), 0) >= dims.reduce((s, k) => s + (b.metrics[k] ?? 0), 0) ? t : b), result.targets[0]).displayName, sub: "" },
+        ...dims.slice(0, 4).map((k) => ({ label: k, value: `${((laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0) >= 0) ? "+" : ""}${((laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0)).toFixed(1)}pp`, sub: `${fmtPct(result.base.metrics[k])} → ${fmtPct(laatsteTarget.metrics[k])}` })),
+      ];
+  document.getElementById("cmp-diffcards").innerHTML = diffCards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub}</div></div>`).join("");
+
+  const alleVersies = [result.base, ...result.targets].filter(Boolean);
+  if (dims.length === 0) emptyChart(document.getElementById("chart-cmp-score"), "Nog geen meetgegevens voor deze selectie");
+  else simpleBarChart(document.getElementById("chart-cmp-score"), alleVersies.map((v) => ({ label: v.displayName, value: Number((dims.reduce((s, k) => s + (v.metrics[k] ?? 0), 0) / dims.length).toFixed(1)), color: v.isActive ? COLORS.dev : "#9fb0c9" })));
+
+  if (dims.length === 0) emptyChart(document.getElementById("chart-cmp-dims"), "Nog geen meetgegevens voor deze selectie");
+  else groupedBarChart(document.getElementById("chart-cmp-dims"), dims, alleVersies.map((v, i) => ({ name: v.displayName, color: [COLORS.pre, COLORS.dev, COLORS.holdout, COLORS.good][i % 4], values: dims.map((k) => v.metrics[k] ?? null) })));
+
+  document.getElementById("cmp-changes-vs").textContent = `t.o.v. ${result.base ? result.base.displayName : "basisversie"}`;
+  const changes = laatsteTarget ? dims.map((k) => ({ k, delta: (laatsteTarget.metrics[k] ?? 0) - (result.base.metrics[k] ?? 0) })).filter((c) => Math.abs(c.delta) >= 3) : [];
+  document.getElementById("cmp-changes").innerHTML = changes.length > 0
+    ? changes.map((c) => `<p style="margin:4px 0; font-size:13px;">${c.delta > 0 ? "🡅" : "🡇"} <b>${c.k}</b> ${c.delta > 0 ? "+" : ""}${c.delta.toFixed(1)}pp</p>`).join("")
+    : `<div class="empty">Geen verschil boven de ruismarge (3pp) tussen de geselecteerde versies.</div>`;
+
+  const tbody = document.querySelector("#cmp-table tbody");
+  tbody.innerHTML = alleVersies.map((v) => {
+    const score = dims.length > 0 ? dims.reduce((s, k) => s + (v.metrics[k] ?? 0), 0) / dims.filter((k) => k in v.metrics).length || null : null;
+    return `<tr><td>${v.displayName}<div class="sub" style="font-size:11px;">${v.versionId}</div></td><td>${new Date(v.createdAt).toLocaleDateString("nl-NL")}</td><td>${score ? score.toFixed(1) + "%" : "—"}</td><td><span class="tag ${v.status === "ACTIVE" ? "good" : v.status === "FAILED" ? "bad" : ""}">${v.status}</span></td><td>${v.isActive ? "" : `<button class="ghost" data-versies-goto="${v.versionId}">Details</button>`}</td></tr>`;
+  }).join("");
+  tbody.querySelectorAll("[data-versies-goto]").forEach((btn) => btn.addEventListener("click", () => switchTab("versies")));
+}
+
+async function loadVergelijk() {
+  await loadVergelijkOptions();
+  await runVergelijk();
+}
+document.getElementById("btn-cmp-run").addEventListener("click", runVergelijk);
+
+// ---- Runs (handmatig/debug-formulier) ----
 document.getElementById("run-type").addEventListener("change", (e) => {
   const el = document.getElementById("run-type-extra");
   if (e.target.value === "challenge") {
@@ -476,6 +749,96 @@ async function loadAutonomyCard() {
 
 // ---- Live run ----
 const STATUS_LABELS = { STARTING: "wordt gestart…", RUNNING: "loopt", DONE: "afgerond", FAILED: "mislukt", STOPPED: "gestopt" };
+
+/** Gedeeld door Live run en Runs: nooit een latere stap als 'done'/'active' tonen wanneer een eerdere stap niet gehaald is (§ UI-redesign: "als een run faalt vóór PRE, kleur POST/Holdout niet groen"). `deriveProofStages` op de server bewaakt dit al zelf. */
+function renderStepper(el, stages) {
+  el.innerHTML = (stages || []).map((s, i) => `${i > 0 ? '<span class="arrow">→</span>' : ""}<div class="step ${s.status}">${s.label}</div>`).join("");
+}
+
+// ---- Runs ----
+async function loadRuns() {
+  const actief = await j("/api/current-run");
+  const activeCard = document.getElementById("runs-active-card");
+  if (actief && (actief.status === "RUNNING" || actief.status === "STARTING")) {
+    activeCard.style.display = "block";
+    document.getElementById("runs-active-status").textContent = STATUS_LABELS[actief.status] || actief.status;
+    document.getElementById("runs-active-status").className = `tag ${actief.status === "RUNNING" ? "good" : "warn"}`;
+    document.getElementById("runs-active-title").textContent = `${actief.kind} (${actief.runId})`;
+    document.getElementById("runs-active-meta").textContent = `Gestart ${new Date(actief.startedAt).toLocaleString("nl-NL")} · ${Math.round((Date.now() - new Date(actief.startedAt)) / 60000)} min geleden`;
+    if (actief.kind === "proof") {
+      const logboek = await j(`/api/logbook/events?runId=${encodeURIComponent(actief.runId)}`);
+      renderStepper(document.getElementById("runs-active-stepper"), logboek.stages);
+    } else {
+      document.getElementById("runs-active-stepper").innerHTML = "";
+    }
+  } else {
+    activeCard.style.display = "none";
+  }
+
+  const summary = await j("/api/runs/summary");
+  document.getElementById("runs-summary-cards").innerHTML = [
+    { label: "Totaal runs", value: summary.totalRuns },
+    { label: "Technisch geslaagd", value: summary.technicallyCompleted, sub: "proces liep door naar een echt besluit — KEEP_TESTING telt hierin mee" },
+    { label: "Technisch mislukt", value: summary.technicallyFailed, sub: "proces/spawn-fout, geen inhoudelijke beoordeling" },
+    { label: "Gem. benchmarkverschil", value: summary.averageBenchmarkDeltaPct !== null ? `${summary.averageBenchmarkDeltaPct >= 0 ? "+" : ""}${summary.averageBenchmarkDeltaPct.toFixed(1)}pp` : "Nog geen meting" },
+    { label: "Promotion candidates", value: summary.promotionCandidates },
+    { label: "Gem. looptijd", value: summary.averageRuntimeSeconds !== null ? `${Math.round(summary.averageRuntimeSeconds)}s` : "Nog geen meting" },
+  ].map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub || ""}</div></div>`).join("");
+
+  const geschiedenis = await j("/api/runs/history");
+  const metProof = geschiedenis.filter((r) => r.experiment && r.experiment.qualityMetrics && Object.keys(r.experiment.qualityMetrics).length > 0).slice(0, 8).reverse();
+  if (metProof.length === 0) emptyChart(document.getElementById("chart-runs-results"), "Nog geen afgeronde proof-runs met echte metingen");
+  else groupedBarChart(document.getElementById("chart-runs-results"), metProof.map((r) => r.runId.slice(-6)), [
+    { name: "PRE", color: COLORS.pre, values: metProof.map((r) => avgOf(r.experiment.baselineMetrics)) },
+    { name: "POST", color: COLORS.post, values: metProof.map((r) => avgOf(r.experiment.qualityMetrics)) },
+  ]);
+
+  const experimenten = await j("/api/experiments");
+  const verdeling = {
+    verbetering: experimenten.filter((e) => e.decision === "PROMOTION_CANDIDATE").length,
+    geenVerschil: experimenten.filter((e) => e.decision === "KEEP_TESTING").length,
+    verslechtering: experimenten.filter((e) => e.decision === "REJECTED").length,
+    technischMislukt: geschiedenis.filter((r) => r.outcome === "RUN_FAILED").length,
+  };
+  document.getElementById("runs-outcome-dist").innerHTML = `
+    <div class="grid">
+      <div class="stat"><div class="label">Verbetering</div><div class="value" style="color:${COLORS.good}">${verdeling.verbetering}</div></div>
+      <div class="stat"><div class="label">Geen verschil</div><div class="value">${verdeling.geenVerschil}</div></div>
+      <div class="stat"><div class="label">Verslechtering</div><div class="value" style="color:${COLORS.bad}">${verdeling.verslechtering}</div></div>
+      <div class="stat"><div class="label">Technisch mislukt</div><div class="value" style="color:${COLORS.warn||'#b9862c'}">${verdeling.technischMislukt}</div></div>
+    </div>`;
+
+  const tbody = document.querySelector("#runs-table tbody");
+  tbody.innerHTML = geschiedenis.slice(0, 30).map((r) => {
+    const e = r.experiment;
+    const looptijd = r.startedAt && r.finishedAt ? `${Math.round((new Date(r.finishedAt) - new Date(r.startedAt)) / 1000)}s` : "—";
+    const statusTag = r.outcome === "RUN_COMPLETED" ? '<span class="tag good">AFGEROND</span>' : r.outcome === "RUN_FAILED" ? '<span class="tag bad">MISLUKT</span>' : r.outcome === "RUN_INTERRUPTED" ? '<span class="tag warn">ONDERBROKEN</span>' : '<span class="tag">LOOPT</span>';
+    const pre = e ? avgOf(e.baselineMetrics) : null;
+    const post = e ? avgOf(e.qualityMetrics) : null;
+    const delta = pre !== null && post !== null ? post - pre : null;
+    return `<tr class="clickable" data-goto-run="${r.runId}">
+      <td>${r.runId.slice(-8)}</td>
+      <td>${r.startedAt ? new Date(r.startedAt).toLocaleString("nl-NL") : "—"}</td>
+      <td>${statusTag}</td>
+      <td>${r.kind || "—"}</td>
+      <td>${pre !== null ? pre.toFixed(1) + "%" : "—"}</td>
+      <td>${post !== null ? post.toFixed(1) + "%" : "—"}</td>
+      <td>—</td>
+      <td>${delta !== null ? `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}pp` : "—"}</td>
+      <td>${e ? `<span class="tag ${e.decision === "PROMOTION_CANDIDATE" ? "good" : e.decision === "REJECTED" ? "bad" : "warn"}">${e.decision}</span>` : "—"}</td>
+      <td>${looptijd}</td>
+      <td><button class="ghost" data-goto-run-btn="${r.runId}">Bekijken</button></td>
+    </tr>`;
+  }).join("") || `<tr><td colspan="11" class="empty">Nog geen runs</td></tr>`;
+  tbody.querySelectorAll("[data-goto-run-btn]").forEach((btn) => btn.addEventListener("click", () => { switchTab("logboek"); selectLogbookRun(btn.dataset.gotoRunBtn); }));
+}
+function avgOf(o) {
+  if (!o) return null;
+  const vals = Object.entries(o).filter(([k]) => !k.startsWith("latency")).map(([, v]) => v).filter((v) => typeof v === "number");
+  return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+}
+
+// ---- Live run ----
 async function loadLiveRun() {
   const run = await j("/api/current-run");
   const log = document.getElementById("log");
@@ -514,9 +877,7 @@ async function loadLiveRun() {
   // Voortgangsstepper: alleen tonen bij een proof-of-value-run (§v0.3 punt 1).
   if (run.kind === "proof") {
     stepperCard.style.display = "block";
-    document.getElementById("proof-stepper").innerHTML = (logboek.stages || [])
-      .map((s, i) => `${i > 0 ? '<span class="arrow">→</span>' : ""}<div class="step ${s.status}">${s.label}</div>`)
-      .join("");
+    renderStepper(document.getElementById("proof-stepper"), logboek.stages);
     const besluit = (logboek.stages || []).find((s) => s.key === "decision");
     document.getElementById("proof-decision-detail").textContent = besluit?.detail || "";
   } else {
@@ -732,7 +1093,9 @@ async function refresh() {
     veilig("banner", loadBanner),
     veilig("overzicht", loadOverzicht),
     veilig("autonomy", loadAutonomyCard),
+    veilig("vergelijk", loadVergelijk),
     veilig("vooruitgang", loadVooruitgang),
+    veilig("runs", loadRuns),
     veilig("liverun", loadLiveRun),
     veilig("experimenten", loadExperimenten),
     veilig("versies", loadVersies),

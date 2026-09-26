@@ -1,0 +1,236 @@
+import { listVersions } from "../publish/versions";
+import { listRunLogs, readRunEvents } from "../store/logbook";
+import { readAllExperiments } from "../store/runlog";
+import type { AgentQualityCategory, ExperimentRecord, LyraVersion } from "../types";
+
+/**
+ * Read-only aggregaties voor het herontworpen dashboard (§ UI-redesign-
+ * aanvulling, punt 10: "Maak waar nodig kleine read-only API-endpoints/
+ * aggregaties. Pas de backend niet aan om fictieve UI-data te produceren.").
+ *
+ * Niets hier verzint data: elke functie leest uitsluitend de bestaande,
+ * echte bronnen (versiestore, benchmarkgeschiedenis, experimentgeheugen,
+ * logboek) en geeft `null`/een lege array terug wanneer er simpelweg nog
+ * niets gemeten is — nooit een 0 of een verzonnen tussenwaarde.
+ */
+
+const LATENCY_KEYS = new Set(["latencyP50", "latencyP95"]);
+
+function aggregateScore(metrics: Record<string, number> | null | undefined): number | null {
+  if (!metrics) return null;
+  const waarden = Object.entries(metrics)
+    .filter(([k]) => !LATENCY_KEYS.has(k))
+    .map(([, v]) => v)
+    .filter((v) => typeof v === "number" && Number.isFinite(v));
+  if (waarden.length === 0) return null;
+  return waarden.reduce((a, b) => a + b, 0) / waarden.length;
+}
+
+export interface VersionPerformancePoint {
+  readonly versionId: string;
+  readonly displayName: string;
+  readonly status: LyraVersion["status"];
+  readonly createdAt: string;
+  /** Gemiddelde over alle gemeten dimensies bij publicatie (`benchmarkReference.post`) — `null` als er niets gemeten is (bijv. baseline). */
+  readonly score: number | null;
+  readonly isActive: boolean;
+}
+
+/** Chronologisch (oudste eerst) — alleen versies die ooit gepubliceerd/geactiveerd zijn, dus met een echte meting eromheen. */
+export function versionPerformanceSeries(): readonly VersionPerformancePoint[] {
+  const actief = listVersions().find((v) => v.status === "ACTIVE")?.id ?? null;
+  const chronologisch = [...listVersions()].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  return chronologisch.map((v, i) => ({
+    versionId: v.id,
+    displayName: `Lyra v${i + 1}`,
+    status: v.status,
+    createdAt: v.createdAt,
+    score: aggregateScore(v.benchmarkReference?.post ?? null),
+    isActive: v.id === actief,
+  }));
+}
+
+export interface VersionDelta {
+  readonly fromVersionId: string;
+  readonly toVersionId: string;
+  readonly fromDisplayName: string;
+  readonly toDisplayName: string;
+  /** `null` wanneer één van beide versies geen gemeten score heeft — nooit een verzonnen 0-delta. */
+  readonly delta: number | null;
+}
+
+export function versionDeltas(): readonly VersionDelta[] {
+  const serie = versionPerformanceSeries();
+  const out: VersionDelta[] = [];
+  for (let i = 1; i < serie.length; i += 1) {
+    const vorige = serie[i - 1];
+    const huidige = serie[i];
+    out.push({
+      fromVersionId: vorige.versionId,
+      toVersionId: huidige.versionId,
+      fromDisplayName: vorige.displayName,
+      toDisplayName: huidige.displayName,
+      delta: vorige.score !== null && huidige.score !== null ? huidige.score - vorige.score : null,
+    });
+  }
+  return out;
+}
+
+export interface VersionComparisonRow {
+  readonly versionId: string;
+  readonly displayName: string;
+  readonly status: LyraVersion["status"];
+  readonly createdAt: string;
+  readonly isActive: boolean;
+  /** Alleen dimensies waarvoor voor DEZE versie werkelijk een meting bestaat. */
+  readonly metrics: Record<string, number>;
+}
+
+export interface VersionComparisonResult {
+  readonly benchmarkSet: "dev" | "holdout" | "both";
+  readonly base: VersionComparisonRow | null;
+  readonly targets: readonly VersionComparisonRow[];
+  /** Alleen dimensies die zowel bij base als bij minstens één target gemeten zijn. */
+  readonly comparableDimensions: readonly string[];
+  readonly warning: string | null;
+}
+
+function metricsForSet(v: LyraVersion, set: "dev" | "holdout" | "both"): Record<string, number> {
+  const ref = v.benchmarkReference;
+  if (!ref) return {};
+  // "dev" en "both" gebruiken de dev/post-meting die bij publicatie is vastgelegd; holdout is apart bewaard.
+  const bron: Record<string, number> = (set === "holdout" ? ref.holdout : ref.post) ?? {};
+  const out: Record<string, number> = {};
+  for (const [k, waarde] of Object.entries(bron)) if (!LATENCY_KEYS.has(k)) out[k] = waarde;
+  return out;
+}
+
+export function compareVersions(baseId: string | null, targetIds: readonly string[], benchmarkSet: "dev" | "holdout" | "both" = "both"): VersionComparisonResult {
+  const alle = listVersions();
+  const actief = alle.find((v) => v.status === "ACTIVE")?.id ?? null;
+  const vind = (id: string): LyraVersion | undefined => alle.find((v) => v.id === id);
+  const rij = (v: LyraVersion): VersionComparisonRow => ({
+    versionId: v.id,
+    displayName: versionPerformanceSeries().find((p) => p.versionId === v.id)?.displayName ?? v.id,
+    status: v.status,
+    createdAt: v.createdAt,
+    isActive: v.id === actief,
+    metrics: metricsForSet(v, benchmarkSet),
+  });
+
+  const baseVersion = baseId ? vind(baseId) : undefined;
+  const base = baseVersion ? rij(baseVersion) : null;
+  const targets = targetIds.map(vind).filter((v): v is LyraVersion => v !== undefined).map(rij);
+
+  const dimensiesInBase = new Set(Object.keys(base?.metrics ?? {}));
+  const comparableDimensions = [...dimensiesInBase].filter((k) => targets.some((t) => k in t.metrics));
+
+  const geenBenchmarkReferentie = [base, ...targets].filter((r): r is VersionComparisonRow => r !== null).some((r) => Object.keys(r.metrics).length === 0);
+
+  return {
+    benchmarkSet,
+    base,
+    targets,
+    comparableDimensions,
+    warning: geenBenchmarkReferentie ? "Niet rechtstreeks vergelijkbaar: één of meer geselecteerde versies heeft geen benchmarkreferentie uit dezelfde meting (bijv. de baseline, of een handmatig geactiveerde versie)." : null,
+  };
+}
+
+export interface RunHistoryEntry {
+  readonly runId: string;
+  readonly kind: string | null;
+  readonly startedAt: string | null;
+  readonly finishedAt: string | null;
+  readonly outcome: "RUN_COMPLETED" | "RUN_FAILED" | "RUN_INTERRUPTED" | "RUNNING_OF_ONBEKEND";
+  /** Alleen aanwezig voor proof-of-value-runs met een bijbehorend experimentrecord. */
+  readonly experiment: ExperimentRecord | null;
+}
+
+/** Nieuwste eerst — combineert het logboek (alle ooit gestarte runs) met het experimentgeheugen (alleen runs die een experiment opleverden). */
+export function runHistory(): readonly RunHistoryEntry[] {
+  const experimentenPerRun = new Map<string, ExperimentRecord>();
+  for (const e of readAllExperiments()) if (!experimentenPerRun.has(e.runId)) experimentenPerRun.set(e.runId, e);
+
+  return listRunLogs().map((r) => {
+    const events = readRunEvents(r.runId);
+    const startEvent = events.find((e) => e.kind === "RUN_START");
+    const endEvent = [...events].reverse().find((e) => e.kind === "RUN_END");
+    const kind = (startEvent?.data as { kind?: string } | undefined)?.kind ?? null;
+    const outcome: RunHistoryEntry["outcome"] = endEvent
+      ? (((endEvent.data as { summary?: { outcome?: string } } | undefined)?.summary?.outcome as RunHistoryEntry["outcome"] | undefined) ?? "RUN_COMPLETED")
+      : "RUNNING_OF_ONBEKEND";
+    return {
+      runId: r.runId,
+      kind,
+      startedAt: startEvent?.timestamp ?? r.startedAt,
+      finishedAt: endEvent?.timestamp ?? null,
+      outcome,
+      experiment: experimentenPerRun.get(r.runId) ?? null,
+    };
+  });
+}
+
+export interface RunsSummary {
+  readonly totalRuns: number;
+  /** Een run "slaagde technisch" wanneer hij echt uitvoerde (niet LOCAL REQUIRED/spawn-fout) en tot een besluit kwam — KEEP_TESTING telt hierin mee, dat is geen mislukking. */
+  readonly technicallyCompleted: number;
+  readonly technicallyFailed: number;
+  readonly averageBenchmarkDeltaPct: number | null;
+  readonly promotionCandidates: number;
+  readonly averageRuntimeSeconds: number | null;
+}
+
+export function runsSummary(): RunsSummary {
+  const geschiedenis = runHistory();
+  const technischMislukt = geschiedenis.filter((r) => r.outcome === "RUN_FAILED").length;
+  const technischVoltooid = geschiedenis.filter((r) => r.outcome === "RUN_COMPLETED").length;
+
+  const looptijden = geschiedenis
+    .filter((r) => r.startedAt && r.finishedAt)
+    .map((r) => (new Date(r.finishedAt as string).getTime() - new Date(r.startedAt as string).getTime()) / 1000)
+    .filter((s) => Number.isFinite(s) && s >= 0);
+
+  const experimentenMetDiff = readAllExperiments()
+    .map((e) => aggregateScore(e.comparisonWithBaseline ?? null))
+    .filter((v): v is number => v !== null);
+
+  return {
+    totalRuns: geschiedenis.length,
+    technicallyCompleted: technischVoltooid,
+    technicallyFailed: technischMislukt,
+    averageBenchmarkDeltaPct: experimentenMetDiff.length > 0 ? experimentenMetDiff.reduce((a, b) => a + b, 0) / experimentenMetDiff.length : null,
+    promotionCandidates: readAllExperiments().filter((e) => e.decision === "PROMOTION_CANDIDATE").length,
+    averageRuntimeSeconds: looptijden.length > 0 ? looptijden.reduce((a, b) => a + b, 0) / looptijden.length : null,
+  };
+}
+
+export interface Finding {
+  readonly title: string;
+  readonly detail: string;
+  readonly direction: "up" | "down";
+  readonly basis: string;
+  readonly at: string;
+}
+
+/** Laatste, betekenisvolle bevindingen — alleen echte dimensieverschillen boven de ruismarge, met vermelding waarop ze gebaseerd zijn. */
+export function latestFindings(limit = 6): readonly Finding[] {
+  const experimenten = [...readAllExperiments()].reverse();
+  const bevindingen: Finding[] = [];
+  for (const e of experimenten) {
+    if (!e.comparisonWithBaseline) continue;
+    for (const [dimensie, delta] of Object.entries(e.comparisonWithBaseline)) {
+      if (LATENCY_KEYS.has(dimensie) || typeof delta !== "number" || Math.abs(delta) < 3) continue;
+      bevindingen.push({
+        title: `${dimensie} ${delta > 0 ? "verbeterd" : "verslechterd"}`,
+        detail: `${delta > 0 ? "+" : ""}${delta.toFixed(1)}pp t.o.v. controle in run ${e.runId}.`,
+        direction: delta > 0 ? "up" : "down",
+        basis: `Experiment ${e.id.slice(0, 12)} (${e.runId})`,
+        at: e.timestamp,
+      });
+      if (bevindingen.length >= limit) return bevindingen;
+    }
+  }
+  return bevindingen;
+}
+
+export type AgentDimensionKey = Exclude<keyof AgentQualityCategory, "latencyMs">;

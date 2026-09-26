@@ -11,6 +11,7 @@ import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
 import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
 import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults";
+import { compareVersions, latestFindings, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 
 /**
@@ -315,8 +316,13 @@ const server = http.createServer((req, res) => {
       "/api/progress/roster-quality": apiRosterQuality,
       "/api/versions": apiVersions,
       "/api/versions/active": apiActiveVersion,
+      "/api/versions/performance": versionPerformanceSeries,
+      "/api/versions/deltas": versionDeltas,
       "/api/current-run": () => currentRun(),
       "/api/autonomy/results": () => listAutonomyResults(),
+      "/api/runs/history": runHistory,
+      "/api/runs/summary": runsSummary,
+      "/api/findings": () => latestFindings(),
     };
     if (req.method === "GET" && url.pathname in routesGet) return json(res, 200, routesGet[url.pathname]());
 
@@ -329,6 +335,12 @@ const server = http.createServer((req, res) => {
       const id = url.searchParams.get("id");
       const found = id ? getVersion(id) : null;
       return json(res, found ? 200 : 404, found ?? { error: "niet gevonden" });
+    }
+    if (req.method === "GET" && url.pathname === "/api/versions/compare") {
+      const base = url.searchParams.get("base");
+      const targets = url.searchParams.getAll("target");
+      const set = (url.searchParams.get("set") as "dev" | "holdout" | "both" | null) ?? "both";
+      return json(res, 200, compareVersions(base, targets, set));
     }
     if (req.method === "GET" && url.pathname === "/api/autonomy/detail") {
       const id = url.searchParams.get("id");
