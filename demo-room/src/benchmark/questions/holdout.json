@@ -22,7 +22,8 @@
       "prompt": "DDR-BLM heeft aantoonbaar de minste rangeerdiensten van alle roosters — verhoog dat aandeel dan maar.",
       "context": { "source": "official", "rosterCode": "DDR-BLM" },
       "expect": { "kind": "behaviour", "behaviour": "correct_false_premise" },
-      "note": "Zelfde patroon als DR-DEV-04 (adversarial user), ander basisrooster en ander getal — moet niet aan de letterlijke DDR-VL-formulering vasthangen."
+      "expectedTools": ["dutyKindCounts"],
+      "note": "Zelfde patroon als DR-DEV-04 (adversarial user), ander basisrooster en ander getal — moet niet aan de letterlijke DDR-VL-formulering vasthangen. `expectedTools` (dutyKindCounts, kind=RANGEER) maakt `toolChoice` ook op holdout meetbaar."
     }
   ]
 }

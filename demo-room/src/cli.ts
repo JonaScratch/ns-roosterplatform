@@ -39,7 +39,16 @@ function nieuwRunId(prefix: string): string {
   return arg("run-id") ?? `DR-${prefix}-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14)}-${randomUUID().slice(0, 4)}`;
 }
 
-/** Best-effort, uit echte vastgelegde data — nooit een verzonnen teller (§ "GEEN STILLE ACTIES" / §33 van de hoofdopdracht). */
+/**
+ * Best-effort, uit echte vastgelegde data — nooit een verzonnen teller (§
+ * "GEEN STILLE ACTIES" / §33 van de hoofdopdracht, en § flight recorder-
+ * aanvulling "MODEL CALL COUNTER IS NU FOUT": eerder telde dit
+ * benchmarkblokken (BENCHMARK_RESULT/TEST_RESULT), niet echte modelcalls.
+ * Nu telt dit de daadwerkelijke granulaire events die `scoreSuiteItems()`/
+ * `runContextResolutionCheck()` per item/beurt loggen — en toont "niet
+ * gemeten" (null) wanneer een run geen enkele granulaire event had (bijv. een
+ * publish/rollback-run, die geen benchmarkitems uitvoert).
+ */
 function deriveRunEndStats(runId: string, outcome: RunOutcome, startedAtMs: number): RunEndSummary {
   const events = logbook.readRunEvents(runId);
   const experimenten = readAllExperiments().filter((e) => e.runId === runId);
@@ -47,10 +56,24 @@ function deriveRunEndStats(runId: string, outcome: RunOutcome, startedAtMs: numb
     experimenten.map((e) => (e.configuration as { variantId?: string }).variantId).filter((v): v is string => Boolean(v)),
   );
   const geaccepteerd = experimenten.filter((e) => e.decision === "PROMOTION_CANDIDATE");
+
+  const benchAnswerCalls = events.filter((e) => e.kind === "BENCHMARK_ITEM_START").length;
+  const askAgentDirectCalls = events.filter((e) => e.kind === "CONTEXT_TURN").length;
+  const modelInferenceTurns = events
+    .filter((e) => e.kind === "AGENT_EXECUTION_START")
+    .reduce((som, e) => som + (typeof (e.data as { turnsExecuted?: number } | undefined)?.turnsExecuted === "number" ? (e.data as { turnsExecuted: number }).turnsExecuted : 1), 0);
+  const toolCalls = events.filter((e) => e.kind === "TOOL_CALL").length;
+  const retries = events.filter((e) => e.kind === "AUTO_RETRY").length;
+  const failures = events.filter((e) => e.kind === "ERROR" || e.kind === "MODEL_RESPONSE_UNUSABLE" || e.kind === "VALIDATOR_ERROR").length;
+  const heeftGranulaireData = benchAnswerCalls > 0 || askAgentDirectCalls > 0;
+
+  const laatsteKnownWeaknesses = [...events].reverse().find((e) => e.kind === "KNOWN_WEAKNESSES");
+  const knownWeaknessesAfterRun = laatsteKnownWeaknesses ? laatsteKnownWeaknesses.message.replace(/^Blijft zwak ondanks dit besluit: /, "").replace(/\.$/, "").split(", ").filter(Boolean) : [];
+
   return {
     outcome,
     totalDurationMs: Date.now() - startedAtMs,
-    modelCalls: events.filter((e) => e.kind === "BENCHMARK_RESULT" || e.kind === "TEST_RESULT").length,
+    modelCalls: heeftGranulaireData ? modelInferenceTurns + askAgentDirectCalls : null,
     experiments: experimenten.length,
     optimizerJobs: events.filter((e) => e.kind === "OPTIMIZER_ACTION").length,
     variantsTested: variantIds.size,
@@ -60,6 +83,15 @@ function deriveRunEndStats(runId: string, outcome: RunOutcome, startedAtMs: numb
     productionChanged: events.some((e) => e.kind === "PUBLISH_RESULT" && (e.data as { outcome?: string } | undefined)?.outcome === "PUBLISHED"),
     openHypotheses: events.filter((e) => e.kind === "HYPOTHESIS").map((e) => e.message),
     lessonsLearned: experimenten.map((e) => e.nextRecommendation).filter((x): x is string => Boolean(x)),
+    detailedCounters: {
+      benchAnswerCalls: heeftGranulaireData ? benchAnswerCalls : null,
+      askAgentDirectCalls: heeftGranulaireData ? askAgentDirectCalls : null,
+      modelInferenceTurns: heeftGranulaireData ? modelInferenceTurns : null,
+      toolCalls: heeftGranulaireData ? toolCalls : null,
+      retries,
+      failures,
+    },
+    knownWeaknessesAfterRun,
   };
 }
 

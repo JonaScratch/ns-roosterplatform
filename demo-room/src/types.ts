@@ -205,6 +205,8 @@ export interface ProofOfValueResult {
   readonly improvements: readonly string[];
   readonly decision: PromotionDecision;
   readonly reasoning: string;
+  /** §"KNOWN WEAKNESSES AFTER RUN": dimensies die ondanks dit besluit zwak blijven — nooit verborgen door een verbetering elders. */
+  readonly knownWeaknesses: readonly string[];
 }
 
 export type LyraVersionStatus = "ACTIVE" | "SUPERSEDED" | "ROLLED_BACK" | "FAILED";
@@ -248,6 +250,23 @@ export type LogEventKind =
   | "CHALLENGE_OR_GOAL"
   | "BENCHMARK_START"
   | "BENCHMARK_RESULT"
+  // Flight-recorder-granulariteit (§ aanvulling "FULL FLIGHT RECORDER"): één
+  // reeks van deze events per afzonderlijk benchmarkitem, zodat een run
+  // achteraf reconstrueerbaar is zonder de code te hoeven lezen — zie
+  // `benchmark/agentQuality.ts#scoreSuiteItems`.
+  | "BENCHMARK_ITEM_START"
+  | "CONTEXT_BEFORE"
+  | "AGENT_EXECUTION_START"
+  | "TOOL_DECISION"
+  | "TOOL_CALL"
+  | "TOOL_RESULT"
+  | "AGENT_RESPONSE"
+  | "BENCHMARK_ITEM_GRADE"
+  | "BENCHMARK_ITEM_END"
+  /** Per beurt van de contextresolutietest — zie `runContextResolutionCheck`. */
+  | "CONTEXT_TURN"
+  /** Expliciet, aan het eind van een run: welke zwaktes blijven ondanks deze verbetering (§ "KNOWN WEAKNESSES AFTER RUN"). */
+  | "KNOWN_WEAKNESSES"
   | "HYPOTHESIS"
   | "VARIANT_CREATED"
   | "CHANGE_APPLIED"
@@ -299,7 +318,13 @@ export type RunOutcome = "RUN_COMPLETED" | "RUN_FAILED" | "RUN_INTERRUPTED";
 export interface RunEndSummary {
   readonly outcome: RunOutcome;
   readonly totalDurationMs: number;
-  readonly modelCalls: number;
+  /**
+   * Totaal aantal echte modelaanroepen (askAgent-beurten), niet het aantal
+   * benchmarkblokken — `null` wanneer dit niet betrouwbaar te tellen is
+   * (§ "MODEL CALL COUNTER IS NU FOUT": nooit een fout getal tonen, liever
+   * expliciet "niet gemeten").
+   */
+  readonly modelCalls: number | null;
   readonly experiments: number;
   readonly optimizerJobs: number;
   readonly variantsTested: number;
@@ -309,6 +334,17 @@ export interface RunEndSummary {
   readonly productionChanged: boolean;
   readonly openHypotheses: readonly string[];
   readonly lessonsLearned: readonly string[];
+  /** Losse, betrouwbaar geteld per bron — zie `deriveRunEndStats` in `cli.ts`. `null` per veld = niet betrouwbaar gemeten. */
+  readonly detailedCounters?: {
+    readonly benchAnswerCalls: number | null;
+    readonly askAgentDirectCalls: number | null;
+    readonly modelInferenceTurns: number | null;
+    readonly toolCalls: number | null;
+    readonly retries: number | null;
+    readonly failures: number | null;
+  };
+  /** §"KNOWN WEAKNESSES AFTER RUN": welke dimensies ondanks deze run zwak blijven — een verbetering mag dit nooit verbergen. */
+  readonly knownWeaknessesAfterRun?: readonly string[];
 }
 
 export type PublishStepName = "PREFLIGHT" | "BACKUP" | "TYPECHECK" | "APPLY" | "SMOKE_BENCHMARK" | "GROUNDING_CHECK" | "CONFIRM";

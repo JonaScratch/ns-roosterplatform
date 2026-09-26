@@ -133,4 +133,42 @@ describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
       expect(r.improvements.some((i) => i.includes("2 runs"))).toBe(true);
     });
   });
+
+  describe("§ flight recorder-aanvulling — 'TEST MOET BIJ VARIANT PASSEN'", () => {
+    it("een TOOL_ROUTING-variant promoveert NOOIT op winst elders wanneer toolChoice zelf niet gemeten is (null) — de echte bug uit DR-UI-202609261343", () => {
+      // Precies de situatie van de eerste echte lokale run: grounding 50→100,
+      // maar toolChoice bleef null omdat geen enkel item destijds `expectedTools`
+      // had. Dat bewijst niet dat tool-routing verbeterde.
+      const pre = measurement(agent({ grounding: 50, toolChoice: null }));
+      const post = measurement(agent({ grounding: 100, toolChoice: null }));
+      const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true, variantCategory: "TOOL_ROUTING" });
+      expect(r.decision).toBe("KEEP_TESTING");
+      expect(r.reasoning).toMatch(/toolChoice/);
+      expect(r.reasoning).toMatch(/niet gemeten|niet meetbaar/i);
+    });
+
+    it("dezelfde variant promoveert wél zodra toolChoice daadwerkelijk gemeten is en meeverbetert", () => {
+      const pre = measurement(agent({ grounding: 50, toolChoice: 50 }));
+      const post = measurement(agent({ grounding: 100, toolChoice: 100 }));
+      const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true, variantCategory: "TOOL_ROUTING" });
+      expect(r.decision).toBe("PROMOTION_CANDIDATE");
+    });
+
+    it("een PROMPT-categorie-variant heeft geen primaire-dimensie-eis (mag gewoon promoveren zonder toolChoice)", () => {
+      const pre = measurement(agent({ grounding: 50, toolChoice: null }));
+      const post = measurement(agent({ grounding: 100, toolChoice: null }));
+      const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true, variantCategory: "PROMPT" });
+      expect(r.decision).toBe("PROMOTION_CANDIDATE");
+    });
+
+    it("KNOWN WEAKNESSES AFTER RUN: een promotie verbergt nooit dat andere dimensies zwak blijven", () => {
+      const pre = measurement(agent({ grounding: 50, contextResolution: 0, falsePremiseCorrection: 0 }));
+      const post = measurement(agent({ grounding: 100, contextResolution: 0, falsePremiseCorrection: 0 }));
+      const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true, variantCategory: "PROMPT" });
+      expect(r.decision).toBe("PROMOTION_CANDIDATE");
+      expect(r.knownWeaknesses.some((w) => w.includes("contextResolution"))).toBe(true);
+      expect(r.knownWeaknesses.some((w) => w.includes("falsePremiseCorrection"))).toBe(true);
+      expect(r.reasoning).toMatch(/welke onzekerheden blijven bestaan/i);
+    });
+  });
 });

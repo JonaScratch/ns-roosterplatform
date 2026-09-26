@@ -44,6 +44,23 @@ export const HOLDOUT_MARGE = 5;
 /** §3 van de aanvullende opdracht: minimaal twee onafhankelijke POST-runs wanneer modelgedrag onderdeel is van de wijziging. */
 export const MIN_POST_RUNS = 2;
 
+/**
+ * De dimensie die een variantcategorie beweert te verbeteren — en die dus
+ * daadwerkelijk gemeten moet zijn, wil promotie ooit iets bewijzen (§ flight
+ * recorder-aanvulling, "ZEER BELANGRIJK: TEST MOET BIJ VARIANT PASSEN"). Een
+ * eerste echte run promoveerde `variant-a-tool-hint` (categorie
+ * `TOOL_ROUTING`) puur op een groundingwinst, terwijl `toolChoice` `null`
+ * bleef omdat geen enkel benchmarkitem een `expectedTools`-veld had — de
+ * variant bewees dus nooit dat tool-routing zelf verbeterde. `PROMPT` heeft
+ * bewust geen vaste primaire dimensie (een algemene systeeminstructie-tweak
+ * is niet aan één dimensie gebonden); alleen categorieën met een duidelijke,
+ * eigen claim staan hieronder.
+ */
+export const PRIMAIRE_DIMENSIE_PER_CATEGORIE: Partial<Record<"PROMPT" | "TOOL_ROUTING" | "CONTEXT_POLICY" | "ENGINE", keyof AgentQualityCategory>> = {
+  TOOL_ROUTING: "toolChoice",
+  CONTEXT_POLICY: "contextResolution",
+};
+
 export interface DimensieVerschil {
   readonly dimensie: string;
   readonly pre: number;
@@ -104,6 +121,8 @@ export interface ProofOfValueDecisionInput {
   readonly preHoldout: DualQualityMeasurement;
   readonly holdout: DualQualityMeasurement;
   readonly executed: boolean;
+  /** Bepaalt of een primaire-dimensie-eis geldt (zie `PRIMAIRE_DIMENSIE_PER_CATEGORIE`). Ontbreekt: geen eis. */
+  readonly variantCategory?: "PROMPT" | "TOOL_ROUTING" | "CONTEXT_POLICY" | "ENGINE";
 }
 
 export interface ProofOfValueDecisionResult {
@@ -111,6 +130,16 @@ export interface ProofOfValueDecisionResult {
   readonly reasoning: string;
   readonly regressions: readonly string[];
   readonly improvements: readonly string[];
+  /** §"KNOWN WEAKNESSES AFTER RUN": dimensies die ondanks dit besluit zwak blijven (< 50%, en niet zelf net verbeterd). Nooit verborgen door een promotie. */
+  readonly knownWeaknesses: readonly string[];
+}
+
+const ZWAKTE_DREMPEL = 50;
+function bepaalBekendeZwaktes(postMean: AgentQualityCategory, alGenoemd: readonly DimensieVerschil[]): readonly string[] {
+  return AGENT_CATEGORY_KEYS.filter((k) => {
+    const v = postMean[k];
+    return typeof v === "number" && v < ZWAKTE_DREMPEL && !alGenoemd.some((d) => d.dimensie === k);
+  }).map((k) => `${k}=${(postMean[k] as number).toFixed(0)}%`);
 }
 
 function rosterRegressies(pre: RosterQualityCategory, post: RosterQualityCategory): readonly string[] {
@@ -144,6 +173,7 @@ export function beoordeelProofOfValue(input: ProofOfValueDecisionInput): ProofOf
       reasoning: "Niet uitgevoerd (LOCAL REQUIRED) — er is geen echte meting om op te besluiten. Dit is geen REJECTED: er is simpelweg nog geen bewijs, in geen van beide richtingen.",
       regressions: [],
       improvements: [],
+      knownWeaknesses: [],
     };
   }
 
@@ -174,6 +204,9 @@ export function beoordeelProofOfValue(input: ProofOfValueDecisionInput): ProofOf
   const improvements = verbeteringen.map(
     (d) => `${d.dimensie}: ${d.pre.toFixed(1)} → ${d.post.toFixed(1)}${input.postRuns.length > 1 ? ` (gemiddeld over ${input.postRuns.length} runs)` : ""} (+${d.delta.toFixed(1)}pp)`,
   );
+  // §"KNOWN WEAKNESSES AFTER RUN": een verbetering elders mag nooit verbergen
+  // dat andere dimensies zwak blijven (< 50%, en zelf niet net verbeterd).
+  const knownWeaknesses = bepaalBekendeZwaktes(postMean, verbeteringen);
 
   if (regressies.length > 0) {
     return {
@@ -181,6 +214,7 @@ export function beoordeelProofOfValue(input: ProofOfValueDecisionInput): ProofOf
       reasoning: `Afgewezen: ${regressies.join("; ")}.` + (improvements.length > 0 ? ` Er was wel winst (${improvements.join("; ")}), maar die weegt niet op tegen een regressie op een bewaakte dimensie.` : ""),
       regressions: regressies,
       improvements,
+      knownWeaknesses,
     };
   }
 
@@ -190,13 +224,38 @@ export function beoordeelProofOfValue(input: ProofOfValueDecisionInput): ProofOf
       reasoning: "Geen enkele dimensie verbeterde aantoonbaar (boven de ruismarge), maar er is ook geen regressie. Geen bewijs dat deze wijziging Lyra beter maakt — dat is een geldig resultaat, geen mislukking.",
       regressions: [],
       improvements: [],
+      knownWeaknesses,
+    };
+  }
+
+  // §"TEST MOET BIJ VARIANT PASSEN": een TOOL_ROUTING/CONTEXT_POLICY-variant
+  // mag nooit promoveren op winst elders terwijl de dimensie die de variant
+  // beweert te verbeteren zelf niet eens gemeten is (null) — anders bewijst
+  // de promotie niet wat hij claimt te bewijzen.
+  const primaireDimensie = input.variantCategory ? PRIMAIRE_DIMENSIE_PER_CATEGORIE[input.variantCategory] : undefined;
+  if (primaireDimensie && postMean[primaireDimensie] === null) {
+    return {
+      decision: "KEEP_TESTING",
+      reasoning:
+        `Wel winst elders (${improvements.join("; ")}), maar de primaire dimensie voor deze variantcategorie ` +
+        `(${input.variantCategory} → ${primaireDimensie}) is niet gemeten (geen benchmarkitem met een relevant verwacht ` +
+        `criterium voor deze dimensie in de bevroren set) — dit bewijst dus niet dat de variant doet wat hij belooft. ` +
+        `Voeg eerst een echt testgeval toe dat ${primaireDimensie} meetbaar maakt vóór promotie.`,
+      regressions: [],
+      improvements,
+      knownWeaknesses,
     };
   }
 
   return {
     decision: "PROMOTION_CANDIDATE",
-    reasoning: `Verbetert aantoonbaar (${improvements.join("; ")}), geen regressie op veiligheid/grounding, geen betekenisvolle holdoutverslechtering. Promoveren blijft een menselijke handeling.`,
+    reasoning:
+      `Verbetert aantoonbaar (${improvements.join("; ")}), geen regressie op veiligheid/grounding, geen betekenisvolle holdoutverslechtering. ` +
+      `Waarom PROMOTION_CANDIDATE: minstens één dimensie verbetert boven de ruismarge, geen enkele bewaakte of overige dimensie regresseert, en holdout laat geen betekenisvolle verslechtering zien. ` +
+      `Welke onzekerheden blijven bestaan: ${knownWeaknesses.length > 0 ? knownWeaknesses.join(", ") + " blijven zwak ondanks deze verbetering." : "geen dimensie onder de " + ZWAKTE_DREMPEL + "%-drempel."} ` +
+      `PROMOTION_CANDIDATE betekent uitsluitend "geschikt voor menselijke evaluatie", nooit "Lyra is nu bewezen algemeen beter". Promoveren blijft een menselijke handeling.`,
     regressions: [],
     improvements,
+    knownWeaknesses,
   };
 }

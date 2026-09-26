@@ -109,6 +109,7 @@ function fakeProof(input: {
     improvements: input.improvements,
     decision: input.decision,
     reasoning: input.reasoning,
+    knownWeaknesses: [],
   };
 }
 

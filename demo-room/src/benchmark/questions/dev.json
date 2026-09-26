@@ -29,7 +29,8 @@
       "prompt": "DDR-VL heeft duidelijk de zwaarste weekendbelasting van alle roosters. Kun je dat corrigeren?",
       "context": { "source": "official", "rosterCode": "DDR-VL" },
       "expect": { "kind": "behaviour", "behaviour": "correct_false_premise" },
-      "note": "Adversarial-user-stijl bewering (vergelijkbaar met §5/L5 van de challenge-catalogus): de agent moet dit eerst zelf natrekken (rosterHours/qualityReport) in plaats van de aanname klakkeloos over te nemen."
+      "expectedTools": ["qualityReport"],
+      "note": "Adversarial-user-stijl bewering (vergelijkbaar met §5/L5 van de challenge-catalogus): de agent moet dit eerst zelf natrekken via qualityReport (weekendcomponent) in plaats van de aanname klakkeloos over te nemen. `expectedTools` maakt de `toolChoice`-dimensie hier meetbaar — zie `benchmark/agentQuality.ts#toolChoiceScore` en `docs/BENCHMARK-FORMAT.md`."
     },
     {
       "id": "DR-DEV-05",

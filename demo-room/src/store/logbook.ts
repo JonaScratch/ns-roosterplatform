@@ -129,12 +129,21 @@ export function log(runId: string, input: Omit<LogEvent, "timestamp" | "runId"> 
   appendFileSync(jsonlPath(runId), `${JSON.stringify(event)}\n`, "utf8");
 }
 
+const aantalOfNietGemeten = (n: number | null | undefined): string => (n === null || n === undefined ? "niet gemeten" : String(n));
+
 export function endRun(runId: string, summary: RunEndSummary): void {
+  const dc = summary.detailedCounters;
   const blok = [
     "",
     `=== ${summary.outcome} ===`,
+    "--- VOLLEDIGE RUN ACCOUNTING ---",
     `Totale looptijd: ${Math.round(summary.totalDurationMs / 1000)}s`,
-    `Modelaanroepen: ${summary.modelCalls}`,
+    `Modelaanroepen (totaal, beste schatting): ${aantalOfNietGemeten(summary.modelCalls)}`,
+    dc ? `  waarvan benchAnswer()-aanroepen: ${aantalOfNietGemeten(dc.benchAnswerCalls)}` : null,
+    dc ? `  waarvan directe askAgent()-aanroepen (contextresolutietest): ${aantalOfNietGemeten(dc.askAgentDirectCalls)}` : null,
+    dc ? `  waarvan model-inferentiebeurten (turns): ${aantalOfNietGemeten(dc.modelInferenceTurns)}` : null,
+    dc ? `  toolaanroepen: ${aantalOfNietGemeten(dc.toolCalls)}` : null,
+    dc ? `  retries: ${aantalOfNietGemeten(dc.retries)} · mislukkingen: ${aantalOfNietGemeten(dc.failures)}` : null,
     `Experimenten: ${summary.experiments}`,
     `Optimizerjobs: ${summary.optimizerJobs}`,
     `Geteste varianten: ${summary.variantsTested}`,
@@ -143,8 +152,14 @@ export function endRun(runId: string, summary: RunEndSummary): void {
     `Productie gewijzigd: ${summary.productionChanged ? "ja" : "nee"}`,
     `Openstaande hypotheses: ${summary.openHypotheses.length > 0 ? summary.openHypotheses.join("; ") : "geen"}`,
     `Belangrijkste lessen: ${summary.lessonsLearned.length > 0 ? summary.lessonsLearned.join("; ") : "geen vastgelegd"}`,
+    "--- KNOWN WEAKNESSES AFTER RUN ---",
+    summary.knownWeaknessesAfterRun && summary.knownWeaknessesAfterRun.length > 0
+      ? summary.knownWeaknessesAfterRun.join("; ")
+      : "geen expliciet vastgelegd (dat betekent niet automatisch dat er geen zijn — zie de individuele dimensiewaarden hierboven)",
     "",
-  ].join("\n");
+  ]
+    .filter((regel): regel is string => regel !== null)
+    .join("\n");
   appendFileSync(txtPath(runId), blok, "utf8");
   appendFileSync(jsonlPath(runId), `${JSON.stringify({ timestamp: new Date().toISOString(), runId, kind: "RUN_END", summary })}\n`, "utf8");
 }

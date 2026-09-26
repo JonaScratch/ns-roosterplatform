@@ -289,6 +289,13 @@ export async function benchAnswer(
   // niet te onderscheiden is van een weigering die het model zelf uitsprak. Een
   // benchmark die dat verschil niet vastlegt, schrijft een platformeigenschap op
   // het conto van het model.
+  //
+  // `toolCalls` (volledig, met input/ok/ms/note) en `contextUsed` zijn
+  // additief toegevoegd naast het al bestaande, vereenvoudigde `tools`
+  // (namen-lijst) — een audit-trail die per toolaanroep en per opgeloste
+  // context wil loggen (Demo Room) had anders geen toegang tot iets dat
+  // `askAgent()` zelf al teruggeeft. Bestaande aanroepers zijn onveranderd:
+  // dit voegt alleen velden toe, niets wordt anders.
   return {
     ...antwoord,
     status: oordeel.status,
@@ -297,6 +304,9 @@ export async function benchAnswer(
     reasoning: laatste.reasoning,
     model: laatste.model,
     isLanguageModel: laatste.isLanguageModel,
+    toolCalls: laatste.toolCalls,
+    contextUsed: laatste.contextUsed,
+    turnsExecuted: beurten.length,
   };
 }
 

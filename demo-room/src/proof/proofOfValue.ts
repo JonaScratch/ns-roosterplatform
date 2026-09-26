@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { computeAgentQualityCategory, computeAgentQualityVariance, runContextResolutionCheck, scoreSuiteItems } from "../benchmark/agentQuality";
+import { computeAgentQualityBreakdown, computeAgentQualityCategory, computeAgentQualityVariance, runContextResolutionCheck, scoreSuiteItems } from "../benchmark/agentQuality";
 import { loadSuite } from "../benchmark/run";
 import { rosterNotApplicableReason, rosterQualityFromMetrics } from "../benchmark/rosterQuality";
 import { REPORTS_DIR, locationCode as defaultLocationCode } from "../config";
@@ -43,14 +43,22 @@ export async function measure(
   locationCode: string,
   rosterMetrics: Record<string, number> | null,
   variantCategory: ProofOfValueResult["variantCategory"],
+  suite: string = "dev",
 ): Promise<DualQualityMeasurement> {
   logbook.log(runId, { kind: "BENCHMARK_START", experimentId: null, message: `${label} gestart (${items.length} items).` });
-  const results = await scoreSuiteItems(items, modelOverride);
-  const contextCheck = await runContextResolutionCheck(locationCode, modelOverride);
+  const results = await scoreSuiteItems(items, modelOverride, { runId, suite, phase: label });
+  const contextCheck = await runContextResolutionCheck(locationCode, modelOverride, runId);
   const agent = computeAgentQualityCategory(items, results, contextCheck);
+  const breakdown = computeAgentQualityBreakdown(items, results);
+  // §"BENCHMARK IS NU TE KLEIN VOOR STERKE CLAIMS": nooit alleen een
+  // percentage — altijd ook pass/total en de item-ID's die de score bepalen,
+  // zodat een percentage nooit misleidt over hoe weinig items erachter zitten.
   const samenvatting = Object.entries(agent)
     .filter(([k, v]) => k !== "latencyMs" && typeof v === "number")
-    .map(([k, v]) => `${k}=${(v as number).toFixed(0)}%`)
+    .map(([k, v]) => {
+      const b = breakdown[k as keyof typeof breakdown];
+      return b ? `${k}=${b.pass}/${b.total} (${(v as number).toFixed(0)}%, items: ${b.itemIds.join(",")})` : `${k}=${(v as number).toFixed(0)}%`;
+    })
     .join(" | ");
   logbook.log(runId, { kind: "BENCHMARK_RESULT", experimentId: null, message: `${label} voltooid. ${samenvatting}` });
   return {
@@ -101,8 +109,8 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
 
   try {
     // 1. PRE: production Lyra (control, geen override) op de bevroren dev-set én op holdout.
-    pre = await measure(runId, "PRE (dev, controle)", dev.items, undefined, locationCode, null, variantCategory);
-    preHoldout = await measure(runId, "PRE-holdout (controle)", holdout.items, undefined, locationCode, null, variantCategory);
+    pre = await measure(runId, "PRE (dev, controle)", dev.items, undefined, locationCode, null, variantCategory, "dev");
+    preHoldout = await measure(runId, "PRE-holdout (controle)", holdout.items, undefined, locationCode, null, variantCategory, "holdout");
 
     // 2. Sandboxvariant maken (§14 hoofdapp-koppeling: systemPromptOverride, nooit productie).
     const variantModel = chatModelForVariant(variant);
@@ -113,11 +121,11 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     // run wordt bewaard; er wordt hier nergens de beste uitgekozen.
     postRuns = [];
     for (let i = 0; i < aantalPostRuns; i += 1) {
-      postRuns.push(await measure(runId, `POST-run ${i + 1}/${aantalPostRuns} (variant, dev)`, dev.items, variantModel, locationCode, null, variantCategory));
+      postRuns.push(await measure(runId, `POST-run ${i + 1}/${aantalPostRuns} (variant, dev)`, dev.items, variantModel, locationCode, null, variantCategory, "dev"));
     }
 
     // 4. Holdout: nooit gebruikt tijdens het maken van de variant.
-    holdoutMeasurement = await measure(runId, "Holdout (variant)", holdout.items, variantModel, locationCode, null, variantCategory);
+    holdoutMeasurement = await measure(runId, "Holdout (variant)", holdout.items, variantModel, locationCode, null, variantCategory, "holdout");
   } catch (fout) {
     executed = false;
     notExecutedReason =
@@ -131,13 +139,16 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     holdoutMeasurement = leeg;
   }
 
-  const oordeel = beoordeelProofOfValue({ pre, postRuns, preHoldout, holdout: holdoutMeasurement, executed });
+  const oordeel = beoordeelProofOfValue({ pre, postRuns, preHoldout, holdout: holdoutMeasurement, executed, variantCategory });
   const postMean = meanMeasurement(postRuns);
   logbook.log(runId, { kind: "COMPARISON", experimentId: null, message: `PRE vs. POST (gemiddeld over ${postRuns.length} run(s)) vergeleken.` });
   if (oordeel.regressions.length > 0) {
     for (const r of oordeel.regressions) logbook.log(runId, { kind: "REGRESSION_FOUND", experimentId: null, message: r });
   }
   logbook.log(runId, { kind: "PROMOTION_DECISION", experimentId: null, message: oordeel.reasoning, data: { decision: oordeel.decision } });
+  if (oordeel.knownWeaknesses.length > 0) {
+    logbook.log(runId, { kind: "KNOWN_WEAKNESSES", experimentId: null, message: `Blijft zwak ondanks dit besluit: ${oordeel.knownWeaknesses.join(", ")}.` });
+  }
   const postVariance = computeAgentQualityVariance(postRuns.map((r) => r.agent));
 
   const result: ProofOfValueResult = {
@@ -161,6 +172,7 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     improvements: oordeel.improvements,
     decision: oordeel.decision,
     reasoning: oordeel.reasoning,
+    knownWeaknesses: oordeel.knownWeaknesses,
   };
 
   await persist(result, dev.items.length, holdout.items.length);
@@ -270,7 +282,7 @@ async function persist(result: ProofOfValueResult, devCount: number, holdoutCoun
     newErrors: result.executed ? [] : [result.notExecutedReason ?? "onbekende fout"],
     decision: result.decision,
     rollback: "Geen productiecode gewijzigd — de variant leeft alleen in het geheugen van dit testproces (systemPromptOverride, nooit gezet door localConfigFromEnv()).",
-    humanSummary: `${result.reasoning} (${result.postRuns.length} onafhankelijke POST-run(s); ${varianceSummary(result)})`,
+    humanSummary: `${result.reasoning} (${result.postRuns.length} onafhankelijke POST-run(s); ${varianceSummary(result)})${result.knownWeaknesses.length > 0 ? ` KNOWN WEAKNESSES AFTER RUN: ${result.knownWeaknesses.join(", ")}.` : ""}`,
   };
   writeJournalEntry(journal);
 }

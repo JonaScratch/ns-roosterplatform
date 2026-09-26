@@ -99,6 +99,35 @@ function kiesVariantVoorZwakte(dimensie: keyof AgentQualityCategory | null, uitg
   return { variant: kandidaten[0], motivatie: `Zwakste gemeten dimensie is ${dimensie ?? "onbekend (niet uitgevoerd)"} — ${kandidaten[0].label} is de meest relevante resterende, al bestaande sandboxvariant.` };
 }
 
+/**
+ * §"HOLDOUT-UITLEG": "geen holdoutregressie" en "verbetering generaliseert
+ * naar holdout" zijn NIET hetzelfde beweren. Deze functie claimt generalisatie
+ * alleen wanneer een dimensie die op dev verbeterde, óók op holdout een
+ * werkelijke verbetering laat zien (preHoldout → holdout omhoog) — niet
+ * wanneer holdout gewoon op hetzelfde niveau bleef (bijvoorbeeld al 100% vóór
+ * én na, wat niets bewijst over generalisatie, alleen dat er geen regressie
+ * optrad).
+ */
+function holdoutGeneraliseert(proof: ProofOfValueResult): { generaliseert: boolean; toelichting: string } {
+  const preH = proof.preHoldout.agent;
+  const h = proof.holdout.agent;
+  const verbeterdeDimensies = AGENT_CATEGORY_KEYS.filter((k) => {
+    const voor = preH[k];
+    const na = h[k];
+    return typeof voor === "number" && typeof na === "number" && na > voor;
+  });
+  if (verbeterdeDimensies.length > 0) {
+    return {
+      generaliseert: true,
+      toelichting: `Werkelijke holdoutverbetering gemeten op ${verbeterdeDimensies.map((k) => `${k}: ${(preH[k] as number).toFixed(1)} → ${(h[k] as number).toFixed(1)}`).join(", ")}.`,
+    };
+  }
+  return {
+    generaliseert: false,
+    toelichting: "Geen holdoutregressie gemeten, maar ook geen werkelijke holdoutverbetering — de holdoutscore bleef op hetzelfde niveau (bijvoorbeeld al aan het plafond vóór de wijziging). Dat bewijst afwezigheid van regressie, geen generalisatie.",
+  };
+}
+
 function scoreVoorDimensie(agent: AgentQualityCategory, dimensie: keyof AgentQualityCategory | null): number | null {
   if (!dimensie) return null;
   const v = agent[dimensie];
@@ -251,7 +280,16 @@ function bouwScorecard(cycles: readonly AutonomyCycleResult[]): readonly Capabil
     item("learnFromPrevious", "van vorige experimenten leren", cycles.length > 1 ? "JA" : "NEE", cycles.length > 1 ? "Cyclus 2 koos expliciet een andere variant, gemotiveerd door de afwijzing van cyclus 1." : "Slechts één onderzoekscyclus was nodig of mogelijk binnen dit budget — leren-van-afwijzing kon niet aangetoond worden."),
     item("useOptimizer", "optimizer gebruiken", "NIET_GETEST", "Buiten scope van deze test — de optimizer hoort bij ENGINE_VARIANT/autonome onderzoekslussen, niet bij prompt-proof-of-value."),
     item("useValidator", "validator gebruiken", "NIET_GETEST", "Er is geen kandidaatrooster gegenereerd in deze test — er was niets te valideren."),
-    item("generalizeToHoldout", "verbetering generaliseren naar holdout", enigePromotie ? "JA" : executed ? "NIET_GEVONDEN" : "NIET_GEVONDEN", enigePromotie ? `${enigePromotie.variantLabel} generaliseerde naar de holdout (geen betekenisvolle holdoutregressie).` : executed ? "Geen aantoonbare verbetering gevonden binnen dit budget — een geldig, informatief resultaat." : localRequiredDetail),
+    item(
+      "generalizeToHoldout",
+      "verbetering generaliseren naar holdout",
+      enigePromotie ? (holdoutGeneraliseert(enigePromotie.proof).generaliseert ? "JA" : "NIET_GEVONDEN") : "NIET_GEVONDEN",
+      enigePromotie
+        ? `${enigePromotie.variantLabel}: ${holdoutGeneraliseert(enigePromotie.proof).toelichting}`
+        : executed
+          ? "Geen aantoonbare verbetering gevonden binnen dit budget — een geldig, informatief resultaat."
+          : localRequiredDetail,
+    ),
     item("protectProduction", "productie beschermd houden", "JA", "Dit pad roept nergens activateVersion()/publishExperiment() aan — structureel geverifieerd via proof/proofOfValue.ts, ongeacht de uitkomst hierboven."),
     item("fullLogbook", "volledig logboek produceren", "JA", `Elke stap van deze run staat in demo-room/logs/${cycles[0]?.proof.runId ?? "—"}.txt/.jsonl.`),
   ];

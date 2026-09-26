@@ -80,7 +80,7 @@ describe("Demo Room — logboek (audit trail)", () => {
     });
     const tekst = readRunText(runId)!;
     expect(tekst).toContain("=== RUN_COMPLETED ===");
-    expect(tekst).toContain("Modelaanroepen: 12");
+    expect(tekst).toContain("Modelaanroepen (totaal, beste schatting): 12");
     expect(tekst).toContain("holdout regresseerde");
   });
 
