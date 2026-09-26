@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { computeAgentQualityCategory, runContextResolutionCheck, scoreSuiteItems } from "../benchmark/agentQuality";
+import { computeAgentQualityCategory, computeAgentQualityVariance, runContextResolutionCheck, scoreSuiteItems } from "../benchmark/agentQuality";
 import { loadSuite } from "../benchmark/run";
 import { rosterNotApplicableReason, rosterQualityFromMetrics } from "../benchmark/rosterQuality";
 import { REPORTS_DIR, locationCode as defaultLocationCode } from "../config";
@@ -11,9 +11,10 @@ import { appendBenchmarkHistory } from "../store/benchmarkHistory";
 import { appendExperiment } from "../store/runlog";
 import { writeJournalEntry } from "../store/journal";
 import { getVersion, currentVersionId } from "../publish/versions";
+import * as logbook from "../store/logbook";
 import { CONTROL, chatModelForVariant, findPromptVariant, type PromptVariant } from "../variants/promptVariants";
-import { beoordeelProofOfValue } from "./decision";
-import type { DualQualityMeasurement, ExperimentRecord, JournalEntry, ProofOfValueResult } from "../types";
+import { MIN_POST_RUNS, beoordeelProofOfValue } from "./decision";
+import type { AgentQualityCategory, DualQualityMeasurement, ExperimentRecord, JournalEntry, ProofOfValueResult } from "../types";
 
 /**
  * De proof-of-value-test (v0.2, §1/§3 van de aanvullende opdracht):
@@ -29,11 +30,26 @@ import type { DualQualityMeasurement, ExperimentRecord, JournalEntry, ProofOfVal
 
 const FROZEN_SET_ID = "dev-v0.2-frozen-1"; // dev.json's inhoud is de bevroren set; wijzig deze ID als dev.json ooit inhoudelijk verandert.
 
-async function measure(items: readonly Record<string, unknown>[], modelOverride: Parameters<typeof scoreSuiteItems>[1], locationCode: string, rosterMetrics: Record<string, number> | null, variantCategory: ProofOfValueResult["variantCategory"]): Promise<DualQualityMeasurement> {
+async function measure(
+  runId: string,
+  label: string,
+  items: readonly Record<string, unknown>[],
+  modelOverride: Parameters<typeof scoreSuiteItems>[1],
+  locationCode: string,
+  rosterMetrics: Record<string, number> | null,
+  variantCategory: ProofOfValueResult["variantCategory"],
+): Promise<DualQualityMeasurement> {
+  logbook.log(runId, { kind: "BENCHMARK_START", experimentId: null, message: `${label} gestart (${items.length} items).` });
   const results = await scoreSuiteItems(items, modelOverride);
   const contextCheck = await runContextResolutionCheck(locationCode, modelOverride);
+  const agent = computeAgentQualityCategory(items, results, contextCheck);
+  const samenvatting = Object.entries(agent)
+    .filter(([k, v]) => k !== "latencyMs" && typeof v === "number")
+    .map(([k, v]) => `${k}=${(v as number).toFixed(0)}%`)
+    .join(" | ");
+  logbook.log(runId, { kind: "BENCHMARK_RESULT", experimentId: null, message: `${label} voltooid. ${samenvatting}` });
   return {
-    agent: computeAgentQualityCategory(items, results, contextCheck),
+    agent,
     roster: rosterQualityFromMetrics(rosterMetrics, rosterNotApplicableReason(variantCategory)),
     measuredAt: new Date().toISOString(),
   };
@@ -42,51 +58,82 @@ async function measure(items: readonly Record<string, unknown>[], modelOverride:
 export interface RunProofOfValueOptions {
   readonly variantId?: string;
   readonly locationCode?: string;
+  /** §3: minimaal twee onafhankelijke POST-runs wanneer modelgedrag onderdeel is van de wijziging. */
+  readonly postRuns?: number;
+  /** Extern run-ID (van de CLI/dashboard) zodat het logboek van start tot eind hetzelfde ID gebruikt. Zonder dit genereert deze functie er zelf een — handig voor losse tests/scripts. */
+  readonly runId?: string;
+}
+
+function meanMeasurement(runs: readonly DualQualityMeasurement[]): DualQualityMeasurement {
+  const keys = Object.keys(runs[0].agent).filter((k) => k !== "latencyMs") as (keyof AgentQualityCategory)[];
+  const mean = {} as Record<keyof AgentQualityCategory, number | null>;
+  for (const k of keys) {
+    const waarden = runs.map((r) => r.agent[k]).filter((v): v is number => typeof v === "number");
+    mean[k] = waarden.length > 0 ? waarden.reduce((a, b) => a + b, 0) / waarden.length : null;
+  }
+  const agent: AgentQualityCategory = { ...(mean as Omit<AgentQualityCategory, "latencyMs">), latencyMs: runs.find((r) => r.agent.latencyMs)?.agent.latencyMs ?? null };
+  return { agent, roster: runs[0].roster, measuredAt: runs[runs.length - 1].measuredAt };
 }
 
 export async function runProofOfValue(options: RunProofOfValueOptions = {}): Promise<ProofOfValueResult> {
-  const runId = `DR-POV-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
+  const runId = options.runId ?? `DR-POV-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
   const startedAt = new Date().toISOString();
   const locationCode = options.locationCode ?? defaultLocationCode();
   const variant: PromptVariant = (options.variantId ? findPromptVariant(options.variantId) : null) ?? findPromptVariant("variant-a-tool-hint")!;
   const variantCategory: ProofOfValueResult["variantCategory"] = variant.category;
+  const aantalPostRuns = Math.max(1, options.postRuns ?? MIN_POST_RUNS);
 
   const dev = loadSuite("dev");
   const holdout = loadSuite("holdout");
+  logbook.log(runId, { kind: "SANDBOX_VARIANT", experimentId: null, message: `Sandboxvariant gekozen: ${variant.label} (${variant.category}).`, data: { variantId: variant.id } });
 
   let executed = true;
   let notExecutedReason: string | null = null;
   let pre: DualQualityMeasurement;
-  let post: DualQualityMeasurement;
+  let postRuns: DualQualityMeasurement[];
   let preHoldout: DualQualityMeasurement;
   let holdoutMeasurement: DualQualityMeasurement;
 
   try {
     // 1. PRE: production Lyra (control, geen override) op de bevroren dev-set én op holdout.
-    pre = await measure(dev.items, undefined, locationCode, null, variantCategory);
-    preHoldout = await measure(holdout.items, undefined, locationCode, null, variantCategory);
+    pre = await measure(runId, "PRE (dev, controle)", dev.items, undefined, locationCode, null, variantCategory);
+    preHoldout = await measure(runId, "PRE-holdout (controle)", holdout.items, undefined, locationCode, null, variantCategory);
 
     // 2. Sandboxvariant maken (§14 hoofdapp-koppeling: systemPromptOverride, nooit productie).
     const variantModel = chatModelForVariant(variant);
+    logbook.log(runId, { kind: "VARIANT_CREATED", experimentId: null, message: `Sandbox-ChatModel gebouwd via systemPromptOverride (nooit productie).` });
 
-    // 3. POST: dezelfde bevroren dev-set, nu met de variant.
-    post = await measure(dev.items, variantModel, locationCode, null, variantCategory);
+    // 3. POST: dezelfde bevroren dev-set, N onafhankelijke keren — nooit maar
+    // één keer wanneer modelgedrag onderdeel is van de wijziging (§3). Elke
+    // run wordt bewaard; er wordt hier nergens de beste uitgekozen.
+    postRuns = [];
+    for (let i = 0; i < aantalPostRuns; i += 1) {
+      postRuns.push(await measure(runId, `POST-run ${i + 1}/${aantalPostRuns} (variant, dev)`, dev.items, variantModel, locationCode, null, variantCategory));
+    }
 
     // 4. Holdout: nooit gebruikt tijdens het maken van de variant.
-    holdoutMeasurement = await measure(holdout.items, variantModel, locationCode, null, variantCategory);
+    holdoutMeasurement = await measure(runId, "Holdout (variant)", holdout.items, variantModel, locationCode, null, variantCategory);
   } catch (fout) {
     executed = false;
     notExecutedReason =
       `Niet uitgevoerd: ${fout instanceof Error ? fout.message : String(fout)}. ` +
       "Waarschijnlijk ontbreekt een lokaal taalmodel (NS_LOCAL_LLM_URL/NS_LOCAL_LLM_MODEL) of de database. Zie demo-room/README.md.";
+    logbook.log(runId, { kind: "ERROR", experimentId: null, message: notExecutedReason });
     const leeg = await legeDualQualityMeasurement(variantCategory);
     pre = leeg;
-    post = leeg;
+    postRuns = [leeg];
     preHoldout = leeg;
     holdoutMeasurement = leeg;
   }
 
-  const oordeel = beoordeelProofOfValue({ pre, post, preHoldout, holdout: holdoutMeasurement, executed });
+  const oordeel = beoordeelProofOfValue({ pre, postRuns, preHoldout, holdout: holdoutMeasurement, executed });
+  const postMean = meanMeasurement(postRuns);
+  logbook.log(runId, { kind: "COMPARISON", experimentId: null, message: `PRE vs. POST (gemiddeld over ${postRuns.length} run(s)) vergeleken.` });
+  if (oordeel.regressions.length > 0) {
+    for (const r of oordeel.regressions) logbook.log(runId, { kind: "REGRESSION_FOUND", experimentId: null, message: r });
+  }
+  logbook.log(runId, { kind: "PROMOTION_DECISION", experimentId: null, message: oordeel.reasoning, data: { decision: oordeel.decision } });
+  const postVariance = computeAgentQualityVariance(postRuns.map((r) => r.agent));
 
   const result: ProofOfValueResult = {
     id: randomUUID(),
@@ -100,7 +147,9 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     variantCategory,
     frozenSetId: FROZEN_SET_ID,
     pre,
-    post,
+    postRuns,
+    post: postMean,
+    postVariance,
     preHoldout,
     holdout: holdoutMeasurement,
     regressions: oordeel.regressions,
@@ -216,7 +265,7 @@ async function persist(result: ProofOfValueResult, devCount: number, holdoutCoun
     newErrors: result.executed ? [] : [result.notExecutedReason ?? "onbekende fout"],
     decision: result.decision,
     rollback: "Geen productiecode gewijzigd — de variant leeft alleen in het geheugen van dit testproces (systemPromptOverride, nooit gezet door localConfigFromEnv()).",
-    humanSummary: result.reasoning,
+    humanSummary: `${result.reasoning} (${result.postRuns.length} onafhankelijke POST-run(s); ${varianceSummary(result)})`,
   };
   writeJournalEntry(journal);
 }
@@ -239,6 +288,15 @@ function writeImprovementReport(experiment: ExperimentRecord, result: ProofOfVal
   writeFileSync(path.join(dir, `${experiment.id}-jonathan.md`), renderForJonathan(input), "utf8");
   writeFileSync(path.join(dir, `${experiment.id}-technisch.md`), renderForClaude(input), "utf8");
   writeFileSync(path.join(dir, `${experiment.id}-machine.json`), `${JSON.stringify(buildImprovementReportJson(input), null, 2)}\n`, "utf8");
+}
+
+/** §3: variantie altijd expliciet noemen, nooit alleen het gemiddelde tonen alsof het één zekere meting was. */
+function varianceSummary(result: ProofOfValueResult): string {
+  if (result.postRuns.length <= 1) return "geen spreiding te melden bij één run";
+  const relevante = Object.entries(result.postVariance).filter(([k, v]) => k !== "latencyMs" && v !== null) as [string, { min: number; max: number; stddev: number }][];
+  if (relevante.length === 0) return "geen variantie berekend";
+  const grootste = relevante.reduce((a, b) => (b[1].stddev > a[1].stddev ? b : a));
+  return `grootste spreiding: ${grootste[0]} (${grootste[1].min.toFixed(1)}–${grootste[1].max.toFixed(1)}, sd ${grootste[1].stddev.toFixed(2)})`;
 }
 
 function averageOf(o: Record<string, number>): number {

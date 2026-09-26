@@ -1,4 +1,4 @@
-# Lyra Demo Room v0.2
+# Lyra Demo Room v0.3
 
 Een apart, lokaal laboratorium naast het NS Roosterplatform, om de ingebouwde
 roosteragent (in deze codebase "de agent" genoemd — er staat nergens de naam
@@ -7,7 +7,8 @@ gaf) hard te testen, te benchmarken en — via een veilige, met een klik
 bevestigde publicatiepijplijn, nooit automatisch — te verbeteren.
 
 Zie ook: `docs/ARCHITECTURE.md`, `docs/SAFETY-BOUNDARIES.md`,
-`docs/CHALLENGE-FORMAT.md`, `docs/BENCHMARK-FORMAT.md`, `docs/SAFE-PUBLISH.md`.
+`docs/CHALLENGE-FORMAT.md`, `docs/BENCHMARK-FORMAT.md`, `docs/SAFE-PUBLISH.md`,
+`docs/LOGBOOK.md`.
 
 ## Wat dit WEL en NIET is
 
@@ -38,6 +39,33 @@ de eerste voortbouwt:
    smoke benchmark → grondingscontrole → succes/automatische rollback) en een
    losse, met een klik bevestigde "Herstel"-actie naar elke eerdere versie.
    Demo Room experimenteert en beveelt aan; **Jonathan publiceert.**
+
+## v0.3 in het kort
+
+Drie acceptatiepunten, bovenop v0.2:
+
+3. **Proof-of-value volledig vanuit de UI**: knop "Bewijs verbeterlus" op
+   Overzicht, met een live voortgangsstepper (PRE → sandboxvariant → POST →
+   holdout → regressiecontrole → beslissing) op het tabblad Live run. CMD
+   blijft de fallback/debug-weg (`npm run demo-room -- proof-of-value`).
+4. **Rollback bewezen met een gecontroleerde failure-injectietest**
+   (`tests/demo-room/safePublishRollback.test.ts`): een expres ongeldige
+   testvariant wordt gepubliceerd naar een volledig geïsoleerde
+   test-productionstate (`DEMO_ROOM_STATE_ROOT_OVERRIDE`, nooit de echte
+   installatie), waarna programmatisch geverifieerd wordt dat de vorige
+   versie weer actief is, de prompt exact hersteld is, de versiegeschiedenis
+   intact blijft, en de mislukking + rollback in journaal/HANDOFF/logboek
+   staan.
+5. **Geen promotie op één toevallige modelrun**: minimaal twee onafhankelijke
+   POST-runs (`--post-runs`, standaard 2) op dezelfde bevroren suite; winst
+   wordt op het gemiddelde beoordeeld, regressies (vooral
+   veiligheid/grounding) op de slechtste run — nooit cherry-picken in beide
+   richtingen. Zie `proof/decision.ts`.
+6. **Volledig append-only logboek** (`demo-room/logs/RUN-*.txt`/`.jsonl`, zie
+   `docs/LOGBOOK.md`): elke operationele stap van een run, crash-safe
+   weggeschreven, met centrale redactie van geheimen, en een eigen tabblad
+   "Logboek" (zoeken/filteren, downloaden, kopiëren voor ChatGPT/Claude,
+   deep-link vanuit een experimentdetail).
 
 ## Vereisten
 
@@ -129,17 +157,45 @@ Na een run staat het volledige verslag in:
 
 ## De acceptatietest, in deze volgorde (niet overslaan)
 
-1. `npm run demo-room -- proof-of-value` — moet écht PRE/POST/holdout meten
-   met het lokale model, en een eerlijke `PROMOTION_CANDIDATE`, `REJECTED` of
-   `KEEP_TESTING` opleveren.
-2. Bekijk het dashboard: grafieken tonen deze echte cijfers (geen
-   dummydata), het journaal en `HANDOFF.md` zijn bijgewerkt.
-3. Pas dáárna: een korte challenge (§ hierboven) en een korte autonome
-   smoke-run (10 minuten).
-4. Pas als die stabiel eindigt: een langere autonome run (30/60 min of meer).
+Dit is de exacte volgorde die Jonathan vroeg, en die moet lokaal
+end-to-end bewezen worden vóór er sprake is van een langere run:
 
-Dit is bewust dezelfde volgorde als Jonathan expliciet vroeg: **geen
-60-minutenrun voordat proof-of-value aantoont dat de verbeterlus werkt.**
+`Start Demo Room` → `UI opent` → `Bewijs verbeterlus` → `echte lokale
+Qwen + echte DB` → `PRE` → `sandboxvariant` → `POST-runs` → `holdout` →
+`resultaat in grafieken` → `tekstuele uitleg` → `journal/HANDOFF` →
+`alleen bij aantoonbare verbetering PROMOTION CANDIDATE`.
+
+Concreet:
+
+1. Start Demo Room (`npm run demo-room -- dashboard` of het equivalente
+   startscript) en open het dashboard in de browser.
+2. Klik in het dashboard op **"Bewijs verbeterlus"** (Overzicht-tabblad).
+   Dit start dezelfde proof-of-value-pipeline als
+   `npm run demo-room -- proof-of-value`, nu vanuit de UI — CMD blijft
+   alleen fallback/debug. Met echte lokale Qwen en echte database moet dit
+   écht PRE → sandboxvariant → POST-runs (minimaal 2, onafhankelijk, zelfde
+   bevroren suite) → holdout meten, met live voortgang in de stappenrij
+   (PRE → sandboxvariant → POST → holdout → regressiecontrole →
+   beslissing).
+3. Bekijk het dashboard: grafieken tonen deze echte cijfers (geen
+   dummydata), inclusief de variantie tussen de POST-runs — nooit alleen
+   de beste run. Er is een tekstuele uitleg van het resultaat. Het
+   journaal en `HANDOFF.md` zijn bijgewerkt. Het logboek
+   (`docs/LOGBOOK.md`, tabblad "Logboek") bevat de volledige,
+   ongefilterde procesgang van deze run.
+4. Alleen bij aantoonbare verbetering — geen regressie op grounding/
+   falsePremiseCorrection/causalClaims, geen holdout-regressie, verbetering
+   op de overige dimensies over het gemiddelde van de POST-runs — volgt
+   een `PROMOTION_CANDIDATE`. Geen verbetering aantonen is een geldige,
+   informatieve uitkomst (`KEEP_TESTING`) en geen mislukking. Publiceren
+   blijft altijd een expliciete, aparte handeling van Jonathan.
+5. Pas ná deze end-to-end proof: een korte challenge (§ hierboven) en een
+   korte autonome smoke-run (10 minuten).
+6. Pas als die stabiel eindigt: een langere autonome run (30/60 min of
+   meer).
+
+**Geen 60-minutenrun totdat dit lokaal end-to-end bewezen is.** Dit is
+bewust dezelfde volgorde als Jonathan expliciet vroeg.
 
 ## Tests
 

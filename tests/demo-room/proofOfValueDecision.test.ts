@@ -24,7 +24,7 @@ function measurement(agentCat: AgentQualityCategory): DualQualityMeasurement {
 describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
   it("niet uitgevoerd (LOCAL REQUIRED) is nooit REJECTED, altijd KEEP_TESTING", () => {
     const leeg = measurement(agent({ contextResolution: null, multiTurnContext: null, machinistTaal: null, toolChoice: null, falsePremiseCorrection: null, grounding: null, causalClaims: null, unnecessaryClarifications: null, latencyMs: null }));
-    const r = beoordeelProofOfValue({ pre: leeg, post: leeg, preHoldout: leeg, holdout: leeg, executed: false });
+    const r = beoordeelProofOfValue({ pre: leeg, postRuns: [leeg], preHoldout: leeg, holdout: leeg, executed: false });
     expect(r.decision).toBe("KEEP_TESTING");
   });
 
@@ -33,7 +33,7 @@ describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
     const post = measurement(agent({ contextResolution: 91 })); // +14pp
     const preHoldout = measurement(agent({ contextResolution: 80 }));
     const holdout = measurement(agent({ contextResolution: 84 })); // geen regressie
-    const r = beoordeelProofOfValue({ pre, post, preHoldout, holdout, executed: true });
+    const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout, holdout, executed: true });
     expect(r.decision).toBe("PROMOTION_CANDIDATE");
     expect(r.improvements.some((i) => i.includes("contextResolution"))).toBe(true);
   });
@@ -43,7 +43,7 @@ describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
     const post = measurement(agent({ contextResolution: 95, grounding: 90 })); // grounding -10, elke daling telt
     const preHoldout = measurement(agent({}));
     const holdout = measurement(agent({}));
-    const r = beoordeelProofOfValue({ pre, post, preHoldout, holdout, executed: true });
+    const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout, holdout, executed: true });
     expect(r.decision).toBe("REJECTED");
     expect(r.regressions.some((x) => x.includes("grounding"))).toBe(true);
   });
@@ -53,7 +53,7 @@ describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
     const post = measurement(agent({ contextResolution: 95 })); // dev: flinke winst
     const preHoldout = measurement(agent({ contextResolution: 80 }));
     const holdout = measurement(agent({ contextResolution: 60 })); // holdout: -20pp t.o.v. controle
-    const r = beoordeelProofOfValue({ pre, post, preHoldout, holdout, executed: true });
+    const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout, holdout, executed: true });
     expect(r.decision).toBe("REJECTED");
     expect(r.regressions.some((x) => x.startsWith("holdout"))).toBe(true);
   });
@@ -63,7 +63,7 @@ describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
     const post = measurement(agent({ contextResolution: 81 })); // binnen de ruismarge
     const preHoldout = measurement(agent({}));
     const holdout = measurement(agent({}));
-    const r = beoordeelProofOfValue({ pre, post, preHoldout, holdout, executed: true });
+    const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout, holdout, executed: true });
     expect(r.decision).toBe("KEEP_TESTING");
     expect(r.regressions).toEqual([]);
     expect(r.improvements).toEqual([]);
@@ -74,7 +74,63 @@ describe("Demo Room v0.2 — proof-of-value promotiecriterium (§2)", () => {
     const post = measurement(agent({ contextResolution: 95, grounding: 99 })); // -1pp, nog steeds een daling
     const preHoldout = measurement(agent({}));
     const holdout = measurement(agent({}));
-    const r = beoordeelProofOfValue({ pre, post, preHoldout, holdout, executed: true });
+    const r = beoordeelProofOfValue({ pre, postRuns: [post], preHoldout, holdout, executed: true });
     expect(r.decision).toBe("REJECTED");
+  });
+
+  describe("§3 — geen promotie op één toevallige modelrun", () => {
+    it("geïnspireerd op het voorbeeld uit de opdracht: twee POST-runs, holdout zakt betekenisvol — REJECTED, ook al zag POST #1 er goed uit", () => {
+      const pre = measurement(agent({ contextResolution: 81.4 }));
+      const post1 = measurement(agent({ contextResolution: 84.1 }));
+      const post2 = measurement(agent({ contextResolution: 82.0 }));
+      const preHoldout = measurement(agent({ contextResolution: 84.0 }));
+      const holdout = measurement(agent({ contextResolution: 78.2 })); // -5.8pp t.o.v. de controle op dezelfde holdout-set
+      const r = beoordeelProofOfValue({ pre, postRuns: [post1, post2], preHoldout, holdout, executed: true });
+      expect(r.decision).toBe("REJECTED");
+      expect(r.regressions.some((x) => x.startsWith("holdout"))).toBe(true);
+    });
+
+    it("kleine dev-winst die de ruismarge niet haalt (zoals in het voorbeeld: +1.65pp gemiddeld) blijft KEEP_TESTING zonder holdoutregressie", () => {
+      const pre = measurement(agent({ contextResolution: 81.4 }));
+      const post1 = measurement(agent({ contextResolution: 84.1 }));
+      const post2 = measurement(agent({ contextResolution: 82.0 })); // gemiddeld +1.65pp, onder VERBETERMARGE
+      const r = beoordeelProofOfValue({ pre, postRuns: [post1, post2], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true });
+      expect(r.decision).toBe("KEEP_TESTING");
+    });
+
+    it("winst wordt op het GEMIDDELDE van de POST-runs beoordeeld, niet op de beste run", () => {
+      const pre = measurement(agent({ contextResolution: 80 }));
+      const goedeRun = measurement(agent({ contextResolution: 95 })); // ruim boven de marge
+      const matigeRun = measurement(agent({ contextResolution: 81 })); // binnen de ruismarge
+      // gemiddelde = 88, dat is nog steeds een aantoonbare verbetering — mag PROMOTION_CANDIDATE zijn
+      const r1 = beoordeelProofOfValue({ pre, postRuns: [goedeRun, matigeRun], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true });
+      expect(r1.decision).toBe("PROMOTION_CANDIDATE");
+
+      // maar cherry-picken van alléén de goede run zou een ANDER besluit geven dan het eerlijke gemiddelde bij een kleinere winst
+      const kleineWinst = measurement(agent({ contextResolution: 85 }));
+      const geenWinst = measurement(agent({ contextResolution: 80 }));
+      // gemiddelde = 82.5, ruim binnen de ruismarge van 3pp t.o.v. pre=80
+      const r2 = beoordeelProofOfValue({ pre, postRuns: [kleineWinst, geenWinst], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true });
+      expect(r2.decision).toBe("KEEP_TESTING");
+    });
+
+    it("een regressie op grounding in ÉÉN van de twee runs blokkeert promotie, ook als de andere run perfect scoorde", () => {
+      const pre = measurement(agent({ contextResolution: 80, grounding: 100 }));
+      const perfecteRun = measurement(agent({ contextResolution: 95, grounding: 100 }));
+      const eenSlechteRun = measurement(agent({ contextResolution: 95, grounding: 85 })); // duidelijke terugval
+      const r = beoordeelProofOfValue({ pre, postRuns: [perfecteRun, eenSlechteRun], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true });
+      expect(r.decision).toBe("REJECTED");
+      expect(r.regressions.some((x) => x.includes("grounding"))).toBe(true);
+      expect(r.regressions.some((x) => x.includes("2 POST-runs"))).toBe(true);
+    });
+
+    it("rapporteert expliciet dat het om meerdere runs gaat in de tekst van winst/regressie", () => {
+      const pre = measurement(agent({ contextResolution: 77 }));
+      const post1 = measurement(agent({ contextResolution: 90 }));
+      const post2 = measurement(agent({ contextResolution: 92 }));
+      const r = beoordeelProofOfValue({ pre, postRuns: [post1, post2], preHoldout: measurement(agent({})), holdout: measurement(agent({})), executed: true });
+      expect(r.decision).toBe("PROMOTION_CANDIDATE");
+      expect(r.improvements.some((i) => i.includes("2 runs"))).toBe(true);
+    });
   });
 });

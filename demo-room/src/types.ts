@@ -154,9 +154,26 @@ export interface DualQualityMeasurement {
 export type PromotionDecision = "PROMOTION_CANDIDATE" | "REJECTED" | "KEEP_TESTING";
 
 /**
- * Eén proof-of-value-run: production Lyra → PRE → sandboxvariant → POST
- * (dezelfde bevroren set) → holdout → regressiecontrole → besluit (§1-§3 van
- * de aanvullende opdracht).
+ * Variantie van een agentkwaliteitsdimensie over meerdere onafhankelijke
+ * runs op dezelfde bevroren set (§3 van de aanvullende opdracht: "geen
+ * promotie op één toevallige modelrun"). `values` bevat élke run, in
+ * volgorde — nooit ingekort tot alleen de beste.
+ */
+export interface CategoryVariance {
+  readonly values: readonly number[];
+  readonly mean: number;
+  readonly min: number;
+  readonly max: number;
+  readonly stddev: number;
+}
+
+/** Dezelfde negen dimensies als `AgentQualityCategory`, maar elk als variantie over N runs. */
+export type AgentQualityVariance = { readonly [K in keyof AgentQualityCategory]: CategoryVariance | null };
+
+/**
+ * Eén proof-of-value-run: production Lyra → PRE → sandboxvariant → N
+ * onafhankelijke POST-runs → holdout → regressiecontrole → besluit (§1-§3
+ * van de aanvullende opdracht).
  */
 export interface ProofOfValueResult {
   readonly id: string;
@@ -171,8 +188,15 @@ export interface ProofOfValueResult {
   readonly frozenSetId: string;
   /** Productie-Lyra (control) op de bevroren dev-set — de meetlat voor POST. */
   readonly pre: DualQualityMeasurement;
-  /** Sandboxvariant op EXACT dezelfde bevroren dev-set als `pre`. */
+  /**
+   * Alle onafhankelijke POST-runs, ongewijzigd — nooit ingekort tot de beste
+   * run. Minimaal 2 wanneer modelgedrag onderdeel is van de wijziging.
+   */
+  readonly postRuns: readonly DualQualityMeasurement[];
+  /** Gemiddelde over `postRuns`, per dimensie — het cijfer dat in de UI als "POST" getoond wordt. */
   readonly post: DualQualityMeasurement;
+  /** Variantie per dimensie over `postRuns` — altijd expliciet gerapporteerd, ook bij grote spreiding. */
+  readonly postVariance: AgentQualityVariance;
   /** Productie-Lyra (control) op de holdout-set — de meetlat voor de holdoutvergelijking. */
   readonly preHoldout: DualQualityMeasurement;
   /** Sandboxvariant op de holdout-set. */
@@ -206,6 +230,84 @@ export interface LyraVersion {
   readonly changedFiles: readonly string[];
   readonly knownIssues: readonly string[];
   readonly reasonForPromotion: string;
+}
+
+/**
+ * De volledige gebeurtenistaxonomie van het Demo Room-logboek (§ aanvulling
+ * "VERPLICHT VOLLEDIG DEMO ROOM LOGBOEK"). Eén regel per betekenisvolle
+ * operationele stap — nooit stil overslaan, ook niet bij afwijzen/overslaan/
+ * budget/ongeldige kandidaat/mislukking (zie "GEEN STILLE ACTIES").
+ */
+export type LogEventKind =
+  | "RUN_START"
+  | "RUN_END"
+  | "PRODUCTION_VERSION"
+  | "SANDBOX_VARIANT"
+  | "MODEL_CONFIG"
+  | "CHALLENGE_OR_GOAL"
+  | "BENCHMARK_START"
+  | "BENCHMARK_RESULT"
+  | "HYPOTHESIS"
+  | "VARIANT_CREATED"
+  | "CHANGE_APPLIED"
+  | "TOOL_ACTION"
+  | "OPTIMIZER_ACTION"
+  | "VALIDATOR_ACTION"
+  | "TEST_START"
+  | "TEST_RESULT"
+  | "ERROR"
+  | "CANDIDATE_GENERATED"
+  | "VALIDATOR_RESULT"
+  | "COMPARISON"
+  | "REGRESSION_FOUND"
+  | "ROLLBACK"
+  | "PROMOTION_DECISION"
+  | "PUBLISH_ATTEMPT"
+  | "BACKUP"
+  | "PUBLISH_RESULT"
+  | "VARIANT_REJECTED"
+  | "EXPERIMENT_SKIPPED"
+  | "BUDGET_REACHED"
+  | "CANDIDATE_INVALID"
+  | "MODEL_RESPONSE_UNUSABLE"
+  | "VALIDATOR_ERROR"
+  | "AUTO_RETRY"
+  | "CRASH_RECOVERY"
+  | "INFO";
+
+/** Eén logregel. `message` is altijd een korte, menselijke, operationele omschrijving — nooit ruwe modelredenering. */
+export interface LogEvent {
+  readonly timestamp: string;
+  readonly runId: string;
+  readonly experimentId: string | null;
+  readonly kind: LogEventKind;
+  readonly message: string;
+  readonly data?: Readonly<Record<string, unknown>>;
+  readonly change?: {
+    readonly beforeVersion: string | null;
+    readonly afterVersion: string | null;
+    readonly affectedFiles: readonly string[];
+    readonly causedByExperimentId: string | null;
+    readonly rollbackReference: string | null;
+    readonly diffReference: string | null;
+  };
+}
+
+export type RunOutcome = "RUN_COMPLETED" | "RUN_FAILED" | "RUN_INTERRUPTED";
+
+export interface RunEndSummary {
+  readonly outcome: RunOutcome;
+  readonly totalDurationMs: number;
+  readonly modelCalls: number;
+  readonly experiments: number;
+  readonly optimizerJobs: number;
+  readonly variantsTested: number;
+  readonly accepted: number;
+  readonly rejected: number;
+  readonly bestVariant: string | null;
+  readonly productionChanged: boolean;
+  readonly openHypotheses: readonly string[];
+  readonly lessonsLearned: readonly string[];
 }
 
 export type PublishStepName = "PREFLIGHT" | "BACKUP" | "TYPECHECK" | "APPLY" | "SMOKE_BENCHMARK" | "GROUNDING_CHECK" | "CONFIRM";

@@ -22,7 +22,7 @@ import type { AgentQualityCategory, DualQualityMeasurement, PromotionDecision, R
  * geldig resultaat, geen fout).
  */
 
-const AGENT_CATEGORY_KEYS: readonly (keyof AgentQualityCategory)[] = [
+export const AGENT_CATEGORY_KEYS: readonly (keyof AgentQualityCategory)[] = [
   "contextResolution",
   "multiTurnContext",
   "machinistTaal",
@@ -41,6 +41,8 @@ export const REGRESSIEMARGE = 3;
 export const VERBETERMARGE = 3;
 /** Holdout mag hoogstens dit veel procentpunt slechter zijn dan de controle op dezelfde set. */
 export const HOLDOUT_MARGE = 5;
+/** §3 van de aanvullende opdracht: minimaal twee onafhankelijke POST-runs wanneer modelgedrag onderdeel is van de wijziging. */
+export const MIN_POST_RUNS = 2;
 
 export interface DimensieVerschil {
   readonly dimensie: string;
@@ -60,9 +62,45 @@ function verschillen(pre: AgentQualityCategory, post: AgentQualityCategory): rea
   }));
 }
 
+/**
+ * Per dimensie het gemiddelde en het slechtste van alle POST-runs.
+ *
+ * Twee verschillende meetlatten, met opzet: winst wordt beoordeeld op het
+ * gemiddelde (één toevallige uitschieter naar boven mag geen promotie
+ * opleveren), regressie wordt beoordeeld op de slechtste run (één
+ * toevallige uitschieter naar beneden — vooral op een veiligheidsdimensie —
+ * mag nooit worden weggemiddeld). "Nooit de beste run cherry-picken" geldt
+ * dus in twee richtingen tegelijk.
+ */
+function meanEnMinOverRuns(runs: readonly AgentQualityCategory[]): { mean: AgentQualityCategory; min: AgentQualityCategory } {
+  const dimensie = (k: keyof AgentQualityCategory): { mean: number | null; min: number | null } => {
+    const waarden = runs.map((r) => r[k]).filter((v): v is number => typeof v === "number");
+    if (waarden.length === 0) return { mean: null, min: null };
+    return { mean: waarden.reduce((a, b) => a + b, 0) / waarden.length, min: Math.min(...waarden) };
+  };
+  const mean = {} as Record<keyof AgentQualityCategory, number | null>;
+  const min = {} as Record<keyof AgentQualityCategory, number | null>;
+  for (const k of AGENT_CATEGORY_KEYS) {
+    const d = dimensie(k);
+    mean[k] = d.mean;
+    min[k] = d.min;
+  }
+  return {
+    mean: { ...mean, latencyMs: runs.find((r) => r.latencyMs)?.latencyMs ?? null } as AgentQualityCategory,
+    min: { ...min, latencyMs: runs.find((r) => r.latencyMs)?.latencyMs ?? null } as AgentQualityCategory,
+  };
+}
+
 export interface ProofOfValueDecisionInput {
   readonly pre: DualQualityMeasurement;
-  readonly post: DualQualityMeasurement;
+  /**
+   * Alle onafhankelijke POST-runs (§3 van de aanvullende opdracht: "geen
+   * promotie op één toevallige modelrun"). Minimaal 1, maar de aanroeper
+   * hoort er minimaal 2 te geven zodra modelgedrag onderdeel is van de
+   * wijziging — dat controleert deze functie zelf niet af, dat is een
+   * verantwoordelijkheid van `proofOfValue.ts` (`MIN_POST_RUNS`).
+   */
+  readonly postRuns: readonly DualQualityMeasurement[];
   readonly preHoldout: DualQualityMeasurement;
   readonly holdout: DualQualityMeasurement;
   readonly executed: boolean;
@@ -109,22 +147,33 @@ export function beoordeelProofOfValue(input: ProofOfValueDecisionInput): ProofOf
     };
   }
 
-  const devDiffs = verschillen(input.pre.agent, input.post.agent);
+  if (input.postRuns.length === 0) throw new Error("beoordeelProofOfValue: postRuns mag niet leeg zijn");
+  const { mean: postMean, min: postMin } = meanEnMinOverRuns(input.postRuns.map((r) => r.agent));
+
+  // Winst: op het gemiddelde van alle POST-runs (§3 — één toevallige goede
+  // run mag geen promotie opleveren). Regressie: op de slechtste run per
+  // dimensie (§3 — "kritieke grounding/factual-integrity regressies blijven
+  // blokkerend", ook als een andere run daarop wél goed scoorde).
+  const winstDiffs = verschillen(input.pre.agent, postMean);
+  const regressieDiffs = verschillen(input.pre.agent, postMin);
   const holdoutDiffs = verschillen(input.preHoldout.agent, input.holdout.agent);
-  const rosterRegr = rosterRegressies(input.pre.roster, input.post.roster);
+  const rosterRegr = rosterRegressies(input.pre.roster, input.postRuns[0].roster);
 
-  const veiligheidsregressies = devDiffs.filter((d) => d.isVeiligheidsdimensie && d.delta < 0);
-  const overigeRegressies = devDiffs.filter((d) => !d.isVeiligheidsdimensie && d.delta < -REGRESSIEMARGE);
+  const veiligheidsregressies = regressieDiffs.filter((d) => d.isVeiligheidsdimensie && d.delta < 0);
+  const overigeRegressies = regressieDiffs.filter((d) => !d.isVeiligheidsdimensie && d.delta < -REGRESSIEMARGE);
   const holdoutRegressies = holdoutDiffs.filter((d) => d.delta < -HOLDOUT_MARGE);
-  const verbeteringen = devDiffs.filter((d) => d.delta > VERBETERMARGE);
+  const verbeteringen = winstDiffs.filter((d) => d.delta > VERBETERMARGE);
 
+  const meervoud = input.postRuns.length > 1 ? ` (slechtste van ${input.postRuns.length} POST-runs)` : "";
   const regressies = [
-    ...veiligheidsregressies.map((d) => `${d.dimensie} (veiligheid/grounding): ${d.pre.toFixed(1)} → ${d.post.toFixed(1)} (marge 0)`),
-    ...overigeRegressies.map((d) => `${d.dimensie}: ${d.pre.toFixed(1)} → ${d.post.toFixed(1)}`),
+    ...veiligheidsregressies.map((d) => `${d.dimensie} (veiligheid/grounding): ${d.pre.toFixed(1)} → ${d.post.toFixed(1)}${meervoud} (marge 0)`),
+    ...overigeRegressies.map((d) => `${d.dimensie}: ${d.pre.toFixed(1)} → ${d.post.toFixed(1)}${meervoud}`),
     ...holdoutRegressies.map((d) => `holdout ${d.dimensie}: ${d.pre.toFixed(1)} → ${d.post.toFixed(1)} (controle vs. variant, marge ${HOLDOUT_MARGE}pp)`),
     ...rosterRegr,
   ];
-  const improvements = verbeteringen.map((d) => `${d.dimensie}: ${d.pre.toFixed(1)} → ${d.post.toFixed(1)} (+${d.delta.toFixed(1)}pp)`);
+  const improvements = verbeteringen.map(
+    (d) => `${d.dimensie}: ${d.pre.toFixed(1)} → ${d.post.toFixed(1)}${input.postRuns.length > 1 ? ` (gemiddeld over ${input.postRuns.length} runs)` : ""} (+${d.delta.toFixed(1)}pp)`,
+  );
 
   if (regressies.length > 0) {
     return {

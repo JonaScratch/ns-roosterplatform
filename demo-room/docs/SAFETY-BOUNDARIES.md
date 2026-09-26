@@ -15,6 +15,16 @@ zou typen (het dashboard spawnt letterlijk `cli.ts`, zie
 `demo-room/src/runControl.ts`) — er is geen tweede, soepeler uitvoeringspad
 "omdat het via de webinterface gaat". Zie ook `docs/SAFE-PUBLISH.md`.
 
+**v0.3-nuance:** promotie vereist voortaan minimaal twee onafhankelijke
+POST-runs op dezelfde bevroren suite wanneer modelgedrag onderdeel is van de
+verbetering (§ `proof/decision.ts`, `MIN_POST_RUNS`); verbeteringen tellen op
+het gemiddelde over de runs, regressies op de slechtste run — nooit
+cherry-picken. Elke stap van elke run (ook afwijzingen, overgeslagen
+experimenten, mislukkingen) komt bovendien terecht in het append-only
+logboek (`store/logbook.ts`, zie `docs/LOGBOOK.md`) — dat is een aanvulling
+op, geen vervanging van, journaal/rapport/HANDOFF, en verandert niets aan de
+bevoegdhedenlaag hierboven.
+
 ## Wat de Demo Room WEL mag
 
 - Data, regels, kennis, kandidaten en historische benchmarks lezen.

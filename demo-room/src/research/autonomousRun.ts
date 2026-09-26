@@ -8,6 +8,7 @@ import { demoRoomActor } from "../actor";
 import { budgetFromMinutes, locationCode as defaultLocationCode, type ComputeBudget } from "../config";
 import { requireCapability } from "../safety";
 import { vindDuplicaat } from "../store/experimentMemory";
+import * as logbook from "../store/logbook";
 import { appendExperiment, readAllExperiments } from "../store/runlog";
 import type { ExperimentRecord } from "../types";
 
@@ -34,6 +35,14 @@ import type { ExperimentRecord } from "../types";
  */
 
 export interface AutonomousRunRequest {
+  /**
+   * Het run-ID dat overal — logboek, experimentgeheugen, journaal — hetzelfde
+   * moet zijn. Verplicht en door de aanroeper bepaald (in plaats van hier
+   * gegenereerd) om te voorkomen dat `startAutonomousRun()` en
+   * `awaitAutonomousRun()` per ongeluk met twee verschillende ID's dezelfde
+   * run vastleggen.
+   */
+  readonly runId: string;
   readonly minutes: number;
   readonly goal: string;
   readonly goals: readonly RebuildGoal[];
@@ -58,7 +67,7 @@ export interface AutonomousRunOutcome {
 export async function startAutonomousRun(
   request: AutonomousRunRequest,
 ): Promise<{ readonly runId: string; readonly loopId: string; readonly budget: ComputeBudget; readonly duplicateWarning: string | null }> {
-  const runId = `DR-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}-${randomUUID().slice(0, 6)}`;
+  const runId = request.runId;
   const location = request.locationCode ?? defaultLocationCode();
   const budget = budgetFromMinutes(request.minutes, request.budgetOverrides);
 
@@ -68,8 +77,10 @@ export async function startAutonomousRun(
   const eerdereRuns = readAllExperiments();
   const duplicaat = vindDuplicaat({ hypothesis: request.goal, configuration: { goals: request.goals }, soort: "ENGINE_VARIANT" }, eerdereRuns);
   const duplicateWarning = duplicaat.isDuplicaat ? duplicaat.toelichting : null;
+  if (duplicateWarning) logbook.log(runId, { kind: "EXPERIMENT_SKIPPED", experimentId: null, message: `Mogelijke herhaling gedetecteerd: ${duplicateWarning}` });
 
   const { actor, grant } = await requireCapability(await demoRoomActor(), location, AGENT_CAPABILITIES.AUTONOMOUS);
+  logbook.log(runId, { kind: "CHALLENGE_OR_GOAL", experimentId: null, message: `Doel: ${request.goal}`, data: { goals: request.goals.join(","), searchMode: request.searchMode, minutes: request.minutes } });
 
   // Het rondebudget van de lus zelf komt uit de toekenning (maxRounds), niet
   // uit dit tijdsbudget: die twee zijn met opzet gescheiden bewaakt. De Demo
@@ -82,6 +93,7 @@ export async function startAutonomousRun(
     goals: [...request.goals],
     searchMode: request.searchMode,
   });
+  logbook.log(runId, { kind: "OPTIMIZER_ACTION", experimentId: null, message: `Onderzoekslus gestart in de hoofdapp (startResearchLoop).`, data: { loopId } });
 
   appendExperiment(startRecord(runId, request, loopId, duplicateWarning));
   return { runId, loopId, budget, duplicateWarning };
@@ -117,8 +129,21 @@ export async function awaitAutonomousRun(runId: string, loopId: string, budget: 
   const begin = Date.now();
   const maxMs = budget.maxWallClockMinutes * 60_000 + 30_000; // marge: de lus mag zelf ook nog netjes afronden
   let laatste: Awaited<ReturnType<typeof haalLoopOp>>;
+  let gerapporteerdeRonde = 0;
   do {
     laatste = await haalLoopOp(loopId);
+    if (laatste.roundsDone > gerapporteerdeRonde) {
+      gerapporteerdeRonde = laatste.roundsDone;
+      logbook.log(runId, {
+        kind: "CANDIDATE_GENERATED",
+        experimentId: null,
+        message: `Ronde ${gerapporteerdeRonde} afgerond, beste score tot nu toe: ${laatste.bestScore?.toFixed(1) ?? "onbekend"}.`,
+        data: { round: gerapporteerdeRonde, bestScore: laatste.bestScore ?? undefined, baselineScore: laatste.baselineScore ?? undefined },
+      });
+    }
+    if (Date.now() - begin > budget.maxWallClockMinutes * 60_000) {
+      logbook.log(runId, { kind: "BUDGET_REACHED", experimentId: null, message: `Wandklokbudget (${budget.maxWallClockMinutes} min) bereikt; de lus zelf bepaalt of ze nog afrondt.` });
+    }
     if (laatste.status !== "RUNNING") break;
     await new Promise((r) => setTimeout(r, 5000));
   } while (Date.now() - begin < maxMs);
@@ -135,7 +160,18 @@ export async function awaitAutonomousRun(runId: string, loopId: string, budget: 
     conclusion: laatste.conclusion,
   };
 
-  appendExperiment(eindRecord(runId, loopId, uitkomst));
+  if (uitkomst.bestCandidateId) {
+    logbook.log(runId, { kind: "VALIDATOR_RESULT", experimentId: null, message: `Beste kandidaat ${uitkomst.bestCandidateId} is door de onafhankelijke validator gegaan (research.ts gebruikt uitsluitend gevalideerde kandidaten).` });
+  }
+  logbook.log(runId, {
+    kind: "COMPARISON",
+    experimentId: null,
+    message: `Vergelijking met baseline: ${uitkomst.baselineScore?.toFixed(1) ?? "onbekend"} → ${uitkomst.bestScore?.toFixed(1) ?? "onbekend"}.`,
+    data: { baselineScore: uitkomst.baselineScore ?? undefined, bestScore: uitkomst.bestScore ?? undefined },
+  });
+  const record = eindRecord(runId, loopId, uitkomst);
+  logbook.log(runId, { kind: "PROMOTION_DECISION", experimentId: record.id, message: record.nextRecommendation ?? record.reason, data: { decision: record.decision } });
+  appendExperiment(record);
   return uitkomst;
 }
 

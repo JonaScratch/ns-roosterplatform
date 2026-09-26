@@ -7,6 +7,7 @@ import { CHALLENGES } from "./challenges/catalogue";
 import { dashboardPort, HANDOFF_PATH, REPORTS_DIR } from "./config";
 import { currentRun, startCliRun, stopCurrentRun } from "./runControl";
 import { readBenchmarkHistory } from "./store/benchmarkHistory";
+import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
 import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 
@@ -162,6 +163,42 @@ function apiImprovement(experimentId: string) {
   };
 }
 
+// ---- /api/logbook/* --------------------------------------------------------
+
+/**
+ * Live voortgang van een proof-of-value-run als vaste stappenrij (v0.3 §1:
+ * "PRE → sandboxvariant → POST → holdout → regressiecontrole → beslissing"),
+ * afgeleid uit de echte logboekregels van die run — niets hiervan is een
+ * schatting.
+ */
+function deriveProofStages(events: readonly { kind: string; message: string }[]) {
+  const heeft = (re: RegExp, kind?: string) => events.some((e) => (kind ? e.kind === kind : true) && re.test(e.message));
+  const postResultaten = events.filter((e) => e.kind === "BENCHMARK_RESULT" && /POST-run/.test(e.message));
+  const laatstePostMatch = [...events].reverse().find((e) => /POST-run \d+\/\d+/.test(e.message))?.message.match(/POST-run (\d+)\/(\d+)/);
+  const besluitEvent = events.find((e) => e.kind === "PROMOTION_DECISION");
+
+  const stages = [
+    { key: "pre", label: "PRE", done: heeft(/^PRE \(dev/, "BENCHMARK_RESULT"), active: heeft(/^PRE \(dev/, "BENCHMARK_START") },
+    { key: "variant", label: "Sandboxvariant", done: heeft(/Sandbox-ChatModel gebouwd/), active: heeft(/Sandboxvariant gekozen/) },
+    {
+      key: "post",
+      label: laatstePostMatch ? `POST (${postResultaten.length}/${laatstePostMatch[2]})` : "POST",
+      done: laatstePostMatch ? postResultaten.length >= Number(laatstePostMatch[2]) : false,
+      active: postResultaten.length > 0,
+    },
+    { key: "holdout", label: "Holdout", done: heeft(/^Holdout \(variant\)/, "BENCHMARK_RESULT"), active: heeft(/^Holdout \(variant\)/, "BENCHMARK_START") },
+    { key: "regression", label: "Regressiecontrole", done: heeft(/vergeleken/, "COMPARISON"), active: false },
+    { key: "decision", label: "Beslissing", done: Boolean(besluitEvent), active: false, detail: besluitEvent?.message ?? null },
+  ];
+
+  let vorigeKlaar = true;
+  return stages.map((s) => {
+    const status = s.done ? "done" : s.active && vorigeKlaar ? "active" : "pending";
+    vorigeKlaar = vorigeKlaar && s.done;
+    return { key: s.key, label: s.label, status, detail: (s as { detail?: string | null }).detail ?? null };
+  });
+}
+
 // ---- server ---------------------------------------------------------------
 
 const server = http.createServer((req, res) => {
@@ -225,6 +262,30 @@ const server = http.createServer((req, res) => {
       const kies = runId ?? ids[0];
       return json(res, 200, { runId: kies ?? null, events: kies ? readRunlog(kies) : [] });
     }
+    if (req.method === "GET" && url.pathname === "/api/logbook/runs") {
+      return json(res, 200, listRunLogs());
+    }
+    if (req.method === "GET" && url.pathname === "/api/logbook/text") {
+      const runId = url.searchParams.get("runId") ?? currentRun()?.runId ?? listRunLogs()[0]?.runId ?? null;
+      return json(res, 200, { runId, text: runId ? readRunText(runId) : null });
+    }
+    if (req.method === "GET" && url.pathname === "/api/logbook/events") {
+      const runId = url.searchParams.get("runId") ?? currentRun()?.runId ?? listRunLogs()[0]?.runId ?? null;
+      const events = runId ? readRunEvents(runId) : [];
+      return json(res, 200, { runId, events, stages: deriveProofStages(events) });
+    }
+    if (req.method === "GET" && url.pathname === "/api/logbook/download") {
+      const runId = url.searchParams.get("runId");
+      const format = url.searchParams.get("format") === "jsonl" ? "jsonl" : "txt";
+      if (!runId) return json(res, 400, { error: "runId ontbreekt" });
+      const bestand = format === "jsonl" ? runJsonlFilePath(runId) : runTxtFilePath(runId);
+      if (!existsSync(bestand)) return json(res, 404, { error: "logboek niet gevonden" });
+      res.writeHead(200, {
+        "Content-Type": format === "jsonl" ? "application/x-ndjson" : "text/plain; charset=utf-8",
+        "Content-Disposition": `attachment; filename="${runId}.${format}"`,
+      });
+      return res.end(readFileSync(bestand));
+    }
 
     if (req.method === "POST" && url.pathname === "/api/runs/start") {
       const body = await readBody(req);
@@ -232,13 +293,14 @@ const server = http.createServer((req, res) => {
       try {
         const type = String(body.type ?? "");
         const args =
-          type === "proof" ? ["proof-of-value", ...(body.variantId ? ["--variant", String(body.variantId)] : [])]
+          type === "proof"
+            ? ["proof-of-value", ...(body.variantId ? ["--variant", String(body.variantId)] : []), "--post-runs", String(body.postRuns ?? 2)]
           : type === "challenge" ? ["run-challenge", "--id", String(body.challengeId)]
           : type === "autonomous"
             ? ["autonomous", "--minutes", String(body.minutes ?? 10), "--goal", String(body.goal ?? "Zelfgekozen verbetering"), "--goals", String(body.goals ?? "KEEP_GOOD_PARTS")]
             : null;
         if (!args) return json(res, 400, { error: `onbekend runtype: ${type}` });
-        const state = startCliRun(runId, type, args);
+        const state = startCliRun(runId, type, [...args, "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
@@ -252,7 +314,8 @@ const server = http.createServer((req, res) => {
       const experimentId = String(body.experimentId ?? "");
       if (!experimentId) return json(res, 400, { error: "experimentId ontbreekt" });
       try {
-        const state = startCliRun(`DR-PUBLISH-${randomUUID().slice(0, 8)}`, "publish", ["publish", "--experiment-id", experimentId, "--confirm"]);
+        const runId = `DR-PUBLISH-${randomUUID().slice(0, 8)}`;
+        const state = startCliRun(runId, "publish", ["publish", "--experiment-id", experimentId, "--confirm", "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
@@ -263,7 +326,8 @@ const server = http.createServer((req, res) => {
       const versionId = String(body.versionId ?? "");
       if (!versionId) return json(res, 400, { error: "versionId ontbreekt" });
       try {
-        const state = startCliRun(`DR-ROLLBACK-${randomUUID().slice(0, 8)}`, "rollback", ["rollback", "--version-id", versionId, "--confirm"]);
+        const runId = `DR-ROLLBACK-${randomUUID().slice(0, 8)}`;
+        const state = startCliRun(runId, "rollback", ["rollback", "--version-id", versionId, "--confirm", "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });

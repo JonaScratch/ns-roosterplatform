@@ -11,10 +11,25 @@ import path from "node:path";
 
 export const REPO_ROOT = path.resolve(__dirname, "..", "..");
 export const DEMO_ROOM_ROOT = path.resolve(__dirname, "..");
-export const DATA_DIR = path.join(DEMO_ROOM_ROOT, "data");
-export const REPORTS_DIR = path.join(DEMO_ROOM_ROOT, "reports");
+
+/**
+ * Waar alle runtime-state (experimentgeheugen, versies, logboek, journaal,
+ * HANDOFF.md) op schijf staat.
+ *
+ * Overrideable via `DEMO_ROOM_STATE_ROOT_OVERRIDE` — uitsluitend bedoeld voor
+ * geïsoleerde integratietests (zie `tests/demo-room/safePublishRollback.test.ts`,
+ * de gecontroleerde rollback-failure-injectietest), zodat zo'n test nooit de
+ * echte, waardevolle productionstate van een lokale installatie kan raken —
+ * geen versie, geen journaalregel, geen logboekbestand van de test belandt
+ * dan tussen de echte bestanden. Onbekend/leeg in normaal gebruik → gewoon
+ * de map van dit pakket.
+ */
+const STATE_ROOT = process.env.DEMO_ROOM_STATE_ROOT_OVERRIDE?.trim() || DEMO_ROOM_ROOT;
+export const DATA_DIR = path.join(STATE_ROOT, "data");
+export const REPORTS_DIR = path.join(STATE_ROOT, "reports");
 export const REPORTS_HISTORY_DIR = path.join(REPORTS_DIR, "history");
-export const HANDOFF_PATH = path.join(DEMO_ROOM_ROOT, "HANDOFF.md");
+export const HANDOFF_PATH = path.join(STATE_ROOT, "HANDOFF.md");
+export const LOGS_DIR = path.join(STATE_ROOT, "logs");
 
 /**
  * De standplaats waarop de Demo Room werkt.

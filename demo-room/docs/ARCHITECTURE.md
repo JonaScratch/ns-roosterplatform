@@ -21,12 +21,13 @@ ns-roosterplatform/
     │   ├── benchmark/                               ← dev/holdout/hidden, agent-/roosterkwaliteit, Pareto
     │   ├── variants/                                 ← sandbox-promptvarianten
     │   ├── research/                                  ← "run N minuten" (spoor B) + compute-budget
-    │   ├── proof/                                      ← v0.2: proof-of-value (PRE→variant→POST→holdout→besluit)
+    │   ├── proof/                                      ← v0.2/v0.3: proof-of-value (PRE→variant→POST(≥2 runs)→holdout→besluit)
     │   ├── publish/                                     ← v0.2: versiestore + veilige publicatiepijplijn
     │   ├── promotion/                                    ← (v0.1) generieke promotion-proposaltekst
     │   ├── report/                                        ← mens-/technisch/machineleesbaar rapport
+    │   ├── store/logbook.ts                                 ← v0.3: append-only audit-trail (zie docs/LOGBOOK.md)
     │   ├── runControl.ts                                   ← v0.2: spawnt cli.ts voor het dashboard, géén hoofdapp-import
-    │   ├── cli.ts, server.ts                                ← de twee ingangen
+    │   ├── cli.ts, server.ts                                ← de twee ingangen (server.ts: v0.3 "Bewijs verbeterlus"-knop + logboek-routes)
     └── ui/index.html                                         ← het dashboard (leest + start/stop/publiceer/herstel via runControl)
 ```
 

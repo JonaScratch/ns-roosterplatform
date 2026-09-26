@@ -4,7 +4,8 @@ import type { ChatModel } from "@/server/agent/model/types";
 import { benchAnswer } from "@/server/agent/bench-adapter";
 import { demoRoomActor } from "../actor";
 import { requireReadAccess } from "../safety";
-import type { AgentQualityCategory } from "../types";
+import { AGENT_CATEGORY_KEYS } from "../proof/decision";
+import type { AgentQualityCategory, AgentQualityVariance, CategoryVariance } from "../types";
 
 /**
  * De negen Lyra-agentkwaliteitsdimensies (§1 van v0.2). Bewust generiek
@@ -153,6 +154,25 @@ export async function runContextResolutionCheck(locationCode: string, modelOverr
   // dezelfde context-switch die zowel "resolutie binnen deze beurt" als
   // "vasthouden over beurten heen" toetst). Apart uitsplitsen is vervolgwerk.
   return { contextResolution: score, multiTurnContext: score };
+}
+
+/**
+ * Variantie per dimensie over N onafhankelijke runs (§3 van de aanvullende
+ * opdracht: "rapporteer variantie expliciet, cherry-pick nooit de beste
+ * run"). `values` bewaart élke run in volgorde — niets wordt ingekort.
+ */
+export function computeAgentQualityVariance(runs: readonly AgentQualityCategory[]): AgentQualityVariance {
+  const perDimensie = (k: keyof AgentQualityCategory): CategoryVariance | null => {
+    const waarden = runs.map((r) => r[k]).filter((v): v is number => typeof v === "number");
+    if (waarden.length === 0) return null;
+    const mean = waarden.reduce((a, b) => a + b, 0) / waarden.length;
+    const variantie = waarden.reduce((a, b) => a + (b - mean) ** 2, 0) / waarden.length;
+    return { values: waarden, mean, min: Math.min(...waarden), max: Math.max(...waarden), stddev: Math.sqrt(variantie) };
+  };
+  const out = {} as Record<keyof AgentQualityCategory, CategoryVariance | null>;
+  for (const k of AGENT_CATEGORY_KEYS) out[k] = perDimensie(k);
+  out.latencyMs = null; // latency heeft een eigen p50/p95-vorm, geen simpele numerieke variantie
+  return out as AgentQualityVariance;
 }
 
 export function computeAgentQualityCategory(items: readonly Json[], results: readonly ScoredItem[], contextCheck: { contextResolution: number | null; multiTurnContext: number | null }): AgentQualityCategory {

@@ -54,6 +54,20 @@
   .chart-legend { font-size:12px; color:#556; display:flex; gap:14px; margin-top:6px; flex-wrap:wrap; }
   .chart-legend span.dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
   details summary { cursor:pointer; color:var(--accent); font-size:13px; }
+  .stepper { display:flex; gap:0; flex-wrap:wrap; }
+  .step { flex:1; min-width:120px; text-align:center; padding:10px 6px; border-bottom:4px solid #dde3ee; font-size:12px; color:#556; }
+  .step.done { border-bottom-color:var(--good); color:var(--good); font-weight:600; }
+  .step.active { border-bottom-color:var(--accent); color:var(--accent); font-weight:600; }
+  .step .arrow { color:#ccd4e0; }
+  #proof-hero { background:linear-gradient(135deg, var(--bg), #123a72); color:#fff; border-radius:10px; padding:18px 20px; margin-bottom:14px; }
+  #proof-hero h3 { margin:0 0 4px; }
+  #proof-hero p { margin:0 0 12px; color:var(--muted); font-size:13px; }
+  #proof-hero button { background:#fff; color:var(--bg); border:none; padding:11px 20px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px; }
+  #logbook-list { max-height:240px; overflow:auto; }
+  #logbook-list .run-row { padding:8px; border-bottom:1px solid #eef1f6; cursor:pointer; font-size:13px; }
+  #logbook-list .run-row:hover, #logbook-list .run-row.selected { background:#f7f9fc; }
+  #logbook-text { font-family: ui-monospace, monospace; font-size:12px; background:#0f172a; color:#d6e2f0; padding:12px; border-radius:8px; max-height:480px; overflow:auto; white-space:pre-wrap; }
+  input#logbook-filter { max-width:100%; }
 </style>
 </head>
 <body>
@@ -72,10 +86,16 @@
   <button data-tab="experimenten">Experimenten</button>
   <button data-tab="versies">Lyra-versies</button>
   <button data-tab="rapporten">Rapporten</button>
+  <button data-tab="logboek">Logboek</button>
 </nav>
 <main>
 
   <section id="overzicht" class="active">
+    <div id="proof-hero">
+      <h3>Bewijs verbeterlus</h3>
+      <p>Production Lyra → PRE → sandboxvariant → 2× POST (dezelfde bevroren set) → holdout → regressiecontrole → beslissing. Voer dit eerst uit, vóór elke langere autonome run.</p>
+      <button id="btn-proof-of-value">Bewijs verbeterlus starten</button>
+    </div>
     <div class="grid" id="overzicht-cards"></div>
   </section>
 
@@ -130,9 +150,14 @@
   </section>
 
   <section id="liverun">
+    <div class="card" id="proof-stepper-card" style="display:none;">
+      <h3>Voortgang: PRE → sandboxvariant → POST → holdout → regressiecontrole → beslissing</h3>
+      <div class="stepper" id="proof-stepper"></div>
+      <p class="sub" id="proof-decision-detail" style="margin-top:8px;"></p>
+    </div>
     <div class="grid" id="liverun-cards"></div>
     <div class="card" style="margin-top:14px;">
-      <h3>Eventlog</h3>
+      <h3>Eventlog <button class="ghost" id="btn-liverun-to-logboek">Open volledig logboek</button></h3>
       <div id="log">geen actieve run geladen</div>
     </div>
   </section>
@@ -160,6 +185,29 @@
     <div class="card">
       <h3>Laatste journaalentry (latest.json)</h3>
       <pre id="report" style="white-space:pre-wrap; font-size:12px;">nog geen rapport</pre>
+    </div>
+  </section>
+
+  <section id="logboek">
+    <div class="row">
+      <div class="col" style="max-width:280px;">
+        <div class="card">
+          <h3>Vorige runs</h3>
+          <input type="text" id="logbook-filter" placeholder="Zoeken/filteren…" />
+          <div id="logbook-list" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3 id="logbook-title">Live log</h3>
+          <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+            <button class="ghost" id="btn-logbook-download-txt">Download .txt</button>
+            <button class="ghost" id="btn-logbook-download-jsonl">Download JSONL</button>
+            <button class="ghost" id="btn-logbook-copy">Kopieer voor ChatGPT/Claude</button>
+          </div>
+          <div id="logbook-text">wordt geladen…</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -193,12 +241,11 @@ async function post(url, body) { return j(url, { method: "POST", headers: { "Con
 
 // ---- navigatie ----
 const tabs = document.querySelectorAll("nav button");
-tabs.forEach((b) => b.addEventListener("click", () => {
-  tabs.forEach((x) => x.classList.remove("active"));
-  document.querySelectorAll("main section").forEach((s) => s.classList.remove("active"));
-  b.classList.add("active");
-  document.getElementById(b.dataset.tab).classList.add("active");
-}));
+function switchTab(name) {
+  tabs.forEach((x) => x.classList.toggle("active", x.dataset.tab === name));
+  document.querySelectorAll("main section").forEach((s) => s.classList.toggle("active", s.id === name));
+}
+tabs.forEach((b) => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
 // ---- kleine SVG-grafiekhelpers (geen bibliotheek, vaste NS-achtige kleuren) ----
 const COLORS = { dev: "#1f5fd0", holdout: "#c9622a", pre: "#9fb0c9", post: "#1f5fd0", good: "#2e9e5b", bad: "#c0392b" };
@@ -360,6 +407,13 @@ document.getElementById("btn-stop-run").addEventListener("click", async () => {
   document.getElementById("run-status").textContent = result.detail;
 });
 
+document.getElementById("btn-proof-of-value").addEventListener("click", async () => {
+  const result = await post("/api/runs/start", { type: "proof", postRuns: 2 });
+  if (result.error) { alert(`Kon niet starten: ${result.error}`); return; }
+  switchTab("liverun");
+  refresh();
+});
+
 // ---- Live run ----
 async function loadLiveRun() {
   const run = await j("/api/current-run");
@@ -377,7 +431,26 @@ async function loadLiveRun() {
   if (!events.events || events.events.length === 0) { log.textContent = "geen events voor deze run"; }
   else log.textContent = events.events.map((e) => `[${e.timestamp}] ${e.decision} — ${e.hypothesis}${e.failureReason ? "\n  " + e.failureReason : ""}${e.nextRecommendation ? "\n  → " + e.nextRecommendation : ""}`).join("\n\n");
   if (run && run.tailOutput) log.textContent += "\n\n--- procesoutput ---\n" + run.tailOutput;
+
+  // Voortgangsstepper: alleen tonen bij een proof-of-value-run (§v0.3 punt 1).
+  const stepperCard = document.getElementById("proof-stepper-card");
+  if (run && run.kind === "proof") {
+    const logboek = await j(`/api/logbook/events?runId=${encodeURIComponent(run.runId)}`);
+    stepperCard.style.display = "block";
+    document.getElementById("proof-stepper").innerHTML = (logboek.stages || [])
+      .map((s, i) => `${i > 0 ? '<span class="arrow">→</span>' : ""}<div class="step ${s.status}">${s.label}</div>`)
+      .join("");
+    const besluit = (logboek.stages || []).find((s) => s.key === "decision");
+    document.getElementById("proof-decision-detail").textContent = besluit?.detail || "";
+  } else {
+    stepperCard.style.display = "none";
+  }
 }
+document.getElementById("btn-liverun-to-logboek").addEventListener("click", async () => {
+  const run = await j("/api/current-run");
+  switchTab("logboek");
+  if (run) selectLogbookRun(run.runId);
+});
 
 // ---- Experimenten ----
 async function loadExperimenten() {
@@ -405,13 +478,17 @@ function showExperimentDetail(e) {
     <p><b>Aanbeveling:</b> ${e.nextRecommendation || "—"}</p>
     ${e.failureReason ? `<p><b>Regressie(s):</b> ${e.failureReason}</p>` : ""}
     <table><thead><tr><th>Verschil t.o.v. baseline</th><th></th></tr></thead><tbody>${diffRows || "<tr><td colspan=2>geen</td></tr>"}</tbody></table>
-    ${e.decision === "PROMOTION_CANDIDATE" ? `<div style="margin-top:12px;"><button class="primary" id="btn-publish-${e.id}">Publish naar Lyra</button> <button class="ghost" id="btn-improvement-${e.id}">Bekijk volledig verslag</button></div>` : ""}
+    <div style="margin-top:12px;">
+      ${e.decision === "PROMOTION_CANDIDATE" ? `<button class="primary" id="btn-publish-${e.id}">Publish naar Lyra</button> <button class="ghost" id="btn-improvement-${e.id}">Bekijk volledig verslag</button>` : ""}
+      <button class="ghost" id="btn-golog-${e.id}">Bekijk in logboek</button>
+    </div>
     <details style="margin-top:12px;"><summary>Technische sectie (configuratie/diff)</summary><pre style="font-size:11px;">${JSON.stringify(e.configuration, null, 2)}</pre></details>
   `;
   if (e.decision === "PROMOTION_CANDIDATE") {
     document.getElementById(`btn-publish-${e.id}`).addEventListener("click", () => openPublishModal(e.id));
     document.getElementById(`btn-improvement-${e.id}`).addEventListener("click", () => openImprovementReport(e.id));
   }
+  document.getElementById(`btn-golog-${e.id}`).addEventListener("click", () => { switchTab("logboek"); selectLogbookRun(e.runId); });
 }
 async function openImprovementReport(experimentId) {
   const rep = await j(`/api/improvement?experimentId=${encodeURIComponent(experimentId)}`);
@@ -482,6 +559,48 @@ document.getElementById("btn-copy-handoff").addEventListener("click", async () =
   setTimeout(() => (btn.textContent = origineel), 1500);
 });
 
+// ---- Logboek ----
+let logbookRuns = [];
+let selectedLogbookRun = null;
+
+async function loadLogboekList() {
+  logbookRuns = await j("/api/logbook/runs");
+  renderLogbookList();
+  if (!selectedLogbookRun && logbookRuns.length > 0) selectLogbookRun(logbookRuns[0].runId);
+}
+function renderLogbookList() {
+  const filter = (document.getElementById("logbook-filter").value || "").toLowerCase();
+  const lijst = logbookRuns.filter((r) => r.runId.toLowerCase().includes(filter));
+  document.getElementById("logbook-list").innerHTML = lijst.map((r) => `
+    <div class="run-row ${r.runId === selectedLogbookRun ? "selected" : ""}" data-run="${r.runId}">
+      <div>${r.runId}</div>
+      <div class="sub" style="font-size:11px;color:var(--muted);">${r.startedAt ? new Date(r.startedAt).toLocaleString("nl-NL") : ""} · ${r.outcome || ""}</div>
+    </div>
+  `).join("") || `<div class="empty">Nog geen runs</div>`;
+  document.querySelectorAll("#logbook-list .run-row").forEach((el) => el.addEventListener("click", () => selectLogbookRun(el.dataset.run)));
+}
+async function selectLogbookRun(runId) {
+  selectedLogbookRun = runId;
+  renderLogbookList();
+  document.getElementById("logbook-title").textContent = `Log: ${runId}`;
+  const data = await j(`/api/logbook/text?runId=${encodeURIComponent(runId)}`);
+  document.getElementById("logbook-text").textContent = data.text || "(geen logboek gevonden voor deze run)";
+}
+document.getElementById("logbook-filter").addEventListener("input", renderLogbookList);
+document.getElementById("btn-logbook-download-txt").addEventListener("click", () => {
+  if (selectedLogbookRun) window.open(`/api/logbook/download?runId=${encodeURIComponent(selectedLogbookRun)}&format=txt`, "_blank");
+});
+document.getElementById("btn-logbook-download-jsonl").addEventListener("click", () => {
+  if (selectedLogbookRun) window.open(`/api/logbook/download?runId=${encodeURIComponent(selectedLogbookRun)}&format=jsonl`, "_blank");
+});
+document.getElementById("btn-logbook-copy").addEventListener("click", async () => {
+  await navigator.clipboard.writeText(document.getElementById("logbook-text").textContent);
+  const btn = document.getElementById("btn-logbook-copy");
+  const origineel = btn.textContent;
+  btn.textContent = "Gekopieerd!";
+  setTimeout(() => (btn.textContent = origineel), 1500);
+});
+
 // ---- banner + refresh ----
 async function loadBanner() {
   const run = await j("/api/current-run");
@@ -489,7 +608,10 @@ async function loadBanner() {
 }
 
 async function refresh() {
-  await Promise.all([loadBanner(), loadOverzicht(), loadVooruitgang(), loadLiveRun(), loadExperimenten(), loadVersies(), loadRapporten()]);
+  await Promise.all([loadBanner(), loadOverzicht(), loadVooruitgang(), loadLiveRun(), loadExperimenten(), loadVersies(), loadRapporten(), loadLogboekList()]);
+  // Houd een geselecteerde run die nog loopt live bijgewerkt.
+  const actief = await j("/api/current-run");
+  if (actief && selectedLogbookRun === actief.runId) selectLogbookRun(actief.runId);
 }
 refresh();
 setInterval(refresh, 5000);
