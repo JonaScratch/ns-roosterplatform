@@ -5,7 +5,7 @@ import http from "node:http";
 import path from "node:path";
 import { CHALLENGES } from "./challenges/catalogue";
 import { dashboardPort, HANDOFF_PATH, REPO_ROOT, REPORTS_DIR } from "./config";
-import { currentRun, startCliRun, stopCurrentRun } from "./runControl";
+import { currentRun, currentRunWithElapsed, startCliRun, stopCurrentRun } from "./runControl";
 import { readBenchmarkHistory } from "./store/benchmarkHistory";
 import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
@@ -68,7 +68,7 @@ function apiOverview() {
     bestSandboxVariant: besteKandidaat ? { experimentId: besteKandidaat.id, hypothesis: besteKandidaat.hypothesis, diff: besteKandidaat.comparisonWithBaseline } : null,
     latestBenchmark: laatsteBenchmark ? { label: laatsteBenchmark.label, timestamp: laatsteBenchmark.timestamp, passRate: laatsteBenchmark.benchmark.passRate } : null,
     bestBenchmarkEver: besteScoreOoit,
-    activeRun: currentRun(),
+    activeRun: currentRunWithElapsed(),
     counts: {
       experiments: alles.length,
       promotionCandidates: kandidaten.length,
@@ -319,7 +319,7 @@ const server = http.createServer((req, res) => {
       "/api/versions/active": apiActiveVersion,
       "/api/versions/performance": versionPerformanceSeries,
       "/api/versions/deltas": versionDeltas,
-      "/api/current-run": () => currentRun(),
+      "/api/current-run": () => currentRunWithElapsed(),
       "/api/autonomy/results": () => listAutonomyResults(),
       "/api/runs/history": runHistory,
       "/api/runs/summary": runsSummary,

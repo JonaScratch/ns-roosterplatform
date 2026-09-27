@@ -341,7 +341,7 @@
 
     <div class="card">
       <h3>Recente runs</h3>
-      <table id="runs-table"><thead><tr><th>Run</th><th>Datum/tijd</th><th>Status</th><th>Type</th><th>PRE</th><th>POST</th><th>Holdout</th><th>Δ</th><th>Beslissing</th><th>Looptijd</th><th></th></tr></thead><tbody></tbody></table>
+      <table id="runs-table"><thead><tr><th>Run</th><th>Datum/tijd</th><th>Status</th><th>Type</th><th>Versie</th><th>PRE</th><th>POST</th><th>Holdout</th><th>Δ</th><th>Beslissing</th><th>Looptijd</th><th></th></tr></thead><tbody></tbody></table>
     </div>
 
     <div class="card">
@@ -896,16 +896,19 @@ async function loadAutonomyCard() {
 // ---- Live run ----
 const STATUS_LABELS = { STARTING: "wordt gestart…", RUNNING: "loopt", DONE: "afgerond", FAILED: "mislukt", STOPPED: "gestopt" };
 /**
- * Bug (§ "verstreken tijd blijft nu oplopen na afronding"): het element
- * rekende altijd `Date.now() - startedAt` uit, ook ná afronding — elke
- * refresh-cyclus (om de 5s) liet de teller dus doortikken, ongeacht status.
- * Fix: zodra de run een `finishedAt` heeft (elke eindstatus zet dit),
- * bevriest de teller op de echte totale duur; alleen zonder `finishedAt`
- * (dus terwijl de run nog STARTING/RUNNING is) loopt hij live door.
+ * Bug (§ "verstreken tijd blijft nu oplopen na afronding"): dit element
+ * rekende altijd client-side `Date.now() - startedAt` uit, ook ná afronding —
+ * elke refresh-cyclus (om de 5s) liet de teller dus doortikken, ongeacht
+ * status. Fix: de server berekent `elapsedMs` nu zelf (`runControl.ts`'s
+ * `computeElapsedMs()`) en bevriest die zodra `finishedAt` bekend is; de
+ * client toont hier uitsluitend die serverwaarde, zonder zelf te rekenen
+ * (§ regressiecheck "alle getoonde waarden zijn serverdata; alleen elapsed
+ * rendering mag client-side worden bijgewerkt" — het "bijwerken" is dus
+ * simpelweg: bij elke refresh de nieuwste serverwaarde tonen, nooit een
+ * eigen client-klok).
  */
 function elapsedMinutes(run) {
-  const eind = run.finishedAt ? new Date(run.finishedAt) : new Date();
-  return Math.round((eind - new Date(run.startedAt)) / 60000);
+  return Math.round((run.elapsedMs ?? 0) / 60000);
 }
 
 // §6/§7 UI-aanvulling: elk logboek-eventtype hoort bij één van acht badge-categorieën, zodat een lange run scanbaar blijft.
@@ -1011,6 +1014,7 @@ async function loadRuns() {
       <td>${r.startedAt ? new Date(r.startedAt).toLocaleString("nl-NL") : "—"}</td>
       <td>${statusTag}</td>
       <td>${r.kind || "—"}</td>
+      <td>${r.productionVersionDisplayName ? `<span class="tag">${r.productionVersionDisplayName}</span>` : "—"}</td>
       <td>${pre !== null ? pre.toFixed(1) + "%" : "—"}</td>
       <td>${post !== null ? post.toFixed(1) + "%" : "—"}</td>
       <td>—</td>
@@ -1019,7 +1023,7 @@ async function loadRuns() {
       <td>${looptijd}</td>
       <td><button class="ghost" data-goto-run-btn="${r.runId}">Bekijken</button></td>
     </tr>`;
-  }).join("") || `<tr><td colspan="11" class="empty">Nog geen runs</td></tr>`;
+  }).join("") || `<tr><td colspan="12" class="empty">Nog geen runs</td></tr>`;
   tbody.querySelectorAll("[data-goto-run-btn]").forEach((btn) => btn.addEventListener("click", () => { switchTab("logboek"); selectLogbookRun(btn.dataset.gotoRunBtn); }));
 }
 function avgOf(o) {
@@ -1207,7 +1211,6 @@ function openRollbackModal(versionId) {
 }
 document.getElementById("rollback-cancel").addEventListener("click", () => document.getElementById("rollback-modal").classList.remove("open"));
 
-// ---- Rapporten ----
 // ---- Logboek ----
 let logbookRuns = [];
 let selectedLogbookRun = null;

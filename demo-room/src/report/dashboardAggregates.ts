@@ -159,6 +159,17 @@ export interface RunHistoryEntry {
   readonly outcome: "RUN_COMPLETED" | "RUN_FAILED" | "RUN_INTERRUPTED" | "RUNNING_OF_ONBEKEND";
   /** Alleen aanwezig voor proof-of-value-runs met een bijbehorend experimentrecord. */
   readonly experiment: ExperimentRecord | null;
+  /**
+   * De productieversie die ACTIEF WAS TOEN DEZE RUN STARTTE (§ regressiecheck
+   * "historical run: toont de versie die daadwerkelijk bij die run hoorde,
+   * niet automatisch de huidige actieve versie") — gelezen uit het
+   * `RUN_START`-event van díe run zelf (vastgelegd op het moment van
+   * starten, dus onveranderlijk), nooit uit de huidige `currentVersionId()`.
+   * `null` als de run geen productieversie logde (bijv. ouder dan deze
+   * velden, of een run-type zonder productieversie).
+   */
+  readonly productionVersionId: string | null;
+  readonly productionVersionDisplayName: string | null;
 }
 
 /** Nieuwste eerst — combineert het logboek (alle ooit gestarte runs) met het experimentgeheugen (alleen runs die een experiment opleverden). */
@@ -174,6 +185,11 @@ export function runHistory(): readonly RunHistoryEntry[] {
     const outcome: RunHistoryEntry["outcome"] = endEvent
       ? (((endEvent.data as { summary?: { outcome?: string } } | undefined)?.summary?.outcome as RunHistoryEntry["outcome"] | undefined) ?? "RUN_COMPLETED")
       : "RUNNING_OF_ONBEKEND";
+    // `productionVersion` in de RUN_START-data is `currentProductionVersionLabel()`
+    // (zie cli.ts): "<versie-id>" of "<versie-id> (<variantId>)" — het eerste
+    // woord is altijd de kale, spatie-vrije technische ID.
+    const productionVersionLabel = (startEvent?.data as { productionVersion?: string } | undefined)?.productionVersion ?? null;
+    const productionVersionId = productionVersionLabel && productionVersionLabel !== "onbekend" ? productionVersionLabel.split(" ")[0] : null;
     return {
       runId: r.runId,
       kind,
@@ -181,6 +197,8 @@ export function runHistory(): readonly RunHistoryEntry[] {
       finishedAt: endEvent?.timestamp ?? null,
       outcome,
       experiment: experimentenPerRun.get(r.runId) ?? null,
+      productionVersionId,
+      productionVersionDisplayName: productionVersionId ? (displayNameForVersionId(productionVersionId) ?? productionVersionId) : null,
     };
   });
 }

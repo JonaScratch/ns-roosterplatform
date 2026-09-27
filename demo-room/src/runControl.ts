@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, DEMO_ROOM_ROOT, REPO_ROOT } from "./config";
 import * as logbook from "./store/logbook";
@@ -60,6 +60,45 @@ function writeState(state: RunControlState): void {
 
 export function currentRun(): RunControlState | null {
   return readState();
+}
+
+const TERMINAL_STATUSSEN: readonly RunControlState["status"][] = ["DONE", "FAILED", "STOPPED"];
+export function isTerminalStatus(status: RunControlState["status"]): boolean {
+  return TERMINAL_STATUSSEN.includes(status);
+}
+
+/**
+ * De verstreken tijd is server-berekend, niet client-berekend (§ regressiecheck
+ * "Live run: alle getoonde waarden zijn serverdata; alleen elapsed rendering
+ * mag client-side worden bijgewerkt") — puur en dus zonder een echt bestand te
+ * testen.
+ *
+ * Regel: zolang de run nog geen `finishedAt` heeft, loopt de tijd mee met
+ * `now` (echt "live"). Zodra `finishedAt` bekend is, bevriest de tijd daarop —
+ * voor altijd hetzelfde getal, ongeacht hoe vaak of laat dit later opnieuw
+ * wordt opgevraagd (de bug die dit verving rekende bij elke opvraging opnieuw
+ * `now - startedAt` uit, ook ná afronding, en bleef dus doortellen).
+ *
+ * Een oude/beschadigde toestand die WEL een eindstatus heeft maar GEEN
+ * `finishedAt` (bijvoorbeeld geschreven door een eerdere versie van deze
+ * code) mag nooit alsnog tegen `now` aflopen — dat zou hetzelfde
+ * "blijft oplopen"-symptoom terugbrengen. `fallbackEndMs` (in de praktijk:
+ * de laatste-wijzigingstijd van het statusbestand) geeft dan een vast,
+ * niet-groeiend ijkpunt.
+ */
+export function computeElapsedMs(state: Pick<RunControlState, "startedAt" | "finishedAt" | "status">, now: number, fallbackEndMs?: number): number {
+  const start = new Date(state.startedAt).getTime();
+  if (state.finishedAt) return Math.max(0, new Date(state.finishedAt).getTime() - start);
+  if (isTerminalStatus(state.status)) return Math.max(0, (fallbackEndMs ?? start) - start);
+  return Math.max(0, now - start);
+}
+
+/** `currentRun()` plus de server-berekende `elapsedMs` — dit is wat `/api/current-run` teruggeeft. */
+export function currentRunWithElapsed(): (RunControlState & { readonly elapsedMs: number }) | null {
+  const state = readState();
+  if (!state) return null;
+  const fallbackEndMs = existsSync(STATE_FILE) ? statSync(STATE_FILE).mtimeMs : undefined;
+  return { ...state, elapsedMs: computeElapsedMs(state, Date.now(), fallbackEndMs) };
 }
 
 /**
