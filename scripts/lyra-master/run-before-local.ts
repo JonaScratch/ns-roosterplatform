@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { isWorktreeGeregistreerd, prismaClientAanwezig, PRISMA_CLIENT_MARKERS } from "./subject-worktree";
 
 /**
  * De echte, cross-platform LYRA MASTER PROGRAM BEFORE-run-orchestrator.
@@ -130,7 +131,10 @@ function controleerBaselineBestaat(): void {
 function zorgVoorSubjectWorktree(): void {
   stap(`Subject-worktree (${SUBJECT_PATH})`);
   const lijst = git(CONTROL_ROOT, ["worktree", "list", "--porcelain"]);
-  const geregistreerd = lijst.includes(`worktree ${SUBJECT_PATH}`) || lijst.includes(`worktree ${path.resolve(SUBJECT_PATH)}`);
+  // Vergelijk genormaliseerd (schuine strepen, hoofdletters) — git geeft paden altijd met "/",
+  // ook op Windows, terwijl path.resolve() daar "\" gebruikt. Een kale string-vergelijking
+  // miste daardoor een al bestaande worktree na een eerdere --preflight-only-run.
+  const geregistreerd = isWorktreeGeregistreerd(lijst, path.resolve(SUBJECT_PATH));
 
   if (geregistreerd) {
     const head = git(SUBJECT_PATH, ["rev-parse", "HEAD"]);
@@ -208,6 +212,60 @@ function zorgVoorSubjectEnv(): void {
   }
   cpSync(controlEnv, subjectEnv);
   console.log("  .env gekopieerd naar de subject-worktree. (Inhoud wordt hier nooit gelogd.)");
+}
+
+// ── Stap: gegenereerde Prisma-client in de subject-worktree ──────────────────
+//
+// `prisma/schema.prisma` genereert naar `../src/lib/generated/prisma`, en die
+// map staat in `.gitignore` (`/src/lib/generated`) — een verse `git worktree`
+// bevat dus terecht geen gegenereerde client. Zonder deze stap faalt elke
+// import van baseline-appcode (bv. `src/server/audit/log.ts`) met
+// "Cannot find module '@/lib/generated/prisma/enums'" zodra `before-manifest.ts`
+// of `golden-bench.ts` draait. Genereren gebeurt met het BEVROREN
+// `prisma/schema.prisma` van de subject-worktree zelf (nooit het schema uit
+// control, en er wordt niets uit control se `src/lib/generated` gekopieerd).
+function zorgVoorFrozenPrismaClient(): void {
+  stap("Gegenereerde Prisma-client controleren/genereren (subject-worktree, bevroren schema)");
+  if (prismaClientAanwezig(SUBJECT_PATH)) {
+    console.log(`  Gegenereerde Prisma-client al aanwezig in de subject-worktree (${PRISMA_CLIENT_MARKERS.join(", ")}) — hergebruikt.`);
+    return;
+  }
+  console.log("  Gegenereerde Prisma-client ontbreekt (verwacht: gitignored). Genereren met het bevroren schema van de subject-worktree...");
+  voerUit(SUBJECT_PATH, "npx", ["prisma", "generate", "--schema", "prisma/schema.prisma"], "npx prisma generate (subject, bevroren schema)");
+  if (!prismaClientAanwezig(SUBJECT_PATH)) {
+    mislukt(
+      `'npx prisma generate' is uitgevoerd in de subject-worktree, maar de verwachte gegenereerde bestanden ontbreken nog steeds ` +
+        `(${PRISMA_CLIENT_MARKERS.join(", ")}). Controleer de prisma-versie/het schema op commit ${BASELINE}.`,
+    );
+  }
+  console.log("  Gegenereerde Prisma-client aanwezig en geverifieerd in de subject-worktree.");
+}
+
+// ── Stap: snelle smoke-import — resolveert runtime-afhankelijkheden, draait NOG geen benchmarkitem ──
+//
+// Dit is precies de importketen die eerder pas tijdens de echte manifestgeneratie
+// crashte (capabilities.ts -> audit/log.ts -> @/lib/generated/prisma/enums). Door
+// hem hier, vóór "PRECHECK PASS", te draaien, vangt de preflight dit soort fouten
+// voortaan zelf, in plaats van pas na de dure opstap.
+function voerSmokeImportUit(): void {
+  stap("Smoke-import subject-runtime (Prisma-client + agent-afhankelijkheden resolveren — nog geen benchmarkitem)");
+  const doelDir = path.join(SUBJECT_PATH, "scripts", "lyra-master");
+  mkdirSync(doelDir, { recursive: true });
+  const smokeBestand = path.join(doelDir, "smoke-import.ts");
+  writeFileSync(
+    smokeBestand,
+    [
+      "// Automatisch gegenereerd door run-before-local.ts (untracked, blijft in de subject-worktree).",
+      "// Importeert dezelfde module die golden-bench.ts ook importeert (@/server/agent/agent),",
+      "// zodat dit precies de importketen test die eerder pas tijdens de manifestgeneratie",
+      "// crashte (agent.ts -> capabilities.ts -> audit/log.ts -> @/lib/generated/prisma/enums).",
+      "// Voert GEEN benchmarkitem uit en raakt geen data aan.",
+      'import "@/server/agent/agent";',
+      'console.log("SMOKE_IMPORT_OK");',
+      "",
+    ].join("\n"),
+  );
+  voerUit(SUBJECT_PATH, "npx", [...NS_TSX_ARGS, "scripts/lyra-master/smoke-import.ts"], "Smoke-import (subject)");
 }
 
 // ── Stap: database bereikbaar (gedeeld cluster, control-side beheerd) ───────
@@ -295,6 +353,8 @@ async function main(): Promise<void> {
     controleerSubjectVereisten();
     zorgVoorSubjectNodeModules();
     zorgVoorSubjectEnv();
+    zorgVoorFrozenPrismaClient();
+    voerSmokeImportUit();
     controleerDatabase();
     const modelEnv = leesLocalModelEnv();
     await controleerOllama(modelEnv);
