@@ -1,6 +1,6 @@
 # Lyra Master Program — voortgang
 
-Bijgewerkt: 2026-09-28 (ronde: "LOCAL BEFORE BUG #4 — orchestrator maakte subject zelf dirty en weigerde hem daarna"). Zie `docs/lyra-knowledge/` voor alle output van deze ronde.
+Bijgewerkt: 2026-09-28 (ronde: "LOCAL BEFORE BUG #5 — self-copy crash na succesvolle 3×43-meting, + SCOPE CORRECTION naar Lyra Development Sandbox"). Zie `docs/lyra-knowledge/` voor alle output van deze ronde.
 
 Dit document volgt §106 (werkwijze) en §108 (als de opdracht te groot is voor één uitvoering) van de opdracht. Status per fase: `NOT_STARTED` / `IN_PROGRESS` / `BLOCKED` / `TESTED` / `COMPLETE`.
 
@@ -68,6 +68,38 @@ Na de BUG #3-reparatie kwam de gebruiker's preflight volledig door (bewijs dat d
 - **Echt uitgevoerd in deze sandbox** (niet alleen unit-getest): een verse `git worktree` op `588c1e5` (pad met spatie) → node_modules-junction, `.env`, echte `prisma generate`, echte smoke-import (allemaal hergebruikt uit de vorige ronde) → de drie orchestrator-helperbestanden erbij gezet zoals de echte orchestrator dat doet → **echte** `git status --porcelain --untracked-files=all` gevoed aan de **echte** `beoordeelWerkmapSchoonheid()`/`headMatchtBaseline()`: `trackedBaselineClean=true`, alle drie helpers herkend, nul onverwacht. Daarna `before-manifest.ts` zelf écht gedraaid: geen enkele "Werkmap is niet schoon"-melding meer — het script komt nu voorbij de integriteitscheck en faalt pas (verwacht, apart, al gedocumenteerd gat) op de ontbrekende ontwikkeldatabase (`Can't reach database server`). Daarna `scripts/v106/golden-bench.ts` (de bevroren benchmark-runner zelf) rechtstreeks gedraaid: laadt volledig, geen enkele module-fout, en stopt netjes bij het ontbrekende lokale model — "start van minimaal de frozen benchmark runner" is dus aantoonbaar bereikt. Vervolgens de volledige orchestrator (`--preflight-only`) tweemaal na elkaar gedraaid tegen dezelfde, nu deels-vervuilde (met leftover benchmark-output) worktree: de integriteitscheck tolereert alles terecht, de opruimstap verwijdert na elke aanroep precies de drie helperbestanden (bevestigd via `git status` erna), en een derde hergebruik-poging werkt nog steeds. Controlebranch/HEAD bevestigd ongewijzigd vóór en na elke stap; geen enkel getrackt bestand geraakt (`git diff --stat` leeg). Worktree en scratchmap na afloop volledig opgeruimd.
 - Volledige `npx tsc --noEmit` (geen nieuwe fouten) en volledige `npx vitest run`: 1067/1094 groen — dezelfde 27 vooraf bestaande ortools-fouten als bij elke eerdere controle, plus 13 nieuwe tests, allemaal groen.
 - **Bevestigd, vereiste 8**: een reeds bestaande frozen subject-worktree op de Windows-pc van de gebruiker blijft na `git pull` gewoon bruikbaar — de reparatie verandert niets aan hoe een bestaande worktree wordt herkend/hergebruikt (behalve de al eerder gefixte padnormalisatie), voegt alleen een classificatiestap toe vóórdat er iets bijgeschreven wordt, en ruimt aan het einde exact zijn eigen drie bestanden op. De twee bestaande runtime/geschiedenisbestanden van de gebruiker in hun normale CONTROL-checkout (`demo-room/reports/history/DR-*.md`) worden hier nergens door geraakt: dit hele mechanisme werkt uitsluitend binnen de SUBJECT-worktree.
+
+## LOCAL BEFORE BUG #5: self-copy crash NA een succesvolle 3×43-meting — en het eerste echte BEFORE-bewijs
+
+De gebruiker draaide `run-before-local.ps1` opnieuw na de BUG #4-fix. Alle preflightchecks, manifestgeneratie en **alle 3 replicaten van de volledige bevroren 43-item-suite** liepen dit keer daadwerkelijk door tot en met de aggregatie:
+
+```
+3 replicaten · item-agreement 97.7% · 1 instabiele items
+totaal: mean 79.8% · mediaan 79.1% · worst 79.1%
+```
+
+Meteen daarna crashte het script alsnog, ditmaal bij het kopiëren van de aggregatie terug naar het uitvoerpad:
+
+```
+Error: src and dest cannot be the same ...docs\lyra-knowledge\benchmarks\before\20260927-205217
+    at cpSyncFn (node:internal/fs/cp/cp-sync:56:13)
+    at main (...\run-before-local.ts:506:42)
+```
+
+**Root cause**: `outDir` (het uitvoerpad, bepaald vóór de replicaten draaiden) en `controlAggregateDir` (waar `aggregate-replicates.ts` `aggregate.json` al rechtstreeks in schreef) zijn in het normale, niet-collisiegeval **letterlijk hetzelfde pad** (`docs/lyra-knowledge/benchmarks/before/<runId>`). De code deed daarna alsnog `cpSync(controlAggregateDir, outDir, {recursive:true})` — een map naar zichzelf kopiëren, wat Node's `fs.cpSync` met `ERR_FS_CP_EINVAL` weigert. Dit was een puur administratieve nacontrole-stap; de echte meetdata (manifest, alle 3 replicaten se `golden.json`/`golden-grade.json`, `aggregate.json`) stond op dat moment al veilig en correct op schijf.
+
+**Reparatie**:
+1. **De crash zelf**: de kopieerstap slaat nu over wanneer `controlAggregateDir` en `outDir` naar hetzelfde pad resolven (`path.resolve(...) !== path.resolve(...)`-guard) — geen kopie nodig, de data staat er al.
+2. **`--resume-run <runId>`** (nieuw, in `run-before-local.ts` + `-ResumeRun` op de `.ps1`-wrapper): finaliseert een reeds (grotendeels) uitgevoerde run **zonder het bevroren 43-item-benchmark opnieuw te draaien** — precies wat vereist was ("De reeds uitgevoerde benchmarkresultaten mogen NIET opnieuw gegenereerd, overschreven of achteraf aangepast worden"). Leest `manifest.json` (baseline/model/stub, zoals destijds ÍN de subject-worktree zelf vastgelegd — niet opnieuw live bevraagd, want de worktree kan intussen zijn hergebruikt), verifieert dat alle verwachte ruwe replicaatbestanden bestaan en hasht ze (sha256, read-only), hergebruikt `aggregate.json` als het al bestaat (herberekent het alléén als het echt ontbreekt — een deterministische samenvatting van bestaande grades, geen nieuwe meting), draait de EXTENSION/NON-FROZEN-suite alsnog (puur additief), en schrijft dan pas `BEFORE-VERIFICATION.json` — met een harde weigering als dat bestand al bestaat (nooit stilzwijgend overschrijven van een reeds gefinaliseerde run).
+3. **Getest**: de zelf-copy-crash is (met de oude foutieve code, ter bevestiging van de root cause) exact gereproduceerd door `nieuweUitvoerDirectory()`/`aggregate-replicates.ts`-pad-logica na te bootsen; met de fix verdwijnt hij. `--resume-run` zelf is end-to-end getest tegen een gefabriceerd, realistisch fixture-scenario (manifest.json + aggregate.json + 3×2 ruwe replicaatbestanden, precies zoals de crash ze achterliet) in deze sandbox: levert een correcte `BEFORE-VERIFICATION.json` met `status: "PASS"`, draait het bevroren benchmark niet opnieuw (geen `golden-bench.ts`-aanroep), hergebruikt het bestaande `aggregate.json` ongewijzigd, en weigert daarna correct een tweede finalize-poging op dezelfde run (`BEFORE-VERIFICATION.json bestaat al`). Volledige `tsc --noEmit` en de 24 `subject-worktree`-tests blijven schoon.
+
+**Dit is het eerste run met een (aantoonbaar te finaliseren) frozen BEFORE-meting**: run `20260927-205217`, baseline `588c1e5`, model `qwen3:8b`, stub OFF, 3 replicaten, 43-item bevroren suite. Structurele fouten zichtbaar in alle 3 replicaten: `C-nacht-vroeg-overgang`, `D-DDR-MIX`, `E-klacht-3`, `E-klacht-4`, `F-DDR-50MIX-weekend`, `F-DDR-MIX-weekend`; instabiel over replicaten: `J-geen-verduidelijking-1` (GOED/FOUT/FOUT). Deze bevindingen zijn **bewaard als toekomstige testdata voor de Development Sandbox** (zie hieronder) — expliciet NIET nu al één-voor-één handmatig gerepareerd in de actieve Lyra, per de scope-correctie hieronder.
+
+## SCOPE CORRECTION: Lyra Development Sandbox bouwen, niet nu al Lyra optimaliseren
+
+De gebruiker corrigeerde de koers van het Master Program expliciet: het doel van deze fase is **niet** om de gevonden BEFORE-fouten nu handmatig te repareren, maar om eerst het **Demo Room / Sandbox Development System** af te bouwen waarmee Lyra later herhaaldelijk en autonoom ontwikkeld, getest, vergeleken, geversioneerd en — na menselijke goedkeuring — geactiveerd kan worden. Run `20260927-205217` is dus een validatie van de meet-/benchmarkinfrastructuur, geen startsein voor inhoudelijke Lyra-fixes. De BEFORE-fouten worden bewaard als testdata voor de sandbox, niet nu opgelost.
+
+Vereiste sandbox-cyclus: `ACTIVE/BASELINE LYRA → immutable clone → EXPERIMENT → CANDIDATE VERSION → benchmark+regressie+validator → verwerpen/bewaren → volgende experiment → BEST CANDIDATE → holdout+adversarial+promotion gates → HUMAN APPROVAL → ACTIVATE → rollback blijft mogelijk`, plus infrastructuur voor tijdgebonden autonome ontwikkelruns (1u/6u/24u/onbeperkt). Voor technische validatie van de sandbox zelf mogen disposable/synthetic kandidaten gebruikt worden — de actieve Lyra mag daarbij niet inhoudelijk veranderen. Zie hieronder voor de inventarisatie van wat van deze cyclus al bestaat (Demo Room v0.2-v0.4 bouwde al een proof-of-value-pipeline, versiebeheer, safe-publish/rollback en een audit-logboek) versus wat nog ontbreekt.
 
 ## Commits deze ronde (chronologisch)
 

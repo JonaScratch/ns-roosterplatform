@@ -16,11 +16,17 @@
 #   .\run-before-local.ps1
 #   .\run-before-local.ps1 -PreflightOnly
 #   .\run-before-local.ps1 -Replicates 5
+#   .\run-before-local.ps1 -ResumeRun 20260927-205217
+#     (finalizes an existing, already-executed run: verifies its artifacts
+#      and writes BEFORE-VERIFICATION.json, WITHOUT re-running the frozen
+#      43-item benchmark. Use this if a run's benchmark/aggregation steps
+#      completed but a later, unrelated step crashed before verification.)
 
 param(
   [int]$Replicates = 3,
   [string]$Baseline = "588c1e5",
   [string]$SubjectPath = "",
+  [string]$ResumeRun = "",
   [switch]$PreflightOnly
 )
 
@@ -35,6 +41,10 @@ $scriptArgs += "$Baseline"
 if ($SubjectPath -ne "") {
   $scriptArgs += "--subject-path"
   $scriptArgs += "$SubjectPath"
+}
+if ($ResumeRun -ne "") {
+  $scriptArgs += "--resume-run"
+  $scriptArgs += "$ResumeRun"
 }
 if ($PreflightOnly) {
   $scriptArgs += "--preflight-only"

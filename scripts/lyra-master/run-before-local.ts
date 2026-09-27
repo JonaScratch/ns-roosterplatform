@@ -100,6 +100,7 @@ const BASELINE = argument("baseline") ?? "588c1e5";
 const REPLICATES = Number(argument("replicates") ?? "3");
 const PREFLIGHT_ONLY = flag("preflight-only");
 const SUBJECT_PATH = argument("subject-path") ?? path.resolve(CONTROL_ROOT, "..", `${path.basename(CONTROL_ROOT)}-frozen-subject-${BASELINE}`);
+const RESUME_RUN = argument("resume-run");
 
 const NS_TSX_ARGS = ["tsx", "--conditions=react-server"];
 
@@ -408,9 +409,200 @@ function nieuweUitvoerDirectory(runId: string): string {
   return kandidaat;
 }
 
+// ── Bestaande run finaliseren (--resume-run) — NOOIT het bevroren 43-item-benchmark opnieuw draaien ──
+//
+// "LOCAL BEFORE BUG #5": een echte run kan de volledige bevroren 3×43-meting
+// en de aggregatie succesvol afronden, en dan alsnog crashen op een latere,
+// puur administratieve stap (zie de zelf-copy-bug hierboven). De ruwe
+// resultaten (golden.json/golden-grade.json per replicaat) en het manifest/
+// aggregate staan dan al veilig op schijf. Dit opnieuw als een normale run
+// starten zou het bevroren 43-item-benchmark een tweede keer draaien — exact
+// wat verboden is ("reeds uitgevoerde benchmarkresultaten mogen NIET opnieuw
+// gegenereerd, overschreven of achteraf aangepast worden"). --resume-run
+// leest daarom uitsluitend de al-bestaande artifacts, verifieert ze, en
+// schrijft alleen het ontbrekende verificatiebestand — zonder Ollama, zonder
+// database, zonder de subject-worktree opnieuw aan te roepen.
+async function resumeRun(runId: string): Promise<number> {
+  stap(`Bestaande run finaliseren (--resume-run ${runId}) — het bevroren 43-item-benchmark wordt NIET opnieuw uitgevoerd`);
+  rapporteerControlIdentiteit();
+
+  const runDir = path.join(CONTROL_ROOT, "docs", "lyra-knowledge", "benchmarks", "before", runId);
+  const manifestPad = path.join(runDir, "manifest.json");
+  const verificatiePad = path.join(runDir, "BEFORE-VERIFICATION.json");
+
+  if (!existsSync(manifestPad)) {
+    mislukt(
+      `Geen manifest.json gevonden voor run ${runId} op ${manifestPad}. --resume-run kan uitsluitend een reeds uitgevoerde run afronden ` +
+        `(nooit een nieuwe starten) — controleer de runId.`,
+    );
+  }
+  if (existsSync(verificatiePad)) {
+    mislukt(
+      `BEFORE-VERIFICATION.json bestaat al voor run ${runId} (${verificatiePad}). Een gefinaliseerde run wordt nooit stilzwijgend ` +
+        `overschreven. Verwijder het bestand handmatig als je zeker weet dat het opnieuw moet.`,
+    );
+  }
+
+  const manifest = JSON.parse(readFileSync(manifestPad, "utf8")) as Record<string, unknown>;
+  const manifestGit = (manifest.git ?? {}) as Record<string, unknown>;
+  const localModel = (manifest.localModel ?? {}) as Record<string, unknown>;
+
+  // Subject-identiteit hier NOOIT opnieuw live bevragen (de subject-worktree kan
+  // intussen zijn opgeruimd of hergebruikt voor een andere run) — uitsluitend
+  // lezen uit wat before-manifest.ts destijds, IN de subject-worktree zelf, al
+  // vastlegde. Dat is precies wat "verifieer dit uit de artifacts zelf, neem
+  // het niet op vertrouwen aan" hier betekent.
+  const headMatchesBaseline = manifestGit.headMatchesBaseline === true;
+  const trackedBaselineClean = manifestGit.trackedBaselineClean === true;
+  console.log(`  manifest.json gelezen: ${manifestPad}`);
+  console.log(
+    `  baseline (uit manifest)=${manifestGit.baselineHead ?? "onbekend"} headMatchesBaseline=${headMatchesBaseline} ` +
+      `trackedBaselineClean=${trackedBaselineClean}`,
+  );
+  console.log(`  model (uit manifest)=${localModel.model ?? "onbekend"} bereikbaar=${localModel.reachable === true} stubExplicitlyDisabled=${manifest.stubExplicitlyDisabled === true}`);
+  if (!headMatchesBaseline) console.error(`  [WAARSCHUWING] manifest.json zegt dat HEAD destijds niet op de baseline stond.`);
+  if (!trackedBaselineClean) console.error(`  [WAARSCHUWING] manifest.json zegt dat de getrackte baseline-inhoud destijds gewijzigd was.`);
+
+  const rawDir = path.join(runDir, "raw");
+  mkdirSync(rawDir, { recursive: true });
+
+  let alleReplicatenOk = true;
+  const ruweBestanden: { pad: string; sha256: string }[] = [];
+  for (let r = 1; r <= REPLICATES; r += 1) {
+    const meting = `before-${runId}-r${r}`;
+    const bronMap = path.join(CONTROL_ROOT, "docs", "v1.0.6", "benchmarks", meting);
+    const rawMeting = path.join(rawDir, meting);
+    if (!existsSync(bronMap) && !existsSync(rawMeting)) {
+      alleReplicatenOk = false;
+      console.error(`  [FOUT] Replicaat-map ontbreekt (niet in control, niet al in raw/): ${bronMap}. Er wordt niets opnieuw gegenereerd — deze run kan zo niet volledig geverifieerd worden.`);
+      continue;
+    }
+    // Nooit overschrijven als de raw/-kopie er al staat (bv. van een eerdere, ook-gecrashte finalize-poging).
+    if (!existsSync(rawMeting) && existsSync(bronMap)) cpSync(bronMap, rawMeting, { recursive: true });
+    for (const naam of ["golden.json", "golden-grade.json"]) {
+      const p = path.join(rawMeting, naam);
+      if (existsSync(p)) {
+        ruweBestanden.push({ pad: `raw/${meting}/${naam}`, sha256: sha256Van(p) });
+      } else {
+        alleReplicatenOk = false;
+        console.error(`  [FOUT] Verwacht ruw bestand ontbreekt: ${p}`);
+      }
+    }
+  }
+  console.log(`  ${ruweBestanden.length}/${REPLICATES * 2} verwachte ruwe bestanden gevonden en gehasht (sha256), niets herschreven.`);
+
+  // Aggregatie: dit is een DETERMINISTISCHE SAMENVATTING van reeds bestaande,
+  // ongewijzigde grade-bestanden — geen nieuwe benchmark-meting. Alleen
+  // (opnieuw) draaien als aggregate.json nog echt ontbreekt; als hij er al
+  // staat (zoals bij run 20260927-205217, waar de aggregatie al voor de crash
+  // succesvol afrondde), blijft hij ongemoeid.
+  let aggregatieOk = true;
+  const aggregatePad = path.join(runDir, "aggregate.json");
+  if (!existsSync(aggregatePad)) {
+    stap("Replicaten aggregeren (aggregate.json ontbrak nog)");
+    try {
+      voerUit(
+        CONTROL_ROOT,
+        "npx",
+        [...NS_TSX_ARGS, "scripts/lyra-master/aggregate-replicates.ts", "--run", runId, "--replicates", String(REPLICATES), "--phase", "before"],
+        "aggregate-replicates.ts",
+      );
+    } catch {
+      aggregatieOk = false;
+    }
+  } else {
+    console.log(`  aggregate.json bestond al (${aggregatePad}) — niet opnieuw berekend, niet overschreven.`);
+  }
+
+  // EXTENSION / NON-FROZEN: als nog niet gedraaid voor deze run, alsnog vanuit
+  // control — puur additief, raakt de bevroren 43-item-resultaten niet aan.
+  stap("EXTENSION / NON-FROZEN golden-suite-extensie (categorieën L, O) — bewust vanuit control, niet de bevroren subject");
+  let extensieOk = true;
+  try {
+    voerUit(CONTROL_ROOT, "npx", [...NS_TSX_ARGS, "scripts/v106/golden-suite-extension.ts"], "golden-suite-extension.ts");
+    for (let r = 1; r <= REPLICATES; r += 1) {
+      const meting = `before-${runId}-r${r}`;
+      voerUit(CONTROL_ROOT, "npx", [...NS_TSX_ARGS, "scripts/v106/golden-bench-extension.ts", "--meting", meting], `golden-bench-extension.ts (${meting})`);
+      voerUit(CONTROL_ROOT, "npx", [...NS_TSX_ARGS, "scripts/v106/golden-grade-extension.ts", "--meting", meting], `golden-grade-extension.ts (${meting})`);
+    }
+  } catch (fout) {
+    extensieOk = false;
+    console.error(
+      `  [WAARSCHUWING] EXTENSION/NON-FROZEN-meting faalde: ${fout instanceof Error ? fout.message : String(fout)} — dit blokkeert de officiële BEFORE-meting niet.`,
+    );
+  }
+
+  const status =
+    headMatchesBaseline &&
+    trackedBaselineClean &&
+    localModel.reachable === true &&
+    manifest.stubExplicitlyDisabled === true &&
+    alleReplicatenOk &&
+    aggregatieOk &&
+    ruweBestanden.length === REPLICATES * 2
+      ? "PASS"
+      : "FAIL";
+
+  const verificatie = {
+    schema: "ns-lyra-master-before-verification/2",
+    runId,
+    phase: "before",
+    recordedAt: new Date().toISOString(),
+    status,
+    finalizedVia: "resume-run",
+    controlBranchTouched: false,
+    subject: {
+      baselineCommitRequested: BASELINE,
+      baselineHeadFromManifest: manifestGit.baselineHead ?? null,
+      headMatchesBaseline,
+      trackedBaselineClean,
+      note:
+        "Subject-identiteit hier gelezen uit manifest.json (geschreven tijdens de oorspronkelijke run, IN de subject-worktree zelf), " +
+        "niet opnieuw live bevraagd — de worktree kan intussen zijn opgeruimd of voor een andere run hergebruikt.",
+    },
+    model: { name: localModel.model ?? null, reachable: localModel.reachable ?? null },
+    stubExplicitlyDisabled: manifest.stubExplicitlyDisabled ?? null,
+    replicates: REPLICATES,
+    allReplicatesCompleted: alleReplicatenOk,
+    gradingCompleted: aggregatieOk,
+    extension: {
+      ranOk: extensieOk,
+      note: "EXTENSION / NON-FROZEN — categorieen L/O, uitgevoerd vanuit control (post-baseline code), NOOIT onderdeel van de officiele bevroren BEFORE-vergelijking.",
+    },
+    rawArtifacts: ruweBestanden,
+    paths: { manifest: "manifest.json", aggregate: "aggregate.json", raw: "raw/" },
+  };
+  writeFileSync(verificatiePad, `${JSON.stringify(verificatie, null, 2)}\n`);
+
+  console.log(`\nStatus: ${status}`);
+  console.log(`Uitvoer: ${runDir}`);
+  if (status !== "PASS") {
+    console.log("Reden(en) voor FAIL: zie BEFORE-VERIFICATION.json.");
+    return 1;
+  }
+  console.log("\nStuur BEFORE-VERIFICATION.json (of de hele map) terug — dat is het BEFORE-bewijs.");
+  return 0;
+}
+
 // ── Hoofdprogramma ───────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
+  if (RESUME_RUN) {
+    console.log("=== LYRA MASTER PROGRAM - lokale BEFORE-run (finalize/resume) ===");
+    let exitCode = 0;
+    try {
+      exitCode = await resumeRun(RESUME_RUN);
+    } catch (fout) {
+      if (fout instanceof PreflightError) {
+        console.error(`\n[PRECHECK FAIL] ${fout.message}`);
+        exitCode = 1;
+      } else {
+        throw fout;
+      }
+    }
+    process.exit(exitCode);
+  }
+
   console.log("=== LYRA MASTER PROGRAM - lokale BEFORE-run ===");
 
   // Eén exitpunt onderaan (via `exitCode`, nooit `process.exit()` middenin de
@@ -503,7 +695,15 @@ async function main(): Promise<void> {
       aggregatieOk = false;
     }
     const controlAggregateDir = path.join(CONTROL_ROOT, "docs", "lyra-knowledge", "benchmarks", "before", runId);
-    if (existsSync(controlAggregateDir)) cpSync(controlAggregateDir, outDir, { recursive: true });
+    // LOCAL BEFORE BUG #5: in het gewone (niet-collisie) geval IS controlAggregateDir
+    // hetzelfde pad als outDir (beide `docs/lyra-knowledge/benchmarks/before/<runId>`) —
+    // aggregate-replicates.ts schreef aggregate.json dus al rechtstreeks in outDir zelf.
+    // Een cpSync van een map naar zichzelf gooit Node's ERR_FS_CP_EINVAL. Alleen kopiëren
+    // als het pad daadwerkelijk verschilt (bv. bij een naamcollisie kreeg outDir een
+    // "-2"-suffix van nieuweUitvoerDirectory() en is dit wél nodig).
+    if (existsSync(controlAggregateDir) && path.resolve(controlAggregateDir) !== path.resolve(outDir)) {
+      cpSync(controlAggregateDir, outDir, { recursive: true });
+    }
 
     // ── EXTENSION / NON-FROZEN: bewust vanuit CONTROL, nooit vermengd met de bevroren meting ──
     stap("EXTENSION / NON-FROZEN golden-suite-extensie (categorieën L, O) — bewust vanuit control, niet de bevroren subject");
