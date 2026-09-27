@@ -22,7 +22,9 @@ Dit document volgt §106 (werkwijze) en §108 (als de opdracht te groot is voor 
 | `798ffba` | Stap 1: `run-before-local.ps1` + `scripts/lyra-master/before-manifest.ts` + `aggregate-replicates.ts` |
 | `44b61bb` | Fase 2/3/9: source-coverage, rule-audit, preference-audit, human-pattern-audit, conflict-report, knowledge-gap-report, migration-report, knowledge-model.md + `canonical-status.ts`, golden-suite-extensie (categorieën L, O) |
 | `aa1f59f` | Fase 8/9/13-voorbereiding: `claim-verification.ts` + tests, `known-gaps-pin.test.ts` (3 gaten gepind), `promotion-contract.md` |
-| *(volgt)* | Fase 12-voorbereiding: `adversarial-holdout-design.md` (loopt, achtergrondagent) |
+| `de54ab6` | Voortgang bijgewerkt na Stap 1-3 |
+| `a1cef08` | Fase 12-voorbereiding deel 1: 6 adversarial-holdout-items (JSON) |
+| `50861f7` | Fase 12-voorbereiding deel 2: adversarial-holdout-ontwerpdocument |
 
 Elke commit hierboven is getypecheckt en getest (volledige vitest-suite) vóór commit — zie de individuele commitberichten voor exacte cijfers.
 
@@ -42,7 +44,7 @@ Elke commit hierboven is getypecheckt en getest (volledige vitest-suite) vóór 
 | 9 | Regressiesuite uitbreiden | **GEDEELTELIJK COMPLETE** | `jsonUit()`-test (commit `588c1e5`, 8 tests) + golden-suite-extensie (categorieën L, O, geschreven maar NOOIT gedraaid — DB ontbreekt hier) + 3 pin-tests voor bekende gaten. |
 | 10 | Kennisconsistentie + broncoverage | **DEELS COMPLETE** | `source-coverage.md` bestaat. Een geautomatiseerde, doorlopende cross-component-consistency-checker (§47) is ONTWERP-only (zie conflict-report.md) — niet gebouwd. |
 | 11 | AFTER-benchmark | **BLOCKED (LOCAL REQUIRED)** | Afhankelijk van Fase 1 — kan pas na de lokale BEFORE-run. |
-| 12 | Locked holdout/adversarial | **IN_PROGRESS** | `adversarial-holdout-design.md` wordt geschreven (achtergrondagent, loopt bij het schrijven van dit document). |
+| 12 | Locked holdout/adversarial | **ONTWERP + 6 ITEMS COMPLETE** | `adversarial-holdout-design.md` (architectuur, vries-/auditregel, alle 15 §56-categorieën beoordeeld) + `benchmarks/adversarial-holdout-design.json` (6 volledig gegronde items, status `DESIGNED_NOT_GRADED`). Grader (Fase 8) en het daadwerkelijk als locked holdout inzetten (na AFTER) zijn vervolgwerk. |
 | 13 | Promotion-compatibiliteitstest | **CONTRACT COMPLETE, TEST NOT_STARTED** | `promotion-contract.md`: criteria + brain-manifest-ontwerp + cross-system-adapterontwerp. Een daadwerkelijke compatibiliteitstest tegen het echte NS-platform is buiten de zichtbaarheid van deze ronde (geen toegang tot dat platform). |
 | 14 | Eindrapport + commits | **IN_PROGRESS** | Dit document + het antwoord aan het einde van deze beurt zijn het tussentijdse eindrapport; commits lopen door zolang er onafhankelijk werk is. |
 
