@@ -1,0 +1,135 @@
+/*
+ * Gedeeld design system voor de Lyra Demo Room (§ UI/UX REBUILD).
+ *
+ * Bewust dezelfde kleurtaal als het bestaande NS Roosterplatform-gevoel:
+ * donkerblauwe header, lichte achtergrond, blauwe primaire acties, groen
+ * uitsluitend voor succes/verbetering, oranje voor wachtend/in test, rood
+ * voor fouten/afwijzing. Dit bestand vervangt de vroegere inline <style> in
+ * index.html (dezelfde tokens, hergebruikt — geen nieuwe kleurtaal verzonnen).
+ */
+
+:root {
+  --bg: #0a1e3d;
+  --panel: #0f2647;
+  --accent: #1f5fd0;
+  --orange: #c9622a;
+  --text: #e7edf7;
+  --muted: #9fb0c9;
+  --good: #2e9e5b;
+  --bad: #c0392b;
+  --warn: #b9862c;
+  --card-shadow: 0 1px 2px rgba(10, 30, 61, 0.06), 0 1px 8px rgba(10, 30, 61, 0.04);
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, "Segoe UI", Arial, sans-serif; background: #f4f6fb; color: #12223c; }
+
+/* ---- Header ---- */
+header.app-header { background: var(--bg); color: var(--text); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+header.app-header .brand { display: flex; align-items: center; gap: 12px; }
+header.app-header .brand-icon { background: #fff; border-radius: 8px; padding: 6px 8px; display: flex; align-items: center; justify-content: center; }
+header.app-header .brand-icon img { height: 20px; width: auto; display: block; }
+header.app-header h1 { margin: 0; font-size: 19px; line-height: 1.2; }
+header.app-header .brand-sub { margin: 1px 0 0; color: var(--muted); font-size: 12px; }
+header.app-header .chrome { display: flex; align-items: center; gap: 14px; }
+header.app-header .chrome .help-icon { width: 30px; height: 30px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+header.app-header .chrome .user-chip { display: flex; align-items: center; gap: 8px; color: #fff; font-size: 13px; }
+header.app-header .chrome .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: #2a4a82; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+#banner { font-size: 12px; color: var(--muted); }
+
+/* ---- Nav ---- */
+nav.app-nav { display: flex; gap: 2px; background: var(--panel); padding: 0 24px; overflow-x: auto; }
+nav.app-nav button { background: none; border: none; color: var(--muted); padding: 10px 14px; cursor: pointer; font-size: 13px; border-bottom: 3px solid transparent; white-space: nowrap; }
+nav.app-nav button.active { color: #fff; border-bottom-color: var(--accent); background: rgba(255, 255, 255, 0.06); }
+
+main { padding: 20px 24px; max-width: 1320px; margin: 0 auto; }
+
+/* ---- Cards / stats ---- */
+.card { background: #fff; border: 1px solid #eaeef5; border-radius: 12px; padding: 18px; margin-bottom: 14px; box-shadow: var(--card-shadow); }
+.card h3 { display: flex; align-items: center; gap: 8px; margin-top: 0; }
+.card h3 .info-icon { margin-left: auto; width: 16px; height: 16px; border-radius: 50%; background: #eef1f6; color: var(--muted); font-size: 10px; display: inline-flex; align-items: center; justify-content: center; cursor: default; font-style: normal; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.stat { background: #fff; border: 1px solid #eaeef5; border-radius: 10px; padding: 14px; }
+.stat.with-icon { display: flex; gap: 12px; align-items: flex-start; }
+.stat .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.stat .value { font-size: 22px; font-weight: 600; margin-top: 4px; }
+.stat .sub { font-size: 12px; color: #556; margin-top: 2px; }
+
+.icon-chip { flex-shrink: 0; width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+.icon-chip svg { width: 19px; height: 19px; }
+.icon-chip.blue { background: #e7effd; color: var(--accent); }
+.icon-chip.amber { background: #fdf1de; color: #c8791a; }
+.icon-chip.green { background: #e4f6ea; color: var(--good); }
+.icon-chip.red { background: #fbe6e3; color: var(--bad); }
+.icon-chip.purple { background: #ece7fb; color: #6d4fc9; }
+.icon-chip.navy { background: #eef2fa; color: var(--bg); }
+.icon-chip.lg { width: 52px; height: 52px; border-radius: 12px; }
+.icon-chip.lg svg { width: 26px; height: 26px; }
+
+/* ---- Tags / badges ---- */
+.tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #eef1f6; color: #455; font-weight: 600; }
+.tag.good { background: #e4f6ea; color: var(--good); }
+.tag.bad { background: #fbe6e3; color: var(--bad); }
+.tag.warn { background: #fbf1e0; color: var(--warn); }
+.tag.info { background: #e7effd; color: var(--accent); }
+
+/* ---- Tables ---- */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid #eef1f6; vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.02em; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover { background: #f7f9fc; }
+code { background: #eef1f6; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+
+/* ---- Buttons / forms ---- */
+button.primary { background: var(--accent); color: #fff; border: none; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+button.danger { background: var(--bad); color: #fff; border: none; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+button.ghost { background: #eef1f6; color: #333; border: none; padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+label { display: block; font-size: 12px; color: #556; margin: 10px 0 4px; }
+select, input[type=text], input[type=number] { padding: 7px 9px; border: 1px solid #ccd4e0; border-radius: 6px; font-size: 13px; width: 100%; max-width: 320px; }
+.row { display: flex; gap: 24px; flex-wrap: wrap; }
+.col { flex: 1; min-width: 280px; }
+.empty { color: var(--muted); font-style: italic; padding: 20px 0; text-align: center; }
+
+/* ---- Duration/option picker (§ Dashboard "Nieuwe ontwikkelrun starten") ---- */
+.option-tile { border: 2px solid #dde3ee; border-radius: 8px; padding: 12px 14px; cursor: pointer; background: #fff; flex: 1; min-width: 110px; text-align: left; }
+.option-tile.selected { border-color: var(--accent); background: #eef4fd; }
+.option-tile .option-title { font-weight: 600; font-size: 13px; }
+.option-tile .option-sub { font-size: 11px; color: #667; margin-top: 2px; }
+
+/* ---- Stepper (Diagnose -> Experiment -> ... -> Beslissing) ---- */
+.stepper { display: flex; gap: 0; flex-wrap: wrap; }
+.step { flex: 1; min-width: 110px; text-align: center; padding: 10px 6px; border-bottom: 4px solid #dde3ee; font-size: 12px; color: #556; }
+.step.done { border-bottom-color: var(--good); color: var(--good); font-weight: 600; }
+.step.active { border-bottom-color: var(--accent); color: var(--accent); font-weight: 600; }
+.step.failed { border-bottom-color: var(--bad); color: var(--bad); font-weight: 600; }
+.step .arrow { color: #ccd4e0; }
+
+/* ---- Gate status (Benchmark/Validator/Holdout/Promotie) ---- */
+.gate-list { display: flex; flex-direction: column; gap: 8px; }
+.gate-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f3f8; font-size: 13px; }
+.gate-row:last-child { border-bottom: none; }
+
+/* ---- Findings ---- */
+.finding-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid #f1f3f8; }
+.finding-item:last-child { border-bottom: none; }
+.finding-badge { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.finding-badge.up { background: #e4f6ea; color: var(--good); }
+.finding-badge.down { background: #fbe6e3; color: var(--bad); }
+.finding-title { font-weight: 600; font-size: 13px; }
+.finding-detail { font-size: 12px; color: #667; margin-top: 1px; }
+.finding-basis { font-size: 11px; color: var(--muted); }
+
+/* ---- Charts (hand-rolled SVG, geen bibliotheek) ---- */
+svg.chart { width: 100%; height: 220px; }
+.chart-legend { font-size: 12px; color: #556; display: flex; gap: 14px; margin-top: 6px; flex-wrap: wrap; }
+.chart-legend span.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+
+/* ---- Modal ---- */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(10, 30, 61, 0.5); display: none; align-items: center; justify-content: center; z-index: 10; }
+.modal-backdrop.open { display: flex; }
+.modal { background: #fff; border-radius: 10px; padding: 22px; max-width: 640px; width: 92%; max-height: 85vh; overflow: auto; }
+.modal h2 { margin-top: 0; }
+.modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+details summary { cursor: pointer; color: var(--accent); font-size: 13px; }

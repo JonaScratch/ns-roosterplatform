@@ -28,7 +28,14 @@ import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from 
  *   npx tsx demo-room/src/server.ts
  */
 
-const UI_DIR = path.join(path.dirname(__filename), "..", "ui");
+const UI_DIR = path.resolve(path.dirname(__filename), "..", "ui");
+const STATIC_CONTENT_TYPES: Record<string, string> = {
+  ".js": "application/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".json": "application/json; charset=utf-8",
+};
+const STATIC_EXTENSIONS = Object.keys(STATIC_CONTENT_TYPES);
 
 function json(res: http.ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
@@ -292,6 +299,21 @@ const server = http.createServer((req, res) => {
     // onder demo-room/, gewoon rechtstreeks vanaf zijn eigen plek geserveerd.
     if (req.method === "GET" && url.pathname === "/brand/ns-logo.svg") {
       return serveFile(res, path.join(REPO_ROOT, "public", "brand", "ns-logo.svg"), "image/svg+xml");
+    }
+    // Generieke statische-bestandenserver voor de UI-modules (§ UI/UX REBUILD:
+    // de vroegere monolithische index.html is opgesplitst in aparte CSS/JS-
+    // modulebestanden onder ui/ — deze route serveert ze op hun eigen pad,
+    // uitsluitend binnen UI_DIR (geen ..-padtraversal) en uitsluitend bekende,
+    // veilige extensies (geen willekeurig bestand van schijf serveren).
+    if (req.method === "GET" && STATIC_EXTENSIONS.some((ext) => url.pathname.endsWith(ext))) {
+      const relatief = url.pathname.replace(/^\/+/, "");
+      const bestand = path.resolve(UI_DIR, relatief);
+      if (!bestand.startsWith(UI_DIR)) {
+        res.writeHead(403);
+        return res.end();
+      }
+      const ext = path.extname(bestand);
+      return serveFile(res, bestand, STATIC_CONTENT_TYPES[ext] ?? "application/octet-stream");
     }
     if (req.method !== "GET" && req.method !== "POST") {
       res.writeHead(405);
