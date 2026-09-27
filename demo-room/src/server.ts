@@ -11,6 +11,7 @@ import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
 import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
 import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults";
+import { getDevelopmentRunResult, listAllCandidates, listDevelopmentRunResults } from "./store/developmentRuns";
 import { compareVersions, displayNameForVersionId, latestFindings, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 
@@ -321,6 +322,8 @@ const server = http.createServer((req, res) => {
       "/api/versions/deltas": versionDeltas,
       "/api/current-run": () => currentRunWithElapsed(),
       "/api/autonomy/results": () => listAutonomyResults(),
+      "/api/development-runs": () => listDevelopmentRunResults(),
+      "/api/candidates": () => listAllCandidates(),
       "/api/runs/history": runHistory,
       "/api/runs/summary": runsSummary,
       "/api/findings": () => latestFindings(),
@@ -346,6 +349,16 @@ const server = http.createServer((req, res) => {
     if (req.method === "GET" && url.pathname === "/api/autonomy/detail") {
       const id = url.searchParams.get("id");
       const found = id ? getAutonomyResult(id) : null;
+      return json(res, found ? 200 : 404, found ?? { error: "niet gevonden" });
+    }
+    if (req.method === "GET" && url.pathname === "/api/development-runs/detail") {
+      const id = url.searchParams.get("id");
+      const found = id ? getDevelopmentRunResult(id) : null;
+      return json(res, found ? 200 : 404, found ?? { error: "niet gevonden" });
+    }
+    if (req.method === "GET" && url.pathname === "/api/candidates/detail") {
+      const id = url.searchParams.get("id");
+      const found = id ? listAllCandidates().find((c) => c.candidateId === id) : null;
       return json(res, found ? 200 : 404, found ?? { error: "niet gevonden" });
     }
     if (req.method === "GET" && url.pathname === "/api/publish/preview") {
@@ -402,6 +415,8 @@ const server = http.createServer((req, res) => {
             ? ["autonomous", "--minutes", String(body.minutes ?? 10), "--goal", String(body.goal ?? "Zelfgekozen verbetering"), "--goals", String(body.goals ?? "KEEP_GOOD_PARTS")]
           : type === "autonomy-test"
             ? ["autonomy-test", "--minutes", String(body.minutes ?? 10)]
+          : type === "development-run"
+            ? ["development-run", "--minutes", String(body.minutes ?? 360)]
             : null;
         if (!args) return json(res, 400, { error: `onbekend runtype: ${type}` });
         meldRunAangevraagd(runId, type, body);

@@ -2,6 +2,7 @@ import "server-only";
 import { locationCode as defaultLocationCode } from "../config";
 import * as logbook from "../store/logbook";
 import { currentVersionId } from "../publish/versions";
+import { writeDevelopmentRunResult } from "../store/developmentRuns";
 import { DEFAULT_DEVELOPMENT_CYCLE_DEPENDENCIES, runDevelopmentCycle, type DevelopmentCycleDependencies, type DevelopmentCycleResult } from "./developmentCycle";
 
 /**
@@ -151,7 +152,7 @@ export async function runAutonomousDevelopmentRun(
     data: { stopReason, cycleCount: cycles.length, acceptedCount, rejectedCount },
   });
 
-  return {
+  const result: AutonomousDevelopmentRunResult = {
     runId,
     startedAt,
     finishedAt,
@@ -164,4 +165,11 @@ export async function runAutonomousDevelopmentRun(
     stopReason,
     timeline,
   };
+  // Zonder dit zou het resultaat alleen in het geheugen van dit proces bestaan
+  // en spoorloos verdwijnen zodra het (via `startCliRun()`) gespawnde CLI-proces
+  // stopt — de Dashboard/Development Runs/Candidates-pagina's kunnen een
+  // afgeronde run dan nooit meer terugvinden. Zelfde patroon als
+  // `autonomy/capabilityTest.ts`'s eigen `writeAutonomyResult(result)`.
+  writeDevelopmentRunResult(result);
+  return result;
 }

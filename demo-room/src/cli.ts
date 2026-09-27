@@ -8,6 +8,7 @@ import type { RebuildGoal } from "@/server/optimizer/objective-weights";
 import { runSuite, runSuiteWithVariance } from "./benchmark/run";
 import { runProofOfValue } from "./proof/proofOfValue";
 import { runAutonomyCapabilityTest } from "./autonomy/capabilityTest";
+import { runAutonomousDevelopmentRun } from "./develop/autonomousDevelopmentRun";
 import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
 import { listVersions } from "./publish/versions";
 import { writeHandoff } from "./store/handoff";
@@ -252,6 +253,18 @@ async function cmdAutonomyTest(): Promise<void> {
   });
 }
 
+/** Echte proceskant van de Development Run-pagina (§ UI/UX REBUILD, foto 3): spawnt via `startCliRun()`, net als elk ander runtype hier. */
+async function cmdDevelopmentRun(): Promise<void> {
+  const minutes = Number(arg("minutes", "60"));
+  const runId = nieuwRunId("DEV");
+  await withRunLogbook(runId, { kind: "development-run", challengeOrGoal: `Autonome ontwikkelrun (max. ${minutes} min): diagnose → kandidaat genereren → benchmark/validator → keep/reject → versie opslaan, herhaald tot budget op is.` }, async () => {
+    console.log(`Development run gestart (max. ${minutes} minuten).`);
+    const result = await runAutonomousDevelopmentRun({ runId, maxMinutes: minutes });
+    console.log(JSON.stringify({ stopReason: result.stopReason, cycles: result.cycles.length, accepted: result.acceptedCount, rejected: result.rejectedCount, bestCandidateVersionId: result.bestCandidateVersionId }, null, 2));
+    console.log(`\nGestopt: ${result.stopReason}. ${result.acceptedCount} kandidaat/kandidaten geaccepteerd van ${result.cycles.length} cyclus/cycli. Actieve versie ongewijzigd: ${result.endVersionId === result.startVersionId}.`);
+  });
+}
+
 async function cmdVersions(): Promise<void> {
   const huidig = currentProductionVersionLabel();
   console.log(`Huidige productieversie: ${huidig}\n`);
@@ -353,6 +366,7 @@ async function main(): Promise<void> {
     autonomous: cmdAutonomous,
     "proof-of-value": cmdProofOfValue,
     "autonomy-test": cmdAutonomyTest,
+    "development-run": cmdDevelopmentRun,
     versions: cmdVersions,
     publish: cmdPublish,
     rollback: cmdRollback,
