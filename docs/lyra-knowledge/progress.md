@@ -14,6 +14,24 @@ Dit document volgt §106 (werkwijze) en §108 (als de opdracht te groot is voor 
 
 **BELANGRIJKSTE ONTDEKKING VAN FASE 0**: dit is geen "bouw het canonieke kennissysteem vanaf nul"-opdracht. Er bestaat al een zeer volwassen, goed gedocumenteerde infrastructuur. De opdracht van deze ronde is dus vooral: **reconciliatie, het dichten van specifieke, nu concreet vastgestelde gaten, en één keer een eerlijke voor/na-meting** — niet "bouw dit allemaal opnieuw".
 
+## KRITIEKE REPARATIE: de lokale BEFORE-launcher (na een echte Windows-testrun van de gebruiker)
+
+De gebruiker draaide `run-before-local.ps1` daadwerkelijk op Windows 11 (Windows PowerShell, niet pwsh) en kreeg een echte parser-fout ("Missing closing '}'"). **Root cause**: het bestand bevatte niet-ASCII tekens (em-streepjes, §-tekens) zonder byte-order-mark; Windows PowerShell 5.1 kan zo'n bestand onder de systeem-ANSI-codepage inlezen in plaats van UTF-8, wat een string-literal kan corrumperen en in een cascade van valse accolade-fouten kan eindigen — de eerdere validatie met de PowerShell-taalparser (via `pwsh`/Linux) controleerde alleen de AST van al-correct-gedecodeerde tekst en miste dit dus per definitie.
+
+**Tweede, architectonische fout** die de gebruiker zelf blootlegde: de oude launcher deed `git checkout 588c1e5` op de **eigen ontwikkelbranch** van de gebruiker, en riep daarna orchestratiebestanden aan (`before-manifest.ts`, `golden-suite-extension.ts`) die pas ná die commit zijn toegevoegd — die bestonden dus niet meer zodra de branch daadwerkelijk op `588c1e5` stond. Fout op twee manieren: methodologisch (de BEFORE-meting moet de bevroren agentcode gebruiken, niet ontbrekende nieuwere code) én destructief (de branch van de gebruiker werd gedetacheerd).
+
+**Reparatie — volledig herbouwd, architectonisch, niet cosmetisch:**
+- `scripts/lyra-master/run-before-local.ts` is nu de echte orchestrator (TypeScript, cross-platform, typegecontroleerd).
+- `run-before-local.ps1` is nu een zeer dunne, PUUR-ASCII, PowerShell-5.1-compatibele wrapper (met een expliciete UTF-8-BOM als extra bescherming) die uitsluitend `npx tsx ... run-before-local.ts` aanroept.
+- `run-before-local.cmd` toegevoegd als alternatief, ook puur ASCII.
+- **CONTROL/SUBJECT-scheiding**: de eigen branch van de gebruiker (CONTROL) wordt NOOIT gecheckout/gereset/gestash — er wordt alleen uit gelezen. Een aparte, gedetacheerde `git worktree` (SUBJECT) op exact `588c1e5` bevat de bevroren agentcode/golden-suite/tools; alle metingen tegen de bevroren 43-item suite draaien daarbinnen. De golden-suite-extensie (categorieën L/O) draait bewust vanuit CONTROL en heet overal expliciet "EXTENSION / NON-FROZEN" — nooit vermengd met de officiële BEFORE-vergelijking.
+- `node_modules` in de subject-worktree: een junction (geen Administrator nodig, geen herinstallatie) — pas nadat is geverifieerd dat `package.json`/`package-lock.json` ongewijzigd zijn sinds de baseline.
+- `.env` wordt veilig gekopieerd (inhoud nooit gelogd).
+- Een `--preflight-only`-vlag draait alle controles zonder één benchmarkitem te draaien en print exact `PRECHECK PASS` / `FROZEN SUBJECT: ...` / `MODEL: ...` / `STUB: OFF` / `REPLICATES: ...`.
+- `BEFORE-VERIFICATION.json` is pas `PASS` als daadwerkelijk bewezen is: subject-commit klopt, echt model gebruikt, stub uit, alle replicaten voltooid, grading voltooid, ruwe bestanden + sha256-hashes aanwezig.
+- **Echt getest in deze omgeving** (niet alleen syntax-gevalideerd): een volledige `git worktree add`-cyclus tegen een pad MET een spatie (zoals de daadwerkelijke repository-locatie van de gebruiker), inclusief hergebruik bij een tweede run (idempotent), inclusief een schone, duidelijke `[PRECHECK FAIL]`-melding bij de ontbrekende ontwikkeldatabase — en bevestigd dat de eigen CONTROL-branch/HEAD van deze sessie voor, tijdens en na de test volledig ongewijzigd bleef.
+- De twee bestaande, niet-getrackte bestanden van de gebruiker (`demo-room/reports/history/DR-*.md`) worden door dit ontwerp automatisch nooit geraakt: er wordt nergens meer `git checkout`/`git stash` op CONTROL uitgevoerd.
+
 ## Commits deze ronde (chronologisch)
 
 | Commit | Inhoud |
@@ -91,9 +109,15 @@ Bij het proberen op te lossen van "geen Ollama hier" is óók geprobeerd een lok
 
 **Waarom hier niet uitvoerbaar**: geen Ollama bereikbaar in deze cloud-omgeving; geen levende ontwikkeldatabase (zie hierboven).
 
-**Wat al klaar staat**: `run-before-local.ps1` (repository-root) — controleert commit `588c1e5`, Ollama, database, stub-uitschakeling; regenereert de golden-suite-extensie met echte cijfers; genereert een gecombineerd voor-manifest; draait de bevroren 43-item suite (en de extensie) N keer; beoordeelt en aggregeert; schrijft één `BEFORE-VERIFICATION.json`.
+**Wat al klaar staat**: `run-before-local.ps1`/`.cmd` (dunne wrappers) → `scripts/lyra-master/run-before-local.ts` (echte orchestrator) — zet een aparte, gedetacheerde `git worktree` op exact `588c1e5` (de eigen branch van de gebruiker blijft onaangeroerd), controleert database/Ollama/model/stub, draait de bevroren 43-item suite N keer binnen die worktree, draait de EXTENSION/NON-FROZEN-suite (categorieën L/O) apart vanuit de huidige branch, beoordeelt en aggregeert, schrijft één `BEFORE-VERIFICATION.json`. Zie "KRITIEKE REPARATIE" hierboven voor waarom de eerdere versie niet werkte en wat er structureel is veranderd.
 
-**Het ene commando**:
+**Eerst een snelle controle (seconden, geen benchmark)**:
+```powershell
+cd "C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform-demo-room"
+.\run-before-local.ps1 -PreflightOnly
+```
+
+**Daarna de echte run**:
 ```powershell
 cd "C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform-demo-room"
 .\run-before-local.ps1
