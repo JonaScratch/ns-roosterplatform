@@ -69,6 +69,12 @@ export async function measure(
 }
 
 export interface RunProofOfValueOptions {
+  /**
+   * Een kant-en-klare variant (bv. door `develop/generateCandidate.ts`
+   * autonoom gegenereerd, dus niet in `PROMPT_VARIANTS` geregistreerd).
+   * Heeft voorrang boven `variantId` wanneer beide gegeven zijn.
+   */
+  readonly variant?: PromptVariant;
   readonly variantId?: string;
   readonly locationCode?: string;
   /** §3: minimaal twee onafhankelijke POST-runs wanneer modelgedrag onderdeel is van de wijziging. */
@@ -92,7 +98,7 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
   const runId = options.runId ?? `DR-POV-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
   const startedAt = new Date().toISOString();
   const locationCode = options.locationCode ?? defaultLocationCode();
-  const variant: PromptVariant = (options.variantId ? findPromptVariant(options.variantId) : null) ?? findPromptVariant("variant-a-tool-hint")!;
+  const variant: PromptVariant = options.variant ?? (options.variantId ? findPromptVariant(options.variantId) : null) ?? findPromptVariant("variant-a-tool-hint")!;
   const variantCategory: ProofOfValueResult["variantCategory"] = variant.category;
   const aantalPostRuns = Math.max(1, options.postRuns ?? MIN_POST_RUNS);
 
@@ -184,7 +190,7 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     knownWeaknesses: oordeel.knownWeaknesses,
   };
 
-  await persist(result, dev.items.length, holdout.items.length);
+  await persist(result, variant, dev.items.length, holdout.items.length);
   return result;
 }
 
@@ -206,7 +212,8 @@ async function legeDualQualityMeasurement(variantCategory: ProofOfValueResult["v
   };
 }
 
-function flatten(agent: DualQualityMeasurement["agent"]): Record<string, number> {
+/** Herbruikt door `develop/developmentCycle.ts` om `LyraVersion.benchmarkReference` te vullen. */
+export function flatten(agent: DualQualityMeasurement["agent"]): Record<string, number> {
   const out: Record<string, number> = {};
   for (const [k, v] of Object.entries(agent)) {
     if (k === "latencyMs") continue;
@@ -219,7 +226,7 @@ function flatten(agent: DualQualityMeasurement["agent"]): Record<string, number>
   return out;
 }
 
-async function persist(result: ProofOfValueResult, devCount: number, holdoutCount: number): Promise<void> {
+async function persist(result: ProofOfValueResult, variant: PromptVariant, devCount: number, holdoutCount: number): Promise<void> {
   const experiment: ExperimentRecord = {
     id: result.id,
     runId: result.runId,
@@ -246,7 +253,7 @@ async function persist(result: ProofOfValueResult, devCount: number, holdoutCoun
     decision: result.decision,
   };
   appendExperiment(experiment);
-  if (experiment.decision === "PROMOTION_CANDIDATE") writeImprovementReport(experiment, result);
+  if (experiment.decision === "PROMOTION_CANDIDATE") writeImprovementReport(experiment, result, variant);
 
   appendBenchmarkHistory({
     timestamp: result.finishedAt,
@@ -275,10 +282,15 @@ async function persist(result: ProofOfValueResult, devCount: number, holdoutCoun
     parentVersion: CONTROL.id,
     runId: result.runId,
     problem: "Bewijs vóór een lange autonome run: werkt de meet-wijzig-hermeet-lus van de Demo Room daadwerkelijk?",
-    hypothesis: `${result.variantLabel}: ${findPromptVariant(result.variantId)?.description ?? ""}`,
+    hypothesis: `${result.variantLabel}: ${variant.description}`,
     whatChanged: `Systeeminstructie-variant "${result.variantId}" (${result.variantCategory}), via LocalModelConfig.systemPromptOverride.`,
     whyChanged: "Om te testen of een gecontroleerde sandboxwijziging meetbaar effect heeft, in beide richtingen — verbetering en regressie tellen allebei als geldig resultaat.",
-    diffReference: `demo-room/src/variants/promptVariants.ts#${result.variantId}`,
+    // Statische, hand-geschreven varianten staan echt in promptVariants.ts; een
+    // autonoom gegenereerde kandidaat (develop/generateCandidate.ts) staat daar
+    // NIET — findPromptVariant() zou die dus nooit terugvinden. Verwijs dan
+    // naar de letterlijke tekst zelf (die al in whatChanged/productionText
+    // staat), niet naar een bestandslocatie die de wijziging niet bevat.
+    diffReference: findPromptVariant(variant.id) ? `demo-room/src/variants/promptVariants.ts#${variant.id}` : `gegenereerde kandidaat "${variant.id}" — zie whatChanged/promptOverrideText, niet in promptVariants.ts geregistreerd`,
     benchmarkBefore: flatten(result.pre.agent),
     benchmarkAfter: flatten(result.post.agent),
     changePerCategory: Object.fromEntries(
@@ -300,14 +312,14 @@ async function persist(result: ProofOfValueResult, devCount: number, holdoutCoun
  * Iedere `PROMOTION_CANDIDATE` krijgt automatisch een Verbeteringsrapport in
  * drie leesniveaus (§ aanvulling "VERPLICHT — UITLEGBARE VERBETERINGEN").
  */
-function writeImprovementReport(experiment: ExperimentRecord, result: ProofOfValueResult): void {
+function writeImprovementReport(experiment: ExperimentRecord, result: ProofOfValueResult, variant: PromptVariant): void {
   const dir = path.join(REPORTS_DIR, "improvements");
   mkdirSync(dir, { recursive: true });
   const preVersion = getVersion(currentVersionId());
   const input = {
     experiment,
     variantLabel: result.variantLabel,
-    variantDescription: findPromptVariant(result.variantId)?.description ?? "",
+    variantDescription: variant.description,
     preVersion,
     candidateChanges: [`Systeeminstructie-toevoeging "${result.variantId}" (${result.variantCategory}) — nog niet gepubliceerd, alleen sandbox-gemeten.`],
   };
