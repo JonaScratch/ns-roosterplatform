@@ -249,7 +249,12 @@ function heeftContext(request: PlanRequest, veld: string): boolean {
 }
 
 /** De planinstructie: welke tools, of doorvragen, of weigeren. Antwoord in JSON. */
-function planInstructie(): string {
+/**
+ * Geëxporteerd (was module-privé) zodat `tests/agent/model-local-pin.test.ts`
+ * de huidige instructietekst rechtstreeks kan pinnen — puur leesbaar maken,
+ * geen enkele gedragswijziging: de functie zelf is ongewijzigd.
+ */
+export function planInstructie(): string {
   return [
     "Bepaal wat er moet gebeuren en antwoord met uitsluitend JSON, zonder toelichting eromheen:",
     '{"intent":"ROOSTERVRAAG|REGELVRAAG|VERDELINGSVRAAG|UITLEGVRAAG|FEEDBACK|OPTIMALISATIEVERZOEK|VERDUIDELIJKING_NODIG|NIET_VAST_TE_STELLEN|GEWEIGERD",',
