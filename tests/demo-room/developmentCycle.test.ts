@@ -189,6 +189,45 @@ describe("Development Sandbox — volledige end-to-end ontwikkelcyclus (SCOPE CO
     expect(eventKinds.has("INFO")).toBe(true);
   });
 
+  it("focusDimension overschrijft de zwakte die de kandidaatgenerator target, en de echte diagnose blijft alsnog gelogd", async () => {
+    const runId = `TEST-DEVCYCLE-FOCUS-${Date.now()}`;
+    let ontvangenCandidateIdVoorProof: string | null = null;
+    const proof = fakeProof({
+      runId,
+      variantId: "placeholder",
+      variantLabel: "Gegenereerde kandidaat — grounding",
+      decision: "KEEP_TESTING",
+      regressions: [],
+      improvements: [],
+      reasoning: "Geen aantoonbare winst.",
+      postAgent: agentCategory(),
+    });
+
+    const result = await developmentCycleMod.runDevelopmentCycle(
+      { runId, focusDimension: "grounding" },
+      {
+        // Automatische diagnose vindt "toolChoice" als zwakste dimensie — de gebruiker koos handmatig "grounding".
+        identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 40 }),
+        generateCandidate: (await import("../../demo-room/src/develop/generateCandidate")).generateCandidateFromWeakness,
+        runProofOfValue: async (options) => {
+          ontvangenCandidateIdVoorProof = options.variant?.id ?? null;
+          return { ...proof, variantId: options.variant?.id ?? proof.variantId };
+        },
+        createVersion: versionsMod.createVersion,
+      },
+    );
+
+    // De kandidaat is echt gegenereerd voor "grounding", niet voor de automatisch gediagnosticeerde "toolChoice".
+    expect(result.weakness.weakestDimension).toBe("grounding");
+    expect(result.candidate?.description).toMatch(/grounding/i);
+    expect(ontvangenCandidateIdVoorProof).toBe(result.candidate?.id);
+
+    // De echte, automatische diagnose is niet verborgen — de overschrijving staat expliciet in het logboek.
+    const tekst = logbookMod.readRunText(runId) ?? "";
+    expect(tekst).toMatch(/toolChoice/);
+    expect(tekst).toMatch(/overschreven/i);
+  });
+
   it("REJECT: een synthetische kandidaat met een veiligheidsregressie wordt afgewezen — geen versie aangemaakt, actieve versie ongewijzigd", async () => {
     const runId = `TEST-DEVCYCLE-REJECT-${Date.now()}`;
     const baselineActiveId = versionsMod.currentVersionId();

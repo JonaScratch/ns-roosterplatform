@@ -6,7 +6,7 @@ import { flatten, runProofOfValue, type RunProofOfValueOptions } from "../proof/
 import { createVersion } from "../publish/versions";
 import { generateCandidateFromWeakness } from "./generateCandidate";
 import type { PromptVariant } from "../variants/promptVariants";
-import type { LyraVersion, ProofOfValueResult } from "../types";
+import type { AgentQualityCategory, LyraVersion, ProofOfValueResult } from "../types";
 
 /**
  * De volledige, bewijsbare ontwikkelcyclus van de Development Sandbox
@@ -46,6 +46,13 @@ export interface DevelopmentCycleOptions {
   readonly locationCode?: string;
   /** Kandidaat-id's die deze cyclus niet opnieuw mag genereren (bv. al geprobeerd in een vorige cyclus van dezelfde run). */
   readonly excludedCandidateIds?: readonly string[];
+  /**
+   * Overschrijft de automatisch gediagnosticeerde zwakste dimensie met een
+   * door de gebruiker gekozen focus (§ Development Runs, "Doel"). De echte
+   * diagnose wordt nog steeds uitgevoerd en gelogd (nooit verborgen) — alleen
+   * welke dimensie de kandidaatgenerator target, wordt hiermee bepaald.
+   */
+  readonly focusDimension?: keyof AgentQualityCategory;
 }
 
 /** Injecteerbaar voor tests — zelfde patroon als `AutonomyTestDependencies`/`PublishSteps`. */
@@ -100,7 +107,22 @@ export async function runDevelopmentCycle(
     return { runId, weakness, candidate: null, proof: null, decision: "NOT_EXECUTED", version: null };
   }
 
-  const candidate = deps.generateCandidate(weakness, options.excludedCandidateIds ?? []);
+  // Handmatige focus (§ Development Runs "Doel") overschrijft welke dimensie de
+  // kandidaatgenerator target — de echte diagnose hierboven is al gelogd en
+  // wordt nooit verborgen, dit bepaalt alleen de vervolgstap.
+  const gerichteZwakte =
+    options.focusDimension && options.focusDimension !== weakness.weakestDimension
+      ? { ...weakness, weakestDimension: options.focusDimension, weakestScore: null }
+      : weakness;
+  if (options.focusDimension && options.focusDimension !== weakness.weakestDimension) {
+    logbook.log(runId, {
+      kind: "INFO",
+      experimentId: null,
+      message: `Focus handmatig overschreven naar ${options.focusDimension} (automatisch gediagnosticeerde zwakste dimensie was ${weakness.weakestDimension ?? "onbekend"}).`,
+    });
+  }
+
+  const candidate = deps.generateCandidate(gerichteZwakte, options.excludedCandidateIds ?? []);
   logbook.log(runId, {
     kind: "CANDIDATE_GENERATED",
     experimentId: null,
@@ -135,5 +157,5 @@ export async function runDevelopmentCycle(
     });
   }
 
-  return { runId, weakness, candidate, proof, decision: proof.decision, version };
+  return { runId, weakness: gerichteZwakte, candidate, proof, decision: proof.decision, version };
 }

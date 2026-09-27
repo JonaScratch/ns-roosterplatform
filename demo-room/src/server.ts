@@ -438,7 +438,7 @@ const server = http.createServer((req, res) => {
           : type === "autonomy-test"
             ? ["autonomy-test", "--minutes", String(body.minutes ?? 10)]
           : type === "development-run"
-            ? ["development-run", "--minutes", String(body.minutes ?? 360)]
+            ? ["development-run", "--minutes", String(body.minutes ?? 360), ...(body.focusDimension ? ["--focus-dimension", String(body.focusDimension)] : [])]
             : null;
         if (!args) return json(res, 400, { error: `onbekend runtype: ${type}` });
         meldRunAangevraagd(runId, type, body);

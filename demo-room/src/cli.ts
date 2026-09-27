@@ -256,10 +256,11 @@ async function cmdAutonomyTest(): Promise<void> {
 /** Echte proceskant van de Development Run-pagina (§ UI/UX REBUILD, foto 3): spawnt via `startCliRun()`, net als elk ander runtype hier. */
 async function cmdDevelopmentRun(): Promise<void> {
   const minutes = Number(arg("minutes", "60"));
+  const focusDimension = arg("focus-dimension") as Parameters<typeof runAutonomousDevelopmentRun>[0]["focusDimension"];
   const runId = nieuwRunId("DEV");
-  await withRunLogbook(runId, { kind: "development-run", challengeOrGoal: `Autonome ontwikkelrun (max. ${minutes} min): diagnose → kandidaat genereren → benchmark/validator → keep/reject → versie opslaan, herhaald tot budget op is.` }, async () => {
-    console.log(`Development run gestart (max. ${minutes} minuten).`);
-    const result = await runAutonomousDevelopmentRun({ runId, maxMinutes: minutes });
+  await withRunLogbook(runId, { kind: "development-run", challengeOrGoal: `Autonome ontwikkelrun (max. ${minutes} min)${focusDimension ? `, focus: ${focusDimension}` : ""}: diagnose → kandidaat genereren → benchmark/validator → keep/reject → versie opslaan, herhaald tot budget op is.` }, async () => {
+    console.log(`Development run gestart (max. ${minutes} minuten)${focusDimension ? `, focus: ${focusDimension}` : ""}.`);
+    const result = await runAutonomousDevelopmentRun({ runId, maxMinutes: minutes, focusDimension });
     console.log(JSON.stringify({ stopReason: result.stopReason, cycles: result.cycles.length, accepted: result.acceptedCount, rejected: result.rejectedCount, bestCandidateVersionId: result.bestCandidateVersionId }, null, 2));
     console.log(`\nGestopt: ${result.stopReason}. ${result.acceptedCount} kandidaat/kandidaten geaccepteerd van ${result.cycles.length} cyclus/cycli. Actieve versie ongewijzigd: ${result.endVersionId === result.startVersionId}.`);
   });

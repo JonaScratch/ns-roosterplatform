@@ -240,4 +240,42 @@ describe("runAutonomousDevelopmentRun", () => {
     expect(result.endVersionId).toBe(startVersionId);
     expect(versionsMod.currentVersionId()).toBe(startVersionId);
   });
+
+  it("slaat live voortgang op na elke cyclus (§ Development Runs-pagina) — niet pas na afloop van de hele run", async () => {
+    const developmentRunsStore = await import("../../demo-room/src/store/developmentRuns");
+    const runId = `TEST-AUTODEV-LIVEPROGRESS-${Date.now()}`;
+
+    // Ná de baseline-run bestaat er nog geen snapshot voor dit run-ID.
+    expect(developmentRunsStore.getDevelopmentRunResult(runId)).toBeNull();
+
+    let call = 0;
+    await autoRunMod.runAutonomousDevelopmentRun(
+      { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
+      {
+        identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
+        generateCandidate: generateCandidateMod.generateCandidateFromWeakness,
+        runProofOfValue: async (options) => {
+          call += 1;
+          if (call === 2) {
+            // Middenin cyclus 2: cyclus 1 is al voltooid en gepusht, maar de HELE run
+            // loopt nog — precies het moment waarop de Development Runs-pagina moet
+            // kunnen pollen. De snapshot op schijf moet dit al tonen.
+            const tussentijds = developmentRunsStore.getDevelopmentRunResult(runId);
+            expect(tussentijds).not.toBeNull();
+            expect(tussentijds!.inProgress).toBe(true);
+            expect(tussentijds!.cycles).toHaveLength(1);
+            expect(tussentijds!.stopReason).toBeNull();
+          }
+          return fakeProof({ runId, variantId: options.variant!.id, decision: "REJECTED", postAgent: agentCategory({ toolChoice: 60 }), reasoning: "Afgewezen: toolChoice regresseerde." });
+        },
+        createVersion: versionsMod.createVersion,
+      },
+    );
+
+    // Na afloop staat de DEFINITIEVE snapshot op schijf, niet meer "in progress".
+    const definitief = developmentRunsStore.getDevelopmentRunResult(runId);
+    expect(definitief).not.toBeNull();
+    expect(definitief!.inProgress).toBe(false);
+    expect(definitief!.stopReason).toBe("NO_PROGRESS_ON_SAME_WEAKNESS");
+  });
 });

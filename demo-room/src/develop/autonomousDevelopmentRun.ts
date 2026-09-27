@@ -38,6 +38,8 @@ export interface AutonomousDevelopmentRunOptions {
   readonly locationCode?: string;
   /** Hoeveel keer dezelfde zwakste dimensie zonder promotie verworpen mag worden vóór de run stopt. Standaard 2. */
   readonly maxAttemptsPerDimensionWithoutPromotion?: number;
+  /** Doorgegeven aan elke cyclus — zie `DevelopmentCycleOptions.focusDimension` (§ Development Runs "Doel"). */
+  readonly focusDimension?: keyof import("../types").AgentQualityCategory;
 }
 
 export type AutonomousDevelopmentRunStopReason =
@@ -54,18 +56,22 @@ export interface TimelineEntry {
 export interface AutonomousDevelopmentRunResult {
   readonly runId: string;
   readonly startedAt: string;
+  /** Tijdstip van de laatst bekende toestand — bij `inProgress: true` is dit "laatst bijgewerkt", geen echt eindtijdstip. */
   readonly finishedAt: string;
   /** De actieve productieversie bij start van de run. */
   readonly startVersionId: string;
-  /** De actieve productieversie bij einde van de run — hoort ALTIJD gelijk te zijn aan `startVersionId` (nooit autonome activatie). */
+  /** De actieve productieversie bij (tot dusver) laatst bekende toestand — hoort ALTIJD gelijk te zijn aan `startVersionId` (nooit autonome activatie). */
   readonly endVersionId: string;
   readonly cycles: readonly DevelopmentCycleResult[];
   readonly acceptedCount: number;
   readonly rejectedCount: number;
   /** De versie-ID van de laatst geaccepteerde kandidaat, indien die er is — niet automatisch "de beste", alleen "de meest recente promotie". */
   readonly bestCandidateVersionId: string | null;
-  readonly stopReason: AutonomousDevelopmentRunStopReason;
+  /** `null` zolang de run nog loopt (`inProgress: true`) — pas bekend zodra de run echt stopt. */
+  readonly stopReason: AutonomousDevelopmentRunStopReason | null;
   readonly timeline: readonly TimelineEntry[];
+  /** `true` = een tussentijdse momentopname van een nog lopende run (§ Development Runs, live voortgang); `false` = de definitieve, afgeronde uitkomst. */
+  readonly inProgress: boolean;
 }
 
 export async function runAutonomousDevelopmentRun(
@@ -96,6 +102,27 @@ export async function runAutonomousDevelopmentRun(
   let bestCandidateVersionId: string | null = null;
   let stopReason: AutonomousDevelopmentRunStopReason = "MAX_MINUTES_REACHED";
 
+  // Bouwt de huidige (tussentijdse of definitieve) momentopname en slaat hem
+  // meteen op — zonder dit zou de Development Runs-pagina pas na afloop van
+  // de HELE run (mogelijk uren) ook maar iets kunnen tonen. `writeDevelopmentRunResult()`
+  // overschrijft eerder bestand voor dezelfde `runId` telkens opnieuw (bestandsnaam = runId).
+  function slaLopendeVoortgangOp(): void {
+    writeDevelopmentRunResult({
+      runId,
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      startVersionId,
+      endVersionId: currentVersionId(),
+      cycles,
+      acceptedCount: cycles.filter((c) => c.decision === "PROMOTION_CANDIDATE").length,
+      rejectedCount: cycles.filter((c) => c.decision === "REJECTED" || c.decision === "KEEP_TESTING").length,
+      bestCandidateVersionId,
+      stopReason: null,
+      timeline,
+      inProgress: true,
+    });
+  }
+
   let iteratie = 0;
   for (;;) {
     const verstrekenMinuten = (Date.now() - begin) / 60000;
@@ -106,12 +133,13 @@ export async function runAutonomousDevelopmentRun(
     }
     iteratie += 1;
 
-    const cycle = await runDevelopmentCycle({ runId, locationCode, excludedCandidateIds }, deps);
+    const cycle = await runDevelopmentCycle({ runId, locationCode, excludedCandidateIds, focusDimension: options.focusDimension }, deps);
     cycles.push(cycle);
 
     if (cycle.decision === "NOT_EXECUTED") {
       stopReason = "NOT_EXECUTED";
       timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: geen echte diagnose mogelijk (LOCAL REQUIRED) — run stopt eerlijk, geen gok.` });
+      slaLopendeVoortgangOp();
       break;
     }
 
@@ -122,6 +150,7 @@ export async function runAutonomousDevelopmentRun(
       attemptsPerDimension.delete(dimensie); // opgelost (voor nu) — teller reset, geen "voortgang"-straf voor een succesvolle dimensie.
       bestCandidateVersionId = cycle.version?.id ?? bestCandidateVersionId;
       timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: kandidaat ${cycle.candidate?.id} GEACCEPTEERD als versie ${cycle.version?.id} (dimensie ${dimensie}).` });
+      slaLopendeVoortgangOp();
       continue;
     }
 
@@ -136,8 +165,10 @@ export async function runAutonomousDevelopmentRun(
         experimentId: null,
         message: `Geen voortgang: dimensie ${dimensie} is ${teller}x verworpen zonder promotie — run stopt om eindeloos op dezelfde zwakte te blijven proberen (vroege overfitting-bescherming) te voorkomen.`,
       });
+      slaLopendeVoortgangOp();
       break;
     }
+    slaLopendeVoortgangOp();
   }
 
   const endVersionId = currentVersionId();
@@ -164,6 +195,7 @@ export async function runAutonomousDevelopmentRun(
     bestCandidateVersionId,
     stopReason,
     timeline,
+    inProgress: false,
   };
   // Zonder dit zou het resultaat alleen in het geheugen van dit proces bestaan
   // en spoorloos verdwijnen zodra het (via `startCliRun()`) gespawnde CLI-proces

@@ -103,6 +103,7 @@ function fakeRun(runId: string, cycles: readonly DevelopmentCycleResult[]): Auto
     rejectedCount: cycles.filter((c) => c.decision === "REJECTED" || c.decision === "KEEP_TESTING").length,
     bestCandidateVersionId: cycles.find((c) => c.version)?.version?.id ?? null,
     stopReason: "MAX_MINUTES_REACHED",
+    inProgress: false,
     timeline: [],
   };
 }
