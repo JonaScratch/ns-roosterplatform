@@ -24,19 +24,26 @@
   4. Controleert de ontwikkeldatabase (npm run db:status-equivalent) en
      Ollama-bereikbaarheid, en dat NS_AGENT_FORCE_STUB NIET gezet is — een
      BEFORE-meting via de stub zou niets bewijzen (zie §29 van de opdracht).
-  5. Genereert een gecombineerd voor-manifest (git+model+hashes+expliciete
+  5. Regenereert de aanvullende golden-suite (categorieën L, O — bovenop de
+     bevroren 43, nooit die 43 vervangend) met ECHTE, op dat moment berekende
+     cijfers uit de eigen ontwikkeldatabase — dit kon in de cloud-omgeving
+     van Claude Code niet: geen levende database daar (zie
+     docs/lyra-knowledge/current-state.md).
+  6. Genereert een gecombineerd voor-manifest (git+model+hashes+expliciete
      database/engine/kwaliteitsmodel/regelset-versies).
-  6. Draait de bevroren 43-item golden suite N keer (replicates) — nooit
+  7. Draait de bevroren 43-item golden suite N keer (replicates) — nooit
      één keer, want temperatuur 0 gaf in v1.0.6 al aantoonbaar variatie
      (docs/v1.0.6/n0-n1-vergelijking.md: 7 van de 43 items verschilden tussen
      twee identieke-code-runs). Elke replicaat krijgt een uniek "meting"-pad
-     (nooit overschreven, zelfs bij een herhaalde scriptrun).
-  7. Beoordeelt elke replicaat (grade + fabricatiecontrole) en telt daarna de
+     (nooit overschreven, zelfs bij een herhaalde scriptrun). Draait daarna,
+     als bonus-meting die de BEFORE-run niet blokkeert bij falen, ook de
+     aanvullende suite tegen dezelfde replicaten.
+  8. Beoordeelt elke replicaat (grade + fabricatiecontrole) en telt daarna de
      spreiding over de replicaten (item-agreement, mean/median/worst).
-  8. Schrijft één BEFORE-VERIFICATION.json die alles samenvat — dit is het
+  9. Schrijft één BEFORE-VERIFICATION.json die alles samenvat — dit is het
      bestand dat je terugstuurt naar (of laat inlezen door) Claude Code.
-  9. Zet de werkmap terug op de branch waar hij vóór dit script op stond
-     (tenzij -BlijfOpBaseline is gegeven).
+  10. Zet de werkmap terug op de branch waar hij vóór dit script op stond
+      (tenzij -BlijfOpBaseline is gegeven).
 
 .PARAMETER Replicates
   Aantal keer dat de golden suite tegen het echte model wordt gedraaid.
@@ -146,13 +153,19 @@ if ($env:NS_AGENT_FORCE_STUB) {
 }
 Write-Host "NS_AGENT_FORCE_STUB is niet gezet — de echte lokale-modelroute wordt gebruikt." -ForegroundColor Green
 
-# ── 5. Manifest ───────────────────────────────────────────────────────────────
+# ── 5. Golden-suite-extensie regenereren (categorieën L, O — nooit uitgevoerd
+#      in de cloud-omgeving, hier voor het eerst met echte cijfers) ──────────
+Write-Stap "Golden-suite-extensie regenereren (categorieën L, O)"
+npx tsx --conditions=react-server scripts/v106/golden-suite-extension.ts
+if ($LASTEXITCODE -ne 0) { Mislukt "golden-suite-extension.ts faalde — dit blokkeert de BEFORE-run niet inhoudelijk, maar iets klopt niet aan de databasekoppeling. Los dit op voordat je verder gaat." }
+
+# ── 6. Manifest ───────────────────────────────────────────────────────────────
 $RunId = Get-Date -Format "yyyyMMdd-HHmmss"
 Write-Stap "Voor-manifest genereren (run $RunId)"
 npx tsx --conditions=react-server scripts/lyra-master/before-manifest.ts --run $RunId --phase before
 if ($LASTEXITCODE -ne 0) { Mislukt "Manifest-generatie faalde (zie foutmelding hierboven) — meestal: model onbereikbaar, stub actief, of werkmap niet exact op $BaselineCommit." }
 
-# ── 6/7. Replicates draaien en beoordelen ────────────────────────────────────
+# ── 7. Replicates draaien en beoordelen ──────────────────────────────────────
 $fout = $false
 for ($r = 1; $r -le $Replicates; $r++) {
   $meting = "before-$RunId-r$r"
@@ -166,6 +179,16 @@ for ($r = 1; $r -le $Replicates; $r++) {
 
   npx tsx --conditions=react-server scripts/v106/golden-fabricatie.ts --meting $meting
   if ($LASTEXITCODE -ne 0) { $fout = $true; Write-Host "[FOUT] golden-fabricatie.ts faalde voor $meting" -ForegroundColor Red; continue }
+
+  # De aanvullende suite (categorieën L, O) is een bonus-meting, geen
+  # onderdeel van de bevroren 43-item BEFORE-referentie — een fout hier
+  # waarschuwt, maar breekt de hoofd-BEFORE-run niet af.
+  npx tsx --conditions=react-server scripts/v106/golden-bench-extension.ts --meting $meting
+  if ($LASTEXITCODE -eq 0) {
+    npx tsx --conditions=react-server scripts/v106/golden-grade-extension.ts --meting $meting
+  } else {
+    Write-Host "[WAARSCHUWING] golden-bench-extension.ts faalde voor $meting — de bevroren 43-item meting zelf is hierdoor niet aangetast." -ForegroundColor Yellow
+  }
 }
 
 if ($fout) { Mislukt "Minstens één replicaat is mislukt (zie hierboven). Los het probleem op en draai het script opnieuw — elke run krijgt een nieuwe RunId, dus niets wordt overschreven." }

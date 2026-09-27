@@ -134,6 +134,71 @@ export function rangeerPerRooster(ctx: EvaluationContext): readonly RangeerLocat
   });
 }
 
+export interface NachtreeksLengte {
+  readonly roster: string;
+  readonly line: number;
+  readonly lengte: number;
+  /** Begin van de reeks, voor herleidbaarheid: "wk<weekIndex> dag<weekday>". */
+  readonly startAanduiding: string;
+}
+
+/**
+ * De lengte van elke aaneengesloten nachtreeks, per regel, cyclisch geteld —
+ * dus ook over de regelgrens heen (zondag van regel N naar maandag van regel
+ * N+1 telt als één doorlopende reeks als beide nacht zijn). Dit is dezelfde
+ * cirkel-eis als bij `nachtNaarVroegOvergangen()` hierboven: een reeks die
+ * per regel gelezen "twee blokken van drie" lijkt, kan in werkelijkheid één
+ * reeks van zes zijn (§ menselijke-roosterprincipes, principe 4 —
+ * `docs/human-roster-benchmark/human-roster-design-principles.md`).
+ *
+ * Toegevoegd voor de golden-suite-extensie (LYRA MASTER PROGRAM, categorie
+ * "nachtreeksen") — bestaande aanroepers van `laadGrondwaarheid()` die alleen
+ * `vroegLaat`/`nachtOvergangen`/`rangeer` destructureren, blijven ongewijzigd
+ * werken: dit is een extra veld, geen wijziging van een bestaand veld.
+ */
+export function nachtreeksLengtePerRooster(ctx: EvaluationContext): readonly NachtreeksLengte[] {
+  const uit: NachtreeksLengte[] = [];
+  for (const roster of ctx.quality.official) {
+    const perLine = new Map<number, (typeof roster.days)[number][]>();
+    for (const dag of roster.days) {
+      const arr = perLine.get(dag.lineNumber) ?? [];
+      arr.push(dag);
+      perLine.set(dag.lineNumber, arr);
+    }
+    for (const [line, dagen] of perLine) {
+      const sorted = dagen.slice().sort((a, b) => a.weekIndex - b.weekIndex || a.weekday - b.weekday);
+      const isNacht = sorted.map((dag) => {
+        if (!dag.dutyCode) return false;
+        const duty = ctx.quality.duties.get(dutyKey(dag.dutyCode, dag.weekday));
+        return duty?.kinds.includes("NACHT") ?? false;
+      });
+      // Cyclisch: begin bij de eerste niet-nacht-dag zodat een reeks die over
+      // het einde van de rotatie heen doorloopt (bijv. laatste 2 + eerste 4
+      // dagen) als één reeks wordt gelezen, niet als twee losse stukken.
+      const eersteNietNacht = isNacht.indexOf(false);
+      if (eersteNietNacht === -1) continue; // volledig nacht — geen zinvolle cyclische start, negeren (komt in dit pakket niet voor)
+      let i = 0;
+      let lopendeLengte = 0;
+      let lopendeStart: string | null = null;
+      const totaal = sorted.length;
+      while (i < totaal) {
+        const idx = (eersteNietNacht + 1 + i) % totaal;
+        if (isNacht[idx]) {
+          if (lopendeLengte === 0) lopendeStart = `wk${sorted[idx].weekIndex} dag${sorted[idx].weekday}`;
+          lopendeLengte += 1;
+        } else if (lopendeLengte > 0) {
+          uit.push({ roster: roster.code, line, lengte: lopendeLengte, startAanduiding: lopendeStart ?? "onbekend" });
+          lopendeLengte = 0;
+          lopendeStart = null;
+        }
+        i += 1;
+      }
+      if (lopendeLengte > 0) uit.push({ roster: roster.code, line, lengte: lopendeLengte, startAanduiding: lopendeStart ?? "onbekend" });
+    }
+  }
+  return uit.sort((a, b) => b.lengte - a.lengte);
+}
+
 export async function laadGrondwaarheid(locationCode = "DDR") {
   const ctx = await loadEvaluationContextCore(locationCode);
   return {
@@ -141,6 +206,7 @@ export async function laadGrondwaarheid(locationCode = "DDR") {
     vroegLaat: vroegLaatPerRooster(ctx),
     nachtOvergangen: nachtNaarVroegOvergangen(ctx),
     rangeer: rangeerPerRooster(ctx),
+    nachtreeksen: nachtreeksLengtePerRooster(ctx),
   };
 }
 
