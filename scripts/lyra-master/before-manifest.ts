@@ -10,6 +10,7 @@ import { toolCatalogue } from "@/server/agent/tools";
 import type { Actor } from "@/server/auth/session";
 import { prisma } from "@/server/data/prisma";
 import { sha256 } from "../benchmark/io";
+import { beoordeelWerkmapSchoonheid, headMatchtBaseline } from "./subject-worktree";
 
 /**
  * Eén gecombineerd voor-manifest voor de LYRA MASTER PROGRAM BEFORE-run.
@@ -35,7 +36,15 @@ import { sha256 } from "../benchmark/io";
  */
 
 const WORTEL = path.resolve(__dirname, "..", "..");
+const BASELINE_HEAD = "588c1e5";
 const git = (args: string[]) => execFileSync("git", args, { cwd: WORTEL, encoding: "utf8" }).trim();
+const gitToegestaanFalen = (args: string[]): string => {
+  try {
+    return execFileSync("git", args, { cwd: WORTEL, encoding: "utf8" });
+  } catch {
+    return "";
+  }
+};
 
 const argument = (naam: string): string | null => {
   const i = process.argv.indexOf(`--${naam}`);
@@ -68,17 +77,41 @@ async function main(): Promise<void> {
   const runId = argument("run") ?? new Date().toISOString().replace(/[:.]/g, "-");
   const phase = (argument("phase") ?? "before") as "before" | "after";
 
-  const dirty = git(["status", "--porcelain"]).split("\n").filter(Boolean);
   const headCommit = git(["rev-parse", "HEAD"]);
+  const headMatchesBaseline = headMatchtBaseline(headCommit, BASELINE_HEAD);
 
-  if (phase === "before" && !headCommit.startsWith("588c1e5")) {
+  if (phase === "before" && !headMatchesBaseline) {
     console.error(
-      `[FOUT] HEAD is ${headCommit.slice(0, 12)}, niet 588c1e5. De BEFORE-run vereist exact de bevroren codebaseline ` +
-        `(commit 588c1e5 — "Lyra Master Program — Fase 0: volledige inventaris bestaande kennisarchitectuur"). ` +
-        `Zie run-before-local.ps1: dat script zet dit automatisch goed (git checkout 588c1e5) vóórdat dit script draait.`,
+      `[FOUT] HEAD is ${headCommit.slice(0, 12)}, niet ${BASELINE_HEAD}. De BEFORE-run vereist exact de bevroren codebaseline ` +
+        `(commit ${BASELINE_HEAD} — "Lyra Master Program — Fase 0: volledige inventaris bestaande kennisarchitectuur"). ` +
+        `Zie run-before-local.ps1: dat script zet dit automatisch goed (aparte subject-worktree op ${BASELINE_HEAD}) vóórdat dit script draait.`,
     );
     process.exit(1);
   }
+
+  // ── Werkmap-integriteit: HEAD == baseline EN getrackte inhoud ongewijzigd ──
+  //
+  // NIET hetzelfde als "git status --porcelain is helemaal leeg" — de
+  // orchestrator zet zelf een paar untracked helperbestanden neer
+  // (before-manifest.ts, subject-worktree.ts, smoke-import.ts) om deze
+  // bevroren appcode te kunnen aanroepen; dat maakt de worktree niet "dirty"
+  // in de zin die hier telt. Zie subject-worktree.ts voor de classificatie.
+  // --untracked-files=all: anders toont git een volledig niet-getrackte map
+  // (bv. scripts/lyra-master/, dat op de bevroren baseline niet bestaat) als
+  // ÉÉN verzamelregel in plaats van elk bestand apart, waardoor de classifier
+  // die regel nooit met een whitelisted orchestrator-pad kan matchen.
+  const porcelain = git(["status", "--porcelain", "--untracked-files=all"]);
+  const schoonheid = beoordeelWerkmapSchoonheid(porcelain);
+  const trackedBaselineClean = schoonheid.trackedModifiedPaths.length === 0;
+  // Alleen informatief: welke genegeerde runtime-artifacten (node_modules,
+  // .env, gegenereerde Prisma-client) daadwerkelijk aanwezig zijn. Git laat
+  // deze standaard al buiten `git status --porcelain` (zonder --ignored), dus
+  // dit heeft geen invloed op trackedBaselineClean/unexpectedUntrackedPaths —
+  // puur ter documentatie in het manifest.
+  const generatedIgnoredArtifacts = gitToegestaanFalen(["status", "--porcelain", "--ignored=matching", "--untracked-files=all"])
+    .split("\n")
+    .filter((r) => r.startsWith("!! "))
+    .map((r) => r.slice(3).trim());
 
   const pakket = await prisma.dutyPackage.findFirst({
     where: { depot: "DDR", status: "ACTIVE" },
@@ -131,8 +164,17 @@ async function main(): Promise<void> {
       headSubject: git(["log", "-1", "--pretty=%s"]),
       headDate: git(["log", "-1", "--pretty=%cI"]),
       branch: git(["rev-parse", "--abbrev-ref", "HEAD"]),
-      uncommittedPaths: dirty.length,
-      dirty: dirty.length > 0,
+      baselineHead: BASELINE_HEAD,
+      headMatchesBaseline,
+      // De echte integriteitsgarantie: HEAD == baseline EN de getrackte inhoud
+      // van die commit is ongewijzigd. NIET "git status --porcelain is leeg" —
+      // de orchestrator zet zelf bekende, ongevaarlijke helperbestanden neer.
+      trackedBaselineClean,
+      trackedModifiedPaths: schoonheid.trackedModifiedPaths,
+      orchestratorArtifacts: schoonheid.orchestratorArtifacts,
+      benchmarkOutputPaths: schoonheid.benchmarkOutputPaths,
+      generatedIgnoredArtifacts,
+      unexpectedUntrackedPaths: schoonheid.unexpectedUntrackedPaths,
     },
     // De vier expliciet gevraagde, eerder ontbrekende velden:
     databaseVersion: databaseVersion(),
@@ -180,14 +222,40 @@ async function main(): Promise<void> {
   writeFileSync(doel, `${JSON.stringify(uit, null, 2)}\n`);
 
   console.log(`Geschreven: ${doel}`);
-  console.log(`  HEAD ${uit.git.headCommit.slice(0, 12)} (${uit.git.dirty ? "NIET SCHOON" : "schoon"})`);
+  console.log(
+    `  HEAD ${uit.git.headCommit.slice(0, 12)} (baseline ${uit.git.headMatchesBaseline ? "OK" : "MISMATCH"}, ` +
+      `getrackte inhoud ${uit.git.trackedBaselineClean ? "ongewijzigd" : "GEWIJZIGD"})`,
+  );
+  if (uit.git.orchestratorArtifacts.length > 0) {
+    console.log(`  Orchestrator-eigen helperbestanden getolereerd: ${uit.git.orchestratorArtifacts.join(", ")}`);
+  }
+  if (uit.git.benchmarkOutputPaths.length > 0) {
+    console.log(`  Eerdere/huidige benchmark-outputpaden getolereerd: ${uit.git.benchmarkOutputPaths.length} pad(en)`);
+  }
+  if (uit.git.unexpectedUntrackedPaths.length > 0) {
+    console.log(`  [WAARSCHUWING] Onverwachte niet-getrackte bestanden: ${uit.git.unexpectedUntrackedPaths.join(", ")}`);
+  }
   console.log(`  databaseVersion=${uit.databaseVersion} engineVersion=${uit.engineVersion} qualityModelVersion=${uit.qualityModelVersion} rulesetVersion=${uit.rulesetVersion}`);
   console.log(`  lokaal model: ${uit.localModel.model} · bereikbaar: ${uit.localModel.reachable} · ${uit.localModel.detail}`);
   console.log(`  stub expliciet uitgeschakeld: ${uit.stubExplicitlyDisabled}`);
   console.log(`  golden suite: ${uit.goldenSuite.itemCount} items, versie ${uit.goldenSuite.version}`);
 
-  if (uit.git.dirty) {
-    console.error("[FOUT] Werkmap is niet schoon. De BEFORE-run vereist een schone, exact-op-588c1e5-staande werkmap.");
+  if (phase === "before" && !uit.git.headMatchesBaseline) {
+    console.error(`[FOUT] HEAD (${uit.git.headCommit.slice(0, 12)}) komt niet overeen met de bevroren baseline ${BASELINE_HEAD}.`);
+    process.exit(1);
+  }
+  if (phase === "before" && !uit.git.trackedBaselineClean) {
+    console.error(
+      `[FOUT] Getrackte baseline-bestanden zijn gewijzigd t.o.v. commit ${BASELINE_HEAD}: ${uit.git.trackedModifiedPaths.join(", ")}. ` +
+        "Dit is een integriteitsschending van de bevroren BEFORE-meting — de agentcode zelf is niet meer identiek aan de baseline.",
+    );
+    process.exit(1);
+  }
+  if (uit.git.unexpectedUntrackedPaths.length > 0) {
+    console.error(
+      `[FOUT] Onverwachte, niet-getrackte bestanden in de subject-worktree (niet orchestrator-eigen, niet benchmark-output): ` +
+        `${uit.git.unexpectedUntrackedPaths.join(", ")}. Verwijder ze, of laat run-before-local.ts een schone worktree aanmaken.`,
+    );
     process.exit(1);
   }
   if (!uit.localModel.reachable) {

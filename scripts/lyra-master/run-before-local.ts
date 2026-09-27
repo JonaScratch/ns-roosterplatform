@@ -1,9 +1,9 @@
 import "dotenv/config";
 import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { isWorktreeGeregistreerd, prismaClientAanwezig, PRISMA_CLIENT_MARKERS } from "./subject-worktree";
+import { beoordeelWerkmapSchoonheid, isWorktreeGeregistreerd, ORCHESTRATOR_OWNED_PATHS, prismaClientAanwezig, PRISMA_CLIENT_MARKERS } from "./subject-worktree";
 
 /**
  * De echte, cross-platform LYRA MASTER PROGRAM BEFORE-run-orchestrator.
@@ -172,6 +172,51 @@ function controleerSubjectVereisten(): void {
   console.log(`  Alle ${vereist.length} vereiste bestanden aanwezig in de subject-worktree.`);
 }
 
+// ── Stap: subject-integriteit, VÓÓR de orchestrator zelf ook maar iets schrijft ──
+//
+// "LOCAL BEFORE BUG #4": een naïeve "git status --porcelain moet leeg zijn"-eis
+// faalt zodra de orchestrator zijn EIGEN, noodzakelijke helperbestanden neerzet
+// (before-manifest.ts, dit bestand se eigen subject-worktree.ts-kopie,
+// smoke-import.ts) — die bestaan niet op de bevroren commit, dus git ziet ze
+// terecht als untracked, en een letterlijke leegte-eis zou de worktree dan
+// zelf dirty maken en daarna weigeren. De garantie die er echt toe doet is:
+// HEAD == baseline EN de GETRACKTE inhoud van die commit is ongewijzigd —
+// niet "er staat helemaal niets anders in de map". Deze controle draait
+// daarom HIER, vóór node_modules/.env/Prisma/smoke-import, zodat een
+// eventuele echte afwijking (een gewijzigd getrackt bestand, of een
+// onverwacht vreemd bestand dat niet van de orchestrator zelf is) gevonden
+// wordt vóórdat de orchestrator zijn eigen, onschuldige artefacten toevoegt.
+function controleerSubjectIntegriteitVoorOrchestratie(): void {
+  stap("Subject-integriteit controleren (vóór de orchestrator hier zelf iets schrijft)");
+  // --untracked-files=all: zonder deze vlag toont git een volledig niet-getrackte
+  // map als ÉÉN regel ("?? scripts/lyra-master/") in plaats van elk bestand apart
+  // (scripts/lyra-master/ bestaat immers niet op de bevroren baseline). Zonder
+  // deze vlag zou de classifier die verzamelregel nooit matchen met een van de
+  // whitelisted orchestrator-paden, en dus ten onrechte als "onverwacht" zien —
+  // precies zo ontdekt tijdens het echt testen van deze reparatie in de sandbox.
+  const porcelain = git(SUBJECT_PATH, ["status", "--porcelain", "--untracked-files=all"]);
+  const beoordeling = beoordeelWerkmapSchoonheid(porcelain);
+  if (beoordeling.trackedModifiedPaths.length > 0) {
+    mislukt(
+      `Getrackte bestanden in de subject-worktree wijken af van de bevroren baseline ${BASELINE}: ${beoordeling.trackedModifiedPaths.join(", ")}. ` +
+        `Dit is een integriteitsschending van de bevroren BEFORE-meting. Herstel de worktree (bv. 'git -C "${SUBJECT_PATH}" checkout -- .') ` +
+        `of verwijder hem ('git worktree remove "${SUBJECT_PATH}"') en laat dit script hem opnieuw aanmaken.`,
+    );
+  }
+  if (beoordeling.unexpectedUntrackedPaths.length > 0) {
+    mislukt(
+      `Onverwachte, niet-getrackte bestanden gevonden in de subject-worktree (niet een orchestrator-eigen helperbestand, ` +
+        `niet eerdere/huidige benchmark-uitvoer): ${beoordeling.unexpectedUntrackedPaths.join(", ")}. ` +
+        `Verwijder ze handmatig, of geef --subject-path <ander pad> voor een schone worktree.`,
+    );
+  }
+  console.log(
+    `  Getrackte baseline-inhoud ongewijzigd (HEAD ${BASELINE}). ` +
+      `${beoordeling.orchestratorArtifacts.length} orchestrator-eigen helperbestand(en) en ${beoordeling.benchmarkOutputPaths.length} ` +
+      `eerdere/huidige benchmark-outputpad(en) getolereerd (verwacht, geen integriteitsschending).`,
+  );
+}
+
 // ── Stap: node_modules — junction, geen herinstallatie, geen Administrator ──
 
 function zorgVoorSubjectNodeModules(): void {
@@ -328,6 +373,28 @@ function controleerStubUit(): void {
   console.log("  NS_AGENT_FORCE_STUB is niet gezet — de echte lokale-modelroute wordt gebruikt, nooit de stub.");
 }
 
+// ── Opruimen: orchestrator-eigen helperbestanden nooit permanent in SUBJECT laten staan ──
+//
+// Alleen de drie exacte, vooraf bekende paden in ORCHESTRATOR_OWNED_PATHS —
+// nooit een brede rm -rf over onbekende inhoud. Draait aan het einde van elke
+// aanroep (ook bij --preflight-only en bij een vroege [PRECHECK FAIL]), zodat
+// een volgende run op dezelfde worktree weer met een minimale, voorspelbare
+// hoeveelheid untracked bestanden begint.
+function ruimOrchestratorArtefactenOp(): void {
+  if (!existsSync(SUBJECT_PATH)) return;
+  stap("Orchestrator-eigen helperbestanden opruimen uit de subject-worktree");
+  let iets = false;
+  for (const rel of ORCHESTRATOR_OWNED_PATHS) {
+    const p = path.join(SUBJECT_PATH, rel);
+    if (existsSync(p)) {
+      rmSync(p);
+      console.log(`  Verwijderd: ${rel}`);
+      iets = true;
+    }
+  }
+  if (!iets) console.log("  Niets op te ruimen (geen van de orchestrator-eigen helperbestanden stond er nog).");
+}
+
 // ── Uitvoerdirectory — nooit overschreven ────────────────────────────────────
 
 function nieuweUitvoerDirectory(runId: string): string {
@@ -346,11 +413,19 @@ function nieuweUitvoerDirectory(runId: string): string {
 async function main(): Promise<void> {
   console.log("=== LYRA MASTER PROGRAM - lokale BEFORE-run ===");
 
+  // Eén exitpunt onderaan (via `exitCode`, nooit `process.exit()` middenin de
+  // try) zodat de `finally` hieronder — orchestrator-eigen helperbestanden
+  // opruimen uit de subject-worktree — altijd draait: bij PRECHECK PASS,
+  // bij --preflight-only, bij een vroege [PRECHECK FAIL], en bij een
+  // afgeronde echte run (PASS of FAIL). `process.exit()` breekt namelijk
+  // synchroon af en zou een latere `finally` overslaan.
+  let exitCode = 0;
   try {
     rapporteerControlIdentiteit();
     controleerBaselineBestaat();
     zorgVoorSubjectWorktree();
     controleerSubjectVereisten();
+    controleerSubjectIntegriteitVoorOrchestratie();
     zorgVoorSubjectNodeModules();
     zorgVoorSubjectEnv();
     zorgVoorFrozenPrismaClient();
@@ -373,13 +448,17 @@ async function main(): Promise<void> {
       console.log(`\n(--preflight-only: geen enkel benchmarkitem uitgevoerd. Uitvoerdirectory ${outDir} weer verwijderd.)`);
       // Geen writeFileSync erin gedaan; laat een lege map geen sporen na buiten wat mkdir zelf al deed —
       // dit is puur cosmetisch (geen inhoud geschreven), dus niets om op te ruimen behalve de lege map zelf.
-      process.exit(0);
+      return;
     }
 
     // ── Manifest genereren IN de subject-worktree (frozen code leest zijn eigen versies) ──
     stap(`Voor-manifest genereren (run ${runId}, uitgevoerd in de subject-worktree)`);
     const manifestHelperDoel = path.join(SUBJECT_PATH, "scripts", "lyra-master");
     mkdirSync(manifestHelperDoel, { recursive: true });
+    // Beide horen bij ORCHESTRATOR_OWNED_PATHS: before-manifest.ts importeert
+    // subject-worktree.ts relatief (../lyra-master/subject-worktree), dus die
+    // moet hier ook staan, anders faalt de import in de subject-worktree.
+    cpSync(path.join(CONTROL_ROOT, "scripts", "lyra-master", "subject-worktree.ts"), path.join(manifestHelperDoel, "subject-worktree.ts"));
     cpSync(path.join(CONTROL_ROOT, "scripts", "lyra-master", "before-manifest.ts"), path.join(manifestHelperDoel, "before-manifest.ts"));
     voerUit(SUBJECT_PATH, "npx", [...NS_TSX_ARGS, "scripts/lyra-master/before-manifest.ts", "--run", runId, "--phase", "before"], "Manifest-generatie");
 
@@ -486,17 +565,21 @@ async function main(): Promise<void> {
     console.log(`Uitvoer: ${outDir}`);
     if (status !== "PASS") {
       console.log("Reden(en) voor FAIL: zie BEFORE-VERIFICATION.json (subject.commitMatches / model.reachable / stubExplicitlyDisabled / allReplicatesCompleted / gradingCompleted / rawArtifacts.length).");
-      process.exit(1);
+      exitCode = 1;
+    } else {
+      console.log("\nStuur de map hierboven (of push hem) terug — dat is het BEFORE-bewijs.");
     }
-    console.log("\nStuur de map hierboven (of push hem) terug — dat is het BEFORE-bewijs.");
-    process.exit(0);
   } catch (fout) {
     if (fout instanceof PreflightError) {
       console.error(`\n[PRECHECK FAIL] ${fout.message}`);
-      process.exit(1);
+      exitCode = 1;
+    } else {
+      throw fout;
     }
-    throw fout;
+  } finally {
+    ruimOrchestratorArtefactenOp();
   }
+  process.exit(exitCode);
 }
 
 main().catch((fout) => {
