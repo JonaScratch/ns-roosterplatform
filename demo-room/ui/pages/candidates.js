@@ -59,7 +59,7 @@ function html() {
     </div>
 
     <div class="card" id="cd-detail" style="display:none;">
-      <h3>Kandidaatdetail — <span id="cd-detail-title"></span></h3>
+      <h3>Kandidaatdetail — <span id="cd-detail-title"></span> <button class="ghost" id="cd-detail-goto-experiment" style="margin-left:10px;">Bekijk volledig experiment →</button></h3>
       <div id="cd-detail-chart"></div>
       <div class="row" style="margin-top:10px;">
         <div class="col">
@@ -159,6 +159,7 @@ async function toonDetail(row) {
   const detailCard = document.getElementById("cd-detail");
   detailCard.style.display = "block";
   document.getElementById("cd-detail-title").textContent = row.candidateId;
+  document.getElementById("cd-detail-goto-experiment").onclick = () => { location.hash = `#/experiment-detail?id=${encodeURIComponent(row.candidateId)}`; };
 
   const run = await j(`/api/development-runs/detail?id=${encodeURIComponent(row.runId)}`);
   const cycle = Array.isArray(run?.cycles) ? run.cycles.find((c) => c.candidate?.id === row.candidateId) : null;

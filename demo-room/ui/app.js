@@ -6,6 +6,10 @@
 import { j } from "./lib/shared.js";
 
 const ROUTES = ["dashboard", "test-room", "development-runs", "candidates", "vergelijken", "versies", "logboek"];
+// Subpagina's die ALLEEN via drilldown bereikbaar zijn (§ UI/UX REBUILD:
+// "geen nieuw hoofdtabblad") — geen navigatieknop, maar wel een geldige
+// route zodra er via een hash-link naartoe genavigeerd wordt.
+const EXTRA_ROUTES = ["experiment-detail"];
 const DEFAULT_ROUTE = "dashboard";
 
 const content = document.getElementById("app-content");
@@ -16,7 +20,7 @@ let huidigeCleanup = null;
 function huidigeRoute() {
   const raw = (location.hash || "").replace(/^#\/?/, "");
   const [route] = raw.split("?");
-  return ROUTES.includes(route) ? route : DEFAULT_ROUTE;
+  return [...ROUTES, ...EXTRA_ROUTES].includes(route) ? route : DEFAULT_ROUTE;
 }
 
 function routeParams() {

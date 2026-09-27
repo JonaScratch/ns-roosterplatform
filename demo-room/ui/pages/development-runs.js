@@ -224,7 +224,7 @@ function renderCandidatesTable(detail) {
     const delta = postAvg - preAvg;
     const decisionTag = c.decision === "PROMOTION_CANDIDATE" ? "good" : c.decision === "REJECTED" ? "bad" : "warn";
     return `<tr>
-      <td>${c.candidate.id}</td>
+      <td><a href="#/experiment-detail?id=${encodeURIComponent(c.candidate.id)}" style="color:var(--accent);">${c.candidate.id}</a></td>
       <td>${c.proof ? new Date(c.proof.startedAt).toLocaleString("nl-NL") : "—"}</td>
       <td style="color:${delta >= 0 ? "var(--good)" : "var(--bad)"};">${delta >= 0 ? "+" : ""}${delta.toFixed(1)}pp</td>
       <td>${postAvg.toFixed(1)}%</td>
