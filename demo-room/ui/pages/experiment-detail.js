@@ -3,7 +3,7 @@
 // volledige hypothese/wijziging/meting/uitkomst per experiment, plus een
 // effect-per-type-overzicht over alle experimenten heen.
 
-import { j, fmtPp, esc, veilig } from "../lib/shared.js";
+import { j, fmtPp, esc, veilig, titleIcon, iconChip, ICONS, renderStepper } from "../lib/shared.js";
 
 const SOORT_LABEL = {
   PROMPT_VARIANT: "Promptvariant", TOOL_HINT_VARIANT: "Tool-hint", CONTEXT_POLICY_VARIANT: "Contextbeleid",
@@ -33,7 +33,7 @@ function gemEffect(exp) {
 function html() {
   return `
     <div class="card">
-      <h3>Experimenten <span class="info-icon" title="Alleen bereikbaar via drilldown — geen apart tabblad">i</span></h3>
+      <h3>${titleIcon("flask", "#6d4fc9")}Experimenten <span class="info-icon" title="Alleen bereikbaar via drilldown — geen apart tabblad">i</span></h3>
       <div class="row">
         <div class="col" style="max-width:260px;">
           <label>Zoeken</label>
@@ -55,39 +55,45 @@ function html() {
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Experimentenlijst</h3>
+          <h3>${titleIcon("chart", "#1f5fd0")}Experimentenlijst</h3>
           <table><thead><tr><th>Experiment</th><th>Run</th><th>Tijdstip</th><th>Type</th><th>Uitkomst</th><th>Beslissing</th></tr></thead><tbody id="ed-rows"></tbody></table>
         </div>
       </div>
-      <div class="col" style="max-width:340px;">
+      <div class="col" style="max-width:360px;">
+        <div class="card" id="ed-selected" style="display:none;">
+          <h3>${titleIcon("flask", "#6d4fc9")}Geselecteerd — <span id="ed-selected-title"></span></h3>
+          <div class="field-list">
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Hypothese</span><span class="field-value" id="ed-hypothese" style="font-weight:500; margin-top:2px;"></span></div>
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Wijziging</span><span class="field-value" id="ed-wijziging" style="font-weight:500; margin-top:2px;"></span></div>
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Verwachte winst</span><span class="field-value" id="ed-verwachting" style="font-weight:500; color:#667; margin-top:2px;"></span></div>
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Uitkomst</span><span class="field-value" id="ed-uitkomst" style="font-weight:500; margin-top:2px;"></span></div>
+          </div>
+          <table style="font-size:12.5px; margin-top:8px;">
+            <thead><tr><th>Dimensie</th><th>Basis</th><th>Kand.</th><th>Δ</th></tr></thead>
+            <tbody id="ed-metrics"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
         <div class="card">
-          <h3>Effect per type</h3>
+          <h3>${titleIcon("chart", "#1f5fd0", "sm")}Effect per type</h3>
           <div id="ed-effect-chart"></div>
         </div>
+      </div>
+      <div class="col">
         <div class="card">
-          <h3>Inzichten</h3>
+          <h3>${titleIcon("lightbulb", "#c8791a", "sm")}Inzichten</h3>
           <ul id="ed-insights" style="margin:0; padding-left:18px; font-size:13px;"></ul>
         </div>
       </div>
     </div>
 
-    <div class="card" id="ed-selected" style="display:none;">
-      <h3>Geselecteerd experiment — <span id="ed-selected-title"></span></h3>
-      <div class="stepper" id="ed-stepper" style="margin-bottom:14px;"></div>
-      <div class="row">
-        <div class="col">
-          <p><b>Hypothese</b><br/><span id="ed-hypothese"></span></p>
-          <p><b>Wijziging</b><br/><span id="ed-wijziging"></span></p>
-          <p><b>Verwachte winst</b><br/><span id="ed-verwachting" style="color:#667; font-size:13px;"></span></p>
-          <p><b>Uitkomst</b><br/><span id="ed-uitkomst"></span></p>
-        </div>
-        <div class="col">
-          <table style="font-size:13px;">
-            <thead><tr><th>Dimensie</th><th>Basis</th><th>Kandidaat</th><th>Δ</th></tr></thead>
-            <tbody id="ed-metrics"></tbody>
-          </table>
-        </div>
-      </div>
+    <div class="card" id="ed-flow-card" style="display:none;">
+      <h3>${titleIcon("clock", "#1f5fd0")}Experimentflow<span class="card-sub" id="ed-flow-title"></span></h3>
+      <div class="stepper" id="ed-stepper"></div>
     </div>
   `;
 }
@@ -100,20 +106,27 @@ function renderKpis(rows) {
   const gemEffectAlles = effecten.length > 0 ? effecten.reduce((a, b) => a + b, 0) / effecten.length : null;
 
   const cards = [
-    { label: "Totaal experimenten", value: rows.length },
-    { label: "Succesvol", value: succesvol },
-    { label: "Mislukt", value: mislukt },
-    { label: "Onduidelijk", value: onduidelijk },
-    { label: "Gem. effect", value: fmtPp(gemEffectAlles) },
+    { icon: "flask", color: "purple", label: "Totaal experimenten", value: rows.length },
+    { icon: "check", color: "green", label: "Succesvol", value: succesvol },
+    { icon: "x", color: "red", label: "Mislukt", value: mislukt },
+    { icon: "alert", color: "amber", label: "Onduidelijk", value: onduidelijk },
+    { icon: "up", color: "green", label: "Gem. effect", value: fmtPp(gemEffectAlles), subClass: (gemEffectAlles ?? 0) >= 0 ? "good" : "bad" },
   ];
-  document.getElementById("ed-kpis").innerHTML = cards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div></div>`).join("");
+  document.getElementById("ed-kpis").innerHTML = cards.map((c) => `
+    <div class="stat with-icon">
+      ${iconChip(c.icon, c.color)}
+      <div>
+        <div class="label">${c.label}</div>
+        <div class="value">${c.value}</div>
+      </div>
+    </div>`).join("");
 }
 
 function renderRows(rows) {
   const tbody = document.getElementById("ed-rows");
   if (rows.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Geen experimenten gevonden voor deze filters.</td></tr>`; return; }
   tbody.innerHTML = rows.map((e) => `
-    <tr class="clickable" data-select="${e.id}">
+    <tr class="clickable ${e.id === geselecteerd ? "selected-row" : ""}" data-select="${e.id}">
       <td>${e.id}</td>
       <td>${e.runId}</td>
       <td>${new Date(e.timestamp).toLocaleString("nl-NL")}</td>
@@ -181,6 +194,7 @@ function renderInsights(rows) {
 function toonExperiment(exp) {
   if (!exp) return;
   geselecteerd = exp.id;
+  document.querySelectorAll("#ed-rows tr[data-select]").forEach((tr) => tr.classList.toggle("selected-row", tr.dataset.select === exp.id));
   document.getElementById("ed-selected").style.display = "block";
   document.getElementById("ed-selected-title").textContent = exp.id;
   document.getElementById("ed-hypothese").textContent = exp.hypothesis;
@@ -207,9 +221,11 @@ function toonExperiment(exp) {
     { label: "Wijziging", status: exp.configuration?.variantId ? "done" : "active" },
     { label: "Meting", status: exp.qualityMetrics ? "done" : "failed" },
     { label: "Validator", status: exp.validatorResult === "NIET_VAN_TOEPASSING" ? "done" : exp.validatorResult === "VALID" ? "done" : exp.validatorResult === "INVALID" ? "failed" : "active" },
-    { label: "Beslissing: " + exp.decision, status: exp.decision === "PROMOTION_CANDIDATE" ? "done" : exp.decision === "REJECTED" ? "failed" : "active" },
+    { label: "Beslissing", sub: exp.decision, status: exp.decision === "PROMOTION_CANDIDATE" ? "done" : exp.decision === "REJECTED" ? "failed" : "active" },
   ];
-  document.getElementById("ed-stepper").innerHTML = stages.map((s, i) => `${i > 0 ? '<span class="arrow">→</span>' : ""}<div class="step ${s.status}">${s.label}</div>`).join("");
+  document.getElementById("ed-flow-card").style.display = "block";
+  document.getElementById("ed-flow-title").textContent = `van ${exp.id}`;
+  renderStepper(document.getElementById("ed-stepper"), stages);
 }
 
 function gefilterd() {
@@ -242,10 +258,8 @@ export async function mount(container, params) {
   await veilig("experiment-detail", laad);
 
   const preselect = params?.get?.("id");
-  if (preselect) {
-    const exp = alle.find((e) => e.id === preselect || e.configuration?.variantId === preselect);
-    if (exp) toonExperiment(exp);
-  }
+  const exp = (preselect && alle.find((e) => e.id === preselect || e.configuration?.variantId === preselect)) || alle[0];
+  if (exp) toonExperiment(exp);
 
   const interval = setInterval(() => veilig("experiment-detail", laad), 10000);
   return () => clearInterval(interval);
