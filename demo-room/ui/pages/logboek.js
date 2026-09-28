@@ -2,7 +2,7 @@
 // en benchmarkontwikkeling-over-tijd — het volledige ruwe logboek blijft
 // achter een "Bekijk volledig logboek"-drilldown, nooit de primaire weergave.
 
-import { j, fmtPp, lineChart, veilig } from "../lib/shared.js";
+import { j, fmtPp, lineChart, veilig, titleIcon, iconChip, ICONS } from "../lib/shared.js";
 
 const PERIODE_OPTIES = [
   { value: "alles", label: "Alles" },
@@ -24,17 +24,17 @@ let geselecteerdeRunId = null;
 function html() {
   return `
     <div class="card">
-      <h3>Filters</h3>
-      <div class="row">
-        <div class="col" style="max-width:220px;">
+      <h3>${titleIcon("clock", "#1f5fd0")}Historie<span class="card-sub">Volledig overzicht van ontwikkelruns, kandidaten, promoties en activaties over tijd.</span></h3>
+      <div class="row" style="align-items:flex-end;">
+        <div class="col" style="max-width:200px;">
           <label>Periode</label>
           <select id="lb-periode">${PERIODE_OPTIES.map((o) => `<option value="${o.value}">${o.label}</option>`).join("")}</select>
         </div>
-        <div class="col" style="max-width:220px;">
+        <div class="col" style="max-width:200px;">
           <label>Type</label>
           <select id="lb-type"><option value="Alle">Alle</option></select>
         </div>
-        <div class="col" style="max-width:220px;">
+        <div class="col" style="max-width:200px;">
           <label>Status</label>
           <select id="lb-status"><option value="Alle">Alle</option>${Object.entries(OUTCOME_LABEL).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select>
         </div>
@@ -50,34 +50,35 @@ function html() {
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Tijdlijn &amp; runhistorie</h3>
-          <table><thead><tr><th>Run</th><th>Type</th><th>Gestart</th><th>Status</th><th>Productieversie</th><th></th></tr></thead><tbody id="lb-rows"></tbody></table>
+          <h3>${titleIcon("chart", "#1f5fd0")}Tijdlijn &amp; runhistorie</h3>
+          <table><thead><tr><th></th><th>Run</th><th>Type</th><th>Gestart</th><th>Status</th><th>Productieversie</th><th></th></tr></thead><tbody id="lb-rows"></tbody></table>
         </div>
       </div>
       <div class="col" style="max-width:340px;">
         <div class="card" id="lb-detail" style="display:none;">
-          <h3>Geselecteerde gebeurtenis</h3>
-          <div id="lb-detail-body" style="font-size:13px;"></div>
-          <button class="ghost" id="lb-detail-full" style="margin-top:10px;">Bekijk volledig logboek →</button>
+          <h3>${titleIcon("clock", "#1f5fd0")}Geselecteerde gebeurtenis</h3>
+          <div id="lb-detail-body" class="field-list"></div>
+          <button class="primary" id="lb-detail-full" style="width:100%; margin-top:12px;">${ICONS.book}Bekijk volledig logboek</button>
         </div>
       </div>
-    </div>
-
-    <div class="card">
-      <h3>Benchmarkontwikkeling over tijd <span class="info-icon" title="Toont uitsluitend echte promotie/activatiemomenten, geen niet-geactiveerde kandidaten">i</span></h3>
-      <div id="lb-chart"></div>
     </div>
 
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Promotiegeschiedenis</h3>
+          <h3>${titleIcon("chart", "#1f5fd0")}Benchmarkontwikkeling over tijd <span class="info-icon" title="Toont uitsluitend echte promotie/activatiemomenten, geen niet-geactiveerde kandidaten">i</span></h3>
+          <div id="lb-chart"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>${titleIcon("trophy", "#b9862c")}Promotiegeschiedenis</h3>
           <table><thead><tr><th>Wanneer</th><th>Type</th><th>Van</th><th>Naar</th><th>Toelichting</th></tr></thead><tbody id="lb-promoties"></tbody></table>
         </div>
       </div>
-      <div class="col" style="max-width:340px;">
+      <div class="col" style="max-width:300px;">
         <div class="card">
-          <h3>Belangrijkste patronen</h3>
+          <h3>${titleIcon("lightbulb", "#c8791a")}Belangrijkste patronen</h3>
           <ul id="lb-patronen" style="margin:0; padding-left:18px; font-size:13px;"></ul>
         </div>
       </div>
@@ -103,46 +104,68 @@ function gefilterdeRuns() {
 
 function renderKpis(runs) {
   const geslaagd = runs.filter((r) => r.outcome === "RUN_COMPLETED").length;
-  const mislukt = runs.filter((r) => r.outcome === "RUN_FAILED").length;
-  const promotiesInPeriode = allePromoties.filter((p) => binnenPeriode(p.at)).length;
+  const promotiesInPeriode = allePromoties.filter((p) => binnenPeriode(p.at));
+  const metScore = promotiesInPeriode.filter((p) => typeof p.score === "number");
+  let gemVerbetering = null;
+  if (metScore.length >= 2) {
+    const deltas = [];
+    for (let i = 1; i < metScore.length; i++) deltas.push(metScore[i].score - metScore[i - 1].score);
+    gemVerbetering = deltas.reduce((s, v) => s + v, 0) / deltas.length;
+  }
   const cards = [
-    { label: "Totaal runs", value: runs.length },
-    { label: "Geslaagd", value: geslaagd },
-    { label: "Mislukt", value: mislukt },
-    { label: "Promoties/rollbacks", value: promotiesInPeriode },
+    { icon: "flask", color: "blue", label: "Totaal runs", value: runs.length },
+    { icon: "trophy", color: "amber", label: "Promoties/rollbacks", value: promotiesInPeriode.length },
+    { icon: "check", color: "green", label: "Geslaagd", value: geslaagd },
+    { icon: "up", color: "green", label: "Gem. verbetering per promotie", value: fmtPp(gemVerbetering), subClass: (gemVerbetering ?? 0) >= 0 ? "good" : "bad" },
   ];
-  document.getElementById("lb-kpis").innerHTML = cards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div></div>`).join("");
+  document.getElementById("lb-kpis").innerHTML = cards.map((c) => `
+    <div class="stat with-icon">
+      ${iconChip(c.icon, c.color)}
+      <div>
+        <div class="label">${c.label}</div>
+        <div class="value">${c.value}</div>
+      </div>
+    </div>`).join("");
 }
 
 function renderRows(runs) {
   const tbody = document.getElementById("lb-rows");
-  if (runs.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Geen runs gevonden voor deze filters.</td></tr>`; return; }
+  if (runs.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="empty">Geen runs gevonden voor deze filters.</td></tr>`; return; }
   tbody.innerHTML = runs.map((r) => `
-    <tr class="clickable" data-select="${r.runId}">
+    <tr class="clickable ${r.runId === geselecteerdeRunId ? "selected-row" : ""}" data-select="${r.runId}">
+      <td><span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:${OUTCOME_TAG[r.outcome] === "good" ? "var(--good)" : OUTCOME_TAG[r.outcome] === "bad" ? "var(--bad)" : "#9fb0c9"};"></span></td>
       <td>${r.runId}</td>
       <td>${r.kind ?? "—"}</td>
       <td>${r.startedAt ? new Date(r.startedAt).toLocaleString("nl-NL") : "—"}</td>
       <td><span class="tag ${OUTCOME_TAG[r.outcome] ?? ""}">${OUTCOME_LABEL[r.outcome] ?? r.outcome}</span></td>
       <td>${r.productionVersionDisplayName ?? "—"}</td>
-      <td><button class="ghost" data-select-btn="${r.runId}">Details</button></td>
+      <td><button class="ghost icon-btn" data-select-btn="${r.runId}" title="Bekijk details">${ICONS.eye}</button></td>
     </tr>`).join("");
   tbody.querySelectorAll("[data-select], [data-select-btn]").forEach((el) => el.addEventListener("click", () => toonRunDetail(runs.find((r) => r.runId === (el.dataset.select ?? el.dataset.selectBtn)))));
+}
+
+function veldRij(label, value) {
+  return `<div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">${label}</span></div><div class="field-value">${value}</div></div>`;
 }
 
 function toonRunDetail(run) {
   if (!run) return;
   geselecteerdeRunId = run.runId;
+  document.querySelectorAll("#lb-rows tr[data-select]").forEach((tr) => tr.classList.toggle("selected-row", tr.dataset.select === run.runId));
   document.getElementById("lb-detail").style.display = "block";
   const body = document.getElementById("lb-detail-body");
-  body.innerHTML = `
-    <p><b>Run</b><br/>${run.runId}</p>
-    <p><b>Type</b><br/>${run.kind ?? "—"}</p>
-    <p><b>Status</b><br/><span class="tag ${OUTCOME_TAG[run.outcome] ?? ""}">${OUTCOME_LABEL[run.outcome] ?? run.outcome}</span></p>
-    <p><b>Gestart</b><br/>${run.startedAt ? new Date(run.startedAt).toLocaleString("nl-NL") : "—"}</p>
-    <p><b>Afgerond</b><br/>${run.finishedAt ? new Date(run.finishedAt).toLocaleString("nl-NL") : "—"}</p>
-    <p><b>Productieversie bij start</b><br/>${run.productionVersionDisplayName ?? "—"}</p>
-    ${run.experiment ? `<p><b>Hypothese</b><br/>${run.experiment.hypothesis}</p><p><b>Besluit</b><br/><span class="tag ${run.experiment.decision === "PROMOTION_CANDIDATE" ? "good" : run.experiment.decision === "REJECTED" ? "bad" : "warn"}">${run.experiment.decision}</span></p>` : ""}
-  `;
+  body.innerHTML = [
+    veldRij("Run", run.runId),
+    veldRij("Type", run.kind ?? "—"),
+    veldRij("Status", `<span class="tag ${OUTCOME_TAG[run.outcome] ?? ""}">${OUTCOME_LABEL[run.outcome] ?? run.outcome}</span>`),
+    veldRij("Gestart", run.startedAt ? new Date(run.startedAt).toLocaleString("nl-NL") : "—"),
+    veldRij("Afgerond", run.finishedAt ? new Date(run.finishedAt).toLocaleString("nl-NL") : "—"),
+    veldRij("Productieversie bij start", run.productionVersionDisplayName ?? "—"),
+    ...(run.experiment ? [
+      veldRij("Hypothese", run.experiment.hypothesis),
+      veldRij("Besluit", `<span class="tag ${run.experiment.decision === "PROMOTION_CANDIDATE" ? "good" : run.experiment.decision === "REJECTED" ? "bad" : "warn"}">${run.experiment.decision}</span>`),
+    ] : []),
+  ].join("");
   document.getElementById("lb-detail-full").onclick = () => { window.open(`/api/logbook/download?runId=${encodeURIComponent(run.runId)}&format=txt`, "_blank"); };
 }
 
@@ -226,10 +249,8 @@ export async function mount(container, params) {
   await veilig("logboek", laad);
 
   const preselect = params?.get?.("runId");
-  if (preselect) {
-    const run = alleRuns.find((r) => r.runId === preselect);
-    if (run) toonRunDetail(run);
-  }
+  const run = (preselect && alleRuns.find((r) => r.runId === preselect)) || alleRuns[0];
+  if (run) toonRunDetail(run);
 
   const interval = setInterval(() => veilig("logboek", laad), 10000);
   return () => clearInterval(interval);
