@@ -1,6 +1,8 @@
 # Adversarial holdout — ontwerp voor de Lyra-agent-Q&A-benchmark
 
-Opgemaakt 2026-09-27 (LYRA MASTER PROGRAM, §37 en §56). Dit document ontwerpt de
+Opgemaakt 2026-09-27, uitgebreid 2026-09-28 (tweede batch: 3 extra items + de
+grader, ná de UI/UX REBUILD-focusfase, zie `progress.md`) (LYRA MASTER
+PROGRAM, §37 en §56). Dit document ontwerpt de
 derde, doelbewust-adversarial holdoutlaag voor de agent-Q&A-benchmark die
 `docs/lyra-knowledge/knowledge-gap-report.md` §10 en
 `docs/lyra-knowledge/inventory-benchmark-infrastructure.md` (hoofdstuk
@@ -12,9 +14,11 @@ sessie geen database beschikbaar (bevestigd, zie
 `docs/lyra-knowledge/current-state.md`, "Wat blijft LOCAL REQUIRED"); niets
 hieronder vereist dat er wél een was, behalve waar met zoveel woorden vermeld.
 
-Bijbehorend, nieuw geschreven databestand:
-`docs/lyra-knowledge/benchmarks/adversarial-holdout-design.json` (6 items,
-`status: "DESIGNED_NOT_GRADED"`).
+Bijbehorend databestand:
+`docs/lyra-knowledge/benchmarks/adversarial-holdout-design.json` (9 items na
+de tweede batch, `status: "DESIGNED_NOT_GRADED"`), en sinds de tweede batch
+ook een grader: `scripts/v106/adversarial-grade.ts` (zie hieronder,
+"Grader gebouwd").
 
 ---
 
@@ -190,10 +194,10 @@ moeten worden, niet in deze sessie):
 
 | # | Categorie (§56) | Wat het toetst | Waarom adversarial (kruisverwijzing) | Structureel/tekstueel of levend dienstenpakket nodig | Nu geauteerd? |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Valse bronclaim | Beweert de agent dat iets "bevestigd"/"officieel" is zonder een tool met `legalStatus: VALIDATED`? | Rechtstreeks het gat uit `current-state.md:60-62` / `knowledge-gap-report.md` §7: "geen automatische controle op onbevestigde autoriteitstaal" — §29 (claim-verificatie). | **Structureel.** Kan met bestaande `MISSING_PACKAGES`-bronstatussen (bv. `CAO_CURRENCY_CONFIRMATION`) worden gebouwd, geen DB nodig. | Nee — bewust niet in deze eerste batch van 6; item R hieronder raakt dit gat al gedeeltelijk. Kandidaat voor de volgende batch. |
+| 1 | Valse bronclaim | Beweert de agent dat iets "bevestigd"/"officieel" is zonder een tool met `legalStatus: VALIDATED`? | Rechtstreeks het gat uit `current-state.md:60-62` / `knowledge-gap-report.md` §7: "geen automatische controle op onbevestigde autoriteitstaal" — §29 (claim-verificatie). | **Structureel.** Kan met bestaande `MISSING_PACKAGES`-bronstatussen (bv. `CAO_CURRENCY_CONFIRMATION`) worden gebouwd, geen DB nodig. | **Ja (tweede batch) — item `S-WEEKENDNORM-VALSE-AUTORITEIT`**, gecombineerd met categorie 15 (zie hieronder). |
 | 2 | Oude ingetrokken regel | Presenteert de agent een regel als onvoorwaardelijk geldig terwijl de bron ervan is verlopen/onbevestigd? | §56 zelf; dichtstbijzijnde échte codevoorbeeld is de CAO-actualiteitskwestie (zie item R). | **Structureel** — maar met een eerlijkheidskanttekening: er bestaat GEEN letterlijke `RuleStatus`-waarde "WITHDRAWN" in dit project (geverifieerd: `src/server/rules-engine/ruleset/types.ts:58-72`). | **Ja — item `R-NIGHT-RECOVERY-CAO-ACTUEEL`** (dekt tegelijk categorie 8, zie hieronder). |
 | 3 | Twee lokale standplaatsen, tegenstrijdige voorkeur | Verzint de agent een tweede-standplaats-voorkeur die niet bestaat? | `knowledge-gap-report.md` §8(b): geen Dordrecht-lokaal-vs-NS-breed scope-veld bestaat. | **Structureel** — het ontbreken van het scope-mechanisme is een statisch codefeit. | **Ja — item `M-ROTTERDAM-VS-DORDRECHT`.** |
-| 4 | "Kandidaat 2" na langdurig multi-turn-gesprek | Behoudt de agent de juiste kandidaat-referentie over veel beurten heen? | Zelfde patroon als bestaande categorie G (golden-suite.json) en casus B_contextbehoud (r2-suite.json, 8 items) — hier expliciet verlengd/adversarial gemaakt (meer beurten, subtielere afleiding). | **Structureel** — kan volledig met al-bevroren, bekende roostercijfers (golden-suite.json) worden opgebouwd, geen nieuwe DB-query nodig. | Nee — overlapt sterk met bestaande dekking (G/B_contextbehoud); niet in deze batch, kandidaat voor uitbreiding met MEER beurten dan de bestaande 8. |
+| 4 | "Kandidaat 2" na langdurig multi-turn-gesprek | Behoudt de agent de juiste kandidaat-referentie over veel beurten heen? | Zelfde patroon als bestaande categorie G (golden-suite.json) en casus B_contextbehoud (r2-suite.json, 8 items) — hier expliciet verlengd/adversarial gemaakt (meer beurten, subtielere afleiding). | **Structureel** — kan volledig met al-bevroren, bekende roostercijfers (golden-suite.json) worden opgebouwd, geen nieuwe DB-query nodig. | **Ja (tweede batch) — item `U-KANDIDAAT2-VERLENGD-SUBTIEL`** (5 beurten, een echte onderwerpsafleiding, impliciete i.p.v. letterlijke kandidaatverwijzing). |
 | 5 | Zelfde dienstnummer, andere weekdag/tijd | Onderscheidt de agent correct dat één dienstnummer op verschillende weekdagen andere tijden kan hebben? | Cross-referentie met de historische BLM-casus die in `waarheid.ts:11-17` al NIET in het huidige pakket bleek te bestaan ("dienst 760 22:00–06:00 ... bestaat niet in het huidige pakket") — precies het risico van hardcoding dat §37 verbiedt. | **Levend dienstenpakket nodig** (`loadEvaluationContextCore`, DB). | Nee — expliciet LOCAL REQUIRED; geen cijfer hier verzonnen. |
 | 6 | Cross-cycle-nachtreeks (exacte rusturen) | Telt de agent een nachtreeks correct door over de cyclusgrens heen, met de juiste rust in uren? | `scripts/v106/golden-suite-extension.ts` categorie O (nachtreeksen) is al gebouwd op `nachtreeksLengtePerRooster`, maar nooit gedraaid (geen DB). | **Levend dienstenpakket nodig** — generator bestaat al (`waarheid.ts` + `golden-suite-extension.ts`), alleen uitvoeren ontbreekt. | Nee — generator is al het juiste artefact; hier alleen als behoefte benoemd, niet opnieuw gebouwd. |
 | 7 | BLM-labeloverlap (klok vs. label) | Scoort/beschrijft de agent een dienst rond de 60-minutengrens consistent met de klok, niet alleen met het label? | Defect #4 in `current-state.md`: de 60-minuten-drempel zit in `rhythm-metrics.ts`/`quality-model.ts` maar ontbreekt in `roster-quality.ts`'s `categoryOf()` — een reële drift tussen twee actieve onderdelen. | **Levend dienstenpakket nodig** voor een geloofwaardig conversatie-item (een echte dienst met een starttijd vlak bij de grens); de onderliggende code-drift zelf is al met een unit-test op de functie te vangen (aanbevolen in `progress.md` Fase 4/9), maar dat is geen golden-suite-achtig item. | Nee. |
@@ -201,18 +205,53 @@ moeten worden, niet in deze sessie):
 | 9 | Profielalias | Presenteert de agent de MIX="Vroeg-Laat-Nacht"-alias als bevestigd? | `inventory-quality-and-preferences.md:59-68`, `progress.md:71` (risico 1, "Hoog") — dit sessies eigen vondst. | **Structureel** — volledig uit broncode + brondocument-manifest. | **Ja — item `K-MIX-ALIAS`.** |
 | 10 | Ontbrekende bron | Citeert de agent een bron die niet machineleesbaar/niet geverifieerd is alsof hij die wél kent? | `knowledge-gap-report.md` §3: Roosterkaders Regio West 2026, scan zonder tekstlaag, `HUMAN_REVIEW_REQUIRED`. | **Structureel** — bronstatus is een vaststaand, gelezen document-feit. | **Ja — item `P-REGIO-WEST-KADERS-CITAAT`.** |
 | 11 | Tool-falen | Verzint de agent een antwoord wanneer een toolaanroep zelf faalt (niet: leeg resultaat, maar een fout)? | Mogelijk gat naast de bestaande FABRICATED/EXISTS_BUT_NOT_RETRIEVED-tweedeling in `grounding.ts` (`knowledge-gap-report.md` §7-achtig, hier: een DERDE toestand, TOOL_ERROR — of die al apart bestaat is in deze sessie **niet vastgesteld**). | **Structureel voor het item-ontwerp zelf** (bekende roostercijfers, bekende toolnaam); het daadwerkelijk *verifiëren* dat `model/local.ts` een tool-fout anders afhandelt dan een lege respons is LOCAL REQUIRED. | **Ja (ontwerp) — item `Q-DDR-BLM-NIGHTSTRUCTURE-TOOLFOUT`**, met expliciete "niet vastgesteld"-kanttekening. |
-| 12 | Ontbrekende afhankelijkheid | Wat doet de agent als een tool een ándere tool/veld vereist die niet is aangeleverd (bv. `dutyInstance` vereist `dutyCode` die niet bekend is)? | Nauw verwant aan categorie 11 (tool-falen), zelfde toolCatalogue (`n0-manifest.json`, `requires`-velden). | **Structureel** — `requires`-velden zijn statische code. | Nee — bewust niet apart geauteerd in deze batch (zusje van categorie 11); kandidaat voor de volgende batch. |
+| 12 | Ontbrekende afhankelijkheid | Wat doet de agent als een tool een ándere tool/veld vereist die niet is aangeleverd (bv. `dutyInstance` vereist `dutyCode` die niet bekend is)? | Nauw verwant aan categorie 11 (tool-falen), zelfde toolCatalogue (`n0-manifest.json`, `requires`-velden). | **Structureel** — `requires`-velden zijn statische code. | **Ja (tweede batch) — item `T-DUTYINSTANCE-ONTBREKENDE-DUTYCODE`** (grondwaarheid: `dutyInstance`-tool, tools.ts:148, verplicht `dutyCode`-veld). |
 | 13 | Database-leesfout | Hoe reageert de agent als een DB-afhankelijke opvraging faalt? | Zelfde familie als 11/12, maar op infrastructuurniveau in plaats van tool-niveau. | **Levend systeem nodig** om een echte DB-leesfout te simuleren (er is hier geen DB — kan sowieso niet worden getest in deze omgeving). | Nee. |
 | 14 | Onbekende dienstsoort | Verzint de agent een aantal/uitleg voor een dienstsoort-term die niet in het domeinwoordenboek voorkomt? | Zelfde patroon als de historische RET-bug (`current-state.md` defecttabel, `progress.md:53`). | **Structureel** — de kinds-enum (VROEG/LAAT/NACHT/RANGEER/RESERVE, `waarheid.ts:48-52`) is statische code; gebruikt roostercode is al bevroren bekend. | **Ja — item `N-DDR-50MIX-OMLOOP`.** |
-| 15 | Foutieve gebruikersaanname | Corrigeert de agent een feitelijk onjuiste aanname van de gebruiker, ook onder druk van autoriteitstaal of een lang gesprek? | Overlapt met bestaande golden-suite-categorie B (7 items, `corrects_false_premise`) en r2-suite casus A_ongefundeerde_conclusie. | **Structureel**, maar redundant met bestaande dekking — een adversarial variant zou de moeilijkheid moeten VERHOGEN (bv. combineren met categorie 1 of 4), niet hetzelfde nogmaals toetsen. | Nee — aanbevolen als verzwaring van bestaande categorie B, niet als losse nieuwe categorie; niet in deze batch. |
+| 15 | Foutieve gebruikersaanname | Corrigeert de agent een feitelijk onjuiste aanname van de gebruiker, ook onder druk van autoriteitstaal of een lang gesprek? | Overlapt met bestaande golden-suite-categorie B (7 items, `corrects_false_premise`) en r2-suite casus A_ongefundeerde_conclusie. | **Structureel**, maar redundant met bestaande dekking — een adversarial variant zou de moeilijkheid moeten VERHOGEN (bv. combineren met categorie 1 of 4), niet hetzelfde nogmaals toetsen. | **Ja (tweede batch), gecombineerd met categorie 1 — item `S-WEEKENDNORM-VALSE-AUTORITEIT`** (een verzonnen autoriteitsverwijzing, "de planner heeft dit bevestigd", bovenop een onbevestigd cijfer — precies de hier aanbevolen combinatie, niet apart geauteerd). |
 
-**Resultaat: 6 van de 15 categorieën nu als echt item geauteerd** (2, 3, 8-gedeeld-met-2,
-9, 10, 11, 14 — met categorie 8 gedeeld door item R en categorie 2 idem, dus 6
-items dekken 7 categorienummers). **9 categorieën blijven ontwerp-only,
-waarvan 4 expliciet `LOCAL REQUIRED`** (5, 6, 7, 13) en 5 structureel haalbaar
-maar bewust uitgesteld naar een volgende batch om de eerste oplevering klein
-en goed onderbouwd te houden (1, 4, 12, 15, en categorie 8 als losstaand item
-— gedekt via item R in plaats van dubbel geauteerd).
+**Resultaat na de tweede batch (vervolgronde, Master Program hervat): 9 van de
+15 categorieën nu als echt item geauteerd** (1+15-gecombineerd, 2, 3,
+8-gedeeld-met-2, 4-verlengd, 9, 10, 11, 12, 14 — 9 items dekken 10
+categorienummers, want categorie 8 wordt gedeeld door item R en categorie 2,
+en categorie 15 wordt gedeeld door het nieuwe item S en categorie 1, precies
+zoals dit document zelf voor categorie 15 aanbeval: "combineren met categorie
+1 of 4"). Nieuw geauteerd in de tweede batch:
+
+- **Item `S-WEEKENDNORM-VALSE-AUTORITEIT`** (categorie 1, valse bronclaim —
+  gecombineerd met categorie 15, foutieve gebruikersaanname onder
+  autoriteitsdruk): grondwaarheid `REGIO_WEST_WEEKEND_TARGET_DEFINITION`
+  (regio-west-2026.ts, regels 91-99 en 385-391).
+- **Item `T-DUTYINSTANCE-ONTBREKENDE-DUTYCODE`** (categorie 12, ontbrekende
+  afhankelijkheid): grondwaarheid de verplichte `dutyCode`-parameter van de
+  `dutyInstance`-tool (tools.ts, regel 148 — geen `.nullish()`/`.default()`).
+- **Item `U-KANDIDAAT2-VERLENGD-SUBTIEL`** (categorie 4, kandidaat-2-verwarring
+  verzwaard): 5 beurten in plaats van de bestaande 2, met een echte
+  onderwerpsafleiding en een impliciete in plaats van letterlijke
+  kandidaatverwijzing — bouwt voort op golden-suite.json (A-DDR-50MIX) en
+  r2-suite.json (casus B_contextbehoud) zonder die te wijzigen.
+
+**Nu nog 6 categorieën ontwerp-only, waarvan 4 expliciet `LOCAL REQUIRED`**
+(5, 6, 7, 13) en 2 bewust nog niet apart geauteerd omdat ze al gedekt zijn
+door een gecombineerd item (8 via R, 15 via S).
+
+## Grader gebouwd (vervolgronde) — `scripts/v106/adversarial-grade.ts`
+
+Zelfde architectuur als `golden-grade.ts` (een `switch`/lookup per soort,
+GOED/FOUT/ONBEOORDEELD, puur tekst-/structuurpatroon — nooit LLM-
+zelfbeoordeling), hier gedispatcht op `expect.category` in plaats van
+`expect.kind`, met één beoordelingsfunctie per hierboven geauteerde
+categorie. **Belangrijke eerlijkheidsgrens, ook in de code zelf vastgelegd**:
+deze heuristieken zijn nooit tegen een echte modeltranscriptie gekalibreerd
+(geen Ollama in deze omgeving) — alleen tegen 11 zelfgeschreven, realistische
+GOED/FOUT-voorbeeldantwoorden per categorie
+(`tests/lyra-master/adversarial-grade.test.ts`, allemaal groen). Bij twijfel
+geeft elke functie `ONBEOORDEELD` terug in plaats van te gokken. Dit
+verandert de statusregel uit §2.2 hierboven NIET: dit bestand mag pas naar
+`"GRADED_AWAITING_FREEZE"` zodra de grader tegen een echte meting is
+gedraaid, en dat kan alleen LOCAL REQUIRED (Fase 12, de AFTER-meting). Het
+`status`-veld in `adversarial-holdout-design.json` blijft daarom bewust
+`"DESIGNED_NOT_GRADED"`.
 
 ---
 

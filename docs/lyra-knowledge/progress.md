@@ -1,6 +1,6 @@
 # Lyra Master Program — voortgang
 
-Bijgewerkt: 2026-09-28 (ronde: "COMPLETE LYRA DEMO ROOM UI/UX REBUILD" — tijdelijke focusfase binnen het Master Program, nu **AFGEROND**, zie hieronder; het Master Program hervat na deze sectie bij de eerstvolgende niet-`COMPLETE`/`TESTED` fase). Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
+Bijgewerkt: 2026-09-28 — UI/UX REBUILD-focusfase **AFGEROND**; Master Program hervat, Fase 12 (adversarial holdout) uitgebreid naar 9 items + een nieuwe grader (zie "Master Program hervat: Fase 12-vervolg" hieronder). Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
 
 ## UI/UX REBUILD — AFGEROND (tijdelijke focusfase, Master Program hervat hieronder)
 
@@ -30,6 +30,60 @@ De gebruiker vroeg een volledige informatiearchitectuur-/UX-rebuild van de Demo 
 Dit document volgt §106 (werkwijze) en §108 (als de opdracht te groot is voor één uitvoering) van de opdracht. Status per fase: `NOT_STARTED` / `IN_PROGRESS` / `BLOCKED` / `TESTED` / `COMPLETE`.
 
 **Master Program hervat vanaf hier** bij de eerstvolgende niet-`COMPLETE`/`TESTED` fase — zie de fasetracker hieronder. Vóór er inhoudelijk op de BEFORE-resultaten voortgebouwd wordt, moet eerst de hierboven genoemde, nog niet onafhankelijk geverifieerde `PASS`-claim van run `20260927-205217` uit de echte artifact-bestanden bevestigd worden.
+
+## Master Program hervat: Fase 12-vervolg (tweede batch adversarial-items + grader)
+
+Na de UI/UX REBUILD-focusfase hierboven is het Master Program hervat. Status-
+check tegen de fasetracker: vrijwel elke resterende fase (regels/bronnen-
+consolidatie, grounding-gatreparatie, claim-verificatie-aansluiting) is
+expliciet gekoppeld aan de BEFORE-freeze (§33/§34: geen inhoudelijke wijziging
+vóór die freeze bevestigd is) — en die `PASS`-claim (run `20260927-205217`) is
+nog steeds niet onafhankelijk geverifieerd uit de echte artifact-bestanden
+(die bestaan niet in dit repository/deze branch; ze staan alleen lokaal bij
+de gebruiker). Zonder die bevestiging blijven die fases terecht geblokkeerd.
+
+De ene fase die wél verder kon zonder BEFORE-bevestiging én zonder Ollama/DB:
+**Fase 12 (adversarial holdout)**. Twee dingen toegevoegd, beide additief,
+zonder de bestaande 6 items te wijzigen (zie `adversarial-holdout-design.md`
+en `adversarial-holdout-design.json` voor de volledige inhoud/motivatie):
+
+1. **Drie nieuwe adversarial-items** (de bij de eerste batch bewust
+   uitgestelde, structureel haalbare categorieën): `S-WEEKENDNORM-VALSE-
+   AUTORITEIT` (categorie 1+15 gecombineerd — een verzonnen autoriteitsclaim
+   over de niet-wiskundig-gedefinieerde Regio West-weekendnorm),
+   `T-DUTYINSTANCE-ONTBREKENDE-DUTYCODE` (categorie 12 — de tool `dutyInstance`
+   vereist een `dutyCode` die in het gesprek nooit gegeven is), en
+   `U-KANDIDAAT2-VERLENGD-SUBTIEL` (categorie 4 — dezelfde kandidaatwissel-
+   verwarring als de bestaande r2-suite, nu over 5 beurten met een echte
+   afleiding en een impliciete in plaats van letterlijke referentie).
+2. **`scripts/v106/adversarial-grade.ts`** (nieuw): de grader die
+   `adversarial-holdout-design.md` §2.2 als voorwaarde noemt vóór dit bestand
+   van status kan veranderen. Zelfde architectuur als `golden-grade.ts` (een
+   lookup per soort, GOED/FOUT/ONBEOORDEELD, puur tekst-/structuurpatroon,
+   nooit LLM-zelfbeoordeling), hier gedispatcht op `expect.category`.
+   **Eerlijkheidsgrens, met zoveel woorden in de code zelf**: deze
+   heuristieken zijn nooit tegen een echt modelantwoord gekalibreerd — alleen
+   tegen 11 zelfgeschreven GOED/FOUT-voorbeeldantwoorden
+   (`tests/lyra-master/adversarial-grade.test.ts`, allemaal groen). Bij twijfel
+   geeft elke functie `ONBEOORDEELD` terug, nooit een gok. Eén echte bug
+   gevonden en gefixt tíjdens het testen: twee bijna-identieke maar
+   uiteenlopende voorbehoud-regexen (één in `heeftVoorbehoud()`, een losse
+   kopie binnen `onvoorwaardelijkBevestigd()`) waren uit elkaar gaan lopen —
+   nu herleid tot één bron.
+3. **Status blijft bewust `"DESIGNED_NOT_GRADED"`**: het bestaan van een
+   grader verandert de freeze-statusregel uit §2.2 niet — dat vereist een
+   echte meting tegen deze items, wat alleen LOCAL REQUIRED (Fase 12 zelf, de
+   AFTER-meting) kan gebeuren.
+4. **Getest**: `npx tsc --noEmit` blijft op exact dezelfde 21 vooraf bekende
+   foutregels; volledige `npx vitest run`: 1099/1126 groen (dezelfde 27
+   vooraf bestaande ortools-fouten als bij elke eerdere controle in deze
+   sessie, plus deze 11 nieuwe tests, allemaal groen).
+
+**Volgende stap voor een derde batch (niet in deze ronde)**: de resterende
+2 structureel-haalbare-maar-nog-niet-aparte categorieën zijn al gedekt via
+gecombineerde items (8 via R, 15 via S) — er blijven dus alleen de 4
+expliciet `LOCAL REQUIRED` categorieën (5, 6, 7, 13) over, die pas verder
+kunnen zodra een levend dienstenpakket beschikbaar is.
 
 ## Uitgangssituatie (Fase 0, vastgesteld)
 
@@ -188,7 +242,7 @@ Elke commit hierboven is getypecheckt en getest (volledige vitest-suite) vóór 
 | 9 | Regressiesuite uitbreiden | **GEDEELTELIJK COMPLETE** | `jsonUit()`-test (commit `588c1e5`, 8 tests) + golden-suite-extensie (categorieën L, O, geschreven maar NOOIT gedraaid — DB ontbreekt hier) + 3 pin-tests voor bekende gaten. |
 | 10 | Kennisconsistentie + broncoverage | **DEELS COMPLETE** | `source-coverage.md` bestaat. Een geautomatiseerde, doorlopende cross-component-consistency-checker (§47) is ONTWERP-only (zie conflict-report.md) — niet gebouwd. |
 | 11 | AFTER-benchmark | **BLOCKED (LOCAL REQUIRED)** | Afhankelijk van Fase 1 — kan pas na de lokale BEFORE-run. |
-| 12 | Locked holdout/adversarial | **ONTWERP + 6 ITEMS COMPLETE** | `adversarial-holdout-design.md` (architectuur, vries-/auditregel, alle 15 §56-categorieën beoordeeld) + `benchmarks/adversarial-holdout-design.json` (6 volledig gegronde items, status `DESIGNED_NOT_GRADED`). Grader (Fase 8) en het daadwerkelijk als locked holdout inzetten (na AFTER) zijn vervolgwerk. |
+| 12 | Locked holdout/adversarial | **ONTWERP + 9 ITEMS + GRADER COMPLETE, INZET (LOCAL REQUIRED) NOT_STARTED** | `adversarial-holdout-design.md` (architectuur, vries-/auditregel, alle 15 §56-categorieën beoordeeld) + `benchmarks/adversarial-holdout-design.json` (9 volledig gegronde items na de tweede batch — 1+15-gecombineerd, 4-verlengd, 12 — status `DESIGNED_NOT_GRADED`) + `scripts/v106/adversarial-grade.ts` (nieuwe grader, 11 tests, tegen zelfgeschreven GOED/FOUT-voorbeelden — nooit tegen een echt modelantwoord gekalibreerd). Het daadwerkelijk als locked holdout inzetten (Fase 12 zelf, de AFTER-meting) is LOCAL REQUIRED vervolgwerk; 6 categorieën blijven ontwerp-only (4 ervan expliciet LOCAL REQUIRED). |
 | 13 | Promotion-compatibiliteitstest | **CONTRACT COMPLETE, TEST NOT_STARTED** | `promotion-contract.md`: criteria + brain-manifest-ontwerp + cross-system-adapterontwerp. Een daadwerkelijke compatibiliteitstest tegen het echte NS-platform is buiten de zichtbaarheid van deze ronde (geen toegang tot dat platform). |
 | 14 | Eindrapport + commits | **IN_PROGRESS** | Dit document + het antwoord aan het einde van deze beurt zijn het tussentijdse eindrapport; commits lopen door zolang er onafhankelijk werk is. |
 
