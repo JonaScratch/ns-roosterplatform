@@ -3,7 +3,7 @@
 // benchmarkset-selectors, per-metric diff, en de relevante wijzigingen
 // tussen de twee versies. Accepteert een voorselectie vanuit Candidates.
 
-import { j, fmtPp, veilig } from "../lib/shared.js";
+import { j, fmtPp, veilig, titleIcon, ICONS } from "../lib/shared.js";
 
 const DIMENSIE_LABEL = {
   contextResolution: "Contextresolutie", multiTurnContext: "Multi-turn context", machinistTaal: "Machinisttaal",
@@ -16,7 +16,7 @@ let alleVersies = [];
 function html() {
   return `
     <div class="card">
-      <h3>Vergelijken</h3>
+      <h3>${titleIcon("compare", "#1f5fd0")}Vergelijken<span class="card-sub">Vergelijk twee Lyra-versies of -kandidaten per meetdimensie.</span></h3>
       <div class="row" style="align-items:flex-end;">
         <div class="col" style="max-width:280px;">
           <label>Basisversie</label>
@@ -91,28 +91,26 @@ async function renderVergelijking() {
   if (wijzigingen.length === 0) wijzigingen.push("Geen aanvullende wijzigingsinformatie vastgelegd voor deze versie.");
 
   bodyEl.innerHTML = `
-    ${compare.warning ? `<div class="card"><span class="tag warn">Let op</span> <span style="font-size:13px;">${compare.warning}</span></div>` : ""}
+    ${compare.warning ? `<div class="card"><span class="tag warn">${ICONS.alert}Let op</span> <span style="font-size:13px;">${compare.warning}</span></div>` : ""}
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Per-dimensie verschil</h3>
+          <h3>${titleIcon("chart", "#1f5fd0")}Per-dimensie verschil</h3>
           <table><thead><tr><th>Dimensie</th><th>${compare.base?.displayName ?? "Basis"}</th><th>${target?.displayName ?? "Vergeleken"}</th><th>Δ</th></tr></thead><tbody>${metricRows}</tbody></table>
           <p class="sub" style="margin-top:10px; font-size:12px;">Roosterkwaliteit/regelovertredingen: n.v.t. — dit systeem test tot dusver alleen agentgedrag (promptniveau), nog geen roosteroptimalisatie.</p>
         </div>
       </div>
       <div class="col" style="max-width:340px;">
         <div class="card">
-          <h3>Statusoverzicht</h3>
-          <table style="font-size:13px;">
-            <tbody>
-              <tr><td style="color:var(--muted);">Basisversie</td><td>${compare.base?.displayName ?? "—"} <span class="tag ${statusVoorRij(compare.base) === "ACTIEF" ? "good" : ""}">${statusVoorRij(compare.base) ?? "—"}</span></td></tr>
-              <tr><td style="color:var(--muted);">Vergeleken versie</td><td>${target?.displayName ?? "—"} <span class="tag ${statusVoorRij(target) === "ACTIEF" ? "good" : ""}">${statusVoorRij(target) ?? "—"}</span></td></tr>
-              <tr><td style="color:var(--muted);">Benchmarkset</td><td>${set === "both" ? "Beide" : set === "dev" ? "Alleen dev" : "Alleen holdout"}</td></tr>
-            </tbody>
-          </table>
+          <h3>${titleIcon("book", "#1f5fd0", "sm")}Statusoverzicht</h3>
+          <div class="field-list">
+            <div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">Basisversie</span></div><div class="field-value">${compare.base?.displayName ?? "—"} <span class="tag ${statusVoorRij(compare.base) === "ACTIEF" ? "good" : ""}">${statusVoorRij(compare.base) ?? "—"}</span></div></div>
+            <div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">Vergeleken versie</span></div><div class="field-value">${target?.displayName ?? "—"} <span class="tag ${statusVoorRij(target) === "ACTIEF" ? "good" : ""}">${statusVoorRij(target) ?? "—"}</span></div></div>
+            <div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">Benchmarkset</span></div><div class="field-value">${set === "both" ? "Beide" : set === "dev" ? "Alleen dev" : "Alleen holdout"}</div></div>
+          </div>
         </div>
         <div class="card">
-          <h3>Relevante wijzigingen</h3>
+          <h3>${titleIcon("lightbulb", "#c8791a", "sm")}Relevante wijzigingen</h3>
           <p style="font-size:13px; margin:0;">${wijzigingen.join("<br/><br/>")}</p>
         </div>
       </div>

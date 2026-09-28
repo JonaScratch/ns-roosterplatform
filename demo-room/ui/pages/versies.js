@@ -4,7 +4,7 @@
 // /api/publish/execute (publiceert een experiment als nieuwe versie) aan;
 // er is geen Demo-Room-only "actieve status".
 
-import { j, post, veilig } from "../lib/shared.js";
+import { j, post, veilig, titleIcon, iconChip, ICONS } from "../lib/shared.js";
 import { confirmAction } from "../app.js";
 
 const STATUS_LABEL = { ACTIVE: "ACTIEF", SUPERSEDED: "GEARCHIVEERD", ROLLED_BACK: "TERUGGEDRAAID", FAILED: "MISLUKT" };
@@ -22,12 +22,16 @@ function gemMetric(metrics) {
 
 function html() {
   return `
+    <div class="card">
+      <h3>${titleIcon("book", "#1f5fd0")}Lyra-versies<span class="card-sub">Levenscyclusbeheer van productieversies — activeren loopt altijd via de canonieke versieservice.</span></h3>
+    </div>
+
     <div class="grid" id="vs-kpis" style="margin-bottom:14px;"></div>
 
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Versiegeschiedenis</h3>
+          <h3>${titleIcon("chart", "#1f5fd0")}Versiegeschiedenis</h3>
           <table>
             <thead><tr><th>Versie</th><th>Status</th><th>Aangemaakt</th><th>Bron</th><th>Gem. dev-score</th><th>Acties</th></tr></thead>
             <tbody id="vs-rows"></tbody>
@@ -37,12 +41,14 @@ function html() {
     </div>
 
     <div class="card" id="vs-detail" style="display:none;">
-      <h3>Versiedetail — <span id="vs-detail-title"></span></h3>
+      <h3>${titleIcon("compare", "#1f5fd0")}Versiedetail — <span id="vs-detail-title"></span></h3>
       <div class="row">
         <div class="col">
-          <p><b>Reden</b><br/><span id="vs-detail-reden"></span></p>
-          <p><b>Bronexperiment</b><br/><span id="vs-detail-bron"></span></p>
-          <p><b>Bekende beperkingen</b><br/><span id="vs-detail-issues"></span></p>
+          <div class="field-list">
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Reden</span><span class="field-value" id="vs-detail-reden" style="font-weight:500; margin-top:2px;"></span></div>
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Bronexperiment</span><span class="field-value" id="vs-detail-bron" style="font-weight:500; margin-top:2px;"></span></div>
+            <div class="field-row" style="padding:6px 0; flex-direction:column;"><span class="field-label">Bekende beperkingen</span><span class="field-value" id="vs-detail-issues" style="font-weight:500; margin-top:2px;"></span></div>
+          </div>
         </div>
         <div class="col">
           <table style="font-size:13px;">
@@ -60,13 +66,20 @@ function renderKpis() {
   const gepromoveerd = alleVersies.filter((v) => v.status !== "FAILED").length;
   const mislukt = alleVersies.filter((v) => v.status === "FAILED").length;
   const cards = [
-    { label: "Actieve versie", value: actief?.displayName ?? "—" },
-    { label: "Totaal versies", value: alleVersies.length },
-    { label: "Beschikbaar", value: gepromoveerd },
-    { label: "Mislukt", value: mislukt },
-    { label: "Aangemaakt op", value: actief ? new Date(actief.createdAt).toLocaleDateString("nl-NL") : "—" },
+    { icon: "trophy", color: "amber", label: "Actieve versie", value: actief?.displayName ?? "—" },
+    { icon: "book", color: "blue", label: "Totaal versies", value: alleVersies.length },
+    { icon: "check", color: "green", label: "Beschikbaar", value: gepromoveerd },
+    { icon: "x", color: "red", label: "Mislukt", value: mislukt },
+    { icon: "clock", color: "navy", label: "Aangemaakt op", value: actief ? new Date(actief.createdAt).toLocaleDateString("nl-NL") : "—" },
   ];
-  document.getElementById("vs-kpis").innerHTML = cards.map((c) => `<div class="stat"><div class="label">${c.label}</div><div class="value">${c.value}</div></div>`).join("");
+  document.getElementById("vs-kpis").innerHTML = cards.map((c) => `
+    <div class="stat with-icon">
+      ${iconChip(c.icon, c.color)}
+      <div>
+        <div class="label">${c.label}</div>
+        <div class="value">${c.value}</div>
+      </div>
+    </div>`).join("");
 }
 
 function renderRows() {
@@ -82,9 +95,9 @@ function renderRows() {
       <td>${v.variantId ?? "—"}</td>
       <td>${gemDev !== null ? gemDev.toFixed(1) + "%" : "—"}</td>
       <td>
-        <button class="ghost" data-detail="${v.id}">Details</button>
-        ${!isActief && v.canActivate ? `<button class="ghost" data-activate="${v.id}">Activeren</button>` : ""}
-        ${!isActief && !v.canActivate && v.reason ? `<span class="tag bad" title="${v.reason}">geblokkeerd</span>` : ""}
+        <button class="ghost icon-btn" data-detail="${v.id}" title="Details">${ICONS.eye}</button>
+        ${!isActief && v.canActivate ? `<button class="primary" data-activate="${v.id}">${ICONS.check}Activeren</button>` : ""}
+        ${!isActief && !v.canActivate && v.reason ? `<span class="tag bad" title="${v.reason}">${ICONS.x}geblokkeerd</span>` : ""}
       </td>
     </tr>`;
   }).join("");
