@@ -4,14 +4,14 @@
 // beste kandidaat, wordt Lyra beter, wat zijn de grootste zwakke punten, wat
 // was de laatste ontwikkelrun, kan ik nu een nieuwe run starten.
 
-import { j, post, iconChip, nl1, lineChart, renderStepper, veilig } from "../lib/shared.js";
+import { j, post, iconChip, titleIcon, ICONS, nl1, lineChart, renderStepper, veilig } from "../lib/shared.js";
 import { confirmAction } from "../app.js";
 
 const DUUR_OPTIES = [
-  { minutes: 60, label: "1 uur", sub: "Snelle ontwikkelrun, klein aantal experimenten." },
-  { minutes: 360, label: "6 uur", sub: "Standaard run." },
-  { minutes: 1440, label: "24 uur", sub: "Uitgebreide autonome ontwikkelrun." },
-  { minutes: null, label: "Aangepast", sub: "Eigen maximale tijd." },
+  { minutes: 60, label: "1 uur", sub: "Snelle test (kleine varianten)" },
+  { minutes: 360, label: "6 uur", sub: "Standaard run (aanbevolen)" },
+  { minutes: 1440, label: "24 uur", sub: "Uitgebreide run (meer varianten)" },
+  { minutes: null, label: "Aangepast", sub: "Zelf instellen duur en opties" },
 ];
 
 let gekozenDuurMinuten = 360;
@@ -19,84 +19,88 @@ let gekozenDuurMinuten = 360;
 function html() {
   return `
     <div class="row" style="align-items:stretch;">
-      <div class="col" style="max-width:420px;">
+      <div class="col" style="max-width:400px;">
         <div class="card" style="height:100%; display:flex; gap:14px;">
           <div id="dash-active-icon"></div>
           <div>
-            <div style="color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em; font-weight:600;">Actieve Lyra</div>
+            <div style="color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em; font-weight:700;">Actieve Lyra</div>
             <div style="display:flex; align-items:baseline; gap:10px; margin:4px 0;">
-              <span id="dash-active-version" style="font-size:26px; font-weight:700; color:var(--bg);">—</span>
+              <span id="dash-active-version" style="font-size:24px; font-weight:800; color:var(--bg);">—</span>
               <span class="tag good" id="dash-active-tag">ACTIEF</span>
             </div>
             <table style="font-size:12px; margin-top:6px;"><tbody id="dash-active-fields"></tbody></table>
-            <p id="dash-active-sub" style="margin:8px 0 0; color:#556; font-size:12px;">Dit is de huidige productieve baseline. Gebruik de Test Room en ontwikkelruns om verbeterde kandidaten te maken en te testen tegen deze versie.</p>
+            <p id="dash-active-sub" style="margin:8px 0 0; color:#7a8aa3; font-size:12px; line-height:1.5;">Dit is de huidige productieve baseline. Gebruik de Test Room en ontwikkelruns om verbeterde kandidaten te maken en te testen tegen deze versie.</p>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card" id="dash-best-candidate" style="height:100%;">
-          <h3>Beste kandidaat</h3>
+          <h3>${titleIcon("trophy", "#b9862c")}Beste kandidaat</h3>
           <div id="dash-best-candidate-body"></div>
         </div>
       </div>
       <div class="col">
         <div class="card" style="height:100%;">
-          <h3>Nieuwe ontwikkelrun starten</h3>
+          <h3>${titleIcon("bolt", "#1f5fd0")}Nieuwe ontwikkelrun starten<span class="card-sub"></span></h3>
+          <p class="sub" style="margin:-8px 0 10px; color:#7a8aa3; font-size:12px;">Start een nieuwe run om verbeterde kandidaten te genereren.</p>
           <div class="row" id="dash-duur-tiles" style="gap:8px; flex-wrap:wrap;"></div>
           <div id="dash-duur-custom" style="display:none; margin-top:8px;">
             <label>Aantal minuten</label>
             <input type="number" id="dash-duur-custom-input" min="5" value="120" style="max-width:140px;" />
           </div>
-          <button class="primary" id="dash-start-run-btn" style="width:100%; margin-top:12px;">Start ontwikkelrun van 6 uur</button>
+          <button class="primary" id="dash-start-run-btn" style="width:100%; margin-top:12px;">${ICONS.play}Start ontwikkelrun van 6 uur</button>
         </div>
       </div>
     </div>
 
-    <div class="card">
-      <h3>Belangrijkste cijfers</h3>
-      <div class="grid" id="dash-kpis"></div>
-    </div>
+    <div class="grid" id="dash-kpis" style="margin-bottom:14px;"></div>
 
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Benchmarkontwikkeling</h3>
-          <p class="sub" style="margin:0 0 8px; color:#556; font-size:13px;">Alleen werkelijk gemeten momenten — geen lijn over niet-gemeten punten.</p>
+          <h3>${titleIcon("chart", "#1f5fd0")}Benchmarkontwikkeling</h3>
+          <p class="sub" style="margin:-8px 0 8px; color:#7a8aa3; font-size:12px;">Ontwikkeling van de benchmarkscore over de tijd.</p>
           <div id="dash-chart-benchmark"></div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <h3>Belangrijkste zwakke punten <button class="ghost" id="dash-zwaktes-alle" style="float:right;">Bekijk alle</button></h3>
+          <h3>${titleIcon("target", "#c0392b")}Belangrijkste zwakke punten<button class="card-link" id="dash-zwaktes-alle">Bekijk alle →</button></h3>
+          <p class="sub" style="margin:-8px 0 8px; color:#7a8aa3; font-size:12px;">Onderdelen met grootste impact op de benchmarkscore.</p>
           <table><thead><tr><th>Categorie</th><th>Ernst</th><th>Beschrijving</th><th>Status</th></tr></thead><tbody id="dash-zwaktes"></tbody></table>
         </div>
       </div>
     </div>
 
-    <div class="card">
-      <h3>Laatste ontwikkelrun <button class="ghost" id="dash-runs-alle" style="float:right;">Bekijk alle runs</button></h3>
-      <div id="dash-laatste-run"></div>
-    </div>
-
-    <div class="card">
-      <h3>Kandidaatvergelijking <button class="ghost" id="dash-vergelijk-details" style="float:right;">Bekijk details</button></h3>
-      <table><thead><tr><th>Versie / kandidaat</th><th>Benchmark dev</th><th>Holdout</th><th>Regels</th><th>Status</th></tr></thead><tbody id="dash-kandidaatvergelijking"></tbody></table>
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <h3>${titleIcon("play", "#1f5fd0")}Laatste ontwikkelrun<button class="card-link" id="dash-runs-alle">Bekijk alle runs →</button></h3>
+          <div id="dash-laatste-run"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>${titleIcon("chart", "#1f5fd0")}Kandidaatvergelijking<button class="card-link" id="dash-vergelijk-details">Bekijk details →</button></h3>
+          <table><thead><tr><th>Versie / kandidaat</th><th>Benchmark (dev)</th><th>Holdout</th><th>Regels</th><th>Status</th></tr></thead><tbody id="dash-kandidaatvergelijking"></tbody></table>
+        </div>
+      </div>
     </div>
 
     <div class="row">
       <div class="col">
         <div class="card">
-          <h3>Recente bevindingen &amp; aanbevelingen</h3>
+          <h3>${titleIcon("lightbulb", "#c8791a")}Recente bevindingen &amp; aanbevelingen</h3>
           <div id="dash-bevindingen"></div>
         </div>
       </div>
       <div class="col" style="max-width:320px;">
         <div class="card">
-          <h3>Snelle acties</h3>
+          <h3>${titleIcon("bolt", "#1f5fd0")}Snelle acties</h3>
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <button class="primary" id="dash-quick-testroom">Open Test Room</button>
-            <button class="ghost" id="dash-quick-startrun">Start ontwikkelrun</button>
-            <button class="ghost" id="dash-quick-bestcandidate" style="display:none;">Bekijk beste kandidaat</button>
+            <button class="primary" id="dash-quick-testroom" style="justify-content:flex-start;">${ICONS.chat}Open Test Room</button>
+            <button class="ghost" id="dash-quick-startrun" style="justify-content:flex-start; padding:9px 12px;">${ICONS.play}Start ontwikkelrun</button>
+            <button class="ghost" id="dash-quick-bestcandidate" style="display:none; justify-content:flex-start; padding:9px 12px;">${ICONS.trophy}Bekijk beste kandidaat</button>
           </div>
         </div>
       </div>
@@ -106,7 +110,8 @@ function html() {
 
 function renderDuurTiles(container) {
   container.innerHTML = DUUR_OPTIES.map((o, i) => `
-    <button type="button" class="option-tile${o.minutes === gekozenDuurMinuten ? " selected" : ""}" data-duur-index="${i}" style="flex:1; min-width:100px;">
+    <button type="button" class="option-tile${o.minutes === gekozenDuurMinuten ? " selected" : ""}" data-duur-index="${i}" style="flex:1; min-width:110px;">
+      <span class="option-icon">${o.minutes === null ? ICONS.gear : ICONS.clock}</span>
       <div class="option-title">${o.label}</div>
       <div class="option-sub">${o.sub}</div>
     </button>
@@ -157,14 +162,19 @@ async function laadBesteKandidaat() {
     return { beste: null, kandidaten };
   }
   body.innerHTML = `
-    <div style="display:flex; align-items:baseline; gap:10px;">
+    <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:2px;">
       <span class="tag good">PROMOTION_CANDIDATE</span>
-      <span style="font-size:20px; font-weight:700; color:var(--good);">${beste.benchmarkDelta !== null ? `+${beste.benchmarkDelta.toFixed(1)}pp` : "—"}</span>
+      <span style="font-size:19px; font-weight:800; color:var(--good);">${beste.benchmarkDelta !== null ? `+${beste.benchmarkDelta.toFixed(1)}pp` : "—"}</span>
     </div>
-    <p style="margin:8px 0 4px; font-size:13px;">${beste.candidateId} · benchmark ${beste.benchmarkDev !== null ? beste.benchmarkDev.toFixed(1) + "%" : "—"} · veiligheid ${beste.validator === "PASS" ? "geen regressies" : "ONBEKEND"}</p>
-    <div style="display:flex; gap:8px; margin-top:10px;">
-      <button class="primary" id="dash-open-candidate">Open kandidaat</button>
-      <button class="ghost" id="dash-compare-candidate">Vergelijk met actief</button>
+    <p style="margin:4px 0 8px; font-size:12px; color:#7a8aa3;">Hogere benchmarkscore dan de actieve versie</p>
+    <div class="field-list">
+      <div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">Benchmark (dev)</span></div><div class="field-value">${beste.benchmarkDev !== null ? beste.benchmarkDev.toFixed(2).replace(".", ",") : "—"}</div></div>
+      <div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">Verschil t.o.v. actief</span></div><div class="field-value" style="color:var(--good);">${beste.benchmarkDelta !== null ? `+${beste.benchmarkDelta.toFixed(1)}pp` : "—"}</div></div>
+      <div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label">Veiligheid</span></div><div class="field-value">${beste.validator === "PASS" ? '<span class="tag good">Geen regressies</span>' : '<span class="tag warn">Onbekend</span>'}</div></div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button class="primary" id="dash-open-candidate" style="flex:1;">Open kandidaat →</button>
+      <button class="ghost" id="dash-compare-candidate" style="flex:1; justify-content:center; padding:9px 12px;">${ICONS.compare}Vergelijk met actief</button>
     </div>
   `;
   document.getElementById("dash-open-candidate").addEventListener("click", () => { location.hash = `#/candidates?id=${encodeURIComponent(beste.candidateId)}`; });
@@ -202,14 +212,14 @@ async function laadKpis(actief) {
   const kandidatenDezeWeek = kandidaten.filter((c) => new Date(c.createdAt).getTime() >= eenWeekGeleden).length;
 
   const cards = [
-    { icon: "gear", color: "blue", label: "Actuele benchmarkscore", value: overview.latestBenchmark ? nl1(overview.latestBenchmark.passRate / 100) : "Nog geen meting", sub: overview.latestBenchmark ? overview.latestBenchmark.label : "" },
-    { icon: "bolt", color: "amber", label: "Laatste verbetering", value: besteDelta !== null && besteDelta > -Infinity ? `+${besteDelta.toFixed(1)}pp` : "Nog geen meting", sub: "beste kandidaat t.o.v. actief" },
-    { icon: "target", color: "purple", label: "Open zwakke punten", value: laatsteRun ? new Set(laatsteRun.cycles.filter((c) => c.decision !== "PROMOTION_CANDIDATE" && c.weakness.weakestDimension).map((c) => c.weakness.weakestDimension)).size : 0, sub: "actuele diagnosepunten" },
-    { icon: "users", color: "green", label: "Kandidaten deze week", value: kandidatenDezeWeek, sub: `${kandidaten.length} totaal` },
-    { icon: "chart", color: "navy", label: "Laatste run duur", value: laatsteRun ? `${Math.round((new Date(laatsteRun.finishedAt) - new Date(laatsteRun.startedAt)) / 60000)} min` : "—", sub: laatsteRun ? new Date(laatsteRun.finishedAt).toLocaleDateString("nl-NL") : "nog geen run" },
+    { icon: "chart", color: "blue", label: "Actuele benchmarkscore", value: overview.latestBenchmark ? nl1(overview.latestBenchmark.passRate / 100) : "Nog geen meting", sub: overview.latestBenchmark ? overview.latestBenchmark.label : "", subClass: "" },
+    { icon: "up", color: "green", label: "Laatste verbetering", value: besteDelta !== null && besteDelta > -Infinity ? `+${besteDelta.toFixed(1)}pp` : "Nog geen meting", sub: "t.o.v. vorige beste kandidaat", subClass: besteDelta > 0 ? "good" : "" },
+    { icon: "target", color: "red", label: "Open zwakke punten", value: laatsteRun ? new Set(laatsteRun.cycles.filter((c) => c.decision !== "PROMOTION_CANDIDATE" && c.weakness.weakestDimension).map((c) => c.weakness.weakestDimension)).size : 0, sub: "aandachtspunten", subClass: "" },
+    { icon: "users", color: "blue", label: "Kandidaten deze week", value: kandidatenDezeWeek, sub: "gegenereerd en getest", subClass: "" },
+    { icon: "clock", color: "navy", label: "Laatste run duur", value: laatsteRun ? `${Math.round((new Date(laatsteRun.finishedAt) - new Date(laatsteRun.startedAt)) / 60000)} min` : "—", sub: laatsteRun ? new Date(laatsteRun.finishedAt).toLocaleString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "nog geen run", subClass: "" },
   ];
   document.getElementById("dash-kpis").innerHTML = cards.map((c) => `
-    <div class="stat with-icon">${iconChip(c.icon, c.color)}<div><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub">${c.sub}</div></div></div>
+    <div class="stat with-icon">${iconChip(c.icon, c.color)}<div><div class="label">${c.label}</div><div class="value">${c.value}</div><div class="sub${c.subClass ? " " + c.subClass : ""}">${c.sub}</div></div></div>
   `).join("");
   return { runs, laatsteRun, kandidaten };
 }
@@ -325,10 +335,11 @@ export async function mount(container) {
     const { runs, laatsteRun, kandidaten } = await laadKpis(actief);
     await veilig("timeline", async () => {
       const timeline = await j("/api/progress/benchmark-timeline");
+      const laatsteDev = [...timeline].reverse().find((t) => typeof t.dev === "number");
       lineChart(document.getElementById("dash-chart-benchmark"), [
-        { name: "dev", color: "#1f5fd0", points: timeline.map((t) => ({ x: t.timestamp, y: t.dev })) },
-        { name: "holdout", color: "#c9622a", points: timeline.map((t) => ({ x: t.timestamp, y: t.holdout })) },
-      ]);
+        { name: "Actieve versie (dev)", color: "#1f5fd0", points: timeline.map((t) => ({ x: t.timestamp, y: t.dev })) },
+        { name: "Holdout", color: "#c9622a", points: timeline.map((t) => ({ x: t.timestamp, y: t.holdout })) },
+      ], { area: true, peakLabel: laatsteDev ? `${laatsteDev.dev.toFixed(1)}%` : null });
     });
     renderZwaktes(runs);
     renderLaatsteRun(laatsteRun);
