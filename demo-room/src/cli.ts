@@ -1,6 +1,9 @@
 import "dotenv/config";
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { askAgent } from "@/server/agent/agent";
+import { localConfigFromEnv, localModel } from "@/server/agent/model/local";
+import type { ChatModel } from "@/server/agent/model/types";
 import { CHALLENGES, findChallenge } from "./challenges/catalogue";
 import { runChatbotChallenge } from "./challenges/engine";
 import { startAutonomousRun, awaitAutonomousRun } from "./research/autonomousRun";
@@ -10,7 +13,9 @@ import { runProofOfValue } from "./proof/proofOfValue";
 import { runAutonomyCapabilityTest } from "./autonomy/capabilityTest";
 import { runAutonomousDevelopmentRun } from "./develop/autonomousDevelopmentRun";
 import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
-import { listVersions } from "./publish/versions";
+import { currentVersionId, getVersion, listVersions } from "./publish/versions";
+import { demoRoomActor } from "./actor";
+import { requireReadAccess } from "./safety";
 import { writeHandoff } from "./store/handoff";
 import * as logbook from "./store/logbook";
 import { readAllExperiments } from "./store/runlog";
@@ -266,6 +271,69 @@ async function cmdDevelopmentRun(): Promise<void> {
   });
 }
 
+/**
+ * Test Room (§ UI/UX REBUILD, foto 2): één echte gespreksbeurt, via dezelfde
+ * `askAgent()` als productie — geen aparte "demo-chat"-implementatie. Een
+ * `--version-id` selecteert welke Lyra-versie meepraat: de actieve versie
+ * (of geen `--version-id`) praat zonder override, precies zoals productie;
+ * elke andere opgeslagen versie (inclusief een nog niet geactiveerde
+ * development-cycle-kandidaat) krijgt zijn eigen `promptOverrideText` als
+ * sandbox-`systemPromptOverride` — nooit productie zelf.
+ */
+async function cmdChat(): Promise<void> {
+  const text = arg("text");
+  if (!text) throw new Error("chat heeft --text nodig.");
+  const sessionId = arg("session-id") ?? null;
+  const versionId = arg("version-id") ?? null;
+  const locationCode = arg("location-code", "DDR")!;
+  const runId = nieuwRunId("CHAT");
+
+  await withRunLogbook(runId, { kind: "chat", challengeOrGoal: `Test Room-bericht (versie: ${versionId ?? "actief"}): "${text.slice(0, 120)}"` }, async () => {
+    const { actor } = await requireReadAccess(await demoRoomActor(), locationCode);
+
+    let modelOverride: ChatModel | undefined;
+    if (versionId && versionId !== currentVersionId()) {
+      const versie = getVersion(versionId);
+      if (!versie) throw new Error(`Onbekende versie: ${versionId}`);
+      if (versie.promptOverrideText) {
+        const config = localConfigFromEnv();
+        if (!config) throw new Error("Geen lokaal model ingesteld (NS_LOCAL_LLM_URL/NS_LOCAL_LLM_MODEL) — Test Room heeft een echt taalmodel nodig, de stub meet geen gesprekskwaliteit.");
+        const override = versie.promptOverrideText;
+        modelOverride = localModel({ ...config, systemPromptOverride: (basis) => `${basis}\n\n${override}` });
+      }
+    }
+
+    const resultaat = await askAgent({
+      actor,
+      text,
+      persist: false,
+      sessionId,
+      modelOverride,
+      uiContext: { source: "official", candidateId: null, candidateLabel: null, rosterCode: null, lineNumber: null, weekday: null, dutyCode: null, locationCode },
+    });
+
+    logbook.log(runId, {
+      kind: "CONTEXT_TURN",
+      experimentId: null,
+      message: `Test Room-bericht: "${text.slice(0, 200)}" → contextUsed=${JSON.stringify(resultaat.contextUsed)} · sessionId=${resultaat.sessionId ?? "geen"} · antwoord="${resultaat.text.slice(0, 300)}".`,
+      data: { versionId: versionId ?? null },
+    });
+
+    console.log(JSON.stringify({
+      text: resultaat.text,
+      sessionId: resultaat.sessionId,
+      intent: resultaat.intent,
+      model: resultaat.model,
+      isLanguageModel: resultaat.isLanguageModel,
+      status: resultaat.status,
+      data: resultaat.data,
+      sources: resultaat.sources,
+      toolCalls: resultaat.toolCalls,
+      contextUsed: resultaat.contextUsed,
+    }));
+  });
+}
+
 async function cmdVersions(): Promise<void> {
   const huidig = currentProductionVersionLabel();
   console.log(`Huidige productieversie: ${huidig}\n`);
@@ -368,6 +436,7 @@ async function main(): Promise<void> {
     "proof-of-value": cmdProofOfValue,
     "autonomy-test": cmdAutonomyTest,
     "development-run": cmdDevelopmentRun,
+    chat: cmdChat,
     versions: cmdVersions,
     publish: cmdPublish,
     rollback: cmdRollback,

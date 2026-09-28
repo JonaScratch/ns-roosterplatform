@@ -257,3 +257,36 @@ export function stopCurrentRun(): { readonly stopped: boolean; readonly detail: 
     return { stopped: false, detail: fout instanceof Error ? fout.message : String(fout) };
   }
 }
+
+/**
+ * Start hetzelfde CLI-proces als `startCliRun()`, maar wacht synchroon op het
+ * einde en geeft de output terug — voor Test Room (§ UI/UX REBUILD, foto 2):
+ * één chatbeurt is een gewoon request/response-gesprek, geen achtergrondrun.
+ * Raakt bewust NOOIT het `current-run.json`-bestand: een druk gesprek in Test
+ * Room mag een lopende Development Run niet blokkeren of laten mislukken, en
+ * omgekeerd — dit is een volledig apart, gelijktijdig pad.
+ */
+export function runCliOnceAndCapture(args: readonly string[]): Promise<{ readonly stdout: string; readonly stderr: string; readonly exitCode: number | null }> {
+  return new Promise((resolve, reject) => {
+    let tsxCli: string;
+    try {
+      tsxCli = resolveTsxCli();
+    } catch (fout) {
+      reject(fout instanceof Error ? fout : new Error(String(fout)));
+      return;
+    }
+    const cliPath = path.join(DEMO_ROOM_ROOT, "src", "cli.ts");
+    const child = spawn(process.execPath, [tsxCli, "--conditions=react-server", cliPath, ...args], {
+      cwd: REPO_ROOT,
+      env: process.env,
+      stdio: ["ignore", "pipe", "pipe"],
+      windowsHide: true,
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout?.on("data", (chunk: Buffer) => { stdout += chunk.toString("utf8"); });
+    child.stderr?.on("data", (chunk: Buffer) => { stderr += chunk.toString("utf8"); });
+    child.on("error", (fout) => reject(new Error(`Kon het CLI-proces niet starten of uitvoeren: ${fout.message}`)));
+    child.on("exit", (code) => resolve({ stdout, stderr, exitCode: code }));
+  });
+}

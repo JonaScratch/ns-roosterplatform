@@ -5,7 +5,7 @@ import http from "node:http";
 import path from "node:path";
 import { CHALLENGES } from "./challenges/catalogue";
 import { dashboardPort, HANDOFF_PATH, REPO_ROOT, REPORTS_DIR } from "./config";
-import { currentRun, currentRunWithElapsed, startCliRun, stopCurrentRun } from "./runControl";
+import { currentRun, currentRunWithElapsed, runCliOnceAndCapture, startCliRun, stopCurrentRun } from "./runControl";
 import { readBenchmarkHistory } from "./store/benchmarkHistory";
 import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
@@ -480,6 +480,27 @@ const server = http.createServer((req, res) => {
       } catch (fout) {
         logbook.log(runId, { kind: "ERROR", experimentId: null, message: fout instanceof Error ? fout.message : String(fout) });
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
+      }
+    }
+    if (req.method === "POST" && url.pathname === "/api/chat") {
+      const body = await readBody(req);
+      const text = String(body.text ?? "").trim();
+      if (!text) return json(res, 400, { error: "text ontbreekt" });
+      const args = ["chat", "--text", text];
+      if (body.sessionId) args.push("--session-id", String(body.sessionId));
+      if (body.versionId) args.push("--version-id", String(body.versionId));
+      if (body.locationCode) args.push("--location-code", String(body.locationCode));
+      try {
+        const { stdout, stderr, exitCode } = await runCliOnceAndCapture(args);
+        if (exitCode !== 0) return json(res, 502, { error: `Test Room-bericht mislukte (afsluitcode ${exitCode}).`, detail: stderr.slice(-2000) || stdout.slice(-2000) });
+        const laatsteRegel = stdout.trim().split("\n").pop() ?? "";
+        try {
+          return json(res, 200, JSON.parse(laatsteRegel));
+        } catch {
+          return json(res, 502, { error: "Kon het antwoord van het chatproces niet lezen.", detail: stdout.slice(-2000) });
+        }
+      } catch (fout) {
+        return json(res, 502, { error: fout instanceof Error ? fout.message : String(fout) });
       }
     }
 
