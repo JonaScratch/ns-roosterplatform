@@ -12,7 +12,7 @@ import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePa
 import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
 import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults";
 import { getDevelopmentRunResult, listAllCandidates, listDevelopmentRunResults } from "./store/developmentRuns";
-import { compareVersions, displayNameForVersionId, latestFindings, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
+import { compareVersions, displayNameForVersionId, latestFindings, promotionHistory, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 
 /**
@@ -348,6 +348,7 @@ const server = http.createServer((req, res) => {
       "/api/candidates": () => listAllCandidates(),
       "/api/runs/history": runHistory,
       "/api/runs/summary": runsSummary,
+      "/api/logbook/promotions": promotionHistory,
       "/api/findings": () => latestFindings(),
     };
     if (req.method === "GET" && url.pathname in routesGet) return json(res, 200, routesGet[url.pathname]());

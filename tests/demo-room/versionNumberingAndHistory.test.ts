@@ -151,3 +151,29 @@ describe("Demo Room v0.9 — historische run toont de versie die tóén actief w
     rmSync(path.join(versionsDir, `${nieuw.id}.json`), { force: true });
   });
 });
+
+describe("Demo Room — runHistory() leest de echte RUN_END-uitkomst", () => {
+  it("toont RUN_FAILED/RUN_INTERRUPTED zoals endRun() ze vastlegde, niet altijd RUN_COMPLETED (§ Logboek-pagina, foto 6)", () => {
+    // `logbook.endRun()` schrijft de RUN_END-regel als `{..., kind: "RUN_END",
+    // summary}` — `summary` op het toplevel, niet onder `data`. Vóór de fix las
+    // `runHistory()` `endEvent.data?.summary?.outcome`, wat altijd `undefined`
+    // gaf en dus altijd op de fallback "RUN_COMPLETED" terugviel — een mislukte
+    // of onderbroken run leek daardoor altijd geslaagd.
+    const mislukteRunId = "TEST-RUNHISTORY-OUTCOME-FAILED";
+    logbookMod.startRun(mislukteRunId, { kind: "proof", productionVersion: versionsMod.currentVersionId(), sandboxParent: null, modelConfig: null, challengeOrGoal: null });
+    logbookMod.endRun(mislukteRunId, { outcome: "RUN_FAILED", totalDurationMs: 1000, modelCalls: null, experiments: 0, optimizerJobs: 0, variantsTested: 0, accepted: 0, rejected: 0, bestVariant: null, productionChanged: false, openHypotheses: [], lessonsLearned: [] });
+
+    const onderbrokenRunId = "TEST-RUNHISTORY-OUTCOME-INTERRUPTED";
+    logbookMod.startRun(onderbrokenRunId, { kind: "proof", productionVersion: versionsMod.currentVersionId(), sandboxParent: null, modelConfig: null, challengeOrGoal: null });
+    logbookMod.endRun(onderbrokenRunId, { outcome: "RUN_INTERRUPTED", totalDurationMs: 1000, modelCalls: null, experiments: 0, optimizerJobs: 0, variantsTested: 0, accepted: 0, rejected: 0, bestVariant: null, productionChanged: false, openHypotheses: [], lessonsLearned: [] });
+
+    const geslaagdeRunId = "TEST-RUNHISTORY-OUTCOME-COMPLETED";
+    logbookMod.startRun(geslaagdeRunId, { kind: "proof", productionVersion: versionsMod.currentVersionId(), sandboxParent: null, modelConfig: null, challengeOrGoal: null });
+    logbookMod.endRun(geslaagdeRunId, { outcome: "RUN_COMPLETED", totalDurationMs: 1000, modelCalls: null, experiments: 0, optimizerJobs: 0, variantsTested: 0, accepted: 0, rejected: 0, bestVariant: null, productionChanged: false, openHypotheses: [], lessonsLearned: [] });
+
+    const geschiedenis = aggMod.runHistory();
+    expect(geschiedenis.find((r) => r.runId === mislukteRunId)?.outcome).toBe("RUN_FAILED");
+    expect(geschiedenis.find((r) => r.runId === onderbrokenRunId)?.outcome).toBe("RUN_INTERRUPTED");
+    expect(geschiedenis.find((r) => r.runId === geslaagdeRunId)?.outcome).toBe("RUN_COMPLETED");
+  });
+});

@@ -182,8 +182,15 @@ export function runHistory(): readonly RunHistoryEntry[] {
     const startEvent = events.find((e) => e.kind === "RUN_START");
     const endEvent = [...events].reverse().find((e) => e.kind === "RUN_END");
     const kind = (startEvent?.data as { kind?: string } | undefined)?.kind ?? null;
+    // `logbook.endRun()` schrijft de RUN_END-regel zelf als `{timestamp, runId,
+    // kind: "RUN_END", summary}` — `summary` staat op het toplevel van die regel,
+    // NIET onder `data` (dat past niet in het `LogEvent`-type, maar de rauwe
+    // JSON-regel bevat het veld gewoon echt; `JSON.parse` behoudt het, alleen de
+    // TS-cast als `LogEvent` verbergt het). Via `endEvent.data` lezen gaf hier
+    // altijd `undefined` en dus altijd de fallback "RUN_COMPLETED", ongeacht de
+    // werkelijke uitkomst (RUN_FAILED/RUN_INTERRUPTED bleven onzichtbaar).
     const outcome: RunHistoryEntry["outcome"] = endEvent
-      ? (((endEvent.data as { summary?: { outcome?: string } } | undefined)?.summary?.outcome as RunHistoryEntry["outcome"] | undefined) ?? "RUN_COMPLETED")
+      ? (((endEvent as unknown as { summary?: { outcome?: string } }).summary?.outcome as RunHistoryEntry["outcome"] | undefined) ?? "RUN_COMPLETED")
       : "RUNNING_OF_ONBEKEND";
     // `productionVersion` in de RUN_START-data is `currentProductionVersionLabel()`
     // (zie cli.ts): "<versie-id>" of "<versie-id> (<variantId>)" — het eerste
@@ -201,6 +208,50 @@ export function runHistory(): readonly RunHistoryEntry[] {
       productionVersionDisplayName: productionVersionId ? (displayNameForVersionId(productionVersionId) ?? productionVersionId) : null,
     };
   });
+}
+
+export interface PromotionHistoryEntry {
+  readonly at: string;
+  readonly runId: string;
+  readonly kind: "PUBLISH" | "ROLLBACK";
+  readonly fromVersionId: string | null;
+  readonly toVersionId: string;
+  readonly fromDisplayName: string | null;
+  readonly toDisplayName: string;
+  readonly message: string;
+}
+
+/**
+ * Echte activatiemomenten van productie-Lyra, oudste eerst (§ Logboek/foto 6
+ * "benchmarkontwikkeling-over-tijd toont alleen promotie/activatiemomenten").
+ *
+ * Bewust NIET gebaseerd op `versionPerformanceSeries()`/`listVersions()`:
+ * sinds development-cycle-kandidaten via `createVersion()` aangemaakt worden
+ * zonder ooit geactiveerd te zijn (§ Sandbox — een kandidaat wordt pas
+ * versie ná menselijke goedkeuring), zou die lijst nooit-geactiveerde
+ * kandidaten laten meetellen als "promotie". Een `CHANGE_APPLIED`- of
+ * `ROLLBACK`-logboekregel met een `change.afterVersion` bestaat uitsluitend
+ * op het moment dat `activateVersion()` daadwerkelijk is aangeroepen (zie
+ * `publish/safePublish.ts`) — dat, en alleen dat, is een echt activatiemoment.
+ */
+export function promotionHistory(): readonly PromotionHistoryEntry[] {
+  const out: PromotionHistoryEntry[] = [];
+  for (const r of listRunLogs()) {
+    for (const e of readRunEvents(r.runId)) {
+      if ((e.kind !== "CHANGE_APPLIED" && e.kind !== "ROLLBACK") || !e.change?.afterVersion) continue;
+      out.push({
+        at: e.timestamp,
+        runId: r.runId,
+        kind: e.kind === "ROLLBACK" ? "ROLLBACK" : "PUBLISH",
+        fromVersionId: e.change.beforeVersion,
+        toVersionId: e.change.afterVersion,
+        fromDisplayName: e.change.beforeVersion ? (displayNameForVersionId(e.change.beforeVersion) ?? e.change.beforeVersion) : null,
+        toDisplayName: displayNameForVersionId(e.change.afterVersion) ?? e.change.afterVersion,
+        message: e.message,
+      });
+    }
+  }
+  return out.sort((a, b) => a.at.localeCompare(b.at));
 }
 
 export interface RunsSummary {
