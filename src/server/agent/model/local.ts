@@ -595,7 +595,13 @@ export function localModel(config: LocalModelConfig): ChatModel {
             feiten || "Er zijn geen toolresultaten.",
             "",
             "Gebruik uitsluitend de bovenstaande gegevens. Staat er iets niet in, zeg dan dat je het niet kunt vaststellen.",
-            "Noem bij een regel altijd de bron en of die bevestigd is. Noem bij een dienst de weekdag.",
+            // "Regel" is in het Nederlands óók een roosterregel. De oude zin ("Noem bij
+            // een regel altijd de bron en of die bevestigd is") liet het model onder
+            // elke roostertelling "De bron is officieel en bevestigd." zetten — een
+            // gezagswoord zonder regel erachter (AFTER-run 20260929-151948, zie
+            // claim-verification.ts). Regelstatus hoort alleen bij het regelbestand.
+            "Noem bij een regel uit het regelbestand (ruleLookup of ruleSearch) altijd de bron en de status precies zoals de tool die geeft.",
+            "Roostergegevens (tellingen, roosterregels, diensten) zijn geen regels: noem daar alleen of ze uit het officiële rooster of uit een kandidaat komen, zonder woorden als 'bevestigd'. Noem bij een dienst de weekdag.",
             "Schrijf het antwoord in het Nederlands, in hooguit vijf zinnen.",
             request.plan.cannotDetermine ? `Verwerk ook dit: ${request.plan.cannotDetermine}` : "",
           ]

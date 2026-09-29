@@ -114,10 +114,18 @@ export function gezagsClaims(antwoord: string): readonly GezagsClaim[] {
   return gevonden;
 }
 
+/** Het deel van een toolresultaat dat de dekkingscontrole nodig heeft. */
+export interface ClaimToolResultaat {
+  readonly data: unknown;
+  /** Toolnaam; ontbreekt in oudere aanroepen en tests — dan beslist de data. */
+  readonly tool?: string;
+  readonly ok?: boolean;
+}
+
 /**
  * Is er, ONDER DE TOOLRESULTATEN VAN DEZE BEURT, een daadwerkelijk
- * `VALIDATED`-signaal — de enige dekking die een positieve gezagsclaim
- * rechtvaardigt? `ruleLookup`/`ruleSearch` geven dit terug als
+ * `VALIDATED`-signaal — de enige dekking die een positieve gezagsclaim over
+ * een REGEL rechtvaardigt? `ruleLookup`/`ruleSearch` geven dit terug als
  * `legalStatus: "VALIDATED"` (zie `src/server/agent/tools.ts`,
  * `STATUS_TEKST.VALIDATED` in `knowledge.ts`: "door NS bevestigd").
  *
@@ -133,10 +141,131 @@ export function isGedektDoorGegevens(toolResultaten: readonly { readonly data: u
   });
 }
 
+/**
+ * ## Waarom "bevestigd" niet altijd een gezagsclaim is (AFTER-run 20260929-151948)
+ *
+ * De eerste versie behandelde elk niet-ontkracht "bevestigd" als claim over
+ * een regel. Teruggespeeld over alle bewaarde ruwe antwoorden
+ * (`docs/v1.0.6/benchmarks/{n0,n0b,n1}/golden.json`) viel hij 45 keer, en
+ * vrijwel steeds op dezelfde zin onder een roostertelling: "De bron is
+ * officieel en bevestigd." of "(bron: official, bevestigd)". De oorzaak zat
+ * in de instructie aan het lokale model ("Noem bij een regel altijd de bron
+ * en of die bevestigd is"): in het Nederlands is "regel" óók een roosterregel,
+ * dus het model zette die herkomstzin onder elk antwoord over roostergegevens.
+ * De grendel hield daarmee juist correcte premiecorrecties tegen
+ * (B-…-omgekeerd), terwijl er over geen enkele regel iets beweerd werd.
+ *
+ * Wat een claim tot GEZAGSCLAIM maakt, is waar hij over gaat. Daarom telt nu
+ * de context, per claim:
+ *
+ * - `REGELSTATUS` — de beurt raadpleegde regelkennis (ruleLookup, ruleSearch,
+ *   knowledgeSearch, of data met een `legalStatus`), óf de zin zelf gebruikt
+ *   normatieve taal (CAO, wet, rusttijd, verplicht, mag, "voldoet aan de
+ *   regels", een regel-ID), óf het signaalwoord is uit zichzelf normatief
+ *   (formeel, CAO-/NS-/wettelijk verplicht, CAO-regel, NS-regel). Alleen een
+ *   `VALIDATED`-signaal dekt dit — ongewijzigd streng.
+ * - `MENSELIJK` — de bevestiging wordt aan een mens toegeschreven ("door de
+ *   gebruiker bevestigd"). Geen NS-gezag, maar wel een feitelijke bewering
+ *   over herkomst: gedekt alleen als de gegevens die menselijke herkomst ook
+ *   echt dragen.
+ * - `HERKOMST` — een herkomstaanduiding bij roostergegevens, zonder enige
+ *   normatieve inhoud. Gedekt zodra de beurt daadwerkelijk roostergegevens
+ *   ophaalde; zonder gegevens blijft ook dit ongedekt.
+ *
+ * Geen uitzondering per vraag of per item: de indeling kijkt alleen naar de
+ * zin en naar welke soort gegevens de beurt echt ophaalde.
+ */
+export type ClaimSoort = "REGELSTATUS" | "MENSELIJK" | "HERKOMST";
+
+export interface GeclassificeerdeClaim extends GezagsClaim {
+  readonly soort: ClaimSoort;
+  /** De zin waarin de claim staat — dat is de context die de indeling bepaalde. */
+  readonly zin: string;
+}
+
+/** Tools die regel- of kennisstatus teruggeven: daar is "bevestigd" altijd een statusclaim. */
+const NORMATIEVE_TOOLS: ReadonlySet<string> = new Set(["ruleLookup", "ruleSearch", "knowledgeSearch"]);
+
+/** Signaalwoorden die uit zichzelf over regels/gezag gaan, ongeacht de zin. */
+const ALTIJD_NORMATIEF: ReadonlySet<string> = new Set(["formeel", "verplicht", "CAO-regel", "NS-regel"]);
+
+const NORMATIEVE_TAAL =
+  /\b(?:cao\w*|wet|wetten|wettelijk\w*|atw|arbeidstijden\w*|norm|normen|regelgeving|regelbestand|rusttijd\w*|rustregel\w*|verplicht\w*|toegestaan|verboden|voorschrift\w*|juridisch\w*|rechtsgeldig\w*|artikel\w*|mag|mogen|voldoe\w*)\b|\bart\.|regels\b/i;
+/** Regel-ID's uit het regelbestand, zoals RP_DAILY_REST_PLANNED. */
+const REGEL_ID = /\b[A-Z]{2,}_[A-Z0-9_]{2,}\b/;
+
+const MENSELIJKE_TOESCHRIJVING =
+  /\bdoor\s+(?:de\s+|een\s+|jou|u\b)?(?:gebruiker|planner|roosteraar|roostercommissie|machinist|collega|mens|medewerker|teamleider|dienstplanner)\w*/i;
+const MENSELIJKE_HERKOMST_IN_DATA = /van een mens|"GEBRUIKER"|HUMAN_DOMAIN_INPUT|opgegeven door|door de gebruiker/i;
+
+/**
+ * De zin rond positie `index`. Een punt telt alleen als zinseinde als er
+ * witruimte en een hoofdletter (of het einde) op volgt, zodat "art. 12" en
+ * "bijv. de nacht" de zin — en dus de normatieve context — niet doorknippen.
+ */
+function zinRond(tekst: string, index: number): string {
+  const grens = /[.!?](?=\s+[A-Z\u00C0-\u00DE"'(]|\s*$)|\n/g;
+  let begin = 0;
+  let eind = tekst.length;
+  for (const m of tekst.matchAll(grens)) {
+    const pos = m.index ?? 0;
+    if (pos < index) begin = pos + 1;
+    else {
+      eind = pos + 1;
+      break;
+    }
+  }
+  return tekst.slice(begin, eind).trim();
+}
+
+function isNormatieveBeurt(toolResultaten: readonly ClaimToolResultaat[]): boolean {
+  return toolResultaten.some((r) => (r.tool !== undefined && NORMATIEVE_TOOLS.has(r.tool)) || JSON.stringify(r.data ?? null).includes('"legalStatus"'));
+}
+
+function heeftOpgehaaldeGegevens(toolResultaten: readonly ClaimToolResultaat[]): boolean {
+  return toolResultaten.some((r) => {
+    if (r.ok === false || r.data === null || r.data === undefined) return false;
+    const d = r.data as { found?: unknown };
+    return d.found !== false;
+  });
+}
+
+/** Deelt elke positieve claim in naar waar hij over gaat (zie het commentaar bij `ClaimSoort`). */
+export function classificeerGezagsClaims(antwoord: string, toolResultaten: readonly ClaimToolResultaat[]): readonly GeclassificeerdeClaim[] {
+  const normatieveBeurt = isNormatieveBeurt(toolResultaten);
+  const uitkomst: GeclassificeerdeClaim[] = [];
+  const gezien = new Set<string>();
+  for (const patroon of CLAIM_PATRONEN) {
+    for (const match of antwoord.matchAll(patroon.regex)) {
+      if (match.index === undefined || isOntkracht(antwoord, match.index)) continue;
+      const zin = zinRond(antwoord, match.index);
+      const soort: ClaimSoort = ALTIJD_NORMATIEF.has(patroon.signaalwoord)
+        ? "REGELSTATUS"
+        : MENSELIJKE_TOESCHRIJVING.test(zin) && !/\bNS\b/.test(zin)
+          ? "MENSELIJK"
+          : normatieveBeurt || NORMATIEVE_TAAL.test(zin) || REGEL_ID.test(zin)
+            ? "REGELSTATUS"
+            : "HERKOMST";
+      const sleutel = `${patroon.signaalwoord}:${soort}:${zin.toLowerCase()}`;
+      if (gezien.has(sleutel)) continue;
+      gezien.add(sleutel);
+      uitkomst.push({ fragment: match[0], signaalwoord: patroon.signaalwoord, soort, zin });
+    }
+  }
+  return uitkomst;
+}
+
 /** Claims die niet gedekt zijn door de gegevens van deze beurt. */
-export function ongedekteGezagsClaims(antwoord: string, toolResultaten: readonly { readonly data: unknown }[]): readonly GezagsClaim[] {
-  if (isGedektDoorGegevens(toolResultaten)) return [];
-  return gezagsClaims(antwoord);
+export function ongedekteGezagsClaims(antwoord: string, toolResultaten: readonly ClaimToolResultaat[]): readonly GeclassificeerdeClaim[] {
+  const gevalideerd = isGedektDoorGegevens(toolResultaten);
+  const menselijk = toolResultaten.some((r) => MENSELIJKE_HERKOMST_IN_DATA.test(JSON.stringify(r.data ?? null)));
+  const gegevens = heeftOpgehaaldeGegevens(toolResultaten);
+  return classificeerGezagsClaims(antwoord, toolResultaten).filter((c) => {
+    if (gevalideerd) return false;
+    if (c.soort === "MENSELIJK") return !menselijk;
+    if (c.soort === "HERKOMST") return !gegevens;
+    return true;
+  });
 }
 
 /**
