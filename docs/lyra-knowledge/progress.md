@@ -1,6 +1,37 @@
 # Lyra Master Program — voortgang
 
-Bijgewerkt: 2026-09-29 (avond) — AFTER-run 20260929-151948 geverifieerd en geanalyseerd; claimgrendel, grader en plancontrole gerepareerd (zie de nieuwe sectie direct hieronder). Eerder op deze dag: UI/UX REBUILD-focusfase en de VISUAL FIDELITY CORRECTION-ronde **AFGEROND** (zie de betreffende secties hieronder). Daarna: de **BEFORE-freeze is bevestigd** (run `20260927-205217`, onafhankelijk herrekend uit de ruwe artifacts, zie "Master Program hervat: BEFORE-freeze bevestigd" hieronder) en het Master Program is zelfstandig verder opgepakt: Fase 1 nu COMPLETE, Fase 3 stap (b), Fase 7 (memoryProposal) en Fase 8 (claim-verificatie) gerepareerd/aangesloten, Fase 10 (consistency-checker) een eerste echte bouwsteen. Resterend: Fase 11/12-inzet blijven `BLOCKED (LOCAL REQUIRED)` (geen Ollama hier), Fase 13 blijft extern geblokkeerd (geen NS-platformtoegang) — zie de fasetracker voor de volledige, actuele status per fase. Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
+Bijgewerkt: 2026-09-29 (laat) — fasen G–T afgerond, zie direct hieronder en `final-report-master-program.md`. Daarvoor (avond): AFTER-run 20260929-151948 geverifieerd en geanalyseerd; claimgrendel, grader en plancontrole gerepareerd (zie de nieuwe sectie direct hieronder). Eerder op deze dag: UI/UX REBUILD-focusfase en de VISUAL FIDELITY CORRECTION-ronde **AFGEROND** (zie de betreffende secties hieronder). Daarna: de **BEFORE-freeze is bevestigd** (run `20260927-205217`, onafhankelijk herrekend uit de ruwe artifacts, zie "Master Program hervat: BEFORE-freeze bevestigd" hieronder) en het Master Program is zelfstandig verder opgepakt: Fase 1 nu COMPLETE, Fase 3 stap (b), Fase 7 (memoryProposal) en Fase 8 (claim-verificatie) gerepareerd/aangesloten, Fase 10 (consistency-checker) een eerste echte bouwsteen. Resterend: Fase 11/12-inzet blijven `BLOCKED (LOCAL REQUIRED)` (geen Ollama hier), Fase 13 blijft extern geblokkeerd (geen NS-platformtoegang) — zie de fasetracker voor de volledige, actuele status per fase. Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
+
+
+## Fasen G–T afgerond in de cloud (2026-09-29, laat) — zie het eindrapport
+
+Volledig rapport: `docs/lyra-knowledge/final-report-master-program.md`
+(secties A–R, veiligheidsgrenzen, openstaand werk).
+
+- **Run 193436:** geanalyseerd (`854d6b3`). De formele FAIL was een telfout in
+  het statusscript; herverificatie gaf PASS en is apart opgeslagen. De
+  oorzaken van O/M/N/P zijn generiek gerepareerd.
+- **G–J** (`08c9d9f`): feedbackleren, conceptgeheugen, generalisatiemeting en
+  uitdagingsgenerator.
+- **K–O** (`4cc99d9`): candidate factory (manifest en lekdetectie),
+  onafhankelijke rechter en Pareto-archief, arena, JobQueue/workers/budget,
+  hervatbare lange runs.
+- **P–Q** (`1db9c2b`): UI-panelen zonder nieuwe tabbladen, en de canonieke,
+  transactionele releasedienst die het platform leest. Activatie gaat
+  altijd op naam.
+- **R** (`19e5b14`): tien end-to-end bewijzen, 10/10
+  (`docs/lyra-knowledge/proofs/e2e-20260929-195446.json`).
+- **S:** volledige suite 1339 geslaagd, 1 overgeslagen, 27 gefaald. De 27 zijn
+  de bekende ortools-tests. Alle 7 pagina's zijn zonder fouten in de browser
+  bekeken.
+- **Mijlpaal:** `MASTER_PROGRAM_COMPLETE` voor alles wat in deze omgeving te
+  bouwen en te bewijzen is.
+- **Nog open:** `LYRA_DEMO_ROOM_AUTONOMOUS_PROGRAM_COMPLETE` is bewust nog
+  NIET gezet. Twee dingen zijn LOCAL REQUIRED:
+  - de lokale AFTER-run die O/M/P op het echte model moet bevestigen;
+  - een echte lange run met echte metingen.
+
+  Commando en verwachting staan in het eindrapport onder "Openstaand".
 
 
 ## AFTER-run 20260929-151948 — geverifieerd en geanalyseerd (2026-09-29)

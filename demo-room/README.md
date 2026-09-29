@@ -189,8 +189,8 @@ npm run demo-room -- autonomous --minutes 60 --goal "Zoek de grootste kwaliteits
 
 # Versies bekijken, publiceren, herstellen (zie docs/SAFE-PUBLISH.md)
 npm run demo-room -- versions
-npm run demo-room -- publish --experiment-id <id> --confirm
-npm run demo-room -- rollback --version-id <id> --confirm
+npm run demo-room -- publish --experiment-id <id> --confirm --door "<naam>" --rol ROOSTERCOMMISSIE --reden "<waarom>"
+npm run demo-room -- rollback --version-id <id> --confirm --door "<naam>" --rol ROOSTERCOMMISSIE --reden "<waarom>"
 
 # HANDOFF.md en het dashboard bijwerken op basis van alle vastgelegde experimenten
 npm run demo-room -- report

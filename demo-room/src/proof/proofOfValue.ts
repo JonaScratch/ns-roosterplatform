@@ -246,7 +246,7 @@ async function persist(result: ProofOfValueResult, variant: PromptVariant, devCo
     failureReason: result.decision === "REJECTED" ? result.regressions.join("; ") : null,
     nextRecommendation:
       result.decision === "PROMOTION_CANDIDATE"
-        ? `Bekijk het verbeteringsrapport en publiceer desgewenst via 'Publish naar Lyra' in het dashboard (of: npm run demo-room -- publish --experiment-id ${result.id} --confirm).`
+        ? `Bekijk het verbeteringsrapport en publiceer desgewenst via 'Publish naar Lyra' in het dashboard (of: npm run demo-room -- publish --experiment-id ${result.id} --confirm --door <naam> --rol <rol> --reden <waarom>).`
         : result.decision === "KEEP_TESTING"
           ? "Probeer een andere variant of grotere wijziging; deze liet geen aantoonbaar effect zien."
           : null,

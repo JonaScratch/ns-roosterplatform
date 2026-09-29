@@ -138,6 +138,21 @@ publicatiebevestiging, daadwerkelijk productie laat worden. Zie
   `flippedItemIds` is nog leeg — dat vergt item-niveau vergelijking tussen
   runs, wat pas zinvol te bouwen is met echte meetdata (LOCAL REQUIRED).
 
+## Uitbreiding fasen G–R (2026-09-29)
+
+| Laag | Bestand(en) | Kern |
+|---|---|---|
+| Feedback en concepten | `src/learning/*` | classificatie (voorkeur ≠ regel), toestandsmachine met menselijke activatie, generalisatiemeting op parafrasen/contrasten/holdout |
+| Candidate Factory | `src/factory/manifest.ts`, `store.ts` | manifest per kandidaat vóór de meting (hash van tekst, criteria, holdout); lekdetectie |
+| Rechter | `src/factory/judge.ts`, `paretoArchive.ts` | KEEP/REJECT/NEEDS_MORE_EVIDENCE met bevroren criteria; kan een promotie tegenhouden, nooit afdwingen |
+| Arena | `src/factory/arena.ts` | Bradley–Terry over paarsgewijze uitslagen |
+| Werkverdeling | `src/factory/workers.ts` | leases, idempotentie, hartslag, budgetreservering |
+| Lange runs | `src/factory/longRun.ts` | checkpoint per cyclus, pauze/stop op cyclusgrens, alleen actieve tijd, crashherstel |
+| Releasedienst | `../src/lib/lyra-release.ts` | de enige lees- en schrijfweg voor de actieve Lyra-versie (zie SAFE-PUBLISH.md) |
+| UI | `ui/lib/panels.js` | panelen binnen bestaande pagina's; geen nieuwe hoofdtabbladen |
+
+Eindrapport: `docs/lyra-knowledge/final-report-master-program.md`.
+
 ## Veiligheid
 
 Zie `SAFETY-BOUNDARIES.md`.

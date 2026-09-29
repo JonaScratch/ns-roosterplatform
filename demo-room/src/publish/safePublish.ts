@@ -273,7 +273,7 @@ async function naPublicatie(experiment: ExperimentRecord | null, activeVersionId
     changePerCategory: {},
     newErrors: success ? [] : [faalreden ?? "onbekend"],
     decision: success ? "PROMOTION_CANDIDATE" : "REJECTED",
-    rollback: `Vorige versie: ${previousVersionId}. Herstellen via 'Lyra-versies' in het dashboard of \`npm run demo-room -- rollback --version-id ${previousVersionId}\`.`,
+    rollback: `Vorige versie: ${previousVersionId}. Herstellen via 'Lyra-versies' in het dashboard of \`npm run demo-room -- rollback --version-id ${previousVersionId} --confirm --door <naam> --rol <rol> --reden <waarom>\`.`,
     humanSummary: success
       ? `Production Lyra bijgewerkt: ${previousVersionId} → ${activeVersionId}.`
       : `Publicatie van ${activeVersionId === previousVersionId ? "een kandidaat" : activeVersionId} is mislukt en teruggedraaid naar ${previousVersionId}. Reden: ${faalreden}.`,

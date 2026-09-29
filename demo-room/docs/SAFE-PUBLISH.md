@@ -43,6 +43,31 @@ runtime-omgevingsbestanden van *deze* lokale installatie — net als een
 elke publicatie (waarom, met welke cijfers) wél in git terechtkomt via het
 journaal (`reports/history/`).
 
+### De releasedienst (sinds fase Q): transactioneel en op naam
+
+Het wisselen van de actieve versie loopt uitsluitend via
+`src/lib/lyra-release.ts` (`commitRelease`), en het NS Roosterplatform leest
+de actieve versie via dezelfde module (`getActiveLyraVersion`, aangeroepen
+door `src/server/agent/model/local.ts`):
+
+- de tekst komt inhoud-geadresseerd in `prompts/<sha256>.txt` (nooit
+  overschreven); daarna wisselt `current.json` atomisch (tmp + rename) met
+  id, hash, generatie, goedkeurder en reden. Dat is het enige commitmoment:
+  een crash ervoor laat de oude versie volledig actief;
+- klopt de hash in de wijzer niet met de tekst, dan gebruikt het platform
+  **geen** toevoeging (kale standaardinstructie) en meldt het dat;
+- `current-prompt.txt` wordt ná het commitmoment bijgewerkt, alleen voor een
+  `NS_PRODUCTION_PROMPT_FILE` die er nog naar wijst;
+- elke activatie vereist een benoemde mens (id + rol) en een reden, en komt in
+  `activations.jsonl` (append-only). Soorten: `ACTIVATE`, `ROLLBACK`,
+  `AUTO_ROLLBACK` (het automatische herstel bij een mislukte publicatie, op
+  naam van wie publiceerde);
+- `expectedGeneration` voorkomt dat twee mensen tegelijk "gelijk" krijgen:
+  wie een verouderde generatie zag, krijgt een conflict.
+
+CLI: `publish|rollback ... --confirm --door <naam> --rol <rol> --reden <tekst>`.
+API: `confirm: true`, `actorId`, `role`, `reason` (anders 400).
+
 Er bestaat altijd een `lyra-prod-baseline`-versie (geen override — de kale
 hardcoded instructie) als impliciet vertrekpunt, ook als er nog nooit
 gepubliceerd is.
@@ -58,8 +83,10 @@ gepubliceerd is.
 2. **Backup** — het herstelpunt is de huidige actieve versie zelf; die blijft
    als eigen bestand bestaan (nooit overschreven), dus een "backup maken" is
    hier een controle, geen kopieeractie.
-3. **Toepassen** — de nieuwe versie wordt live: `current-prompt.txt`
-   overschreven, de wijzer verzet, statussen bijgewerkt.
+3. **Toepassen** — de nieuwe versie wordt live via de releasedienst
+   (tekst inhoud-geadresseerd, dan één atomische wijzerwissel, op naam van
+   de goedkeurder); statussen daarna bijgewerkt. Zonder goedkeuring stopt
+   de pijplijn al bij de preflight.
 4. **Typecheck** — `npx tsc --noEmit` over de hele hoofdapp. Faalt dit, dan
    is er iets structureel mis (zelden veroorzaakt door deze specifieke
    wijziging, maar een publish-moment is een redelijk moment om het sowieso
@@ -79,7 +106,7 @@ gepubliceerd is.
 
 ## Handmatig herstel
 
-`safePublish.rollbackTo(versionId)` (CLI: `rollback --version-id ... --confirm`;
+`safePublish.rollbackTo(versionId, runId, goedkeuring)` (CLI: `rollback --version-id ... --confirm --door ... --rol ... --reden ...`;
 dashboard: tabblad "Lyra-versies" → "Herstel", met bevestiging) zet de wijzer
 terug naar een gekozen eerdere versie. Omdat elke versie een eigen,
 onveranderlijk bestand is, "verlies" je nooit de enige goede versie: de
