@@ -5,6 +5,9 @@
 
 import { j } from "./lib/shared.js";
 
+// Gelezen door de zelfdiagnose in index.html (asset-laadfout-banner).
+window.__demoRoomAppGeladen = true;
+
 const ROUTES = ["dashboard", "test-room", "development-runs", "candidates", "vergelijken", "versies", "logboek"];
 // Subpagina's die ALLEEN via drilldown bereikbaar zijn (§ UI/UX REBUILD:
 // "geen nieuw hoofdtabblad") — geen navigatieknop, maar wel een geldige

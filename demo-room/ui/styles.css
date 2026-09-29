@@ -24,6 +24,8 @@
 body { margin: 0; font-family: -apple-system, "Segoe UI", Arial, sans-serif; background: #f4f6fb; color: #12223c; }
 
 /* ---- Header ---- */
+/* Uitgelezen door de zelfdiagnose in index.html: bewijst dat DIT bestand echt is toegepast. */
+:root { --demo-room-css: 1; }
 header.app-header { background: var(--bg); color: var(--text); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 header.app-header .brand { display: flex; align-items: center; gap: 12px; }
 header.app-header .brand-icon { background: #fff; border-radius: 8px; padding: 6px 8px; display: flex; align-items: center; justify-content: center; }

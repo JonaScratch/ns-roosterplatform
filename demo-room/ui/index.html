@@ -4,12 +4,32 @@
 <meta charset="utf-8" />
 <title>Lyra Demo Room</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="/styles.css" />
+<!--
+  Kritieke inline-opmaak + zelfdiagnose. Staat bewust IN dit bestand: een
+  verouderde server die de routes voor /styles.css en /app.js niet kent,
+  serveert dit bestand nog wel (van schijf, per verzoek). Zonder dit blok
+  viel de pagina dan terug op kale browser-HTML met een reuzenlogo; nu blijft
+  hij beheerst en zegt hij precies wat er mis is en hoe je het oplost.
+-->
+<style>
+  body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+  .brand-icon img { width: 34px; height: 34px; }
+  #app-nav svg { width: 16px; height: 16px; }
+  #asset-fout { display: none; margin: 16px; padding: 14px 18px; border: 2px solid #c0392b; border-radius: 10px; background: #fdecea; color: #6b1d14; font-size: 14px; line-height: 1.5; }
+  #asset-fout.zichtbaar { display: block; }
+  #asset-fout code { background: #fff; padding: 1px 5px; border-radius: 4px; }
+</style>
+<script>
+  window.__assetFouten = [];
+  function __assetFaalt(url) { window.__assetFouten.push(url); }
+</script>
+<link rel="stylesheet" href="/styles.css" onerror="__assetFaalt('/styles.css')" />
 </head>
 <body>
+<div id="asset-fout" role="alert"></div>
 <header class="app-header">
   <div class="brand">
-    <div class="brand-icon"><img src="/brand/ns-logo.svg" alt="NS" /></div>
+    <div class="brand-icon"><img src="/brand/ns-logo.svg" alt="NS" width="34" height="34" /></div>
     <div>
       <h1>Lyra Demo Room</h1>
       <p class="brand-sub">NS Roosterplatform · Ontwikkelkamer voor Lyra</p>
@@ -44,6 +64,33 @@
   </div>
 </div>
 
-<script type="module" src="/app.js"></script>
+<script type="module" src="/app.js" onerror="__assetFaalt('/app.js')"></script>
+<script>
+  // Controle ná het laden, niet alleen via onerror: een stylesheet die met een
+  // verkeerde Content-Type wordt geserveerd, geeft geen onerror maar wordt
+  // door de browser wél genegeerd. styles.css zet daarom een eigen markering
+  // (--demo-room-css) die hier wordt uitgelezen.
+  window.addEventListener("load", function () {
+    var cssActief = getComputedStyle(document.documentElement).getPropertyValue("--demo-room-css").trim() === "1";
+    if (!cssActief && window.__assetFouten.indexOf("/styles.css") < 0) window.__assetFouten.push("/styles.css");
+    if (!window.__demoRoomAppGeladen && window.__assetFouten.indexOf("/app.js") < 0) window.__assetFouten.push("/app.js");
+    if (window.__assetFouten.length === 0) return;
+    var vak = document.getElementById("asset-fout");
+    vak.className = "zichtbaar";
+    vak.innerHTML =
+      "<strong>De Demo Room kon zijn opmaak/code niet laden</strong> (" + window.__assetFouten.join(", ") + " niet beschikbaar).<br>" +
+      "Meestal draait er op deze poort nog een <em>oudere</em> Demo Room-server die de nieuwe bestanden niet kent. " +
+      "Sluit alle oude &lsquo;Lyra Demo Room&rsquo;-vensters en start <code>Start Demo Room.bat</code> opnieuw. " +
+      "Lukt dat niet: <code>netstat -ano | findstr :4173</code> en daarna <code>taskkill /PID &lt;pid&gt; /F</code>.";
+    fetch("/api/server-info").then(function (r) { return r.ok ? r.json() : null; }).then(function (info) {
+      var extra = document.createElement("div");
+      extra.style.marginTop = "6px";
+      extra.textContent = info
+        ? "Draaiende server: build " + info.build + ", PID " + info.pid + ", gestart " + info.startedAt + (info.uiAssetsMissing && info.uiAssetsMissing.length ? " — ontbrekende UI-bestanden: " + info.uiAssetsMissing.join(", ") : "")
+        : "De draaiende server kent /api/server-info niet — dat bevestigt dat hij ouder is dan deze pagina.";
+      vak.appendChild(extra);
+    }).catch(function () {});
+  });
+</script>
 </body>
 </html>
