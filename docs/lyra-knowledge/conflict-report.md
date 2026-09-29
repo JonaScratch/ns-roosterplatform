@@ -271,6 +271,14 @@ ernaast te leggen) krijgt een terminologie te zien die niet meer overeenkomt
 met `validation/result.ts`. Het document zelf bevat geen aantekening die dit
 markeert als verouderd.
 
+**Update (2026-09-29): geadresseerd.** `docs/rules-engine-rapport.md` §2
+draagt nu, direct boven de betreffende tabel, een expliciete
+"Verouderd"-aantekening die naar `validation/result.ts` verwijst als de
+geldende bron. De tabel zelf is bewust ongewijzigd gelaten (punt-in-tijd-
+record van dit rapport, zie het generaliseerbare principe in
+`migration-report.md` §3.1) — alleen een zichtbare, niet-overschrijvende
+correctie toegevoegd.
+
 ---
 
 ## 8. Bronverwijzing `WEEKLY_REST_72H_PER_14D`: artikel 100 genoemd, getal alleen in artikel 99 gevonden
@@ -367,6 +375,22 @@ bestaan wel elders in de codebase (`QUALITY_MODEL_V1/V2/V3` in
 `quality-model.ts`, `ruleset.version` in het optimizer-manifest) — zie
 `inventory-benchmark-infrastructure.md:260-266` — maar zijn niet
 samengevoegd in dit specifieke bestand.
+
+**Update (2026-09-29): opgelost, niet in dit bestand maar in zijn opvolger.**
+`scripts/lyra-master/before-manifest.ts` (gebouwd ná dit rapport, in dezelfde
+Master Program-ronde) vermeldt exact dit gat expliciet in zijn eigen
+doelomschrijving en levert alle vier de eerder ontbrekende velden —
+`databaseVersion`, `engineVersion`, `qualityModelVersion`, `rulesetVersion`
+— daadwerkelijk. Bevestigd tegen echte productie-uitvoer: het BEFORE-run-
+manifest `docs/lyra-knowledge/benchmarks/before/20260927-205217/manifest.json`
+bevat alle vier (`"databaseVersion": "20260925041247_technische_experimenten"`,
+`"engineVersion": "1.0.3"`, `"qualityModelVersion": "quality-model-v3"`,
+`"rulesetVersion": "2026.1-cao-2024-2025-transcribed"`). Het oorspronkelijke
+`scripts/v106/n0-manifest.ts`/`docs/v1.0.6/n0-manifest.json`-paar blijft
+zelf ongewijzigd staan — dat is een historisch, punt-in-tijd-record van de
+v1.0.6-ronde, niet iets om met terugwerkende kracht te herschrijven — maar
+het BEFORE-manifest dat §33/§34 daadwerkelijk vereist, gebruikt sindsdien
+`before-manifest.ts`, niet `n0-manifest.ts`, en draagt het gat niet meer.
 
 ---
 

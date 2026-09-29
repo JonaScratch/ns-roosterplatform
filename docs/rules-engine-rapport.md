@@ -88,6 +88,15 @@ gereconstrueerd.
 
 ### Vijf uitkomsten, geen boolean
 
+> **Verouderd (§ LYRA MASTER PROGRAM, conflict-report.md #7, 2026-09-29):** de
+> tabel hieronder gebruikt een oudere, vijfvoudige naamgeving die door de
+> audit is ingehaald. De huidige code (`src/server/rules-engine/validation/result.ts`)
+> hanteert een zesvoudige naamgeving: `VALID_WITHIN_VALIDATED_RULESET`,
+> `VALID_WITH_WARNINGS`, `CONTEXT_INCOMPLETE`, `RULESET_INCOMPLETE`,
+> `POTENTIAL_HARD_VIOLATION`, `CONFIRMED_HARD_VIOLATION`. De tabel zelf blijft
+> hier ongewijzigd staan als punt-in-tijd-record van dit rapport; voor de
+> huidige, geldende uitkomsten geldt `validation/result.ts`, niet deze tabel.
+
 | | Uitkomst | Laat door | Wat je eraan doet |
 |---|---|---|---|
 | 🟢 | `VALID` | ja | niets |
