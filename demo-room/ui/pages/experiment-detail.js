@@ -221,7 +221,7 @@ function toonExperiment(exp) {
     { label: "Wijziging", status: exp.configuration?.variantId ? "done" : "active" },
     { label: "Meting", status: exp.qualityMetrics ? "done" : "failed" },
     { label: "Validator", status: exp.validatorResult === "NIET_VAN_TOEPASSING" ? "done" : exp.validatorResult === "VALID" ? "done" : exp.validatorResult === "INVALID" ? "failed" : "active" },
-    { label: "Beslissing", sub: exp.decision, status: exp.decision === "PROMOTION_CANDIDATE" ? "done" : exp.decision === "REJECTED" ? "failed" : "active" },
+    { label: "Beslissing", sub: exp.decision === "PROMOTION_CANDIDATE" ? "promotiekandidaat" : exp.decision === "REJECTED" ? "verworpen" : (exp.decision ?? "").toLowerCase(), status: exp.decision === "PROMOTION_CANDIDATE" ? "done" : exp.decision === "REJECTED" ? "failed" : "active" },
   ];
   document.getElementById("ed-flow-card").style.display = "block";
   document.getElementById("ed-flow-title").textContent = `van ${exp.id}`;

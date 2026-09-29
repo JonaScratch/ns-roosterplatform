@@ -61,6 +61,27 @@ async function meetRoute(browser, basis, route, uitDir) {
       tekst: document.getElementById("app-content")?.innerText ?? "",
       headerTekst: header?.innerText ?? "",
       horizontaalScrollen: document.documentElement.scrollWidth > window.innerWidth + 1,
+      // Inhoud die buiten zijn kaart steekt (bijv. een te lang stapjeslabel),
+      // behalve binnen scrollende of afgeknipte containers.
+      uitDeKaart: (() => {
+        const uit = [];
+        for (const kaart of document.querySelectorAll("#app-content .card")) {
+          const k = kaart.getBoundingClientRect();
+          for (const el of kaart.querySelectorAll("*")) {
+            const r = el.getBoundingClientRect();
+            if (r.width === 0 || r.right <= k.right + 2) continue;
+            let ouder = el.parentElement;
+            let geknipt = false;
+            while (ouder && ouder !== kaart) {
+              const o = getComputedStyle(ouder).overflowX;
+              if (o === "auto" || o === "scroll" || o === "hidden") { geknipt = true; break; }
+              ouder = ouder.parentElement;
+            }
+            if (!geknipt) uit.push(`${el.tagName.toLowerCase()}.${String(el.className || "").split(" ")[0]} "${(el.textContent || "").trim().slice(0, 30)}"`);
+          }
+        }
+        return uit.slice(0, 3);
+      })(),
     };
   });
 
@@ -75,6 +96,7 @@ async function meetRoute(browser, basis, route, uitDir) {
   if (!m.appGeladen) problemen.push("app.js niet uitgevoerd");
   if (m.kaarten === 0) problemen.push("geen enkele kaart/KPI gerenderd");
   if (m.horizontaalScrollen) problemen.push("pagina scrolt horizontaal");
+  if (m.uitDeKaart.length > 0) problemen.push(`inhoud steekt buiten de kaart: ${m.uitDeKaart.join("; ")}`);
   if (/in aanbouw/i.test(m.tekst)) problemen.push("pagina toont de 'in aanbouw'-plaatsvervanger (laden mislukt)");
   if (mislukt.length > 0) problemen.push(`mislukte verzoeken: ${mislukt.join(", ")}`);
   if (consoleFouten.length > 0) problemen.push(`paginafouten: ${consoleFouten.join(" | ")}`);
