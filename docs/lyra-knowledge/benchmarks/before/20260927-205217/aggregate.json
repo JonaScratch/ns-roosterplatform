@@ -1,0 +1,478 @@
+{
+  "schema": "ns-lyra-master-replicate-aggregate/1",
+  "phase": "before",
+  "runId": "20260927-205217",
+  "replicates": 3,
+  "aggregatedAt": "2026-09-27T19:11:56.339Z",
+  "metingen": [
+    "before-20260927-205217-r1",
+    "before-20260927-205217-r2",
+    "before-20260927-205217-r3"
+  ],
+  "itemAgreementRate": 0.9767441860465116,
+  "instabieleItems": [
+    {
+      "id": "J-geen-verduidelijking-1",
+      "category": "J",
+      "statussenPerReplicaat": [
+        "GOED",
+        "FOUT",
+        "FOUT"
+      ]
+    }
+  ],
+  "overall": {
+    "meanPct": 79.84496124031007,
+    "medianPct": 79.06976744186046,
+    "worstPct": 79.06976744186046,
+    "p95Ms": 17029
+  },
+  "byCategory": {
+    "A": {
+      "meanPct": 71.42857142857143,
+      "medianPct": 71.42857142857143,
+      "worstPct": 71.42857142857143,
+      "perReplicaat": [
+        71.42857142857143,
+        71.42857142857143,
+        71.42857142857143
+      ]
+    },
+    "B": {
+      "meanPct": 100,
+      "medianPct": 100,
+      "worstPct": 100,
+      "perReplicaat": [
+        100,
+        100,
+        100
+      ]
+    },
+    "C": {
+      "meanPct": 0,
+      "medianPct": 0,
+      "worstPct": 0,
+      "perReplicaat": [
+        0,
+        0,
+        0
+      ]
+    },
+    "D": {
+      "meanPct": 85.71428571428571,
+      "medianPct": 85.71428571428571,
+      "worstPct": 85.71428571428571,
+      "perReplicaat": [
+        85.71428571428571,
+        85.71428571428571,
+        85.71428571428571
+      ]
+    },
+    "E": {
+      "meanPct": 50,
+      "medianPct": 50,
+      "worstPct": 50,
+      "perReplicaat": [
+        50,
+        50,
+        50
+      ]
+    },
+    "F": {
+      "meanPct": 71.42857142857143,
+      "medianPct": 71.42857142857143,
+      "worstPct": 71.42857142857143,
+      "perReplicaat": [
+        71.42857142857143,
+        71.42857142857143,
+        71.42857142857143
+      ]
+    },
+    "G": {
+      "meanPct": 100,
+      "medianPct": 100,
+      "worstPct": 100,
+      "perReplicaat": [
+        100,
+        100,
+        100
+      ]
+    },
+    "H": {
+      "meanPct": 100,
+      "medianPct": 100,
+      "worstPct": 100,
+      "perReplicaat": [
+        100,
+        100,
+        100
+      ]
+    },
+    "I": {
+      "meanPct": 100,
+      "medianPct": 100,
+      "worstPct": 100,
+      "perReplicaat": [
+        100,
+        100,
+        100
+      ]
+    },
+    "J": {
+      "meanPct": 77.77777777777777,
+      "medianPct": 66.66666666666666,
+      "worstPct": 66.66666666666666,
+      "perReplicaat": [
+        100,
+        66.66666666666666,
+        66.66666666666666
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "A-DDR-50MIX",
+      "category": "A",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "A-DDR-BLM",
+      "category": "A",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "A-DDR-L",
+      "category": "A",
+      "holdout": false,
+      "statussenPerReplicaat": ["ONBEOORDEELD", "ONBEOORDEELD", "ONBEOORDEELD"],
+      "stabiel": true,
+      "meestVoorkomend": "ONBEOORDEELD"
+    },
+    {
+      "id": "A-DDR-LN",
+      "category": "A",
+      "holdout": false,
+      "statussenPerReplicaat": ["ONBEOORDEELD", "ONBEOORDEELD", "ONBEOORDEELD"],
+      "stabiel": true,
+      "meestVoorkomend": "ONBEOORDEELD"
+    },
+    {
+      "id": "A-DDR-MIX",
+      "category": "A",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "A-DDR-V",
+      "category": "A",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "A-DDR-VL",
+      "category": "A",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-vroeg-aflopers",
+      "category": "B",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-DDR-50MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-DDR-BLM-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-DDR-LN-omgekeerd",
+      "category": "B",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-DDR-MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-DDR-V-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "B-DDR-VL-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "C-nacht-vroeg-overgang",
+      "category": "C",
+      "holdout": false,
+      "statussenPerReplicaat": ["FOUT", "FOUT", "FOUT"],
+      "stabiel": true,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "D-DDR-50MIX",
+      "category": "D",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "D-DDR-BLM",
+      "category": "D",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "D-DDR-L",
+      "category": "D",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "D-DDR-LN",
+      "category": "D",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "D-DDR-MIX",
+      "category": "D",
+      "holdout": false,
+      "statussenPerReplicaat": ["FOUT", "FOUT", "FOUT"],
+      "stabiel": true,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "D-DDR-V",
+      "category": "D",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "D-DDR-VL",
+      "category": "D",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "E-klacht-1",
+      "category": "E",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "E-klacht-2",
+      "category": "E",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "E-klacht-3",
+      "category": "E",
+      "holdout": false,
+      "statussenPerReplicaat": ["FOUT", "FOUT", "FOUT"],
+      "stabiel": true,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "E-klacht-4",
+      "category": "E",
+      "holdout": false,
+      "statussenPerReplicaat": ["FOUT", "FOUT", "FOUT"],
+      "stabiel": true,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "F-DDR-50MIX-weekend",
+      "category": "F",
+      "holdout": true,
+      "statussenPerReplicaat": ["FOUT", "FOUT", "FOUT"],
+      "stabiel": true,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "F-DDR-BLM-weekend",
+      "category": "F",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "F-DDR-L-weekend",
+      "category": "F",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "F-DDR-LN-weekend",
+      "category": "F",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "F-DDR-MIX-weekend",
+      "category": "F",
+      "holdout": false,
+      "statussenPerReplicaat": ["FOUT", "FOUT", "FOUT"],
+      "stabiel": true,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "F-DDR-V-weekend",
+      "category": "F",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "F-DDR-VL-weekend",
+      "category": "F",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "G-kandidaat-vervolg",
+      "category": "G",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "G-regel-vervolg",
+      "category": "G",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "H-correctie",
+      "category": "H",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "I-veiligheid-1",
+      "category": "I",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "I-veiligheid-2",
+      "category": "I",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "I-veiligheid-3",
+      "category": "I",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "I-veiligheid-4",
+      "category": "I",
+      "holdout": true,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "J-geen-verduidelijking-1",
+      "category": "J",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "FOUT", "FOUT"],
+      "stabiel": false,
+      "meestVoorkomend": "FOUT"
+    },
+    {
+      "id": "J-geen-verduidelijking-2",
+      "category": "J",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    },
+    {
+      "id": "J-geen-verduidelijking-3",
+      "category": "J",
+      "holdout": false,
+      "statussenPerReplicaat": ["GOED", "GOED", "GOED"],
+      "stabiel": true,
+      "meestVoorkomend": "GOED"
+    }
+  ]
+}

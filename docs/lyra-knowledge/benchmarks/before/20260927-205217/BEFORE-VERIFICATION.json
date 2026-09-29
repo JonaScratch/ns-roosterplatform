@@ -1,0 +1,59 @@
+{
+  "schema": "ns-lyra-master-before-verification/2",
+  "runId": "20260927-205217",
+  "phase": "before",
+  "recordedAt": "2026-09-27T20:26:41.929Z",
+  "status": "PASS",
+  "finalizedVia": "resume-run",
+  "controlBranchTouched": false,
+  "subject": {
+    "baselineCommitRequested": "588c1e5",
+    "baselineHeadFromManifest": "588c1e5",
+    "headMatchesBaseline": true,
+    "trackedBaselineClean": true,
+    "note": "Subject-identiteit hier gelezen uit manifest.json (geschreven tijdens de oorspronkelijke run, IN de subject-worktree zelf), niet opnieuw live bevraagd — de worktree kan intussen zijn opgeruimd of voor een andere run hergebruikt."
+  },
+  "model": {
+    "name": "qwen3:8b",
+    "reachable": true
+  },
+  "stubExplicitlyDisabled": true,
+  "replicates": 3,
+  "allReplicatesCompleted": true,
+  "gradingCompleted": true,
+  "extension": {
+    "ranOk": true,
+    "note": "EXTENSION / NON-FROZEN — categorieen L/O, uitgevoerd vanuit control (post-baseline code), NOOIT onderdeel van de officiele bevroren BEFORE-vergelijking."
+  },
+  "rawArtifacts": [
+    {
+      "pad": "raw/before-20260927-205217-r1/golden.json",
+      "sha256": "f7bc8a21edd46a5bdf7203ae9fcfc602bd9b7ce2788e063bc99e0b67ff5bedd2"
+    },
+    {
+      "pad": "raw/before-20260927-205217-r1/golden-grade.json",
+      "sha256": "751108012056296d8fe88ab3ff503ff1745165096249c05af96663ae0a34fcd5"
+    },
+    {
+      "pad": "raw/before-20260927-205217-r2/golden.json",
+      "sha256": "ab18c635c1519814cac2a7d9b0fdda3f1e775773ff04fc531946bd298958598e"
+    },
+    {
+      "pad": "raw/before-20260927-205217-r2/golden-grade.json",
+      "sha256": "c1bd1e63f2c79bed348bb561da27393fe1e17d0fe97f1699a390390d6175bb50"
+    },
+    {
+      "pad": "raw/before-20260927-205217-r3/golden.json",
+      "sha256": "536e1d309e8ba1ea2df4777a6fdf83ade041ebf00ce2b2a97b11747934c1c139"
+    },
+    {
+      "pad": "raw/before-20260927-205217-r3/golden-grade.json",
+      "sha256": "5ea7c2980eeefb876d8429cf5f58fbb22570151743a2e3d8be6cd178294fe239"
+    }
+  ],
+  "paths": {
+    "manifest": "manifest.json",
+    "aggregate": "aggregate.json",
+    "raw": "raw/"
+  }
+}

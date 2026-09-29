@@ -1,0 +1,193 @@
+{
+  "schema": "ns-lyra-master-before-manifest/1",
+  "phase": "before",
+  "runId": "20260927-205217",
+  "recordedAt": "2026-09-27T18:52:19.201Z",
+  "purpose": "Combineert de agent-kant-manifesttraditie (n0-manifest.ts) en de engine-kant-manifesttraditie (optimizer-benchmark.ts) tot één voor-manifest voor de LYRA MASTER PROGRAM-ronde, met de vier expliciet beloofde-maar-eerder-ontbrekende velden: databaseVersion, engineVersion, qualityModelVersion, rulesetVersion.",
+  "git": {
+    "headCommit": "588c1e5a0d5bd8488fa9a46bc605695e579c6f4d",
+    "headSubject": "Lyra Master Program — Fase 0: volledige inventaris bestaande kennisarchitectuur",
+    "headDate": "2026-09-27T13:19:14Z",
+    "branch": "HEAD",
+    "baselineHead": "588c1e5",
+    "headMatchesBaseline": true,
+    "trackedBaselineClean": true,
+    "trackedModifiedPaths": [],
+    "orchestratorArtifacts": [
+      "scripts/lyra-master/before-manifest.ts",
+      "scripts/lyra-master/smoke-import.ts",
+      "scripts/lyra-master/subject-worktree.ts"
+    ],
+    "benchmarkOutputPaths": [
+      "docs/lyra-knowledge/benchmarks/before/20260927-203649/manifest.json"
+    ],
+    "generatedIgnoredArtifacts": [
+      ".env",
+      "node_modules/",
+      "src/lib/generated/"
+    ],
+    "unexpectedUntrackedPaths": []
+  },
+  "databaseVersion": "20260925041247_technische_experimenten",
+  "engineVersion": "1.0.3",
+  "qualityModelVersion": "quality-model-v3",
+  "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+  "hashes": {
+    "ruleset": "6dd5d1619bd3d3d74f8115bf683a9d9a44efda269f4aec6c666ca8e5ab76cdf1",
+    "toolCatalogue": "3f05077874a83b885e45acf81513d3f046eb78fdc229310d3e05efd374685b29",
+    "goldenSuite": "1cbb1d5dbff5242aa4ec287f2e01d57b6768c525c7776759cec6a604c3d203cd"
+  },
+  "dutyPackage": {
+    "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+    "label": "DDR-BDU-05-10-2026-V1",
+    "sourceChecksum": "425b37902bf70752fd9f9ca7f5326f823516ce212c3024bbe7afcec883fe3d83"
+  },
+  "localModel": {
+    "configured": true,
+    "url": "http://127.0.0.1:11434/v1",
+    "model": "qwen3:8b",
+    "temperature": 0,
+    "maxTokens": 2000,
+    "timeoutMs": 120000,
+    "reachable": true,
+    "detail": "1 model(len) beschikbaar",
+    "ollamaVersion": "ollama version is 0.34.4",
+    "gpu": "NVIDIA GeForce RTX 3080, 10240 MiB"
+  },
+  "stubExplicitlyDisabled": true,
+  "agentCapabilities": {
+    "all": [
+      "agent:chat",
+      "agent:job:create",
+      "agent:autonomous",
+      "agent:memory:write",
+      "agent:preference:propose",
+      "agent:preference:approve",
+      "agent:crosslocation:read",
+      "agent:experiment:propose",
+      "agent:experiment:run"
+    ],
+    "levels": {
+      "A": [
+        "agent:chat"
+      ],
+      "B": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write"
+      ],
+      "C": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write",
+        "agent:autonomous"
+      ]
+    },
+    "currentGrantDDR": {
+      "capabilities": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write"
+      ],
+      "maxRounds": 2,
+      "maxSolverSeconds": 120,
+      "allowedStrategies": [],
+      "protectedRosters": [],
+      "suspendedAt": null
+    }
+  },
+  "toolCatalogue": [
+    {
+      "name": "rosterProject",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "rosterLine",
+      "allowed": true,
+      "requires": [
+        "lineNumber"
+      ]
+    },
+    {
+      "name": "dutyInstance",
+      "allowed": true,
+      "requires": [
+        "dutyCode"
+      ]
+    },
+    {
+      "name": "dutyKindCounts",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "dutyKindPerLine",
+      "allowed": true,
+      "requires": [
+        "kind"
+      ]
+    },
+    {
+      "name": "rosterHours",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "ruleLookup",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "ruleSearch",
+      "allowed": true,
+      "requires": [
+        "query"
+      ]
+    },
+    {
+      "name": "qualityReport",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "nightStructure",
+      "allowed": true,
+      "requires": [
+        "rosterCode"
+      ]
+    },
+    {
+      "name": "knowledgeSearch",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "experimentHistory",
+      "allowed": true,
+      "requires": []
+    }
+  ],
+  "goldenSuite": {
+    "version": 1,
+    "itemCount": 43,
+    "counts": {
+      "total": 43,
+      "holdout": 8,
+      "dev": 35,
+      "perCategory": {
+        "A": 7,
+        "B": 7,
+        "C": 1,
+        "D": 7,
+        "E": 4,
+        "F": 7,
+        "G": 2,
+        "H": 1,
+        "I": 4,
+        "J": 3
+      }
+    },
+    "note": "de bevroren 43-item suite; ongewijzigd sinds v1.0.6"
+  }
+}
