@@ -105,6 +105,11 @@ const CONTROL_ROOT = path.resolve(__dirname, "..", "..");
 const REPLICATES = Number(argument("replicates") ?? "3");
 const PREFLIGHT_ONLY = flag("preflight-only");
 const SKIP_ADVERSARIAL = flag("skip-adversarial");
+/** De bevroren BEFORE-run waartegen elke AFTER-run item voor item wordt vergeleken (grader /1 én streng /2). */
+const BEFORE_RUN_ID = (() => {
+  const i = process.argv.indexOf("--before");
+  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : "20260927-205217";
+})();
 const NS_TSX_ARGS = ["tsx", "--conditions=react-server"];
 
 function rapporteerControlIdentiteit(): { head: string; branch: string; dirty: number } {
@@ -283,6 +288,15 @@ async function main(): Promise<void> {
       console.log("\n(--skip-adversarial: Fase 12 overgeslagen.)");
     }
 
+    // ── BEFORE→AFTER per item (golden + extensie), grader /1 en streng /2 ──
+    stap(`BEFORE ${BEFORE_RUN_ID} → AFTER ${runId} vergelijken (compare-before-after.ts)`);
+    const vergelijkingOk = {
+      golden: voerUitAllowFail(CONTROL_ROOT, "npx", [...NS_TSX_ARGS, "scripts/lyra-master/compare-before-after.ts", "--before", BEFORE_RUN_ID, "--after", runId, "--replicates", String(REPLICATES)], "compare-before-after.ts (golden)"),
+      extension: extensieOk
+        ? voerUitAllowFail(CONTROL_ROOT, "npx", [...NS_TSX_ARGS, "scripts/lyra-master/compare-before-after.ts", "--before", BEFORE_RUN_ID, "--after", runId, "--replicates", String(REPLICATES), "--suite", "extension"], "compare-before-after.ts (extensie)")
+        : false,
+    };
+
     // ── Verificatiebestand ───────────────────────────────────────────────
     stap("AFTER-VERIFICATION.json schrijven");
     const manifestPad = path.join(outDir, "manifest.json");
@@ -326,7 +340,13 @@ async function main(): Promise<void> {
         meting: SKIP_ADVERSARIAL ? null : adversarialMeting,
         path: SKIP_ADVERSARIAL ? null : `../adversarial/${adversarialMeting}/`,
         note:
-          "Fase 12 — 9 items uit adversarial-holdout-design.json. Item Q-DDR-BLM-NIGHTSTRUCTURE-TOOLFOUT vereist een gesimuleerde toolfout die dit script bewust niet uitvoert (geen fault-injection-mechanisme in tools.ts) — dat item krijgt daarom een eerlijke error/FOUT, geen echte modelbeoordeling. Zie adversarial-bench.ts.",
+          "Fase 12 — 9 items uit adversarial-holdout-design.json. Item Q draait sinds de AFTER-analyse van 20260929 met een echte, gesimuleerde toolfout (askAgent({ toolFouten }), zichtbaar als toolGesimuleerd in adversarial.json).",
+      },
+      comparison: {
+        before: BEFORE_RUN_ID,
+        golden: vergelijkingOk.golden ? `../../comparisons/before-${BEFORE_RUN_ID}__after-${runId}.json` : null,
+        extension: vergelijkingOk.extension ? `../../comparisons/before-${BEFORE_RUN_ID}__after-${runId}.extension.json` : null,
+        note: "Streng (/2) is leidend: een antwoord dat een grendel verving, telt niet als GOED. Zie docs/lyra-knowledge/after-analysis-20260929.md §2.",
       },
       paths: { manifest: "manifest.json", aggregate: "aggregate.json" },
     };
@@ -338,7 +358,7 @@ async function main(): Promise<void> {
       console.log("Reden(en) voor FAIL: zie AFTER-VERIFICATION.json.");
       exitCode = 1;
     } else {
-      console.log("\nCommit en push de nieuwe map(pen) onder docs/lyra-knowledge/benchmarks/after/, docs/lyra-knowledge/benchmarks/adversarial/ en docs/v1.0.6/benchmarks/ terug naar deze branch — dat is het AFTER-bewijs.");
+      console.log("\nCommit en push de nieuwe map(pen) onder docs/lyra-knowledge/benchmarks/after/, docs/lyra-knowledge/benchmarks/adversarial/, docs/lyra-knowledge/benchmarks/comparisons/ en docs/v1.0.6/benchmarks/ terug naar deze branch — dat is het AFTER-bewijs.");
     }
   } catch (fout) {
     if (fout instanceof PreflightError) {
