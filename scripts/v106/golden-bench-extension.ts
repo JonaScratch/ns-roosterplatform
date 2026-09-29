@@ -104,6 +104,7 @@ async function main(): Promise<void> {
           data: antwoord.data,
           sources: antwoord.sources,
           ...(antwoord.tegengehouden ? { tegengehouden: antwoord.tegengehouden } : {}),
+          ...(antwoord.planCorrecties ? { planCorrecties: antwoord.planCorrecties } : {}),
         });
       }
       if (sessionId) gemaaktSessies.push(sessionId);

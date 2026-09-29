@@ -6,6 +6,7 @@ import { finishActivity, heartbeat, recordEvent, startActivity } from "./activit
 import { AGENT_CAPABILITIES, AgentCapabilityError, agentMay, currentGrant, levelOf } from "./capabilities";
 import { type UiContext, resolveContext, uiContextSchema } from "./context";
 import { claimVerificatieMelding, ongedekteGezagsClaims } from "./claim-verification";
+import { bewaakPlan, type PlanCorrectie } from "./plan-guard";
 import { gegevensTekst, grondingsMelding, ongegrondeVermeldingen } from "./grounding";
 import { localConfigFromEnv, localModel } from "./model/local";
 import { stubModel } from "./model/stub";
@@ -72,6 +73,8 @@ export interface AskResult extends AgentAnswer {
    * te beoordelen is zonder het activiteitenlog uit de database te halen.
    */
   readonly tegengehouden?: { readonly grendel: "ZONDER_BRON" | "GRONDING" | "CLAIMVERIFICATIE"; readonly tekst: string; readonly detail: unknown };
+  /** Wat de plancontrole aan het modelplan veranderde (plan-guard.ts); alleen aanwezig als er iets veranderde. */
+  readonly planCorrecties?: readonly PlanCorrectie[];
 }
 
 export async function askAgent(input: {
@@ -206,13 +209,26 @@ export async function askAgent(input: {
     };
   }
 
-  const ruwPlan = await model.plan(verzoek);
+  const modelPlan = await model.plan(verzoek);
+  // Plancontrole (plan-guard.ts): een voorstel zonder rekenverzoek vervalt, en
+  // een plan zonder tool terwijl het scherm de context kent, kijkt eerst.
+  const bewaakt = bewaakPlan(
+    modelPlan,
+    input.text,
+    { rosterCode: resolved.roster?.code ?? null, lineNumber: resolved.lineNumber ?? null },
+    new Set(verzoek.tools.filter((t) => t.allowed).map((t) => t.name)),
+  );
+  const ruwPlan = bewaakt.plan;
   // Laag 2 hoort in elk voorstel terecht te komen, ook als het model er niet om
   // vroeg: het zijn de doelen die de commissie voor dit project heeft gezet.
   // Het model bedenkt ze niet en kan ze ook niet wegnemen; ze worden hier
   // toegevoegd en in het antwoord genoemd.
   const plan = await metProjectdoelen(ruwPlan, resolved.locationCode);
-  await stap("PLAN", plan.reasoning || "geen toelichting", { intent: plan.intent, tools: plan.toolCalls.map((c) => c.tool) });
+  await stap("PLAN", plan.reasoning || "geen toelichting", {
+    intent: plan.intent,
+    tools: plan.toolCalls.map((c) => c.tool),
+    ...(bewaakt.correcties.length > 0 ? { planCorrecties: bewaakt.correcties, modelIntent: modelPlan.intent } : {}),
+  });
 
   /**
    * De context van het scherm in elke toolaanroep.
@@ -376,10 +392,10 @@ ${Object.values(schermContext).join(" ")}`);
       objectId: sessionId,
       newValue: { intent: plan.intent, status: antwoord.status, tools: calls.map((c) => c.tool), model: model.name },
     });
-    return { ...basis, ...antwoord, sessionId, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls, ...(tegengehouden ? { tegengehouden } : {}) };
+    return { ...basis, ...antwoord, sessionId, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls, ...(tegengehouden ? { tegengehouden } : {}), ...(bewaakt.correcties.length > 0 ? { planCorrecties: bewaakt.correcties } : {}) };
   }
 
-  return { ...basis, ...antwoord, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls, ...(tegengehouden ? { tegengehouden } : {}) };
+  return { ...basis, ...antwoord, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls, ...(tegengehouden ? { tegengehouden } : {}), ...(bewaakt.correcties.length > 0 ? { planCorrecties: bewaakt.correcties } : {}) };
 }
 
 /**

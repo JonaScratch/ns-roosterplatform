@@ -7,6 +7,7 @@ import { beschrijfVoorstel } from "../voorstel-tekst";
 import { bevat, verbodenHandeling } from "../refusals";
 import { begripIn } from "../vocabulary";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
+import { meerdereRondes, REKENVERZOEK_HARD, REKENVERZOEK_ZACHT } from "../request-shape";
 
 /**
  * De lokale stub: geen taalmodel, wel een echte keten.
@@ -54,49 +55,6 @@ const positie = (type: unknown) => POSITIE[String(type)] ?? String(type).toLower
 
 
 /**
- * Woorden die om rekenwerk vragen: daarvoor is een aparte bevoegdheid nodig.
- *
- * In twee soorten, en dat onderscheid is niet cosmetisch. "Start een
- * optimalisatie" kan niets anders betekenen en wordt meteen herkend. "Bereken"
- * of "onderzoek" kan óók een leesvraag zijn ("bereken het roostergemiddelde"),
- * en wordt daarom pas bekeken als geen enkele leesvraag past. Zou het andersom
- * staan, dan weigerde de agent vragen die hij gewoon mag beantwoorden.
- */
-const REKENVERZOEK_HARD = [
-  "optimalisatie",
-  "optimaliseer",
-  "laat rekenen",
-  "laten rekenen",
-  "doorrekenen",
-  // Gevonden door verify:agent --zwaar: "laat eens uitrekenen of de nachten
-  // beter kunnen" werd gelezen als een vraag over de nachtstructuur, omdat
-  // "uitrekenen" nergens stond. Het werd dus netjes beantwoord in plaats van
-  // voorgesteld door te rekenen.
-  "uitrekenen",
-  "reken uit",
-  "laat berekenen",
-  "laten berekenen",
-  "nieuwe kandidaat",
-  "nieuwe kandidaten",
-  "kandidaten maken",
-  "maak kandidaten",
-  "genereer",
-  // Gevonden bij M3: "Zoek een verdeling waarin Laat meer aflopers krijgt én ..."
-  // werd gelezen als een vraag over de huidige verdeling, en netjes beantwoord
-  // met de cijfers. Dat is geen antwoord op wat er gevraagd werd. Hele zinsdelen
-  // en niet het losse "zoek": "zoek uit waar de nachten staan" blijft een
-  // leesvraag.
-  "zoek een verdeling",
-  "zoek een indeling",
-  "zoek een rooster",
-  "zoek een variant",
-  "zoek een alternatief",
-  "vind een verdeling",
-  "vind een indeling",
-];
-const REKENVERZOEK_ZACHT = ["onderzoek", "probeer", "verbeter", "bereken"];
-
-/**
  * Begrippen die in dit dienstenpakket niet bestaan: daar hoort een wedervraag bij.
  *
  * "ret" stond hier tot 21 september 2026 ook tussen. Dat was juist zolang
@@ -126,20 +84,6 @@ const DOELWOORDEN: readonly { readonly herkent: (t: string) => boolean; readonly
   { herkent: (t) => bevat(t, "overgang", "wisseling"), goal: "TRANSITIONS", strategie: "REST_QUALITY" },
   { herkent: (t) => bevat(t, "minder verander", "zo min mogelijk wijzig", "dicht bij het huidige"), goal: "LESS_CHANGE", strategie: "BALANCED" },
 ];
-
-/**
- * Vraagt dit om meerdere rondes achter elkaar?
- *
- * Dat is niveau C en een aparte bevoegdheid. Gevonden door M1: met alleen
- * rekenbevoegdheid vroeg de agent netjes waarop hij moest sturen, en liep het
- * verschil tussen "één opdracht" en "blijf net zolang zoeken" stil weg.
- */
-const meerdereRondes = (tekst: string): boolean =>
-  // Ook uitgeschreven getallen: "je mag drie rondes" is precies de zin waarmee
-  // iemand om niveau C vraagt zonder het zo te noemen.
-  /\b(twee|drie|vier|vijf|zes|zeven|acht|negen|tien|\d+)\s*(rondes?|keer|pogingen)\b/.test(tekst) ||
-  /\brondes\b/.test(tekst) ||
-  bevat(tekst, "meerdere rondes", "meer rondes", "blijf zoeken", "net zolang", "blijf proberen", "zolang tot");
 
 /** Een verzoek om te rekenen: mag alleen met de bevoegdheid, en anders met uitleg. */
 function rekenverzoek(request: PlanRequest, tekst: string, ctx: PlanRequest["context"]): AgentPlan {

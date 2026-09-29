@@ -531,6 +531,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
           clarification:
             "Ik kom er zo niet uit. Kun je de vraag iets concreter stellen — bijvoorbeeld met het basisrooster, de regel of de dag erbij?",
           reasoning: "het model leverde geen leesbaar plan",
+          onleesbaar: true,
         };
       }
 
@@ -581,6 +582,16 @@ export function localModel(config: LocalModelConfig): ChatModel {
         };
       }
 
+      // Een wedervraag van het plan werd hier tot run 20260929-151948 genegeerd:
+      // het model schreef dan zonder één gegeven een eigen, algemeen antwoord
+      // (E-klacht-3: "De vraag is te vage om te beantwoorden …", met de
+      // instructieregels erachter geplakt). Zonder gegevens is de wedervraag
+      // van het plan zelf het antwoord — precies zoals de stub dat doet.
+      const gelukt = request.results.filter((r) => r.ok);
+      if (request.plan.clarification && gelukt.length === 0) {
+        return { text: request.plan.clarification, data: { intent: request.plan.intent }, sources: bronnen, status: "VERDUIDELIJKING" };
+      }
+
       const feiten = request.results
         .map((r) => `Tool ${r.tool} (${r.ok ? "gelukt" : "mislukt"}): ${JSON.stringify(r.data).slice(0, 4000)}`)
         .join("\n\n");
@@ -604,6 +615,11 @@ export function localModel(config: LocalModelConfig): ChatModel {
             "Roostergegevens (tellingen, roosterregels, diensten) zijn geen regels: noem daar alleen of ze uit het officiële rooster of uit een kandidaat komen, zonder woorden als 'bevestigd'. Noem bij een dienst de weekdag.",
             "Schrijf het antwoord in het Nederlands, in hooguit vijf zinnen.",
             request.plan.cannotDetermine ? `Verwerk ook dit: ${request.plan.cannotDetermine}` : "",
+            // Er is gekeken én er is een echte wedervraag: eerst wat de gegevens
+            // laten zien, dan de gerichte vraag — niet andersom, en niet geen van beide.
+            request.plan.clarification
+              ? `Zeg eerst in één of twee zinnen wat je in de gegevens ziet, en sluit af met precies deze vraag aan de gebruiker: ${request.plan.clarification}`
+              : "",
           ]
             .filter(Boolean)
             .join("\n"),

@@ -103,6 +103,12 @@ export interface AgentPlan {
   readonly memoryProposal?: Record<string, unknown>;
   /** Wat de agent van plan is, voor het activiteitenpaneel. */
   readonly reasoning: string;
+  /**
+   * Het model leverde geen leesbaar plan; de clarification is dan een
+   * noodantwoord en geen echte wedervraag. De plancontrole in agent.ts
+   * (`plan-guard.ts`) zoekt in dat geval eerst de bekende context op.
+   */
+  readonly onleesbaar?: boolean;
 }
 
 export interface ComposeRequest extends PlanRequest {
