@@ -25,17 +25,15 @@ import type { Actor } from "@/server/auth/session";
  * Zodra dit voor het eerst is gedraaid en gecommit, geldt de freeze/audit-
  * regel uit §4 van dat document.
  *
- * ## Item Q (`Q-DDR-BLM-NIGHTSTRUCTURE-TOOLFOUT`) — bewust NIET uitgevoerd
+ * ## Item Q (`Q-DDR-BLM-NIGHTSTRUCTURE-TOOLFOUT`) — echte toolfout
  *
- * Dit item vereist dat de `nightStructure`-toolaanroep zelf faalt (een echte
- * timeout/foutcode, niet een lege/onbekende uitkomst) — `context.toolSimulation`
- * in het ontwerpbestand beschrijft dit expliciet. Er bestaat vandaag geen
- * fault-injection-mechanisme in `src/server/agent/tools.ts` om dat na te
- * bootsen, en dit script bouwt er ook geen: dat zou een aparte, op zichzelf
- * te beoordelen wijziging aan de echte toolaanroepketen zijn, geen
- * benchmarkscript. Item Q wordt daarom overgeslagen met een eerlijke,
- * expliciete `error` — nooit stilzwijgend zonder de simulatie gedraaid (dat
- * zou een misleidende GOED/FOUT-uitslag opleveren voor de verkeerde reden).
+ * Dit item vereist dat de `nightStructure`-toolaanroep zelf faalt (niet een
+ * lege/onbekende uitkomst). Tot run 20260929-151948 bestond daar geen
+ * mechanisme voor en werd het item als `error` overgeslagen. Sinds de
+ * AFTER-analyse kent `askAgent` een `toolFouten`-veld (alleen benchmarks):
+ * `callTool` geeft dan exact de uitkomst van een vastgelopen tool terug. De
+ * aanroep draagt `gesimuleerd: true`, zodat de uitvoer (`toolGesimuleerd`)
+ * aantoont dat de simulatie echt draaide.
  *
  *   npx tsx --conditions=react-server scripts/v106/adversarial-bench.ts --meting adversarial-<runId>
  */
@@ -99,25 +97,17 @@ async function main(): Promise<void> {
     process.stdout.write(`\r  ${i}/${ontwerp.items.length} ${item.id.padEnd(36)}`);
     const t0 = Date.now();
 
-    if (item.context?.toolSimulation) {
-      resultaten.push({
-        id: item.id,
-        category: item.category,
-        holdout: item.holdout,
-        context: item.context,
-        expect: item.expect,
-        error: `TOOL_SIMULATION_NIET_GEÏMPLEMENTEERD: dit item vereist een gesimuleerde toolfout (${JSON.stringify(item.context.toolSimulation)}) — geen fault-injection-mechanisme aanwezig in tools.ts, zie de docstring bovenaan dit bestand.`,
-        ms: 0,
-      });
-      continue;
-    }
+    // Adversarial Q ("tool_falen"): de genoemde tool faalt echt in de keten
+    // (askAgent({ toolFouten })), in plaats van het item als crash te melden.
+    const sim = item.context?.toolSimulation as { tool?: string; inject?: string } | undefined;
+    const toolFouten = sim?.tool && sim.inject === "TOOL_ERROR" ? { [sim.tool]: "TOOL_ERROR" as const } : undefined;
 
     let sessionId: string | null = null;
     const context = { ...item.context, candidateId: item.context.candidateId ?? null, locationCode: "DDR" };
     const beurten: Json[] = [];
     try {
       for (let t = 0; t < item.turns.length; t += 1) {
-        const antwoord = await askAgent({ actor: commissie, text: item.turns[t].text, uiContext: context, sessionId, persist: true });
+        const antwoord = await askAgent({ actor: commissie, text: item.turns[t].text, uiContext: context, sessionId, persist: true, toolFouten });
         sessionId = antwoord.sessionId ?? sessionId;
         beurten.push({
           text: antwoord.text,
@@ -125,6 +115,8 @@ async function main(): Promise<void> {
           intent: antwoord.intent,
           reasoning: antwoord.reasoning,
           tools: antwoord.toolCalls.map((c) => c.tool),
+          toolOk: antwoord.toolCalls.map((c) => c.ok),
+          toolGesimuleerd: antwoord.toolCalls.map((c) => Boolean(c.gesimuleerd)),
           toolInputs: antwoord.toolCalls.map((c) => c.input),
           data: antwoord.data,
           sources: antwoord.sources,

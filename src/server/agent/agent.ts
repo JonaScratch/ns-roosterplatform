@@ -14,7 +14,7 @@ import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/typ
 import { projectGoals } from "./project-goals";
 import { geldendeGeheugenDoelen } from "./promotion";
 import { verbodenHandeling } from "./refusals";
-import { type ToolCall, callTool, toolCatalogue } from "./tools";
+import { type ToolCall, type ToolFout, callTool, toolCatalogue } from "./tools";
 
 /**
  * De agent: één beurt in het gesprek, van vraag tot antwoord.
@@ -90,6 +90,11 @@ export async function askAgent(input: {
    * zet dit veld; zonder dit veld is het gedrag exact zoals het was.
    */
   readonly modelOverride?: ChatModel;
+  /**
+   * Alleen voor benchmarks (adversarial Q, "tool_falen"): laat de genoemde
+   * tools falen alsof ze vastliepen. Geen enkele productieaanroep zet dit veld.
+   */
+  readonly toolFouten?: Readonly<Record<string, ToolFout>>;
 }): Promise<AskResult> {
   const model = input.modelOverride ?? modelForRequest();
   const ctx = uiContextSchema.parse(input.uiContext);
@@ -261,7 +266,7 @@ export async function askAgent(input: {
   const results: { tool: string; ok: boolean; data: unknown; sources: readonly string[]; error?: string; note?: string }[] = [];
   for (const toolStap of plan.toolCalls) {
     if (activiteit) await heartbeat(activiteit);
-    const { result, call, error } = await callTool(input.actor, toolStap.tool, metContext(toolStap.input));
+    const { result, call, error } = await callTool(input.actor, toolStap.tool, metContext(toolStap.input), input.toolFouten?.[toolStap.tool]);
     calls.push(call);
     results.push({ tool: toolStap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error, note: call.note });
     await stap(

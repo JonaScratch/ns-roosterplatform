@@ -57,7 +57,16 @@ export interface ToolCall {
   readonly ok: boolean;
   readonly ms: number;
   readonly note?: string;
+  /** Alleen bij een benchmark met foutinjectie (zie `callTool`): deze fout was gesimuleerd. */
+  readonly gesimuleerd?: true;
 }
+
+/**
+ * Een gesimuleerde toolfout, uitsluitend voor benchmarks (adversarial-categorie
+ * Q, "tool_falen"): de agent moet een falende tool eerlijk melden en niets
+ * reconstrueren. Productie zet dit nooit; zie `askAgent({ toolFouten })`.
+ */
+export type ToolFout = "TOOL_ERROR";
 
 export interface ToolResult<T = unknown> {
   readonly data: T;
@@ -563,7 +572,7 @@ export function toolCatalogue(actor: Actor) {
  * Faalt de rechtencontrole, dan is dat geen fout maar een antwoord: de agent
  * moet aan de gebruiker kunnen uitleggen wát hij niet mag.
  */
-export async function callTool(actor: Actor, name: string, rawInput: unknown): Promise<{ result: ToolResult | null; call: ToolCall; error?: string }> {
+export async function callTool(actor: Actor, name: string, rawInput: unknown, gesimuleerdeFout?: ToolFout): Promise<{ result: ToolResult | null; call: ToolCall; error?: string }> {
   const t0 = Date.now();
   const definitie = AGENT_TOOLS.find((x) => x.name === name);
   if (!definitie) {
@@ -576,6 +585,12 @@ export async function callTool(actor: Actor, name: string, rawInput: unknown): P
   const geparsed = definitie.input.safeParse(rawInput);
   if (!geparsed.success) {
     return { result: null, call: { tool: name, input: rawInput, ok: false, ms: Date.now() - t0, note: "ongeldige invoer" }, error: `De invoer voor ${name} klopt niet: ${geparsed.error.issues.map((i) => i.path.join(".")).join(", ")}` };
+  }
+  if (gesimuleerdeFout) {
+    // Voor het model precies dezelfde uitkomst als een echte crash hieronder;
+    // alleen het auditlog en de aanroep zelf zeggen dat het gesimuleerd was.
+    await recordAudit({ actor, action: "agent.tool.mislukt", objectType: "AgentTool", objectId: name, result: "FAILED", reason: `gesimuleerde toolfout (${gesimuleerdeFout}) — benchmark` });
+    return { result: null, call: { tool: name, input: geparsed.data, ok: false, ms: Date.now() - t0, note: "fout", gesimuleerd: true }, error: `De tool ${name} liep vast.` };
   }
   try {
     // De invoer is al gevalideerd door het schema van deze tool zelf; TypeScript
