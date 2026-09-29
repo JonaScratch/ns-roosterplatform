@@ -16,18 +16,24 @@
  * bestaande regressietoets in `scripts/verify-agent.ts` bevat zelfs het
  * woord "bevestigd" in de testinvoer zonder dat op te merken.
  *
- * ## BELANGRIJK — dit bestand is NIET aangesloten op agent.ts
+ * ## Aangesloten op agent.ts (na de bevroren BEFORE-meting)
  *
  * Precies zoals grounding.ts's eigen commentaar zegt over valse alarmen: een
  * te gretige claim-verificatie die goede antwoorden blokkeert, wordt
- * uitgezet en helpt dan niemand meer. Deze functie is daarom gebouwd en
- * volledig los getest (zie `tests/agent/claim-verification.test.ts`), maar
- * NOG NIET aangeroepen vanuit `agent.ts`. Aansluiten op de echte
- * antwoordketen is expliciet vervolgwerk NA de bevroren BEFORE-meting (§33/
- * §34 van de opdracht: een nieuwe grendel die antwoorden kan blokkeren of
- * wijzigen is een inhoudelijke gedragswijziging, en die mag niet vóór de
- * BEFORE-meting plaatsvinden — anders meet de BEFORE-run al het AFTER-
- * gedrag).
+ * uitgezet en helpt dan niemand meer. Deze functie is daarom eerst gebouwd en
+ * volledig los getest (`tests/agent/claim-verification.test.ts`) en pas
+ * daarna aangesloten — bewust NIET vóór de bevroren BEFORE-meting bestond
+ * (§33/§34 van de opdracht: een nieuwe grendel die antwoorden kan blokkeren
+ * of wijzigen is een inhoudelijke gedragswijziging, en die mocht niet vóór
+ * de BEFORE-meting plaatsvinden — anders had de BEFORE-run al het AFTER-
+ * gedrag gemeten). Die freeze is bevestigd (run `20260927-205217`, zie
+ * `docs/lyra-knowledge/progress.md`), dus dit is nu precies het beloofde
+ * AFTER-gedrag: `agent.ts` roept `ongedekteGezagsClaims()` aan na
+ * `model.compose()`, in dezelfde poort als grounding.ts (identiek voor
+ * `stubModel` en `localModel`), en vervangt het antwoord door
+ * `claimVerificatieMelding()` + status `NIET_VAST_TE_STELLEN` als er een
+ * ongedekte claim overblijft — nooit stilzwijgend, altijd met de
+ * oorspronkelijke tekst nog in het activiteitenlog.
  *
  * ## Waarom bewust smal (negatie-bewust, geen kale trefwoordmatch)
  *
@@ -131,4 +137,19 @@ export function isGedektDoorGegevens(toolResultaten: readonly { readonly data: u
 export function ongedekteGezagsClaims(antwoord: string, toolResultaten: readonly { readonly data: unknown }[]): readonly GezagsClaim[] {
   if (isGedektDoorGegevens(toolResultaten)) return [];
   return gezagsClaims(antwoord);
+}
+
+/**
+ * De gebruikersmelding als het antwoord wordt tegengehouden — zelfde toon en
+ * opbouw als `grondingsMelding()` in grounding.ts: eerlijk over wát er mis
+ * is, welk fragment het veroorzaakte, en wat wel kan.
+ */
+export function claimVerificatieMelding(claims: readonly GezagsClaim[]): string {
+  const signaalwoorden = [...new Set(claims.map((c) => c.signaalwoord))];
+  return [
+    "Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord " +
+      `(${signaalwoorden.join(", ")}) zonder dat ik daarvoor een regel met een bevestigde status (legalStatus VALIDATED) heb geraadpleegd.`,
+    "Dat een tekst ergens staat, maakt hem nog niet officieel — die stap mag ik niet zelf maken.",
+    "Stel de vraag opnieuw, dan zoek ik de regel op en zeg ik erbij of NS hem daadwerkelijk heeft bevestigd of dat het (nog) een transcriptie is.",
+  ].join(" ");
 }

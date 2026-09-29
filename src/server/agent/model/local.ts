@@ -275,6 +275,15 @@ export function planInstructie(): string {
     "REBUILD is een bestaande kandidaat verbeteren, GENERATE een nieuwe reeks, RESEARCH meerdere rondes achter elkaar.",
     "Noem alleen doelen uit die lijst. Past het gevraagde doel er niet bij, laat proposal dan weg en vraag door: de zoekmachine kan er niet op sturen.",
     "Je voert niets uit. Een mens bevestigt het voorstel, en de server controleert het daarna opnieuw tegen de bevoegdheden.",
+    "",
+    // Zonder dit blok herhaalt zich exact wat er bij proposal misging: het
+    // model kan een voorkeur niet aanbieden om te onthouden zolang niets het
+    // ooit heeft geleerd dat dat veld bestaat — gepind in
+    // tests/knowledge/known-gaps-pin.test.ts totdat dit blok er stond.
+    "Spreekt iemand een voorkeur uit over hoe hier gewerkt wordt — 'we willen liever', 'voortaan', 'we vinden', 'onthoud dat' — dan is dat geen vraag maar een gegeven. Bied dan aan het vast te leggen, naast of in plaats van toolCalls:",
+    ' "memoryProposal":{"scope":"LOCATION","kind":"PREFERENCE","statement":"de voorkeur in eigen woorden, één zin"}',
+    "scope is LOCATION tenzij iemand uitdrukkelijk een NS-breed besluit bedoelt (NATIONAL) of het uitsluitend dit roosterproject betreft (PROJECT). kind is meestal PREFERENCE; FACT voor een feit, DECISION voor een besluit van de commissie, LESSON voor een les uit een eerdere ronde.",
+    "Je slaat nooit zelf iets op: een mens keurt dit voorstel later goed, net als bij proposal.",
   ].join("\n");
 }
 
@@ -460,6 +469,35 @@ export function voorstelUit(ruw: unknown, request: PlanRequest): Record<string, 
   };
 }
 
+const MEMORY_SCOPES = new Set(["PROJECT", "LOCATION", "NATIONAL"]);
+const MEMORY_KINDS = new Set(["PREFERENCE", "FACT", "DECISION", "LESSON"]);
+
+/**
+ * Zelfde soort validatie als voorstelUit() hierboven, voor het andere voorstel
+ * dat een taalmodel kan doen: iets vastleggen in het leergeheugen. `locationCode`
+ * komt net als bij voorstelUit() altijd van het platform, nooit van het model —
+ * en dit voorstel wordt sowieso pas iets ná een menselijke goedkeuring (zie
+ * memoryProposal in model/types.ts).
+ */
+export function memoryProposalUit(ruw: unknown, request: PlanRequest): Record<string, unknown> | undefined {
+  if (!request.capabilities.includes("agent:memory:write")) return undefined;
+  if (!ruw || typeof ruw !== "object") return undefined;
+  const v = ruw as Record<string, unknown>;
+
+  const statement = typeof v.statement === "string" ? v.statement.trim() : "";
+  if (statement.length === 0) return undefined;
+
+  const scope = typeof v.scope === "string" && MEMORY_SCOPES.has(v.scope.toUpperCase()) ? v.scope.toUpperCase() : "LOCATION";
+  const kind = typeof v.kind === "string" && MEMORY_KINDS.has(v.kind.toUpperCase()) ? v.kind.toUpperCase() : "PREFERENCE";
+
+  return {
+    scope,
+    kind,
+    statement: statement.slice(0, 400),
+    locationCode: request.context.locationCode,
+  };
+}
+
 function instructieVoor(config: LocalModelConfig, request: PlanRequest): string {
   const basis = systeeminstructie(request);
   return config.systemPromptOverride ? config.systemPromptOverride(basis, request) : basis;
@@ -506,6 +544,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
           .filter((c) => typeof c.tool === "string" && toegestaan.has(c.tool))
           .map((c) => ({ tool: String(c.tool), input: (c.input ?? {}) as Record<string, unknown> })),
         proposal: voorstelUit(plan.proposal ?? uitDeToelichting(plan), request),
+        memoryProposal: memoryProposalUit(plan.memoryProposal, request),
         clarification: typeof plan.clarification === "string" ? plan.clarification : undefined,
         cannotDetermine: typeof plan.cannotDetermine === "string" ? plan.cannotDetermine : undefined,
         refusal: typeof plan.refusal === "string" ? plan.refusal : undefined,

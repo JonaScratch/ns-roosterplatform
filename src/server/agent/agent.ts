@@ -5,6 +5,7 @@ import { prisma } from "@/server/data/prisma";
 import { finishActivity, heartbeat, recordEvent, startActivity } from "./activity";
 import { AGENT_CAPABILITIES, AgentCapabilityError, agentMay, currentGrant, levelOf } from "./capabilities";
 import { type UiContext, resolveContext, uiContextSchema } from "./context";
+import { claimVerificatieMelding, ongedekteGezagsClaims } from "./claim-verification";
 import { gegevensTekst, grondingsMelding, ongegrondeVermeldingen } from "./grounding";
 import { localConfigFromEnv, localModel } from "./model/local";
 import { stubModel } from "./model/stub";
@@ -292,7 +293,7 @@ export async function askAgent(input: {
       ? []
       : ongegrondeVermeldingen(ruwAntwoord.text, `${gegevensTekst(results)}
 ${Object.values(schermContext).join(" ")}`);
-  const antwoord: typeof ruwAntwoord = zonderBron
+  const naGronding: typeof ruwAntwoord = zonderBron
     ? {
         ...ruwAntwoord,
         text:
@@ -311,6 +312,24 @@ ${Object.values(schermContext).join(" ")}`);
     await stap("FOUT", `Antwoord tegengehouden: ${los.map((o) => `${o.soort} ${o.waarde}`).join(", ")} staat niet in de gegevens.`, {
       ongegrond: los,
       tegengehoudenTekst: ruwAntwoord.text,
+    });
+  }
+
+  /**
+   * Een gezagsclaim ("bevestigd", "CAO-verplicht", "officieel") zonder een
+   * daadwerkelijk `legalStatus: VALIDATED`-signaal in de gegevens van deze
+   * beurt. Loopt pas hierna, ná grounding: alleen zinvol op tekst die nog
+   * echt van het model komt (`naGronding.status === "BEANTWOORD"`) — een
+   * antwoord dat grounding al verving door een eigen meta-melding bevat geen
+   * inhoudelijke gezagsclaim meer om te controleren. Zie claim-verification.ts.
+   */
+  const ongedekteClaims = naGronding.status === "BEANTWOORD" ? ongedekteGezagsClaims(naGronding.text, results) : [];
+  const antwoord: typeof ruwAntwoord =
+    ongedekteClaims.length === 0 ? naGronding : { ...naGronding, text: claimVerificatieMelding(ongedekteClaims), status: "NIET_VAST_TE_STELLEN" };
+  if (ongedekteClaims.length > 0) {
+    await stap("FOUT", `Antwoord tegengehouden: ongedekte gezagsclaim (${ongedekteClaims.map((c) => c.signaalwoord).join(", ")}).`, {
+      ongedekteClaims,
+      tegengehoudenTekst: naGronding.text,
     });
   }
   await stap(antwoord.status === "GEWEIGERD" ? "WEIGERING" : "ANTWOORD", antwoord.text.length > 200 ? `${antwoord.text.slice(0, 197)}…` : antwoord.text, {

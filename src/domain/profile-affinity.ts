@@ -51,7 +51,13 @@ const N: Cel = { level: "NEUTRAL", source: "geen specifieke voorkeur" };
  */
 export const DAY_DUTY_WEIGHTS: Readonly<Record<string, { readonly weight: number; readonly source: string }>> = {
   LAAT: { weight: 10, source: "HUMAN_DOMAIN_INPUT" },
-  MIX: { weight: 20, source: "HUMAN_DOMAIN_INPUT (Vroeg/Laat/Nacht)" },
+  // "Vroeg/Laat/Nacht" hier is de alias die het weergavelabel ook draagt
+  // (roster-profiles.ts). `docs/lyra-knowledge/sources/manifest.json` zegt
+  // over het enige brondocument dat dit profiel noemt (Mix_1_A.pdf) dat die
+  // alias op basis van dát document alleen NIET te bevestigen is — vandaar
+  // de markering hier, net als bij VROEG hieronder. Het weergavelabel zelf
+  // blijft bewust ongewijzigd (zie tests/knowledge/known-gaps-pin.test.ts).
+  MIX: { weight: 20, source: "HUMAN_DOMAIN_INPUT (Vroeg/Laat/Nacht, alias onbevestigd — zie sources/manifest.json)" },
   VROEG_LAAT: { weight: 20, source: "HUMAN_DOMAIN_INPUT" },
   BLM: { weight: 20, source: "HUMAN_DOMAIN_INPUT" },
   LAAT_NACHT: { weight: 10, source: "HUMAN_DOMAIN_INPUT" },

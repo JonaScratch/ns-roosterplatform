@@ -1,91 +1,46 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { RosterProfile } from "@/lib/generated/prisma/enums";
 import { categoryOf, type QualityDuty } from "@/domain/roster-quality";
 import { DAY_DUTY_WEIGHTS } from "@/domain/profile-affinity";
 import { rosterProfileLabel } from "@/domain/roster-profiles";
 
 /**
- * Regressie-PINNING voor de vier concrete gaten die de LYRA MASTER PROGRAM
- * fase-0/2-inventaris vaststelde (`docs/lyra-knowledge/conflict-report.md`,
- * `docs/lyra-knowledge/knowledge-gap-report.md`). Deze tests REPAREREN NIETS
- * — §33/§34 van de opdracht verbiedt elke inhoudelijke gedragswijziging
- * vóór de bevroren BEFORE-meting bestaat. Ze leggen het HUIDIGE (nog
- * onopgeloste) gedrag vast, zodat een latere, bewuste reparatie een
- * zichtbare, opzettelijke testwijziging is — niet een stille drift die
- * niemand opmerkt.
+ * Regressie-PINNING voor de gaten die de LYRA MASTER PROGRAM fase-0/2-
+ * inventaris vaststelde (`docs/lyra-knowledge/conflict-report.md`,
+ * `docs/lyra-knowledge/knowledge-gap-report.md`). §33/§34 van de opdracht
+ * verbood elke inhoudelijke gedragswijziging vóór de bevroren BEFORE-meting
+ * bestond — die freeze is nu bevestigd (run `20260927-205217`, zie
+ * `docs/lyra-knowledge/progress.md`), dus wat hieronder nog PIN is, blijft
+ * dat om een andere, met naam genoemde reden.
  *
- * `jsonUit()` (het vijfde, oorspronkelijk gevonden gat) is BUITEN deze
- * pin-suite gelaten: dat is al met een echte regressietoets gedicht in
- * `tests/agent/json-uit-lokaal-model.test.ts` (commit 588c1e5).
+ * Twee van de oorspronkelijk vijf gaten zijn intussen met een echte
+ * regressietoets gedicht en BUITEN deze pin-suite gelaten:
+ *   - `jsonUit()` — `tests/agent/json-uit-lokaal-model.test.ts` (commit `588c1e5`).
+ *   - `memoryProposal` op de lokale-modelroute — `tests/agent/memory-proposal-lokaal-model.test.ts`
+ *     (na de BEFORE-freeze: dit is Lyra-agent-plumbing, geen scheduling-
+ *     domeinregel, en dus zonder verder risico voor het platform zelf te
+ *     repareren).
  */
 
-describe("PIN — memoryProposal werkt alleen in de stub, niet in de echte lokale-modelroute", () => {
-  it("de JSON-planinstructie van het echte model beschrijft geen 'memoryProposal'-veld", async () => {
-    const { planInstructie } = await import("@/server/agent/model/local");
-    const instructie = planInstructie();
-    expect(instructie).not.toContain("memoryProposal");
-    // Ter vergelijking: 'proposal' (het rekenvoorstel) staat er wél in —
-    // dit bewijst dat het ontbreken van memoryProposal geen toeval is,
-    // maar een structureel verschil in wat het model wordt verteld.
-    expect(instructie).toContain("proposal");
+describe("PIN — MIX='Vroeg-Laat-Nacht'-alias: weergavelabel blijft een menselijke productbeslissing", () => {
+  it("de interne bronvermelding van het MIX-dagdienstgewicht markeert de alias nu als onbevestigd (gerepareerd)", () => {
+    // De helft van dit gat is gedicht: DAY_DUTY_WEIGHTS.MIX.source is een
+    // interne toeschrijvingsstring (nooit aan een gebruiker getoond), dus
+    // veilig om — net als VROEG's AANNAME-markering — expliciet als
+    // onbevestigd te labelen zonder dat dit voor iemand zichtbaar gedrag
+    // verandert. Zie profile-affinity.ts voor de exacte tekst.
+    expect(DAY_DUTY_WEIGHTS.MIX.source).toMatch(/onbevestigd/i);
   });
 
-  it("plan() geeft memoryProposal niet door, zelfs als het model het zelf in zijn JSON zet", async () => {
-    const origineleFetch = global.fetch;
-    // Simuleert een Ollama-achtig antwoord waarin het model, hypothetisch,
-    // wél zelf een memoryProposal-object teruggeeft — om te bewijzen dat
-    // NIET het model het gat veroorzaakt, maar de nabewerking in local.ts
-    // die het veld nergens overneemt (in tegenstelling tot 'proposal', dat
-    // via voorstelUit() wel expliciet wordt doorgezet).
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify({
-                intent: "FEEDBACK",
-                toolCalls: [],
-                reasoning: "test",
-                memoryProposal: { scope: "LOCATION", kind: "PREFERENCE", statement: "test-voorkeur", locationCode: "DDR" },
-              }),
-            },
-          },
-        ],
-      }),
-    }) as unknown as typeof fetch;
-
-    try {
-      const { localModel } = await import("@/server/agent/model/local");
-      const model = localModel({ baseUrl: "http://test-mock", model: "test-model", timeoutMs: 5000, temperature: 0, maxTokens: 500 });
-      const plan = await model.plan({
-        text: "Onthoud dat we hier liever geen extreem vroege diensten hebben.",
-        context: { locationCode: "DDR", source: "official", candidateId: null, rosterCode: null, lineNumber: null, weekday: null, dutyCode: null, missing: [] },
-        tools: [],
-        history: [],
-        capabilities: ["agent:memory:write"],
-        suspended: false,
-      });
-      expect(plan.intent).toBe("FEEDBACK");
-      // Het gat, aangetoond: het model probeerde het, local.ts liet het vallen.
-      expect((plan as unknown as Record<string, unknown>).memoryProposal).toBeUndefined();
-    } finally {
-      global.fetch = origineleFetch;
-    }
-  });
-});
-
-describe("PIN — MIX='Vroeg-Laat-Nacht'-alias wordt in code als vaststaand gepresenteerd", () => {
-  it("het dagdienstgewicht van MIX draagt de alias in zijn bronvermelding, zonder onbevestigd-markering", () => {
-    // Vergelijk: DAY_DUTY_WEIGHTS.VROEG draagt WEL een AANNAME-markering
-    // (zie preference-audit.md) — MIX draagt die niet, terwijl het eigen
-    // bronmanifest van dit project (sources/manifest.json) de alias zelf
-    // "NIET bevestigd" noemt. Dat verschil is precies het gat.
-    expect(DAY_DUTY_WEIGHTS.MIX.source).toBe("HUMAN_DOMAIN_INPUT (Vroeg/Laat/Nacht)");
-    expect(DAY_DUTY_WEIGHTS.MIX.source).not.toMatch(/aanname|onbevestigd|unconfirmed/i);
-  });
-
-  it("het weergavelabel van MIX bevat de alias als vast onderdeel van de naam", () => {
+  it("het weergavelabel 'Mix (Vroeg-Laat-Nacht)' blijft ongewijzigd — GEEN codegat, een productbeslissing", () => {
+    // Dit deel van het gat is NIET gerepareerd, met opzet: rosterProfileLabel()
+    // is echte, klantgerichte UI-tekst op 16+ plekken in het live platform
+    // (roostercommissie, medewerker-dashboard, exports) — machinisten zien dit
+    // label dagelijks in hun eigen rooster. Of de historische naam "Vroeg-
+    // Laat-Nacht" moet blijven staan zonder brondekking is een productkeuze
+    // voor NS, niet iets wat deze sessie zelf mag beslissen op basis van één
+    // brondocument dat de alias "niet kan bevestigen" (wat iets anders is dan
+    // "weerlegt"). SOURCE_INPUT_REQUIRED — zie knowledge-gap-report.md.
     expect(rosterProfileLabel(RosterProfile.MIX)).toBe("Mix (Vroeg-Laat-Nacht)");
   });
 });
