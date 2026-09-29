@@ -1,0 +1,8 @@
+{"timestamp":"2026-09-27T21:06:48.576Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"RUN_START","message":"Run gestart (development-run).","data":{"kind":"development-run","productionVersion":"lyra-prod-baseline"}}
+{"timestamp":"2026-09-27T21:06:48.577Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"CHALLENGE_OR_GOAL","message":"Autonome ontwikkelrun gestart (budget 360 minuten)."}
+{"timestamp":"2026-09-27T21:06:48.577Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"HYPOTHESIS","message":"Zwakste dimensie: grounding (score 58)."}
+{"timestamp":"2026-09-27T21:06:48.577Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"CANDIDATE_GENERATED","message":"Kandidaat experiment-grounding-1 gegenereerd."}
+{"timestamp":"2026-09-27T21:06:48.577Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"INFO","message":"Cyclus 1: kandidaat experiment-grounding-1 GEACCEPTEERD als versie lyra-prod-2026-09-27-fixture-1 (dimensie grounding)."}
+{"timestamp":"2026-09-27T21:06:48.578Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"VARIANT_REJECTED","message":"Cyclus 2: kandidaat experiment-grounding-2 verworpen (REJECTED) — dimensie grounding, poging 1/2."}
+{"timestamp":"2026-09-27T21:06:48.578Z","runId":"DR-FIXTURE-001","experimentId":null,"kind":"INFO","message":"Cyclus 2 afgerond."}
+{"timestamp":"2026-09-28T03:40:32.892Z","runId":"DR-FIXTURE-001","experimentId":"fixture-exp-1","kind":"CHANGE_APPLIED","message":"Systeeminstructie bijgewerkt (fixture).","change":{"beforeVersion":"lyra-prod-baseline","afterVersion":"lyra-prod-2026-09-27-01","affectedFiles":["NS_PRODUCTION_PROMPT_FILE"],"causedByExperimentId":"fixture-exp-1","rollbackReference":"lyra-prod-baseline","diffReference":null}}

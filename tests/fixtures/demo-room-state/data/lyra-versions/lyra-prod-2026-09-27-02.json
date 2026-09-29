@@ -1,0 +1,45 @@
+{
+  "sourceExperimentId": "fixture-exp-1",
+  "variantId": "experiment-grounding-1",
+  "promptOverrideText": "fixture override tekst met echte benchmarkreferentie",
+  "benchmarkReference": {
+    "pre": {
+      "contextResolution": 80,
+      "multiTurnContext": 80,
+      "machinistTaal": 80,
+      "toolChoice": 80,
+      "falsePremiseCorrection": 80,
+      "grounding": 58,
+      "causalClaims": 80,
+      "unnecessaryClarifications": 80
+    },
+    "post": {
+      "contextResolution": 80,
+      "multiTurnContext": 80,
+      "machinistTaal": 80,
+      "toolChoice": 80,
+      "falsePremiseCorrection": 80,
+      "grounding": 91,
+      "causalClaims": 80,
+      "unnecessaryClarifications": 80
+    },
+    "holdout": {
+      "contextResolution": 79,
+      "multiTurnContext": 80,
+      "machinistTaal": 80,
+      "toolChoice": 80,
+      "falsePremiseCorrection": 80,
+      "grounding": 88,
+      "causalClaims": 80,
+      "unnecessaryClarifications": 80
+    }
+  },
+  "changedFiles": [],
+  "knownIssues": [
+    "Nog niet getest tegen nachtreeks-scenario's."
+  ],
+  "reasonForPromotion": "Fixture met echte benchmarkreferentie: grounding verbeterde van 58% naar 91% zonder holdoutverslechtering.",
+  "id": "lyra-prod-2026-09-27-02",
+  "createdAt": "2026-09-27T21:19:30.761Z",
+  "status": "SUPERSEDED"
+}

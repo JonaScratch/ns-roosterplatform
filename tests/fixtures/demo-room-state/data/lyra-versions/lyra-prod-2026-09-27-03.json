@@ -1,0 +1,43 @@
+{
+  "sourceExperimentId": "fixture-exp-3",
+  "variantId": "experiment-toolchoice-1",
+  "promptOverrideText": "fixture override tekst variant 2",
+  "benchmarkReference": {
+    "pre": {
+      "contextResolution": 80,
+      "multiTurnContext": 80,
+      "machinistTaal": 80,
+      "toolChoice": 62,
+      "falsePremiseCorrection": 80,
+      "grounding": 80,
+      "causalClaims": 80,
+      "unnecessaryClarifications": 80
+    },
+    "post": {
+      "contextResolution": 80,
+      "multiTurnContext": 80,
+      "machinistTaal": 80,
+      "toolChoice": 84,
+      "falsePremiseCorrection": 80,
+      "grounding": 80,
+      "causalClaims": 80,
+      "unnecessaryClarifications": 80
+    },
+    "holdout": {
+      "contextResolution": 80,
+      "multiTurnContext": 80,
+      "machinistTaal": 80,
+      "toolChoice": 81,
+      "falsePremiseCorrection": 80,
+      "grounding": 79,
+      "causalClaims": 80,
+      "unnecessaryClarifications": 80
+    }
+  },
+  "changedFiles": [],
+  "knownIssues": [],
+  "reasonForPromotion": "Fixture-basis met echte benchmarkreferentie voor toolChoice.",
+  "id": "lyra-prod-2026-09-27-03",
+  "createdAt": "2026-09-27T21:20:42.330Z",
+  "status": "SUPERSEDED"
+}

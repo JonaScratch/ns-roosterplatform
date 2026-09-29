@@ -1,0 +1,406 @@
+{
+  "runId": "DR-FIXTURE-001",
+  "startedAt": "2026-09-27T20:58:48.578Z",
+  "finishedAt": "2026-09-27T21:06:48.578Z",
+  "startVersionId": "lyra-prod-baseline",
+  "endVersionId": "lyra-prod-baseline",
+  "cycles": [
+    {
+      "runId": "DR-FIXTURE-001",
+      "weakness": {
+        "executed": true,
+        "notExecutedReason": null,
+        "weakestDimension": "grounding",
+        "weakestScore": 58
+      },
+      "candidate": {
+        "id": "experiment-grounding-1",
+        "label": "experiment-grounding-1",
+        "description": "Voeg een expliciete groundingcontrole toe vóór elk antwoord.",
+        "category": "GROUNDING",
+        "productionText": "fixture"
+      },
+      "proof": {
+        "id": "fixture-exp-1",
+        "runId": "DR-FIXTURE-001",
+        "startedAt": "2026-09-27T21:01:48.578Z",
+        "finishedAt": "2026-09-27T21:06:48.578Z",
+        "executed": true,
+        "notExecutedReason": null,
+        "variantId": "experiment-grounding-1",
+        "variantLabel": "experiment-grounding-1",
+        "variantCategory": "GROUNDING",
+        "frozenSetId": "frozen-43",
+        "pre": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 80,
+            "falsePremiseCorrection": 80,
+            "grounding": 58,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.577Z"
+        },
+        "postRuns": [
+          {
+            "agent": {
+              "contextResolution": 80,
+              "multiTurnContext": 80,
+              "machinistTaal": 80,
+              "toolChoice": 80,
+              "falsePremiseCorrection": 80,
+              "grounding": 91,
+              "causalClaims": 80,
+              "unnecessaryClarifications": 80,
+              "latencyMs": {
+                "p50": 500,
+                "p95": 900
+              }
+            },
+            "roster": {
+              "validity": null,
+              "packageQuality": null,
+              "profileFit": null,
+              "restRecovery": null,
+              "fairness": null,
+              "weekends": null,
+              "nightBlocks": null,
+              "rangeerDistribution": null,
+              "worstLineQuality": null,
+              "paretoResult": null,
+              "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+            },
+            "measuredAt": "2026-09-27T21:06:48.577Z"
+          }
+        ],
+        "post": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 80,
+            "falsePremiseCorrection": 80,
+            "grounding": 91,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.577Z"
+        },
+        "postVariance": {},
+        "preHoldout": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 80,
+            "falsePremiseCorrection": 80,
+            "grounding": 58,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.577Z"
+        },
+        "holdout": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 80,
+            "falsePremiseCorrection": 80,
+            "grounding": 88,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.577Z"
+        },
+        "regressions": [],
+        "improvements": [
+          "grounding verbeterde met 33pp"
+        ],
+        "decision": "PROMOTION_CANDIDATE",
+        "reasoning": "Grounding verbeterde substantieel zonder regressie op andere dimensies of holdout.",
+        "knownWeaknesses": []
+      },
+      "decision": "PROMOTION_CANDIDATE",
+      "version": {
+        "sourceExperimentId": "fixture-exp-1",
+        "variantId": "experiment-grounding-1",
+        "promptOverrideText": "fixture override tekst",
+        "benchmarkReference": null,
+        "changedFiles": [],
+        "knownIssues": [],
+        "reasonForPromotion": "Fixture: grounding verbeterde van 58% naar 91% zonder holdoutverslechtering.",
+        "id": "lyra-prod-2026-09-27-01",
+        "createdAt": "2026-09-27T21:06:48.578Z",
+        "status": "SUPERSEDED"
+      }
+    },
+    {
+      "runId": "DR-FIXTURE-001",
+      "weakness": {
+        "executed": true,
+        "notExecutedReason": null,
+        "weakestDimension": "grounding",
+        "weakestScore": 60
+      },
+      "candidate": {
+        "id": "experiment-grounding-2",
+        "label": "experiment-grounding-2",
+        "description": "Alternatieve groundingaanpak met bronvermelding.",
+        "category": "GROUNDING",
+        "productionText": "fixture"
+      },
+      "proof": {
+        "id": "fixture-exp-2",
+        "runId": "DR-FIXTURE-001",
+        "startedAt": "2026-09-27T21:04:48.578Z",
+        "finishedAt": "2026-09-27T21:06:48.578Z",
+        "executed": true,
+        "notExecutedReason": null,
+        "variantId": "experiment-grounding-2",
+        "variantLabel": "experiment-grounding-2",
+        "variantCategory": "GROUNDING",
+        "frozenSetId": "frozen-43",
+        "pre": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 80,
+            "falsePremiseCorrection": 80,
+            "grounding": 58,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.578Z"
+        },
+        "postRuns": [
+          {
+            "agent": {
+              "contextResolution": 80,
+              "multiTurnContext": 80,
+              "machinistTaal": 80,
+              "toolChoice": 70,
+              "falsePremiseCorrection": 80,
+              "grounding": 62,
+              "causalClaims": 80,
+              "unnecessaryClarifications": 80,
+              "latencyMs": {
+                "p50": 500,
+                "p95": 900
+              }
+            },
+            "roster": {
+              "validity": null,
+              "packageQuality": null,
+              "profileFit": null,
+              "restRecovery": null,
+              "fairness": null,
+              "weekends": null,
+              "nightBlocks": null,
+              "rangeerDistribution": null,
+              "worstLineQuality": null,
+              "paretoResult": null,
+              "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+            },
+            "measuredAt": "2026-09-27T21:06:48.578Z"
+          }
+        ],
+        "post": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 70,
+            "falsePremiseCorrection": 80,
+            "grounding": 62,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.578Z"
+        },
+        "postVariance": {},
+        "preHoldout": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 80,
+            "falsePremiseCorrection": 80,
+            "grounding": 58,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.578Z"
+        },
+        "holdout": {
+          "agent": {
+            "contextResolution": 80,
+            "multiTurnContext": 80,
+            "machinistTaal": 80,
+            "toolChoice": 71,
+            "falsePremiseCorrection": 80,
+            "grounding": 61,
+            "causalClaims": 80,
+            "unnecessaryClarifications": 80,
+            "latencyMs": {
+              "p50": 500,
+              "p95": 900
+            }
+          },
+          "roster": {
+            "validity": null,
+            "packageQuality": null,
+            "profileFit": null,
+            "restRecovery": null,
+            "fairness": null,
+            "weekends": null,
+            "nightBlocks": null,
+            "rangeerDistribution": null,
+            "worstLineQuality": null,
+            "paretoResult": null,
+            "notApplicableReason": "Fixture — geen roosterkwaliteit gemeten."
+          },
+          "measuredAt": "2026-09-27T21:06:48.578Z"
+        },
+        "regressions": [
+          "toolChoice regresseerde van 80% naar 70%"
+        ],
+        "improvements": [],
+        "decision": "REJECTED",
+        "reasoning": "toolChoice regresseerde te veel t.o.v. de 3pp-ruismarge — kandidaat verworpen.",
+        "knownWeaknesses": []
+      },
+      "decision": "REJECTED",
+      "version": null
+    }
+  ],
+  "acceptedCount": 1,
+  "rejectedCount": 1,
+  "bestCandidateVersionId": "lyra-prod-2026-09-27-01",
+  "stopReason": null,
+  "timeline": [],
+  "inProgress": true
+}

@@ -1,0 +1,14 @@
+=== Demo Room-run DR-FIXTURE-001 (development-run) ===
+Gestart: 2026-09-27T21:06:48.576Z
+Production Lyra-versie: lyra-prod-baseline
+Sandbox parent/versie: n.v.t.
+Model/config: onbekend
+Challenge/doel: n.v.t.
+2026-09-27T21:06:48.576Z | RUN_START | Run gestart (development-run). | kind=development-run | productionVersion=lyra-prod-baseline
+2026-09-27T21:06:48.577Z | CHALLENGE_OR_GOAL | Autonome ontwikkelrun gestart (budget 360 minuten).
+2026-09-27T21:06:48.577Z | HYPOTHESIS | Zwakste dimensie: grounding (score 58).
+2026-09-27T21:06:48.577Z | CANDIDATE_GENERATED | Kandidaat experiment-grounding-1 gegenereerd.
+2026-09-27T21:06:48.577Z | INFO | Cyclus 1: kandidaat experiment-grounding-1 GEACCEPTEERD als versie lyra-prod-2026-09-27-fixture-1 (dimensie grounding).
+2026-09-27T21:06:48.578Z | VARIANT_REJECTED | Cyclus 2: kandidaat experiment-grounding-2 verworpen (REJECTED) — dimensie grounding, poging 1/2.
+2026-09-27T21:06:48.578Z | INFO | Cyclus 2 afgerond.
+2026-09-28T03:40:32.892Z | fixture-exp-1 | CHANGE_APPLIED | Systeeminstructie bijgewerkt (fixture). | before=lyra-prod-baseline after=lyra-prod-2026-09-27-01 files=NS_PRODUCTION_PROMPT_FILE
