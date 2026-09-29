@@ -1,0 +1,208 @@
+{
+  "schema": "ns-v106-golden-grade-extension/2",
+  "measurement": "after-20260929-234655-r1",
+  "gradedAt": "2026-09-29T22:11:58.988Z",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "byCategory": {
+    "L": {
+      "GOED": 15
+    },
+    "O": {
+      "GOED": 5,
+      "FOUT": 2
+    }
+  },
+  "byHoldout": {
+    "dev": {
+      "GOED": 17,
+      "FOUT": 1
+    },
+    "holdout": {
+      "GOED": 3,
+      "FOUT": 1
+    }
+  },
+  "items": [
+    {
+      "id": "L-DDR-50MIX-vs-DDR-BLM",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-BLM zwaarder (3 vs 0)",
+      "ms": 8202
+    },
+    {
+      "id": "L-DDR-50MIX-vs-DDR-LN",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-LN zwaarder (6 vs 0)",
+      "ms": 9789
+    },
+    {
+      "id": "L-DDR-50MIX-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-MIX zwaarder (10 vs 0)",
+      "ms": 7097
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-L",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-BLM zwaarder (3 vs 0)",
+      "ms": 10150
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-LN",
+      "category": "L",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "verwacht DDR-LN zwaarder (6 vs 3)",
+      "ms": 18876
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-MIX zwaarder (10 vs 3)",
+      "ms": 9968
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-BLM zwaarder (3 vs 0)",
+      "ms": 9667
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-VL",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-BLM zwaarder (3 vs 0)",
+      "ms": 13252
+    },
+    {
+      "id": "L-DDR-L-vs-DDR-LN",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-LN zwaarder (6 vs 0)",
+      "ms": 10345
+    },
+    {
+      "id": "L-DDR-L-vs-DDR-MIX",
+      "category": "L",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "verwacht DDR-MIX zwaarder (10 vs 0)",
+      "ms": 12108
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-MIX zwaarder (10 vs 6)",
+      "ms": 10767
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-LN zwaarder (6 vs 0)",
+      "ms": 6727
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-VL",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-LN zwaarder (6 vs 0)",
+      "ms": 8369
+    },
+    {
+      "id": "L-DDR-MIX-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "verwacht DDR-MIX zwaarder (10 vs 0)",
+      "ms": 11491
+    },
+    {
+      "id": "L-DDR-MIX-vs-DDR-VL",
+      "category": "L",
+      "holdout": true,
+      "status": "GOED",
+      "detail": "verwacht DDR-MIX zwaarder (10 vs 0)",
+      "ms": 8365
+    },
+    {
+      "id": "O-DDR-50MIX-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen nachtreeks in dit rooster, agent bevestigt dat",
+      "ms": 9594
+    },
+    {
+      "id": "O-DDR-BLM-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "langste reeks 3, tekst noemt 3",
+      "ms": 10117
+    },
+    {
+      "id": "O-DDR-L-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen nachtreeks in dit rooster, agent bevestigt dat",
+      "ms": 13089
+    },
+    {
+      "id": "O-DDR-LN-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "status": "FOUT",
+      "detail": "verwacht langste reeks 3, tekst noemt 6",
+      "ms": 22121
+    },
+    {
+      "id": "O-DDR-MIX-nachtreeks",
+      "category": "O",
+      "holdout": true,
+      "status": "FOUT",
+      "detail": "verwacht langste reeks 5, tekst noemt 8",
+      "ms": 15963
+    },
+    {
+      "id": "O-DDR-V-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen nachtreeks in dit rooster, agent bevestigt dat",
+      "ms": 9330
+    },
+    {
+      "id": "O-DDR-VL-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "status": "GOED",
+      "detail": "geen nachtreeks in dit rooster, agent bevestigt dat",
+      "ms": 8517
+    }
+  ]
+}
