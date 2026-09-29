@@ -80,5 +80,7 @@ describe("overgang (BEFORE→AFTER per item)", () => {
     expect(overgang(["FOUT", "FOUT", "FOUT"], ["FOUT", "FOUT", "GOED"])).toBe("INSTABIEL");
     expect(overgang(["GOED", "FOUT", "GOED"], ["FOUT", "FOUT", "FOUT"])).toBe("GEREGRESSEERD");
     expect(overgang(["ONBEOORDEELD", "ONBEOORDEELD"], ["ONBEOORDEELD", "ONBEOORDEELD"])).toBe("ONBEOORDEELD");
+    // Beide kanten stabiel, ander niet-GOED-oordeel: verschoven, niet instabiel.
+    expect(overgang(["FOUT", "FOUT", "FOUT"], ["ONBEOORDEELD", "ONBEOORDEELD", "ONBEOORDEELD"])).toBe("VERSCHOVEN");
   });
 });

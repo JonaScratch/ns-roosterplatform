@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { afterStatus } from "./after-status";
 
 /**
  * De echte, lokale LYRA MASTER PROGRAM AFTER-run-orchestrator (Fase 9 + 11 + 12).
@@ -315,8 +316,15 @@ async function main(): Promise<void> {
       }
     }
 
-    const status =
-      localModel.reachable === true && manifest?.stubExplicitlyDisabled === true && alleReplicatenOk && aggregatieOk && ruweBestanden.length === REPLICATES * 2 ? "PASS" : "FAIL";
+    const { status, redenen } = afterStatus({
+      replicaten: REPLICATES,
+      modelBereikbaar: localModel.reachable === true,
+      stubUit: manifest?.stubExplicitlyDisabled === true,
+      alleReplicatenOk,
+      aggregatieOk,
+      ruweBestandsnamen: ruweBestanden.map((b) => path.posix.basename(b.pad)),
+      extensieGedraaid: extensieOk,
+    });
 
     const verificatie = {
       schema: "ns-lyra-master-after-verification/1",
@@ -324,6 +332,7 @@ async function main(): Promise<void> {
       phase: "after",
       recordedAt: new Date().toISOString(),
       status,
+      failReasons: redenen,
       subject: { headCommit: identiteit.head, branch: identiteit.branch, trackedClean: true },
       model: { name: localModel.model ?? null, reachable: localModel.reachable ?? null },
       stubExplicitlyDisabled: manifest?.stubExplicitlyDisabled ?? null,
@@ -355,7 +364,7 @@ async function main(): Promise<void> {
     console.log(`\nStatus: ${status}`);
     console.log(`Uitvoer: ${outDir}`);
     if (status !== "PASS") {
-      console.log("Reden(en) voor FAIL: zie AFTER-VERIFICATION.json.");
+      console.log(`Reden(en) voor FAIL:\n${redenen.map((r) => `  - ${r}`).join("\n")}\n(ook vastgelegd als failReasons in AFTER-VERIFICATION.json)`);
       exitCode = 1;
     } else {
       console.log("\nCommit en push de nieuwe map(pen) onder docs/lyra-knowledge/benchmarks/after/, docs/lyra-knowledge/benchmarks/adversarial/, docs/lyra-knowledge/benchmarks/comparisons/ en docs/v1.0.6/benchmarks/ terug naar deze branch — dat is het AFTER-bewijs.");

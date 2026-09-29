@@ -128,11 +128,33 @@ const woorden = (tekst: string): string[] =>
     .split(/\s+/)
     .filter((w) => w.length > 2 && !STOPWOORDEN.has(w));
 
+/**
+ * Kernwoorden achteraan Nederlandse samenstellingen: "weekendnorm",
+ * "rusttijd", "nachtgrens". Het regelbestand gebruikt vaak een ándere
+ * samenstelling met dezelfde stam ("Weekendbalans"), dus zonder deze stap
+ * vond "weekendnorm" niets — en maakte het model daar in de AFTER-run
+ * 20260929-193436 "er staat niets in het document" van, terwijl de regel
+ * gewoon bestaat (adversarial P; S vond hem wél met "Regio West" erbij).
+ */
+const KERNWOORDEN = ["normen", "norm", "balans", "grenzen", "grens", "limiet", "eisen", "eis", "tijden", "tijd", "duur", "periode", "kaders", "kader", "regels", "regel", "aantal"];
+
+/** De stam van een samenstelling met een kernwoord achteraan, of `null`. */
+export function samenstellingsStam(woord: string): string | null {
+  for (const kern of KERNWOORDEN) {
+    if (woord.length > kern.length + 3 && woord.endsWith(kern)) {
+      const stam = woord.slice(0, -kern.length).replace(/s$/, "");
+      if (stam.length >= 4 && !STOPWOORDEN.has(stam)) return stam;
+    }
+  }
+  return null;
+}
+
 /** De zoekwoorden van een vraag, aangevuld met wat ze in het regelbestand heten. */
 function zoekwoorden(vraag: string): string[] {
   const basis = woorden(vraag);
-  const extra = basis.flatMap((w) => SYNONIEMEN[w] ?? []);
-  return [...new Set([...basis, ...extra])];
+  const stammen = basis.map(samenstellingsStam).filter((w): w is string => w !== null);
+  const extra = [...basis, ...stammen].flatMap((w) => SYNONIEMEN[w] ?? []);
+  return [...new Set([...basis, ...stammen, ...extra])];
 }
 
 /**

@@ -77,3 +77,33 @@ export function vraagtOmTeRekenen(tekst: string): boolean {
   const t = tekst.toLowerCase();
   return bevat(t, ...REKENVERZOEK_HARD) || bevat(t, ...REKENVERZOEK_ZACHT) || meerdereRondes(t);
 }
+
+/**
+ * Onderwerpen waarvoor precies één tool het antwoord bevat.
+ *
+ * Aanleiding: AFTER-run 20260929-193436 — op "de langste aaneengesloten reeks
+ * nachtdiensten" koos het lokale model `dutyKindPerLine` (nachten per regel,
+ * niet opeenvolgend) of kwam het met een onleesbaar plan; alleen
+ * `nightStructure` kent de reeksen. De systeeminstructie zei dat al; sturing
+ * is geen garantie. Bewust een korte, uitlegbare lijst — geen trefwoordenwolk.
+ */
+export interface OnderwerpTool {
+  readonly onderwerp: string;
+  readonly tool: string;
+  readonly herkent: (tekst: string) => boolean;
+}
+
+export const ONDERWERP_TOOLS: readonly OnderwerpTool[] = [
+  {
+    onderwerp: "NACHTREEKS",
+    tool: "nightStructure",
+    herkent: (t) =>
+      /\bnacht/.test(t) && /(reeks|achter elkaar|aaneengesloten|opeenvolg|op rij|\bblok|cluster|na elkaar|op elkaar)/.test(t),
+  },
+];
+
+/** De tool die bij het onderwerp van deze vraag hoort, of `null`. */
+export function onderwerpTool(tekst: string): OnderwerpTool | null {
+  const t = tekst.toLowerCase();
+  return ONDERWERP_TOOLS.find((o) => o.herkent(t)) ?? null;
+}

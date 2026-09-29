@@ -1,5 +1,5 @@
 import type { AgentPlan } from "./model/types";
-import { vraagtOmTeRekenen } from "./request-shape";
+import { onderwerpTool, vraagtOmTeRekenen } from "./request-shape";
 
 /**
  * Plancontrole: twee grenzen die niet van de welwillendheid van een taalmodel
@@ -33,6 +33,8 @@ import { vraagtOmTeRekenen } from "./request-shape";
  *     wordt alleen gesteld ná het kijken, zodat de vraag gericht kan zijn.
  *     Weigeringen, "niet vast te stellen", regelvragen en geheugenvoorstellen
  *     blijven ongemoeid.
+ *  4. Hoort bij het onderwerp één bepaalde tool (`ONDERWERP_TOOLS`, bv.
+ *     nachtreeksen → nightStructure) en ontbreekt die, dan wordt hij aangevuld.
  */
 
 export interface PlanContext {
@@ -41,17 +43,29 @@ export interface PlanContext {
 }
 
 export interface PlanCorrectie {
-  readonly regel: "VOORSTEL_ZONDER_REKENVERZOEK" | "ONLEESBAAR_PLAN" | "ONDERZOEK_VOOR_OORDEEL";
+  readonly regel: "VOORSTEL_ZONDER_REKENVERZOEK" | "ONLEESBAAR_PLAN" | "ONDERZOEK_VOOR_OORDEEL" | "ONTBREKENDE_ONDERWERPTOOL";
   readonly uitleg: string;
 }
 
 const NIET_AANRAKEN: ReadonlySet<string> = new Set(["GEWEIGERD", "REGELVRAAG", "NIET_VAST_TE_STELLEN"]);
 
-/** De opzoeking die bij de bekende schermcontext hoort, als die tool mag. */
-function contextOpzoeking(ctx: PlanContext, toegestaan: ReadonlySet<string>): AgentPlan["toolCalls"] {
-  if (ctx.rosterCode && ctx.lineNumber && toegestaan.has("rosterLine")) return [{ tool: "rosterLine", input: {} }];
-  if (ctx.rosterCode && toegestaan.has("rosterProject")) return [{ tool: "rosterProject", input: {} }];
-  return [];
+/**
+ * De opzoeking die bij de bekende context en het onderwerp van de vraag hoort.
+ *
+ * Met een bekende regel: die regel (`rosterLine`), plus de onderwerptool.
+ * Met alleen een rooster: uitsluitend de onderwerptool. Een algemeen
+ * `rosterProject` gaf daar in run 20260929-193436 geen antwoord maar wel een
+ * misleidende bijzin ("223 diensten in DDR-50MIX" — dat is het hele pakket).
+ * `metAlgemeen` staat dat overzicht alleen toe als noodgreep bij een
+ * onleesbaar plan zonder onderwerp (J-1: "welke diensten staan er in dit rooster").
+ */
+function contextOpzoeking(ctx: PlanContext, vraag: string, toegestaan: ReadonlySet<string>, metAlgemeen: boolean): AgentPlan["toolCalls"] {
+  const onderwerp = onderwerpTool(vraag);
+  const calls: { tool: string; input: Record<string, unknown> }[] = [];
+  if (ctx.rosterCode && ctx.lineNumber && toegestaan.has("rosterLine")) calls.push({ tool: "rosterLine", input: {} });
+  if (ctx.rosterCode && onderwerp && toegestaan.has(onderwerp.tool)) calls.push({ tool: onderwerp.tool, input: {} });
+  if (calls.length === 0 && metAlgemeen && ctx.rosterCode && toegestaan.has("rosterProject")) calls.push({ tool: "rosterProject", input: {} });
+  return calls;
 }
 
 export function bewaakPlan(
@@ -70,7 +84,7 @@ export function bewaakPlan(
   }
 
   if (p.onleesbaar) {
-    const opzoeking = contextOpzoeking(ctx, toegestaan);
+    const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, true);
     if (opzoeking.length > 0) {
       correcties.push({ regel: "ONLEESBAAR_PLAN", uitleg: "geen leesbaar plan; de bekende schermcontext opgezocht in plaats van algemeen door te vragen" });
       const { clarification: _weg, onleesbaar: _ook, ...rest } = p;
@@ -81,11 +95,31 @@ export function bewaakPlan(
   const alleenPraten =
     p.toolCalls.length === 0 && !p.refusal && !p.proposal && !p.memoryProposal && !p.cannotDetermine && !NIET_AANRAKEN.has(p.intent);
   if (alleenPraten) {
-    const opzoeking = contextOpzoeking(ctx, toegestaan);
+    const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, false);
     if (opzoeking.length > 0) {
       correcties.push({ regel: "ONDERZOEK_VOOR_OORDEEL", uitleg: `geen enkele tool gepland terwijl de context bekend is; eerst ${opzoeking.map((o) => o.tool).join(", ")}` });
       p = { ...p, toolCalls: opzoeking };
     }
+  }
+
+  // Regel 4: de tool die bij het onderwerp hoort ontbreekt in een plan dat wél
+  // gegevens ophaalt. Aanvullen, niets weghalen. Regelvragen, voorstellen en
+  // weigeringen blijven ongemoeid: "mag ik na drie nachten achter elkaar…" is
+  // een vraag over de regel, niet over dit rooster.
+  const onderwerp = onderwerpTool(vraag);
+  const regelvraag = p.intent === "REGELVRAAG" || p.toolCalls.some((c) => c.tool === "ruleSearch" || c.tool === "ruleLookup");
+  if (
+    onderwerp &&
+    ctx.rosterCode &&
+    toegestaan.has(onderwerp.tool) &&
+    p.toolCalls.length > 0 &&
+    !p.toolCalls.some((c) => c.tool === onderwerp.tool) &&
+    !regelvraag &&
+    !p.refusal &&
+    !p.proposal
+  ) {
+    correcties.push({ regel: "ONTBREKENDE_ONDERWERPTOOL", uitleg: `de vraag gaat over ${onderwerp.onderwerp.toLowerCase()}; ${onderwerp.tool} aangevuld naast ${p.toolCalls.map((c) => c.tool).join(", ")}` });
+    p = { ...p, toolCalls: [...p.toolCalls, { tool: onderwerp.tool, input: {} }] };
   }
 
   return { plan: p, correcties };

@@ -1,0 +1,11 @@
+{
+  "schema": "ns-lyra-master-after-reverification/1",
+  "runId": "20260929-193436",
+  "reverifiedAt": "2026-09-29T19:14:01.590Z",
+  "originalStatus": "FAIL",
+  "status": "PASS",
+  "failReasons": [],
+  "hashesChecked": 12,
+  "hashesOk": 12,
+  "explanation": "De oorspronkelijke status kwam uit de oude telling ruweBestanden.length === replicates * 2; sinds commit 8c19d91 bevat die lijst ook de extensiebestanden (4 per replicaat), zodat elke volledige run FAIL gaf. Zie scripts/lyra-master/after-status.ts."
+}

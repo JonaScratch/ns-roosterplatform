@@ -186,3 +186,60 @@ describe("lokale compose: de wedervraag van het plan gaat niet meer verloren", (
     expect(verstuurd).toContain("sluit af met precies deze vraag aan de gebruiker: Wat vind je het zwaarst?");
   });
 });
+
+describe("onderwerptool — nachtreeksen horen bij nightStructure (run 20260929-193436, O-items)", async () => {
+  const { onderwerpTool } = await import("@/server/agent/request-shape");
+  const reeksvragen = [
+    "Wat is de langste reeks nachten in dit rooster?",
+    "Hoeveel nachten achter elkaar draai ik hier maximaal?",
+    "Hoe lang is het langste blok nachtdiensten?",
+    "Zijn de nachtdiensten aaneengesloten of verspreid?",
+    "Hoeveel opeenvolgende nachtdiensten zitten erin?",
+    "Hoeveel nachten op rij komen er voor?",
+    "Liggen de nachten in één cluster?",
+    "Welke nachtreeksen zitten in DDR-LN?",
+    "Volgen de nachten direct op elkaar?",
+    "Draai ik de nachten na elkaar of met rust ertussen?",
+  ];
+  const geenReeks = [
+    "Hoeveel nachtdiensten heeft dit rooster in totaal?",
+    "Welke regels hebben een nachtdienst?",
+    "Hoe laat begint de nachtdienst op dinsdag?",
+    "Is dit rooster zwaarder dan de andere?",
+    "Wat staat er op regel 3?",
+  ];
+  for (const v of reeksvragen) it(`herkent: ${v}`, () => expect(onderwerpTool(v)?.tool).toBe("nightStructure"));
+  for (const v of geenReeks) it(`geen reeksvraag: ${v}`, () => expect(onderwerpTool(v)).toBeNull());
+});
+
+describe("regel 4 en de nieuwe contextopzoeking", () => {
+  const rooster = { rosterCode: "DDR-MIX", lineNumber: null };
+
+  it("vult nightStructure aan naast een tool die de reeks niet kent", () => {
+    const { plan: p, correcties } = bewaakPlan(plan({ toolCalls: [{ tool: "dutyKindPerLine", input: { kind: "NACHT" } }] }), "Wat is de langste aaneengesloten reeks nachtdiensten?", rooster, ALLE_TOOLS);
+    expect(p.toolCalls.map((c) => c.tool)).toEqual(["dutyKindPerLine", "nightStructure"]);
+    expect(correcties.map((c) => c.regel)).toEqual(["ONTBREKENDE_ONDERWERPTOOL"]);
+  });
+
+  it("laat een regelvraag over nachten achter elkaar met rust", () => {
+    const origineel = plan({ intent: "REGELVRAAG", toolCalls: [{ tool: "ruleSearch", input: { query: "nachten achter elkaar" } }] });
+    expect(bewaakPlan(origineel, "Mag ik na drie nachten achter elkaar meteen vroeg?", rooster, ALLE_TOOLS).plan).toEqual(origineel);
+  });
+
+  it("zonder bekend rooster vult hij niets aan", () => {
+    const origineel = plan({ toolCalls: [{ tool: "dutyKindCounts", input: { kind: "NACHT" } }] });
+    expect(bewaakPlan(origineel, "Wat is de langste reeks nachten?", { rosterCode: null, lineNumber: null }, ALLE_TOOLS).plan).toEqual(origineel);
+  });
+
+  it("een onleesbaar plan over nachtreeksen zoekt nightStructure op, niet het algemene rosterProject", () => {
+    const { plan: p } = bewaakPlan(plan({ intent: "VERDUIDELIJKING_NODIG", clarification: "?", onleesbaar: true }), "Wat is de langste aaneengesloten reeks nachtdiensten in DDR-LN?", { rosterCode: "DDR-LN", lineNumber: null }, ALLE_TOOLS);
+    expect(p.toolCalls).toEqual([{ tool: "nightStructure", input: {} }]);
+  });
+
+  it("met alleen een rooster en geen onderwerp injecteert regel 3 niets (geen misleidend pakketoverzicht)", () => {
+    const origineel = plan({ intent: "VERDUIDELIJKING_NODIG", clarification: "Wat bedoel je met die term?" });
+    const { plan: p, correcties } = bewaakPlan(origineel, "Hoeveel van die bijzondere diensten zitten erin?", { rosterCode: "DDR-50MIX", lineNumber: null }, ALLE_TOOLS);
+    expect(p).toEqual(origineel);
+    expect(correcties).toEqual([]);
+  });
+});

@@ -60,3 +60,26 @@ describe("regels zoeken op gewone woorden", () => {
     expect(uitkomst.rulesetLegalStatus).toMatch(/VERIFIED/);
   });
 });
+
+describe("samenstellingen: een ander kernwoord met dezelfde stam (run 20260929-193436)", async () => {
+  const { samenstellingsStam } = await import("@/server/agent/knowledge");
+
+  it("vindt de weekendregel ook via 'weekendnorm' (het regelbestand zegt 'Weekendbalans')", () => {
+    const ids = searchRules("Wat is de weekendnorm?", context).hits.map((h) => h.ruleId);
+    expect(ids).toContain("REGIO_WEST_WEEKEND_TARGET");
+  });
+
+  it("stammen alleen bij een echt kernwoord achteraan, en nooit naar een stopwoord", () => {
+    expect(samenstellingsStam("weekendnorm")).toBe("weekend");
+    expect(samenstellingsStam("rusttijd")).toBe("rust");
+    expect(samenstellingsStam("nachtgrens")).toBe("nacht");
+    expect(samenstellingsStam("arbeidsduur")).toBe("arbeid");
+    expect(samenstellingsStam("diensttijd")).toBeNull();
+    expect(samenstellingsStam("weekend")).toBeNull();
+    expect(samenstellingsStam("tijd")).toBeNull();
+  });
+
+  it("blijft niets vinden waar niets te vinden is", () => {
+    expect(searchRules("Wat is de omloopnorm voor sprinterdiensten?", context).hits.filter((h) => /WEEKEND/.test(h.ruleId))).toEqual([]);
+  });
+});

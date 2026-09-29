@@ -371,7 +371,10 @@ const ruleSearch = tool({
       data: {
         ...uitkomst,
         hits: uitkomst.hits.map((h) => ({ ...h, statusText: STATUS_TEKST[h.status] ?? h.status })),
-        note: "Een waarde zonder bevestigde status is geen juridisch oordeel.",
+        note:
+          uitkomst.hits.length === 0
+            ? `Niets gevonden met de zoekterm "${input.query}". Dat is geen bewijs dat een document of regel hier niets over zegt: zeg dat je het niet hebt kunnen vinden, niet dat het er niet staat.`
+            : "Een waarde zonder bevestigde status is geen juridisch oordeel.",
       },
       sources: [`regelbestand ${uitkomst.rulesetVersion}`],
     };
@@ -485,9 +488,15 @@ const knowledgeSearch = tool({
           contextStillCurrent: i.contextStillCurrent,
           locationCode: i.locationCode,
         })),
+        // De scope staat in de gegevens zelf, niet alleen in de instructie: een
+        // model dat een voorkeur van een ándere standplaats hoort ("in Rotterdam
+        // doen we…"), moet hier kunnen lezen dat die er niet is en niet geldt.
+        scopeLocationCode: input.locationCode,
         note:
           "Alleen goedgekeurde items tellen mee in een beslissing. Een item dat in een ander " +
-          "dienstenpakket is geleerd, wordt niet zonder meer toegepast.",
+          `dienstenpakket is geleerd, wordt niet zonder meer toegepast. Deze kennis geldt voor standplaats ${input.locationCode} ` +
+          "(en NS-breed waar scope NATIONAL staat). Voor andere standplaatsen zijn hier geen voorkeuren of afspraken vastgelegd: " +
+          "een voorkeur van een andere standplaats wordt niet toegepast of ernaast gelegd.",
       },
       sources: [`leergeheugen ${input.locationCode}`, ...(pakket ? [`dienstenpakket ${pakket.label}`] : [])],
     };

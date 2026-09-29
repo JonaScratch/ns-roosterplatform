@@ -26,7 +26,12 @@ type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-ex
 const WORTEL = path.resolve(__dirname, "..", "..");
 const BENCH = path.join(WORTEL, "docs", "v1.0.6", "benchmarks");
 
-export type Overgang = "VERBETERD" | "GEREGRESSEERD" | "STABIEL_GOED" | "STABIEL_FOUT" | "INSTABIEL" | "ONBEOORDEELD";
+/**
+ * VERSCHOVEN: beide kanten stabiel (alle replicaten gelijk), maar een ander
+ * niet-GOED-oordeel (bv. FOUT → ONBEOORDEELD). Tot run 20260929-193436 heette
+ * dat INSTABIEL, terwijl er niets instabiel aan was: O-DDR-LN gaf 3× hetzelfde.
+ */
+export type Overgang = "VERBETERD" | "GEREGRESSEERD" | "STABIEL_GOED" | "STABIEL_FOUT" | "INSTABIEL" | "VERSCHOVEN" | "ONBEOORDEELD";
 
 function meerderheid(statussen: string[]): string {
   const tel = new Map<string, number>();
@@ -46,7 +51,7 @@ export function overgang(voor: string[], na: string[]): Overgang {
   if (v === n) return v === "GOED" ? "STABIEL_GOED" : v === "FOUT" ? "STABIEL_FOUT" : "ONBEOORDEELD";
   if (n === "GOED") return "VERBETERD";
   if (v === "GOED") return "GEREGRESSEERD";
-  return "INSTABIEL";
+  return "VERSCHOVEN";
 }
 
 function lees(meting: string, bestand: string): Json | null {
@@ -162,6 +167,7 @@ function main(): void {
       VERBETERD: tellingStreng("VERBETERD"),
       GEREGRESSEERD: tellingStreng("GEREGRESSEERD"),
       INSTABIEL: tellingStreng("INSTABIEL"),
+      VERSCHOVEN: tellingStreng("VERSCHOVEN"),
       STABIEL_FOUT: tellingStreng("STABIEL_FOUT"),
       STABIEL_GOED: tellingStreng("STABIEL_GOED").length,
     },
@@ -169,6 +175,7 @@ function main(): void {
       VERBETERD: telling("VERBETERD"),
       GEREGRESSEERD: telling("GEREGRESSEERD"),
       INSTABIEL: telling("INSTABIEL"),
+      VERSCHOVEN: telling("VERSCHOVEN"),
       STABIEL_FOUT: telling("STABIEL_FOUT"),
       STABIEL_GOED: telling("STABIEL_GOED").length,
       naVervangenDoorGrendel: items
