@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { randomUUID } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import http from "node:http";
 import path from "node:path";
@@ -14,6 +15,7 @@ import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults"
 import { getDevelopmentRunResult, listAllCandidates, listDevelopmentRunResults } from "./store/developmentRuns";
 import { compareVersions, displayNameForVersionId, latestFindings, promotionHistory, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
+import { routerPageNames, uiAssetReport } from "./uiAssets";
 
 /**
  * Het lokale dashboard (§20/§21 en v0.2 §4-§10).
@@ -36,6 +38,24 @@ const STATIC_CONTENT_TYPES: Record<string, string> = {
   ".json": "application/json; charset=utf-8",
 };
 const STATIC_EXTENSIONS = Object.keys(STATIC_CONTENT_TYPES);
+
+const UI_ASSETS = uiAssetReport(UI_DIR, routerPageNames(UI_DIR));
+
+function gitBuild(): string {
+  try {
+    return execFileSync("git", ["rev-parse", "--short=12", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" }).trim();
+  } catch {
+    return "onbekend";
+  }
+}
+
+/** Identiteit van dít serverproces — laat de UI en een tweede opstart zien welke code er werkelijk draait. */
+const SERVER_INFO = {
+  build: gitBuild(),
+  startedAt: new Date().toISOString(),
+  pid: process.pid,
+  uiAssetHash: UI_ASSETS.hash,
+};
 
 function json(res: http.ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
@@ -297,6 +317,9 @@ const server = http.createServer((req, res) => {
     // NS-branding (§3 van de finale integratieronde): het bestaande, echte
     // bedrijfslogo — geen nieuw of zelf getekend logo, en geen kopie ervan
     // onder demo-room/, gewoon rechtstreeks vanaf zijn eigen plek geserveerd.
+    if (req.method === "GET" && url.pathname === "/api/server-info") {
+      return json(res, 200, { ...SERVER_INFO, uiAssetsMissing: UI_ASSETS.missing });
+    }
     if (req.method === "GET" && url.pathname === "/brand/ns-logo.svg") {
       return serveFile(res, path.join(REPO_ROOT, "public", "brand", "ns-logo.svg"), "image/svg+xml");
     }
@@ -512,6 +535,41 @@ const server = http.createServer((req, res) => {
 });
 
 const port = dashboardPort();
+
+// Een oudere server die de poort nog vasthoudt, serveert het nieuwe
+// index.html van schijf maar kent de asset-routes niet: de pagina rendert
+// dan als kale HTML terwijl deze nieuwe server stil sterft op EADDRINUSE.
+// Daarom hier nooit stil falen, maar zeggen wie de poort heeft en hoe je
+// hem stopt.
+server.on("error", (fout: NodeJS.ErrnoException) => {
+  if (fout.code !== "EADDRINUSE") throw fout;
+  void (async () => {
+    let wie = null as { pid?: number; build?: string; startedAt?: string } | null;
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/api/server-info`, { signal: AbortSignal.timeout(2000) });
+      if (res.ok) wie = (await res.json()) as typeof wie;
+    } catch {
+      // geen antwoord: iets anders dan (een recente) Demo Room-server
+    }
+    console.error(`\n[FOUT] Poort ${port} is al in gebruik — deze Demo Room-server start NIET.`);
+    if (wie?.pid) {
+      const verouderd = wie.build !== SERVER_INFO.build ? ` (build ${wie.build}, deze code is ${SERVER_INFO.build} — VEROUDERD)` : "";
+      console.error(`Er draait al een Demo Room-server: PID ${wie.pid}, gestart ${wie.startedAt}${verouderd}.`);
+      console.error(`Sluit dat venster, of stop hem met: ${process.platform === "win32" ? `taskkill /PID ${wie.pid} /F` : `kill ${wie.pid}`}`);
+    } else {
+      console.error("Het proces op die poort geeft geen /api/server-info — waarschijnlijk een Demo Room-server van vóór de UI-opsplitsing,");
+      console.error("die de pagina zonder opmaak toont (/styles.css en /app.js geven daar 404). Zoek en stop hem met:");
+      console.error(process.platform === "win32" ? `  netstat -ano | findstr :${port}    en daarna    taskkill /PID <pid> /F` : `  lsof -i :${port}    en daarna    kill <pid>`);
+    }
+    process.exit(2);
+  })();
+});
+
 server.listen(port, () => {
-  console.log(`Demo Room-dashboard: http://localhost:${port}`);
+  console.log(`Demo Room-dashboard: http://localhost:${port}  (build ${SERVER_INFO.build}, PID ${process.pid})`);
+  if (UI_ASSETS.missing.length > 0) {
+    console.error(`[FOUT] UI-bestanden ontbreken: ${UI_ASSETS.missing.join(", ")} — de pagina zal niet correct renderen.`);
+  } else {
+    console.log(`  UI-assets compleet: ${UI_ASSETS.required.length} bestanden (hash ${UI_ASSETS.hash}).`);
+  }
 });

@@ -53,8 +53,29 @@ if not "%OLLAMA_STATUS%"=="200" (
 )
 
 echo.
+echo Controleren of poort 4173 vrij is...
+netstat -ano | findstr /R /C:":4173 .*LISTENING" > "%TEMP%\demoroom_port.txt" 2>nul
+rem usebackq + aanhalingstekens: %TEMP% bevat op de meeste pc's een spatie
+rem (C:\Users\Voornaam Achternaam\...), en een ongequote bestandsnaam breekt for /f.
+for /f "usebackq tokens=5" %%P in ("%TEMP%\demoroom_port.txt") do set PORT_PID=%%P
+del "%TEMP%\demoroom_port.txt" >nul 2>nul
+if defined PORT_PID (
+  echo.
+  echo [FOUT] Poort 4173 is al in gebruik door proces PID !PORT_PID!.
+  echo Meestal is dat een OUDER Demo Room-venster dat nog openstaat. Zo'n oude
+  echo server toont de pagina zonder opmaak: groot logo, standaardknoppen.
+  echo Sluit dat venster, of stop het proces met:
+  echo   taskkill /PID !PORT_PID! /F
+  echo en start dit bestand daarna opnieuw.
+  pause
+  exit /b 1
+)
+
+echo.
 echo Demo Room-dashboard starten op http://localhost:4173 ...
-start "" http://localhost:4173
+rem Browser pas openen als de server de tijd heeft gehad om te luisteren,
+rem niet ervoor: anders kan hij op een ander (oud) proces uitkomen.
+start "" cmd /c "timeout /t 6 /nobreak >nul & start http://localhost:4173"
 call npx tsx demo-room/src/server.ts
 
 pause
