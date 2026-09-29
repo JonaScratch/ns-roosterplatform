@@ -1,7 +1,7 @@
 // Development Runs (§ UI/UX REBUILD, foto 3): commandocentrum voor autonome
 // Lyra-development runs. Configureren + live meekijken wat de Sandbox doet.
 
-import { j, post, veilig, titleIcon, iconChip, ICONS, renderStepper, lineChart } from "../lib/shared.js";
+import { j, post, veilig, titleIcon, iconChip, ICONS, renderStepper, lineChart, esc } from "../lib/shared.js";
 import { confirmAction } from "../app.js";
 
 const DUUR_OPTIES = [
@@ -82,7 +82,8 @@ function html() {
         <div class="card">
           <h3>${titleIcon("refresh", "#1f5fd0")}Live ontwikkellus<span id="dr-progress-wrap" style="margin-left:auto; display:flex; align-items:center; gap:8px; font-size:11px; color:#7a8aa3; font-weight:600;"><span>Runvoortgang</span><span style="width:90px; height:6px; background:#eef1f6; border-radius:3px; overflow:hidden; display:inline-block;"><span id="dr-progress-bar" style="display:block; height:100%; background:var(--accent); width:0%;"></span></span><span id="dr-progress-pct">0%</span></span></h3>
           <div class="stepper" id="dr-live-stepper" style="margin-bottom:14px;"></div>
-          <div id="dr-live-log" style="font-family: ui-monospace, monospace; font-size:11.5px; background:#0f1f38; color:#c9d6ea; padding:12px 14px; border-radius:9px; max-height:190px; overflow:auto; white-space:pre-wrap; line-height:1.6;">Nog geen actieve run.</div>
+          <div id="dr-live-log" class="dr-events">Nog geen actieve run.</div>
+          <details style="margin-top:8px;"><summary>Ruwe logregels</summary><div id="dr-live-raw" class="dr-raw"></div></details>
           <div id="dr-progress-chart" style="margin-top:14px;"></div>
         </div>
       </div>
@@ -102,6 +103,7 @@ function html() {
       <h3>${titleIcon("users", "#1f5fd0")}Kandidaten in deze run</h3>
       <table><thead><tr><th>Kandidaat</th><th>Aangemaakt</th><th>Verbetering</th><th>Benchmark</th><th>Holdout</th><th>Overtredingen</th><th>Beslissing</th><th>Reden</th></tr></thead><tbody id="dr-candidates"></tbody></table>
     </div>
+    <div class="dr-infobalk">${ICONS.alert}<span>Productieversie blijft onaangeraakt. Alleen na menselijke goedkeuring kan een kandidaat promoveren naar actief.</span></div>
   `;
 }
 
@@ -123,6 +125,26 @@ async function startenRun(minutes) {
   const result = await post("/api/runs/start", body);
   if (result.error) { alert(`Kon niet starten: ${result.error}`); return; }
 }
+
+function uurMinSec(ms) {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  const twee = (n) => String(n).padStart(2, "0");
+  return `${twee(Math.floor(t / 3600))}:${twee(Math.floor((t % 3600) / 60))}:${twee(t % 60)}`;
+}
+
+/** Leesbare weergave per logsoort — de ruwe regels blijven beschikbaar onder "Ruwe logregels". */
+const EVENT_WEERGAVE = {
+  RUN_START: ["play", "Run gestart", "blue"], RUN_END: ["check", "Run beëindigd", "green"],
+  CHALLENGE_OR_GOAL: ["target", "Doel", "blue"], HYPOTHESIS: ["search", "Diagnose", "amber"],
+  CANDIDATE_GENERATED: ["book", "Candidate", "blue"], VARIANT_CREATED: ["book", "Candidate", "blue"],
+  BENCHMARK_START: ["chart", "Benchmark", "purple"], BENCHMARK_RESULT: ["chart", "Benchmark", "purple"],
+  VALIDATOR_RESULT: ["shield", "Validator", "purple"], VALIDATOR_ACTION: ["shield", "Validator", "purple"],
+  COMPARISON: ["compare", "Vergelijking", "blue"], REGRESSION_FOUND: ["alert", "Regressie", "red"],
+  PROMOTION_DECISION: ["check", "Beslissing", "green"], CHANGE_APPLIED: ["check", "Beslissing: KEEP", "green"],
+  VARIANT_REJECTED: ["x", "Beslissing: REJECT", "red"], ERROR: ["alert", "Fout", "red"],
+  BUDGET_REACHED: ["clock", "Budget bereikt", "amber"], KNOWN_WEAKNESSES: ["target", "Blijft zwak", "amber"],
+  INFO: ["message", "Info", "navy"],
+};
 
 const STATUS_LABELS_NL = { STARTING: "wordt gestart…", RUNNING: "loopt", DONE: "afgerond", FAILED: "mislukt", STOPPED: "gestopt" };
 const STOPREDEN_LABEL = {
@@ -147,13 +169,13 @@ function renderKpis(run, detail) {
     .reduce((best, v) => (v > best ? v : best), -Infinity);
 
   const cards = [
-    { icon: "play", color: run?.status === "RUNNING" ? "green" : "blue", label: "Runstatus", value: run ? STATUS_LABELS_NL[run.status] || run.status : "Geen actieve run" },
-    { icon: "clock", color: "blue", label: "Verstreken tijd", value: run ? `${Math.round((run.elapsedMs ?? 0) / 60000)} min` : "—" },
+    { icon: "play", color: run?.status === "RUNNING" ? "green" : run?.status === "FAILED" ? "red" : "blue", label: "Runstatus", value: run ? STATUS_LABELS_NL[run.status] || run.status : "Geen actieve run", sub: run?.status === "FAILED" && run.errorMessage ? run.errorMessage : "" },
+    { icon: "clock", color: "blue", label: "Verstreken tijd", value: run ? uurMinSec(run.elapsedMs ?? 0) : "—" },
     { icon: "flask", color: "purple", label: "Experimenten", value: cyclesCount },
     { icon: "book", color: "blue", label: "Kandidaten bewaard", value: kandidatenBewaard },
     { icon: "up", color: "green", label: "Beste verbetering", value: besteVerbetering > -Infinity ? `+${besteVerbetering.toFixed(1)}pp` : "—" },
   ];
-  document.getElementById("dr-kpis").innerHTML = cards.map((c) => `<div class="stat with-icon">${iconChip(c.icon, c.color)}<div><div class="label">${c.label}</div><div class="value">${c.value}</div></div></div>`).join("");
+  document.getElementById("dr-kpis").innerHTML = cards.map((c) => `<div class="stat with-icon">${iconChip(c.icon, c.color)}<div style="min-width:0;"><div class="label">${c.label}</div><div class="value">${c.value}</div>${c.sub ? `<div class="sub bad" style="font-weight:500;">${esc(c.sub)}</div>` : ""}</div></div>`).join("");
 }
 
 function renderConfig(actief, run, detail) {
@@ -164,7 +186,7 @@ function renderConfig(actief, run, detail) {
     ["Standplaats", "DDR — Dordrecht"],
     ["Focus", detail?.cycles?.[0]?.weakness.weakestDimension ?? (run ? "wordt bepaald bij eerste cyclus" : "—")],
   ];
-  document.getElementById("dr-config-table").innerHTML = rows.map(([k, v]) => `<div class="field-row"><div style="flex:1;"><div class="field-label">${k}</div><div class="field-value">${v}</div></div></div>`).join("");
+  document.getElementById("dr-config-table").innerHTML = rows.map(([k, v]) => `<div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label" style="text-transform:none; font-size:12.5px; letter-spacing:0;">${k}</span></div><div class="field-value">${esc(v)}</div></div>`).join("");
 
   const doelen = [
     "Verbeter de gemeten zwakste dimensie zonder een veiligheids-/groundingdimensie te laten verslechteren.",
@@ -192,7 +214,8 @@ function renderLiveStepper(detail) {
     if (!bereikt[i]) return { label, status: "pending" };
     const isLaatsteBereikte = bereikt.slice(i + 1).every((b) => !b);
     if (isLaatsteBereikte && laatste.decision === "NOT_EXECUTED") return { label, status: "failed" };
-    return { label, status: isLaatsteBereikte ? "active" : "done" };
+    // De laatste stap (Keep/Reject) is af zodra er beslist is — dan is er niets meer "bezig".
+    return { label, status: isLaatsteBereikte && i < STAGE_LABELS.length - 1 ? "active" : "done" };
   });
   renderStepper(document.getElementById("dr-live-stepper"), stages);
 }
@@ -227,12 +250,16 @@ function renderProgressChart(detail) {
 
 function renderLiveLog(events) {
   const el = document.getElementById("dr-live-log");
-  if (!events || events.length === 0) { el.textContent = "Nog geen actieve run."; return; }
-  el.textContent = events
-    .slice(-40)
-    .map((e) => `${new Date(e.timestamp).toLocaleTimeString("nl-NL")} | ${e.kind} | ${e.message}`)
-    .join("\n");
-  el.scrollTop = el.scrollHeight;
+  const raw = document.getElementById("dr-live-raw");
+  if (!events || events.length === 0) { el.innerHTML = `<div class="empty">Nog geen actieve run.</div>`; raw.textContent = ""; return; }
+  const zichtbaar = events.filter((e) => EVENT_WEERGAVE[e.kind]).slice(-12).reverse();
+  el.innerHTML = zichtbaar.length === 0
+    ? `<div class="empty">Nog geen ontwikkelstappen gelogd.</div>`
+    : zichtbaar.map((e) => {
+        const [icoon, label, kleur] = EVENT_WEERGAVE[e.kind];
+        return `<div class="dr-event"><span class="dr-event-tijd">${new Date(e.timestamp).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}</span>${iconChip(icoon, kleur, "sm")}<span><b>${label}:</b> ${esc(e.message)}</span></div>`;
+      }).join("");
+  raw.textContent = events.slice(-60).map((e) => `${new Date(e.timestamp).toLocaleTimeString("nl-NL")} | ${e.kind} | ${e.message}`).join("\n");
 }
 
 function renderBestCandidate(detail) {
@@ -241,10 +268,27 @@ function renderBestCandidate(detail) {
     ? (detail.cycles ?? []).find((c) => c.version?.id === detail.bestCandidateVersionId)
     : null;
   if (!beste) { el.innerHTML = `<div class="empty">Nog geen kandidaat.</div>`; return; }
+  const gemiddelde = (agent) => {
+    const keys = Object.keys(agent ?? {}).filter((k) => k !== "latencyMs" && typeof agent[k] === "number");
+    return keys.length ? keys.reduce((som, k) => som + agent[k], 0) / keys.length : null;
+  };
+  const pre = gemiddelde(beste.proof?.pre?.agent);
+  const post = gemiddelde(beste.proof?.post?.agent);
+  const hold = gemiddelde(beste.proof?.holdout?.agent);
+  const delta = pre !== null && post !== null ? post - pre : null;
+  const metriek = (icoon, label, waarde) => `<div class="field-row" style="padding:6px 0;"><div style="flex:1; display:flex; align-items:center; gap:8px;"><span style="width:15px; height:15px; color:var(--accent); display:inline-flex;">${ICONS[icoon]}</span><span style="font-size:12.5px;">${label}</span></div><div class="field-value">${waarde}</div></div>`;
   el.innerHTML = `
-    <span class="tag good">${ICONS.trophy} Voorlopig beste</span>
-    <p style="margin:8px 0 4px; font-size:14px; font-weight:700;">${beste.candidate.id}</p>
-    <p class="sub" style="margin:0 0 10px; font-size:12px; color:#7a8aa3;">${beste.proof.reasoning}</p>
+    <div class="dr-beste-kop">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><b style="font-size:15px;">${esc(beste.candidate.id)}</b><span class="tag good">Voorlopig beste</span></div>
+      <div class="sub" style="font-size:11.5px; margin-top:4px;">Verbetering t.o.v. basis</div>
+      <div style="font-size:24px; font-weight:800; color:var(--good);">${delta !== null ? `${delta >= 0 ? "+" : ""}${delta.toFixed(1)} pp` : "—"}</div>
+    </div>
+    <div class="field-list" style="margin:8px 0 12px;">
+      ${metriek("chart", "Benchmark (dev-set)", post !== null ? post.toFixed(1) : "—")}
+      ${metriek("layers", `Holdout${hold === null ? " (nog niet voltooid)" : ""}`, hold !== null ? hold.toFixed(1) : "—")}
+      ${metriek("shield", "Harde overtredingen / regressies", beste.proof?.regressions?.length ?? 0)}
+    </div>
+    <p class="sub" style="margin:0 0 10px; font-size:12px; color:#7a8aa3;">${esc(beste.proof.reasoning)}</p>
     <div style="display:flex; gap:8px;">
       <button class="primary" data-goto-candidate="${beste.candidate.id}" style="flex:1;">${ICONS.external}Bekijk kandidaat</button>
       <button class="ghost" data-compare-candidate="${beste.candidate.id}" style="flex:1; justify-content:center; padding:9px 12px;">${ICONS.compare}Vergelijk</button>
@@ -256,7 +300,11 @@ function renderBestCandidate(detail) {
 
 function renderGates(detail) {
   const cycles = detail?.cycles ?? [];
-  const laatste = cycles[cycles.length - 1] ?? null;
+  // De gates horen bij de kandidaat die rechts als "beste" staat; zonder beste
+  // kandidaat bij de laatste cyclus. Anders toonde de kaart de FAIL van een
+  // verworpen kandidaat naast een beste kandidaat zonder één regressie.
+  const beste = detail?.bestCandidateVersionId ? cycles.find((c) => c.version?.id === detail.bestCandidateVersionId) : null;
+  const laatste = beste ?? cycles[cycles.length - 1] ?? null;
   const gates = [
     { icon: "chart", label: "Benchmark", status: laatste?.proof?.executed ? "PASS" : "NIET VOLTOOID" },
     { icon: "shield", label: "Validator", status: laatste?.proof ? (laatste.proof.regressions.length === 0 ? "PASS" : "FAIL") : "NIET VOLTOOID" },
@@ -280,7 +328,8 @@ function renderCandidatesTable(detail) {
     const postAvg = keys.reduce((s, k) => s + (postAgent[k] ?? 0), 0) / (keys.length || 1);
     const delta = postAvg - preAvg;
     const decisionTag = c.decision === "PROMOTION_CANDIDATE" ? "good" : c.decision === "REJECTED" ? "bad" : "warn";
-    return `<tr>
+    const isBeste = detail?.bestCandidateVersionId && c.version?.id === detail.bestCandidateVersionId;
+    return `<tr${isBeste ? ' class="dash-beste-rij"' : ""}>
       <td><a href="#/experiment-detail?id=${encodeURIComponent(c.candidate.id)}" style="color:var(--accent);">${c.candidate.id}</a></td>
       <td>${c.proof ? new Date(c.proof.startedAt).toLocaleString("nl-NL") : "—"}</td>
       <td style="color:${delta >= 0 ? "var(--good)" : "var(--bad)"};">${delta >= 0 ? "+" : ""}${delta.toFixed(1)}pp</td>

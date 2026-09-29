@@ -248,3 +248,14 @@ tr.dash-beste-rij td { background: #eaf7ef; }
 .dash-pijl { color: #7a8aa3; }
 #banner { background: rgba(255, 255, 255, 0.08); border-radius: 999px; padding: 6px 13px; }
 #header-active-version { font-size: 12px; padding: 6px 13px; }
+
+/* ---- Development Runs (foto 3): leesbare gebeurtenissen i.p.v. ruwe console ---- */
+.dr-events { display: flex; flex-direction: column; gap: 2px; background: #f7f9fc; border: 1px solid #eef1f6; border-radius: 9px; padding: 6px 10px; max-height: 260px; overflow-y: auto; }
+.dr-event { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 12.5px; color: #26344f; border-bottom: 1px solid #eef1f6; }
+.dr-event:last-child { border-bottom: none; }
+.dr-event > span:last-child { min-width: 0; }
+.dr-event-tijd { width: 40px; flex-shrink: 0; color: #7a8aa3; font-variant-numeric: tabular-nums; font-size: 12px; }
+.dr-raw { margin-top: 6px; font-family: ui-monospace, monospace; font-size: 11px; background: #0f1f38; color: #c9d6ea; padding: 10px 12px; border-radius: 8px; max-height: 180px; overflow: auto; white-space: pre-wrap; line-height: 1.55; }
+.dr-beste-kop { background: #f5f8fd; border-radius: 9px; padding: 10px 12px; }
+.dr-infobalk { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #eaeef5; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: #33415c; margin-top: 14px; }
+.dr-infobalk svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }

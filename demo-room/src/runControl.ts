@@ -58,8 +58,70 @@ function writeState(state: RunControlState): void {
   writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), "utf8");
 }
 
+/** Bestaat dit proces nog? EPERM betekent: bestaat, maar van een ander — dus levend. */
+export function procesLeeft(pid: number): boolean {
+  if (!Number.isInteger(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (fout) {
+    return (fout as NodeJS.ErrnoException).code === "EPERM";
+  }
+}
+
+/** Zo lang mag een run in STARTING staan zonder bekend PID, voordat hij als verloren telt. */
+export const STARTING_GRACE_MS = 2 * 60 * 1000;
+
+/**
+ * Een "lopende" run waarvan het proces niet meer bestaat, is geen lopende run.
+ *
+ * Gevonden bij de visuele controle van 2026-09-29: het dashboard meldde
+ * "loopt: development-run" en een verstreken tijd van 2551 minuten voor een
+ * run waarvan het proces al anderhalve dag weg was. Oorzaak: het statusbestand
+ * werd blind vertrouwd. Na een crash, een herstart van de pc of een gesloten
+ * venster bleef het dus eeuwig RUNNING — en blokkeerde het elke nieuwe run
+ * ("Er draait al een run").
+ *
+ * Puur (levend-check en klok worden meegegeven), zodat het te toetsen is.
+ * Geeft de gecorrigeerde toestand terug, of `null` als er niets te corrigeren is.
+ */
+export function verlorenRunCorrectie(
+  state: RunControlState,
+  leeft: (pid: number) => boolean,
+  nowMs: number,
+  laatstGewijzigdMs: number,
+): RunControlState | null {
+  if (state.status !== "RUNNING" && state.status !== "STARTING") return null;
+  if (state.status === "STARTING" && state.pid <= 0) {
+    if (nowMs - new Date(state.startedAt).getTime() < STARTING_GRACE_MS) return null;
+  } else if (leeft(state.pid)) {
+    return null;
+  }
+  const einde = new Date(Math.max(new Date(state.startedAt).getTime(), laatstGewijzigdMs)).toISOString();
+  return {
+    ...state,
+    status: "FAILED",
+    finishedAt: einde,
+    errorMessage:
+      state.pid > 0
+        ? `Het runproces (PID ${state.pid}) bestaat niet meer — de run is onderbroken (crash, herstart of gesloten venster). Wat tot dat moment gebeurde, staat in het logboek.`
+        : "De run kwam nooit voorbij het starten (geen procesnummer na 2 minuten). Controleer de uitvoer hieronder en start opnieuw.",
+  };
+}
+
+/** Leest de toestand en legt een verloren run meteen vast als FAILED (zie `verlorenRunCorrectie`). */
+function readStateLevend(): RunControlState | null {
+  const state = readState();
+  if (!state) return null;
+  const mtime = existsSync(STATE_FILE) ? statSync(STATE_FILE).mtimeMs : Date.now();
+  const correctie = verlorenRunCorrectie(state, procesLeeft, Date.now(), mtime);
+  if (!correctie) return state;
+  writeState(correctie);
+  return correctie;
+}
+
 export function currentRun(): RunControlState | null {
-  return readState();
+  return readStateLevend();
 }
 
 const TERMINAL_STATUSSEN: readonly RunControlState["status"][] = ["DONE", "FAILED", "STOPPED"];
@@ -95,7 +157,7 @@ export function computeElapsedMs(state: Pick<RunControlState, "startedAt" | "fin
 
 /** `currentRun()` plus de server-berekende `elapsedMs` — dit is wat `/api/current-run` teruggeeft. */
 export function currentRunWithElapsed(): (RunControlState & { readonly elapsedMs: number }) | null {
-  const state = readState();
+  const state = readStateLevend();
   if (!state) return null;
   const fallbackEndMs = existsSync(STATE_FILE) ? statSync(STATE_FILE).mtimeMs : undefined;
   return { ...state, elapsedMs: computeElapsedMs(state, Date.now(), fallbackEndMs) };
@@ -150,7 +212,7 @@ function legeEindsamenvatting(outcome: RunEndSummary["outcome"], reden: string, 
  * nooit stil verdwijnen").
  */
 export function startCliRun(runId: string, kind: string, args: readonly string[]): RunControlState {
-  const bestaand = readState();
+  const bestaand = readStateLevend();
   if (bestaand && (bestaand.status === "RUNNING" || bestaand.status === "STARTING")) {
     throw new Error(`Er draait al een run (${bestaand.kind}, gestart ${bestaand.startedAt}). Stop die eerst.`);
   }
@@ -247,7 +309,7 @@ export function startCliRun(runId: string, kind: string, args: readonly string[]
  * `recoverStaleActivities()` in de hoofdapp).
  */
 export function stopCurrentRun(): { readonly stopped: boolean; readonly detail: string } {
-  const state = readState();
+  const state = readStateLevend();
   if (!state || (state.status !== "RUNNING" && state.status !== "STARTING")) return { stopped: false, detail: "Er draait niets." };
   try {
     process.kill(state.pid, "SIGTERM");
