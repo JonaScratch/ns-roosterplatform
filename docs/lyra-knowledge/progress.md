@@ -14,6 +14,14 @@ Volledige analyse: `docs/lyra-knowledge/after-analysis-20260929.md`. Kort:
 - **Meetbaarheid:** `askAgent` geeft `tegengehouden` en `planCorrecties` terug; de benches leggen beide vast. Vergelijkingstool: `scripts/lyra-master/compare-before-after.ts`.
 - **Volgende stap (LOCAL REQUIRED):** een nieuwe AFTER-run (nieuwe run-ID) op de huidige HEAD, beoordeeld met grader /2 — zie §5 van de analyse voor de falsifieerbare verwachting.
 
+### Daarna in dezelfde sessie (Phase E en Phase F-vervolg)
+
+- **UI tegen de 6 referenties, in de echte runtime** (`62bc15e`…`ef3f74b`): Test Room kan nu echt tegen een rooster/regel/weekdag/kandidaat testen (voorheen altijd `rosterCode: null`) en toont per antwoord wat een grendel tegenhield en wat de plancontrole veranderde; Dashboard, Development Runs, Candidates, Logboek en Experiment-detail bijgewerkt naar de referenties.
+- **Echte fouten gevonden tijdens de visuele controle, geworteld en getest:** een run waarvan het proces weg is bleef eeuwig "loopt" en blokkeerde nieuwe runs (`c687790`); de runhistorie toonde dezelfde run als "LOOPT/ONBEKEND" (`95887cb`); Candidates meldde "Promotie: TOEGESTAAN" terwijl elke activatie een mens vereist (`95887cb`).
+- **Browsertests per toestand tegen de echte server** (`062bbcb`, `ef3f74b`): leeg, verloren run, actieve run, kandidaat geselecteerd — elke route gestyled, zonder mislukte verzoeken/paginafouten/horizontaal scrollen/inhoud buiten de kaart.
+- **Fase 12:** adversarial Q draait nu met een echte toolfout (`askAgent({ toolFouten })`, alleen benchmarks) en een uitgebreide grader (`3bee951`).
+- **Fase 11:** de AFTER-launcher maakt nu zelf de BEFORE→AFTER-vergelijking (grader /1 én streng /2) en hasht ook de extensiebestanden (`27125c8`).
+
 ## UI/UX REBUILD — AFGEROND (tijdelijke focusfase, Master Program hervat hieronder)
 
 De gebruiker vroeg een volledige informatiearchitectuur-/UX-rebuild van de Demo Room, met 6 aangeleverde referentiedesigns (Dashboard/Test Room/Development Runs/Candidates/Experimenten/Logboek) die inhoudelijk en visueel nauwkeurig nagebouwd moeten worden, gekoppeld aan echte backenddata — geen cosmetische restyle. Expliciete instructie: dit is een tijdelijke, exclusieve focusfase (geen andere Master Program-fasen ertussendoor, geen inhoudelijke Lyra-wijzigingen); na aantoonbare afronding (alle schermen, navigatie exact, oude dubbele UI verwijderd, alle knoppen/drilldowns werkend, echte data, alle states, screenshots) hervat het oorspronkelijke Master Program automatisch tot `MASTER_PROGRAM_COMPLETE`.
