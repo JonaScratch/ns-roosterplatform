@@ -31,7 +31,7 @@ export type LongRunProfiel = "1h" | "6h" | "24h" | "handmatig";
 export const PROFIEL_MINUTEN: Readonly<Record<LongRunProfiel, number>> = { "1h": 60, "6h": 360, "24h": 1440, handmatig: Number.POSITIVE_INFINITY };
 
 export type LongRunStatus = "RUNNING" | "PAUSED" | "STOPPED" | "DONE";
-export type LongRunStopReden = "BUDGET_OP" | "GEEN_DIAGNOSE" | "GEEN_VOORTGANG" | "HANDMATIG_GESTOPT" | "MAX_CYCLI" | "HERHAALDE_FOUT";
+export type LongRunStopReden = "BUDGET_OP" | "GEEN_DIAGNOSE" | "GEEN_VOORTGANG" | "ALLES_GEPROBEERD" | "HANDMATIG_GESTOPT" | "MAX_CYCLI" | "HERHAALDE_FOUT";
 
 export interface CyclusUitkomst {
   readonly beslissing: string;
@@ -39,6 +39,14 @@ export interface CyclusUitkomst {
   readonly dimensie: string | null;
   readonly versieId: string | null;
   readonly verdict: string | null;
+  /** De stappen van de cyclus met hun bewijs (develop/developmentCycle.ts, STADIA). */
+  readonly stadia?: readonly { readonly naam: string; readonly status: string; readonly detail: string; readonly bewijs?: unknown }[];
+  /** De les die deze cyclus naliet, en de lessen waarop zijn keuzes rustten. */
+  readonly lesId?: string | null;
+  readonly geleerdVan?: readonly string[];
+  readonly strategie?: string | null;
+  /** Welk model de meting deed — bewijs dat het geen stub was. */
+  readonly model?: string | null;
 }
 
 export interface LongRunCheckpoint {
@@ -58,6 +66,13 @@ export interface LongRunCheckpoint {
   readonly wachtrij: Wachtrij;
   readonly budget: BudgetManager;
   readonly gebeurtenissen: readonly { readonly op: string; readonly tekst: string }[];
+  /** De actieve productieversie bij de start en bij de laatste checkpoint: moeten gelijk zijn (nooit autonome activatie). */
+  readonly productie?: { readonly bijStart: ProductieStand; readonly laatst: ProductieStand } | null;
+}
+
+export interface ProductieStand {
+  readonly versionId: string;
+  readonly generation: number;
 }
 
 export type ControleCommando = "PAUSE" | "STOP";
@@ -70,6 +85,8 @@ export interface Controle {
 export interface LongRunDeps {
   readonly cyclus: (ctx: { runId: string; uitgesloten: readonly string[] }) => Promise<CyclusUitkomst>;
   readonly nu: () => number;
+  /** Welke productieversie is nu actief (releasedienst)? Voor het bewijs dat de run niets activeerde. */
+  readonly productie?: () => ProductieStand;
 }
 
 const dirVan = (runId: string) => path.join(DATA_DIR, "long-runs", runId.replace(/[^A-Za-z0-9._-]/g, "_"));
@@ -129,7 +146,13 @@ function wisControle(runId: string, alleen?: ControleCommando): void {
 export interface LongRunOpties {
   readonly runId: string;
   readonly profiel: LongRunProfiel;
-  /** Aantal keer dezelfde dimensie zonder promotie vóór de run stopt (zelfde regel als de gewone ontwikkelrun). */
+  /**
+   * Vangnet: zo vaak mag één dimensie zonder promotie terugkomen vóór de run
+   * stopt. Met het leergeheugen (develop/lessons.ts) wordt dit niet gehaald:
+   * na drie strategieën (elk hoogstens twee keer onbeslist) is een dimensie
+   * uitgeput en kiest de cyclus een andere, of meldt UITGEPUT. Wordt het wel
+   * gehaald, dan klopt er iets niet en stopt de run liever dan eindeloos door te gaan.
+   */
   readonly maxPogingenPerDimensie?: number;
   /** Veiligheidsgrens voor `handmatig`: nooit echt oneindig zonder mens. */
   readonly maxCycli?: number;
@@ -140,7 +163,7 @@ export interface LongRunOpties {
  * terug zodra de run PAUSED, STOPPED of DONE is.
  */
 export async function draaiLongRun(opties: LongRunOpties, deps: LongRunDeps): Promise<LongRunCheckpoint> {
-  const maxPogingen = opties.maxPogingenPerDimensie ?? 2;
+  const maxPogingen = opties.maxPogingenPerDimensie ?? 7;
   const maxCycli = opties.maxCycli ?? 500;
   const begin = deps.nu();
   const iso = (t: number) => new Date(t).toISOString();
@@ -177,6 +200,7 @@ export async function draaiLongRun(opties: LongRunOpties, deps: LongRunDeps): Pr
         wachtrij: registreerWorker(leeg(), workerId, ["cyclus"], begin),
         budget: nieuwBudget(Number.isFinite(budgetMinuten) ? budgetMinuten : 1e9, 1e9),
         gebeurtenissen: [{ op: iso(begin), tekst: `Gestart, profiel ${opties.profiel}.` }],
+        productie: deps.productie ? { bijStart: deps.productie(), laatst: deps.productie() } : null,
       };
   // Hervatten heft een pauze op; een stopverzoek blijft staan.
   wisControle(opties.runId, "PAUSE");
@@ -239,7 +263,7 @@ export async function draaiLongRun(opties: LongRunOpties, deps: LongRunDeps): Pr
     const dim = uitkomst.dimensie ?? "onbekend";
     const pogingen = { ...c.pogingenPerDimensie };
     if (uitkomst.beslissing === "PROMOTION_CANDIDATE") delete pogingen[dim];
-    else if (uitkomst.beslissing !== "NOT_EXECUTED") pogingen[dim] = (pogingen[dim] ?? 0) + 1;
+    else if (uitkomst.beslissing !== "NOT_EXECUTED" && uitkomst.beslissing !== "UITGEPUT") pogingen[dim] = (pogingen[dim] ?? 0) + 1;
 
     c = {
       ...c,
@@ -250,11 +274,13 @@ export async function draaiLongRun(opties: LongRunOpties, deps: LongRunDeps): Pr
       pogingenPerDimensie: pogingen,
       wachtrij: rondAf(c.wachtrij, geclaimd.job.id, "DONE"),
       budget: verrekenen(c.budget, geclaimd.job.id, { minuten: duur / 60000, modelCalls: 0 }),
+      productie: c.productie && deps.productie ? { ...c.productie, laatst: deps.productie() } : c.productie,
       gebeurtenissen: [...c.gebeurtenissen, { op: iso(eind), tekst: `Cyclus ${nr}: ${uitkomst.beslissing}${uitkomst.verdict ? ` (rechter ${uitkomst.verdict})` : ""}${uitkomst.kandidaatId ? `, kandidaat ${uitkomst.kandidaatId}` : ""}.` }],
     };
     schrijf(c);
 
     if (uitkomst.beslissing === "NOT_EXECUTED") return eindig("DONE", "GEEN_DIAGNOSE", "Geen echte diagnose mogelijk (LOCAL REQUIRED) — run stopt eerlijk.");
+    if (uitkomst.beslissing === "UITGEPUT") return eindig("DONE", "ALLES_GEPROBEERD", "Elke gemeten zwakte is met alle strategieën geprobeerd of wacht op een mens — run stopt eerlijk.");
     if ((pogingen[dim] ?? 0) >= maxPogingen) return eindig("DONE", "GEEN_VOORTGANG", `Dimensie ${dim} ${pogingen[dim]}x verworpen zonder promotie.`);
   }
 }

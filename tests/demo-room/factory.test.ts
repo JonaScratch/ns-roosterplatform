@@ -40,10 +40,15 @@ const manifest = (tekst: string | null = "Noem bij een nachtreeks altijd de leng
 const huidig = (tekst: string | null = "Noem bij een nachtreeks altijd de lengte.") => ({ judgeCriteriaHash: judgeCriteriaHash(), holdoutHash: holdoutHash(), productionText: tekst });
 const intact = { intact: true, bevindingen: [] };
 
-function bewijs(over: Partial<Record<string, { basis: number[]; kandidaat: number[] }>> = {}, holdout: JudgeEvidence["holdout"] = { basis: 70, kandidaat: 70 }): JudgeEvidence {
+function bewijs(
+  over: Partial<Record<string, { basis: number[]; kandidaat: number[] }>> = {},
+  holdout: JudgeEvidence["holdout"] = { basis: 70, kandidaat: 70 },
+  adversarial: JudgeEvidence["adversarial"] = { basis: 78, kandidaat: 78 },
+): JudgeEvidence {
   return {
     doelDimensie: "toolChoice",
     holdout,
+    adversarial,
     dimensies: {
       toolChoice: { basis: [60], kandidaat: [70, 72] },
       grounding: { basis: [90], kandidaat: [90, 90] },
@@ -121,6 +126,16 @@ describe("Phase L — Independent Judge", () => {
     expect(oordeel(m, intact, [], bewijs({ toolChoice: { basis: [60], kandidaat: [75] }, grounding: { basis: [90], kandidaat: [90] }, machinistTaal: { basis: [80], kandidaat: [80] } })).verdict).toBe("NEEDS_MORE_EVIDENCE");
     expect(oordeel(m, intact, [], bewijs({}, null)).verdict).toBe("NEEDS_MORE_EVIDENCE");
     expect(oordeel(m, intact, [], bewijs({ toolChoice: { basis: [60], kandidaat: [61, 62] } })).verdict).toBe("NEEDS_MORE_EVIDENCE");
+  });
+  it("judge/2: elke daling op de adversarial holdout is REJECT; zonder adversarial meting geen KEEP", () => {
+    const daling = oordeel(m, intact, [], bewijs({}, undefined, { basis: 78, kandidaat: 67 }));
+    expect(daling.verdict).toBe("REJECT");
+    expect(daling.redenen.join()).toMatch(/adversarial holdout daalt/);
+    const zonder = oordeel(m, intact, [], bewijs({}, undefined, null));
+    expect(zonder.verdict).toBe("NEEDS_MORE_EVIDENCE");
+    expect(zonder.redenen.join()).toMatch(/adversarial holdout niet gemeten/);
+    expect(oordeel(m, intact, [], bewijs({}, undefined, { basis: 67, kandidaat: 78 })).verdict).toBe("KEEP");
+    expect(JUDGE_CRITERIA.versie).toBe("judge/2");
   });
   it("REJECT als het doel niet verbetert", () => {
     expect(oordeel(m, intact, [], bewijs({ toolChoice: { basis: [60], kandidaat: [58, 60] } })).verdict).toBe("REJECT");
@@ -359,9 +374,23 @@ describe("Phase K/L/O — opslag en hervatbare lange runs", () => {
   });
 
   it("stopt eerlijk bij geen voortgang op dezelfde dimensie en bij geen diagnose", async () => {
-    const g = await longRun.draaiLongRun({ runId: "LR-stuck", profiel: "24h" }, { nu: klok(60_000), cyclus: verworpen("toolChoice") });
+    // Vangnet: met een werkend leergeheugen wordt dit niet gehaald; hier expliciet laag gezet.
+    const g = await longRun.draaiLongRun({ runId: "LR-stuck", profiel: "24h", maxPogingenPerDimensie: 2 }, { nu: klok(60_000), cyclus: verworpen("toolChoice") });
     expect(g.stopReden).toBe("GEEN_VOORTGANG");
     expect(g.cycli).toHaveLength(2);
+    // Meldt de cyclus zelf dat alles geprobeerd is, dan stopt de run daarop.
+    let n = 0;
+    const u = await longRun.draaiLongRun({ runId: "LR-uitgeput", profiel: "24h" }, {
+      nu: klok(60_000),
+      cyclus: async () => {
+        n += 1;
+        return n < 3
+          ? { beslissing: "REJECTED", kandidaatId: `u${n}`, dimensie: `d${n}`, versieId: null, verdict: "REJECT" }
+          : { beslissing: "UITGEPUT", kandidaatId: null, dimensie: null, versieId: null, verdict: null };
+      },
+    });
+    expect(u.stopReden).toBe("ALLES_GEPROBEERD");
+    expect(u.cycli).toHaveLength(3);
     const d = await longRun.draaiLongRun({ runId: "LR-nodiag", profiel: "1h" }, { nu: klok(60_000), cyclus: async () => ({ beslissing: "NOT_EXECUTED", kandidaatId: null, dimensie: null, versieId: null, verdict: null }) });
     expect(d.stopReden).toBe("GEEN_DIAGNOSE");
   });

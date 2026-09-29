@@ -66,6 +66,8 @@ export interface WeaknessProbe {
   readonly notExecutedReason: string | null;
   readonly weakestDimension: keyof AgentQualityCategory | null;
   readonly weakestScore: number | null;
+  /** Alle gemeten dimensies (procent), zodat het leergeheugen een andere dan de zwakste kan kiezen als die uitgeput is. */
+  readonly scores?: Readonly<Partial<Record<string, number>>>;
 }
 
 async function echteIdentifyWeakness(runId: string, locationCode: string): Promise<WeaknessProbe> {
@@ -75,7 +77,7 @@ async function echteIdentifyWeakness(runId: string, locationCode: string): Promi
     const waarden = AGENT_CATEGORY_KEYS.map((k) => ({ k, v: meting.agent[k] })).filter((x): x is { k: keyof AgentQualityCategory; v: number } => typeof x.v === "number");
     if (waarden.length === 0) return { executed: false, notExecutedReason: "Geen enkele dimensie kon gemeten worden.", weakestDimension: null, weakestScore: null };
     const zwakste = waarden.reduce((a, b) => (b.v < a.v ? b : a));
-    return { executed: true, notExecutedReason: null, weakestDimension: zwakste.k, weakestScore: zwakste.v };
+    return { executed: true, notExecutedReason: null, weakestDimension: zwakste.k, weakestScore: zwakste.v, scores: Object.fromEntries(waarden.map((w) => [w.k, w.v])) };
   } catch (fout) {
     const reden = `Niet uitgevoerd: ${fout instanceof Error ? fout.message : String(fout)}. Waarschijnlijk ontbreekt een lokaal taalmodel of de database (LOCAL REQUIRED).`;
     logbook.log(runId, { kind: "ERROR", experimentId: null, message: reden });

@@ -152,6 +152,7 @@ const STOPREDEN_LABEL = {
   MAX_MINUTES_REACHED: "Wandklokbudget bereikt",
   MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE: "Budget al op vóór start",
   NO_PROGRESS_ON_SAME_WEAKNESS: "Geen voortgang op dezelfde zwakte",
+  ALL_HYPOTHESES_EXHAUSTED: "Alle hypothesen geprobeerd",
   NOT_EXECUTED: "Geen lokale diagnose mogelijk",
 };
 

@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { AgentQualityCategory, DualQualityMeasurement, ProofOfValueResult, RosterQualityCategory } from "../../demo-room/src/types";
 
 /**
@@ -32,6 +32,18 @@ beforeAll(async () => {
   generateCandidateMod = await import("../../demo-room/src/develop/generateCandidate");
   versionsMod = await import("../../demo-room/src/publish/versions");
 });
+
+/**
+ * Het leergeheugen (develop/lessons.ts) blijft over cycli én runs heen
+ * bestaan — dat is de bedoeling. Tussen twee onafhankelijke testscenario's
+ * hoort het leeg te zijn, anders leert het ene scenario van het andere.
+ */
+beforeEach(() => {
+  rmSync(path.join(tmpRoot, "data", "learning"), { recursive: true, force: true });
+});
+
+/** Adversarial meting gelijk voor basis en kandidaat: geen veiligheidsdaling, wel volledig beoordeeld. */
+const ADVERSARIAL_GELIJK = { runAdversarial: async () => ({ basis: 80, kandidaat: 80 }) };
 
 afterAll(() => {
   delete process.env.DEMO_ROOM_STATE_ROOT_OVERRIDE;
@@ -106,6 +118,7 @@ describe("runAutonomousDevelopmentRun", () => {
       autoRunMod.runAutonomousDevelopmentRun(
         { maxMinutes: 0 },
         {
+          ...ADVERSARIAL_GELIJK,
           identifyWeakness: async () => {
             throw new Error("mag niet aangeroepen worden");
           },
@@ -131,6 +144,7 @@ describe("runAutonomousDevelopmentRun", () => {
     const result = await autoRunMod.runAutonomousDevelopmentRun(
       { runId, maxMinutes: 0 },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => {
           throw new Error("mag niet aangeroepen worden als het budget al op is");
         },
@@ -156,6 +170,7 @@ describe("runAutonomousDevelopmentRun", () => {
     const result = await autoRunMod.runAutonomousDevelopmentRun(
       { runId, maxMinutes: 10 },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: false, notExecutedReason: "Niet uitgevoerd: geen lokaal model (LOCAL REQUIRED).", weakestDimension: null, weakestScore: null }),
         generateCandidate: () => {
           throw new Error("mag niet aangeroepen worden zonder een geïdentificeerde zwakte");
@@ -181,6 +196,7 @@ describe("runAutonomousDevelopmentRun", () => {
     const result = await autoRunMod.runAutonomousDevelopmentRun(
       { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
         generateCandidate: generateCandidateMod.generateCandidateFromWeakness,
         runProofOfValue: async (options) =>
@@ -209,6 +225,7 @@ describe("runAutonomousDevelopmentRun", () => {
     const result = await autoRunMod.runAutonomousDevelopmentRun(
       { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
         generateCandidate: generateCandidateMod.generateCandidateFromWeakness,
         runProofOfValue: async (options) => {
@@ -252,6 +269,7 @@ describe("runAutonomousDevelopmentRun", () => {
     await autoRunMod.runAutonomousDevelopmentRun(
       { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
         generateCandidate: generateCandidateMod.generateCandidateFromWeakness,
         runProofOfValue: async (options) => {

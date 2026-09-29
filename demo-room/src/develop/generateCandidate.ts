@@ -100,34 +100,56 @@ const GENERIEK_SJABLOON: Sjabloon = {
     "Controleer bij twijfel altijd eerst met een tool voordat je een oordeel of feitelijke bewering geeft — een aanname is nooit een vervanging voor een toolresultaat.",
 };
 
+/**
+ * Strategieën: drie manieren om dezelfde gemeten zwakte aan te pakken. Het is
+ * een echte hypothese over HOE je een model instrueert, niet alleen WAT:
+ *
+ * - REGEL: de eis als directe regel (het oorspronkelijke sjabloon);
+ * - ZELFCONTROLE: dezelfde eis als controle vlak vóór het antwoord;
+ * - WAAROM: de eis mét de reden erachter, zodat het model de bedoeling kan
+ *   toepassen op gevallen die de regel niet letterlijk noemt.
+ *
+ * Alle drie voegen tekst toe aan het eind van de basisinstructie, precies
+ * zoals publicatie dat doet (`NS_PRODUCTION_PROMPT_FILE`): wat getest is,
+ * kan woord voor woord live. Welke strategie per dimensie al verworpen is,
+ * weet `lessons.ts`; de generator zelf onthoudt niets.
+ */
+export const STRATEGIEEN = ["REGEL", "ZELFCONTROLE", "WAAROM"] as const;
+export type Strategie = (typeof STRATEGIEEN)[number];
+
+function tekstVoor(sjabloon: Sjabloon, strategie: Strategie): string {
+  switch (strategie) {
+    case "REGEL":
+      return sjabloon.productionText;
+    case "ZELFCONTROLE":
+      return `Controleer vlak voordat je antwoordt of je antwoord hieraan voldoet, en pas het aan als dat niet zo is: ${sjabloon.productionText}`;
+    case "WAAROM":
+      return `${sjabloon.productionText} Waarom dit ertoe doet: een machinist of planner handelt op wat je zegt; een onjuiste of ongefundeerde uitspraak kan tot een verkeerde dienst of een onterechte klacht leiden.`;
+  }
+}
+
 let volgnummer = 0;
 
-/**
- * Bouwt een NIEUWE, unieke `PromptVariant` uit een gemeten zwakte — nooit uit
- * de vaste lijst in `promptVariants.ts` gekozen. `uitgeslotenIds` voorkomt dat
- * twee cycli binnen dezelfde run toevallig identieke id's krijgen; het
- * voorkomt NIET dat dezelfde dimensie twee keer een sjabloon oplevert (dat is
- * op zichzelf een geldig, herhaalbaar resultaat — zie ook §12 "overfitting",
- * waar een latere iteratie-teller op moet letten).
- */
-export function generateCandidateFromWeakness(weakness: WeaknessProbe, uitgeslotenIds: readonly string[] = []): PromptVariant {
+export function generateCandidateFromWeakness(weakness: WeaknessProbe, uitgeslotenIds: readonly string[] = [], strategie: Strategie = "REGEL"): PromptVariant {
   const dimensie = weakness.weakestDimension;
   const sjabloon = (dimensie && SJABLONEN[dimensie]) ?? GENERIEK_SJABLOON;
+  const productionText = tekstVoor(sjabloon, strategie);
 
   let id: string;
   do {
     volgnummer += 1;
-    id = `experiment-${dimensie ?? "algemeen"}-${volgnummer}`;
+    id = strategie === "REGEL" ? `experiment-${dimensie ?? "algemeen"}-${volgnummer}` : `experiment-${dimensie ?? "algemeen"}-${strategie.toLowerCase()}-${volgnummer}`;
   } while (uitgeslotenIds.includes(id));
 
   const zwakteBeschrijving = dimensie ? `${dimensie} (${weakness.weakestScore?.toFixed(1) ?? "onbekend"}%)` : "onbekende dimensie";
 
   return {
     id,
-    label: `Gegenereerde kandidaat — ${dimensie ?? "algemeen"}`,
-    description: `Autonoom gegenereerd op basis van gemeten zwakte ${zwakteBeschrijving}. ${sjabloon.description}`,
+    label: `Gegenereerde kandidaat — ${dimensie ?? "algemeen"} (${strategie})`,
+    description: `Autonoom gegenereerd op basis van gemeten zwakte ${zwakteBeschrijving}, strategie ${strategie}. ${sjabloon.description}`,
     category: sjabloon.category,
-    productionText: sjabloon.productionText,
-    transform: (basis) => `${basis}\n\n${sjabloon.productionText}`,
+    productionText,
+    transform: (basis) => `${basis}\n\n${productionText}`,
+    hypothesis: { dimensie: dimensie ?? "algemeen", strategie },
   };
 }

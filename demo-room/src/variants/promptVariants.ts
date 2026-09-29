@@ -35,6 +35,8 @@ export interface PromptVariant {
    */
   readonly productionText: string | null;
   readonly transform: (basis: string, request: PlanRequest) => string;
+  /** Alleen bij een gegenereerde kandidaat: welke zwakte, met welke strategie (lessons.ts leert per paar). */
+  readonly hypothesis?: { readonly dimensie: string; readonly strategie: string };
 }
 
 function vasteTekstVariant(input: { id: string; label: string; description: string; category: PromptVariant["category"]; productionText: string }): PromptVariant {

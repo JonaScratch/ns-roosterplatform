@@ -64,7 +64,7 @@ export function mountLongRunsPanel(el) {
         <div class="col" style="flex:0 0 auto;"><button class="primary" id="pl-start">${ICONS.play}Start lange run</button></div>
       </div>
       <table style="margin-top:10px;">
-        <thead><tr><th>Run</th><th>Profiel</th><th>Status</th><th>Actief</th><th>Cycli</th><th>Segmenten</th><th>Laatste gebeurtenis</th><th></th></tr></thead>
+        <thead><tr><th>Run</th><th>Profiel</th><th>Status</th><th>Actief</th><th>Cycli</th><th>Laatste cyclus</th><th>Laatste gebeurtenis</th><th></th></tr></thead>
         <tbody id="pl-rows"></tbody>
       </table>
     </div>`;
@@ -94,8 +94,12 @@ export function mountLongRunsPanel(el) {
               ? `<button class="ghost" data-pl="resume" data-run="${esc(r.runId)}">Hervat</button> <button class="ghost" data-pl="stop" data-run="${esc(r.runId)}">Stop</button>`
               : "";
           const laatste = r.gebeurtenissen.at(-1);
+          // De leercyclus zichtbaar: welke zwakte, welke strategie, welk oordeel, en hoeveel van de elf stappen.
+          const cyc = [...r.cycli].reverse().find((c) => c.stadia && c.stadia.length > 0);
+          const stappen = cyc ? `${cyc.stadia.filter((st) => st.status === "OK").length}/${cyc.stadia.length} stappen` : "";
+          const pad = cyc ? `${esc(cyc.dimensie ?? "?")}/${esc(cyc.strategie ?? "-")} → ${esc(cyc.verdict ?? cyc.beslissing)} <span class="sub">${stappen}</span>` : "—";
           return `<tr><td><code>${esc(r.runId)}</code></td><td>${esc(r.profiel)}</td><td><span class="tag ${tag}">${esc(r.status)}${r.stopReden ? ` · ${esc(r.stopReden)}` : ""}</span></td>
-            <td>${minuten} / ${budget} min</td><td>${r.cycli.length}</td><td>${r.segmenten}</td><td class="sub">${esc(laatste?.tekst ?? "")}</td><td>${knoppen}</td></tr>`;
+            <td>${minuten} / ${budget} min</td><td>${r.cycli.length}${r.segmenten > 1 ? ` <span class="sub">(${r.segmenten} segm.)</span>` : ""}</td><td>${pad}</td><td class="sub">${esc(laatste?.tekst ?? "")}</td><td>${knoppen}</td></tr>`;
         }).join("");
     rows.querySelectorAll("[data-pl]").forEach((b) => b.addEventListener("click", () => actie(`/api/long-runs/${b.dataset.pl}`, b.dataset.run)));
   }

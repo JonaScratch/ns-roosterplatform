@@ -1,0 +1,167 @@
+{
+  "schema": "ns-lyra-e2e-proofs/1",
+  "runId": "20260929-230756",
+  "gegenereerdOp": "2026-09-29T23:07:56.968Z",
+  "staat": "geïsoleerde tijdelijke map (nooit de echte demo-room/data)",
+  "geslaagd": 11,
+  "totaal": 11,
+  "bewijzen": [
+    {
+      "nr": 1,
+      "naam": "Feedbackgovernance: gezagsclaim ≠ regel; concept actief alleen na meting en menselijke activatie",
+      "status": "PASS",
+      "synthetisch": [],
+      "waarnemingen": [
+        "machinist die zich op de CAO beroept: claimsAuthority, maar mayBecomeLegalRule=false",
+        "voorkeur → concept PROPOSED",
+        "activeren van een ongemeten concept door een machinist wordt geweigerd",
+        "generalisatiemeting → VALIDATED (holdout-recall 100%)",
+        "roostercommissie activeert → ACTIVE, met historie"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 2,
+      "naam": "Ontwikkelcyclus: gegenereerde kandidaat → manifest → rechter KEEP → niet-actieve versie; productie onaangeroerd",
+      "status": "PASS",
+      "synthetisch": [
+        "PRE/POST-meting"
+      ],
+      "waarnemingen": [
+        "manifest vastgelegd vóór de meting, met holdout- en criteriahash",
+        "rechter: KEEP (toolChoice +12.0pp (≥ 3), geen regressie, holdout binnen marge)",
+        "nieuwe versie lyra-prod-2026-09-29-01 vastgelegd, niet actief",
+        "actieve productieversie en releasewijzer ongewijzigd",
+        "kandidaat staat in het Pareto-archief"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 3,
+      "naam": "Isolatie: kandidaattekst gewijzigd na het manifest → REJECT ondanks goede scores",
+      "status": "PASS",
+      "synthetisch": [
+        "PRE/POST-meting"
+      ],
+      "waarnemingen": [
+        "er is een eerder behouden kandidaat",
+        "REJECT: 'de kandidaattekst wijkt af van wat in het manifest staat'"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 4,
+      "naam": "Holdoutlek: validator houdt de kandidaat vóór de meting tegen; de rechter zou hem ook verwerpen",
+      "status": "PASS",
+      "synthetisch": [],
+      "waarnemingen": [
+        "locked holdout gelezen door validator en rechter (13 teksten), niet door de generator",
+        "validator: bevat 1 letterlijk(e) holdoutfragment(en); bevat een gezagsclaim (\"bevestigd\")",
+        "geen modeltijd besteed: er is niet gemeten",
+        "geen versie aangemaakt; besluit REJECTED",
+        "geleerd: deze strategie telt voor deze dimensie als verworpen",
+        "rechter: REJECT wegens holdoutfragmenten, ook met uitstekende scores"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 5,
+      "naam": "Lange run: start → pauze → hervat → stop; alleen actieve tijd telt",
+      "status": "PASS",
+      "synthetisch": [
+        "cyclusduur (klok)",
+        "PRE/POST-meting"
+      ],
+      "waarnemingen": [
+        "gepauzeerd op de cyclusgrens na 2 cycli",
+        "hervat in segment 2, na één cyclus netjes gestopt",
+        "actieve tijd 12 min — de 10 uur pauze telt niet",
+        "geen kandidaat twee keer geprobeerd over segmenten heen"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 6,
+      "naam": "Lange run: herstel na crash midden in een cyclus",
+      "status": "PASS",
+      "synthetisch": [
+        "crash (hangende cyclus)"
+      ],
+      "waarnemingen": [
+        "checkpoint na crash: cyclus 2 staat RUNNING bij een dode worker",
+        "cyclus 2 één keer ingepland, bij poging 2 afgerond"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 7,
+      "naam": "Activatie op naam; het NS-platform leest exact de geactiveerde tekst",
+      "status": "PASS",
+      "synthetisch": [],
+      "waarnemingen": [
+        "er is een niet-actieve versie uit bewijs 2",
+        "zonder goedkeuring: geweigerd, niets veranderd",
+        "releasewijzer: lyra-prod-2026-09-29-01, generatie 1, goedgekeurd door rc-lid-e2e",
+        "localConfigFromEnv() (de platformkant) voegt precies de gemeten kandidaattekst toe"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 8,
+      "naam": "Crash tussen prompttekst en wijzer → oude versie blijft volledig actief",
+      "status": "PASS",
+      "synthetisch": [
+        "crash (hook)"
+      ],
+      "waarnemingen": [
+        "nog steeds lyra-prod-2026-09-29-01, generatie 1, integriteit OK",
+        "platform leest nog steeds de oude, volledige tekst"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 9,
+      "naam": "Gemanipuleerde prompttekst → platform valt terug op de standaardinstructie",
+      "status": "PASS",
+      "synthetisch": [
+        "manipulatie (bestand overschreven)"
+      ],
+      "waarnemingen": [
+        "releasedienst: MISMATCH",
+        "platform: geen toevoeging (kale standaardinstructie), ook niet uit current-prompt.txt",
+        "na herstel van het bestand weer OK"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 10,
+      "naam": "Gelijktijdige activatie → conflict; terugdraaien naar baseline op naam, in de geschiedenis",
+      "status": "PASS",
+      "synthetisch": [],
+      "waarnemingen": [
+        "tweede beslisser met verouderde generatie krijgt ReleaseConflict",
+        "baseline actief; platform zonder toevoeging",
+        "geschiedenis: ACTIVATE:rc-lid-e2e, ROLLBACK:rc-lid-e2e (activeren van een nieuwere versie is ACTIVATE, terug is ROLLBACK)"
+      ],
+      "fout": null
+    },
+    {
+      "nr": 11,
+      "naam": "Autonome leercyclus: diagnose → hypothese → kandidaat → validator → experiment → adversarial → rechter → besluit → leren → volgende cyclus",
+      "status": "PASS",
+      "synthetisch": [
+        "PRE/POST-meting",
+        "adversarial meting",
+        "klok"
+      ],
+      "waarnemingen": [
+        "zelfstandig gestopt: ALLES_GEPROBEERD na 8 cycli (toolChoice/REGEL→REJECT, toolChoice/ZELFCONTROLE→REJECT, toolChoice/WAAROM→REJECT, grounding/REGEL→KEEP, machinistTaal/REGEL→REJECT, machinistTaal/ZELFCONTROLE→REJECT, machinistTaal/WAAROM→REJECT, toolChoice/-→UITGEPUT)",
+        "op toolChoice na elke verwerping een andere strategie, nooit dezelfde tekst opnieuw",
+        "toolChoice uitgeput → de diagnose koos zelf de volgende zwakte (grounding), waar het wel werkte",
+        "verify-long-run: OK minstens twee gemeten cycli; OK elke gemeten cyclus doorliep alle stappen; OK onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel; OK elke cyclus leerde van de vorige; OK productie onaangeroerd (geen autonome activatie); OK geldige stopreden",
+        "de controle 'echt taalmodel' faalt hier terecht (synthetische meting) — die bewijst alleen een lokale run"
+      ],
+      "fout": null
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { AgentQualityCategory, DualQualityMeasurement, ProofOfValueResult, RosterQualityCategory } from "../../demo-room/src/types";
 
 /**
@@ -40,6 +40,18 @@ beforeAll(async () => {
   promptVariantsMod = await import("../../demo-room/src/variants/promptVariants");
   logbookMod = await import("../../demo-room/src/store/logbook");
 });
+
+/**
+ * Het leergeheugen (develop/lessons.ts) blijft over cycli én runs heen
+ * bestaan — dat is de bedoeling. Tussen twee onafhankelijke testscenario's
+ * hoort het leeg te zijn, anders leert het ene scenario van het andere.
+ */
+beforeEach(() => {
+  rmSync(path.join(tmpRoot, "data", "learning"), { recursive: true, force: true });
+});
+
+/** Adversarial meting gelijk voor basis en kandidaat: geen veiligheidsdaling, wel volledig beoordeeld. */
+const ADVERSARIAL_GELIJK = { runAdversarial: async () => ({ basis: 80, kandidaat: 80 }) };
 
 afterAll(() => {
   delete process.env.DEMO_ROOM_STATE_ROOT_OVERRIDE;
@@ -138,6 +150,7 @@ describe("Development Sandbox — volledige end-to-end ontwikkelcyclus (SCOPE CO
     const result = await developmentCycleMod.runDevelopmentCycle(
       { runId },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
         // ECHTE generator — dit is de kern van de test: geen mens/test kiest deze kandidaat, de sandbox construeert hem zelf.
         generateCandidate: (await import("../../demo-room/src/develop/generateCandidate")).generateCandidateFromWeakness,
@@ -210,6 +223,7 @@ describe("Development Sandbox — volledige end-to-end ontwikkelcyclus (SCOPE CO
     const result = await developmentCycleMod.runDevelopmentCycle(
       { runId },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
         generateCandidate: (await import("../../demo-room/src/develop/generateCandidate")).generateCandidateFromWeakness,
         runProofOfValue: async (options) => ({ ...proof, variantId: options.variant?.id ?? proof.variantId }),
@@ -282,6 +296,7 @@ describe("Development Sandbox — volledige end-to-end ontwikkelcyclus (SCOPE CO
     const result = await developmentCycleMod.runDevelopmentCycle(
       { runId },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "grounding", weakestScore: 60 }),
         generateCandidate: (await import("../../demo-room/src/develop/generateCandidate")).generateCandidateFromWeakness,
         runProofOfValue: async (options) => ({ ...proof, variantId: options.variant?.id ?? proof.variantId }),
@@ -310,6 +325,7 @@ describe("Development Sandbox — volledige end-to-end ontwikkelcyclus (SCOPE CO
     const result = await developmentCycleMod.runDevelopmentCycle(
       { runId },
       {
+        ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: false, notExecutedReason: "Niet uitgevoerd: geen lokaal model (LOCAL REQUIRED).", weakestDimension: null, weakestScore: null }),
         generateCandidate: () => {
           throw new Error("mag niet aangeroepen worden zonder een geïdentificeerde zwakte");

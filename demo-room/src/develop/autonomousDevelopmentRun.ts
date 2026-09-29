@@ -46,6 +46,8 @@ export type AutonomousDevelopmentRunStopReason =
   | "MAX_MINUTES_REACHED"
   | "MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE"
   | "NO_PROGRESS_ON_SAME_WEAKNESS"
+  /** Het leergeheugen heeft voor geen enkele gemeten dimensie nog een ongeprobeerde strategie. */
+  | "ALL_HYPOTHESES_EXHAUSTED"
   | "NOT_EXECUTED";
 
 export interface TimelineEntry {
@@ -139,6 +141,13 @@ export async function runAutonomousDevelopmentRun(
     if (cycle.decision === "NOT_EXECUTED") {
       stopReason = "NOT_EXECUTED";
       timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: geen echte diagnose mogelijk (LOCAL REQUIRED) — run stopt eerlijk, geen gok.` });
+      slaLopendeVoortgangOp();
+      break;
+    }
+
+    if (cycle.decision === "UITGEPUT") {
+      stopReason = "ALL_HYPOTHESES_EXHAUSTED";
+      timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: elke gemeten zwakte is met alle strategieën geprobeerd of wacht op een mens — run stopt eerlijk.` });
       slaLopendeVoortgangOp();
       break;
     }

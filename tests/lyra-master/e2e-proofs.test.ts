@@ -15,14 +15,14 @@ import { draaiBewijzen } from "../../scripts/lyra-master/e2e-proofs";
  * noemt zelf wat er synthetisch aan is (de PRE/POST-meting); de rest is de
  * echte keten.
  */
-describe("Phase R — tien end-to-end bewijzen", () => {
-  it("alle tien PASS, elk met waarnemingen", async () => {
+describe("Phase R — end-to-end bewijzen", () => {
+  it("alle elf PASS, elk met waarnemingen", async () => {
     const env = { ...process.env };
     try {
       const bewijzen = await draaiBewijzen();
       const mislukt = bewijzen.filter((b) => b.status !== "PASS").map((b) => `${b.nr}: ${b.fout}`);
       expect(mislukt).toEqual([]);
-      expect(bewijzen.map((b) => b.nr)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(bewijzen.map((b) => b.nr)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
       for (const b of bewijzen) expect(b.waarnemingen.length, b.naam).toBeGreaterThan(0);
     } finally {
       for (const k of ["NS_LOCAL_LLM_URL", "NS_LOCAL_LLM_MODEL", "NS_PRODUCTION_PROMPT_FILE"]) {

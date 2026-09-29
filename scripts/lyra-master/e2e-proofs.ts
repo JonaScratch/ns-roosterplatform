@@ -17,7 +17,7 @@
  *   npx tsx --conditions=react-server scripts/lyra-master/e2e-proofs.ts [--uitvoer <pad>]
  */
 
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import type { AgentQualityCategory, DualQualityMeasurement, ProofOfValueResult } from "../../demo-room/src/types";
@@ -118,11 +118,16 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
     }
   }
 
-  const cyclusDeps = (post: AgentQualityCategory, decision: ProofOfValueResult["decision"], generator = gen.generateCandidateFromWeakness) => ({
+  // Het leergeheugen blijft over cycli heen bestaan; elk bewijs hieronder is een
+  // eigen scenario en begint daarom met een leeg geheugen.
+  const vergeet = () => rmSync(path.join(config.DATA_DIR, "learning"), { recursive: true, force: true });
+  const cyclusDeps = (post: AgentQualityCategory, decision: ProofOfValueResult["decision"], generator: typeof gen.generateCandidateFromWeakness = gen.generateCandidateFromWeakness) => ({
     identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice" as const, weakestScore: 55 }),
     generateCandidate: generator,
     runProofOfValue: async (o: { variant?: { id: string } }) => ({ ...synthetischeProof(o.variant?.id ?? "?", decision, post), variantId: o.variant?.id ?? "?" }),
     createVersion: versions.createVersion,
+    // Synthetisch: gelijke adversarial score voor basis en kandidaat (de echte stap vraagt een model).
+    runAdversarial: async () => ({ basis: 78, kandidaat: 78 }),
   });
 
   // 1 ─ Feedback kan geen CAO-regel maken; een voorkeur wordt pas actief na meting én een mens.
@@ -148,6 +153,7 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
   let keepVersieId: string | null = null;
   let keepTekst: string | null = null;
   await bewijs(2, "Ontwikkelcyclus: gegenereerde kandidaat → manifest → rechter KEEP → niet-actieve versie; productie onaangeroerd", ["PRE/POST-meting"], async (w) => {
+    vergeet();
     const voor = versions.currentVersionId();
     const r = await cycleMod.runDevelopmentCycle({ runId: "E2E-2" }, cyclusDeps(agent({ toolChoice: 92 }), "PROMOTION_CANDIDATE"));
     eis(r.manifest?.candidateId === r.candidate?.id && r.manifest?.isolation.holdoutHash, "manifest vastgelegd vóór de meting, met holdout- en criteriahash", w);
@@ -167,24 +173,41 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
     eis(o.verdict === "REJECT" && /kandidaattekst/.test(o.redenen.join()), "REJECT: 'de kandidaattekst wijkt af van wat in het manifest staat'", w);
   });
 
-  // 4 ─ Een kandidaat die holdoutvragen overschrijft, wordt tegengehouden, ook als de proof positief is.
-  await bewijs(4, "Holdoutlek: kandidaat met letterlijke holdouttekst → rechter REJECT, geen versie", ["PRE/POST-meting"], async (w) => {
+  // 4 ─ Een kandidaat die holdoutvragen overschrijft, komt niet eens tot een meting;
+  // en als hij er toch langs zou komen, verwerpt de rechter hem alsnog.
+  await bewijs(4, "Holdoutlek: validator houdt de kandidaat vóór de meting tegen; de rechter zou hem ook verwerpen", [], async (w) => {
+    vergeet();
     const holdout = factoryStore.holdoutTeksten();
-    eis(holdout.length > 0, `locked holdout gelezen door de rechter (${holdout.length} teksten), niet door de generator`, w);
-    const lekkend = (zwakte: Parameters<typeof gen.generateCandidateFromWeakness>[0], uit: readonly string[] = []) => {
-      const basis = gen.generateCandidateFromWeakness(zwakte, uit);
+    eis(holdout.length > 0, `locked holdout gelezen door validator en rechter (${holdout.length} teksten), niet door de generator`, w);
+    const lekkend = (zwakte: Parameters<typeof gen.generateCandidateFromWeakness>[0], uit: readonly string[] = [], st?: Parameters<typeof gen.generateCandidateFromWeakness>[2]) => {
+      const basis = gen.generateCandidateFromWeakness(zwakte, uit, st);
       const tekst = `${basis.productionText}\nVoorbeeld: ${holdout[0]}`;
       return { ...basis, id: `${basis.id}-lek`, productionText: tekst, transform: (b: string) => `${b}\n\n${tekst}` };
     };
     const aantal = versions.listVersions().length;
-    const r = await cycleMod.runDevelopmentCycle({ runId: "E2E-4" }, cyclusDeps(agent({ toolChoice: 95 }), "PROMOTION_CANDIDATE", lekkend));
-    eis(r.proof?.decision === "PROMOTION_CANDIDATE", "proof-of-value (synthetisch) zegt: promoveren", w);
-    eis(r.judge?.verdict === "REJECT" && /holdoutfragmenten/.test(r.judge.redenen.join()), "rechter: REJECT wegens holdoutfragmenten", w);
+    let gemeten = false;
+    const deps = { ...cyclusDeps(agent({ toolChoice: 95 }), "PROMOTION_CANDIDATE", lekkend) };
+    const r = await cycleMod.runDevelopmentCycle({ runId: "E2E-4" }, {
+      ...deps,
+      runProofOfValue: async (o) => {
+        gemeten = true;
+        return deps.runProofOfValue(o);
+      },
+    });
+    const validator = r.stadia?.find((st) => st.naam === "VALIDATOR");
+    eis(validator?.status === "MISLUKT" && /holdoutfragment/.test(validator.detail), `validator: ${validator?.detail}`, w);
+    eis(!gemeten && r.proof === null, "geen modeltijd besteed: er is niet gemeten", w);
     eis(r.decision === "REJECTED" && r.version === null && versions.listVersions().length === aantal, "geen versie aangemaakt; besluit REJECTED", w);
+    eis(r.les?.verdict === "VALIDATOR_REJECT", "geleerd: deze strategie telt voor deze dimensie als verworpen", w);
+    // De tweede verdedigingslinie: de rechter, als een lek langs de validator zou glippen.
+    const m = r.manifest!;
+    const tweede = factoryStore.beoordeelEnBewaar(m.candidateId, r.candidate!.productionText, { dimensies: { toolChoice: { basis: [55], kandidaat: [95, 95] } }, doelDimensie: "toolChoice", holdout: { basis: 70, kandidaat: 70 }, adversarial: { basis: 78, kandidaat: 78 } }, new Date().toISOString());
+    eis(tweede.verdict === "REJECT" && /holdoutfragmenten/.test(tweede.redenen.join()), "rechter: REJECT wegens holdoutfragmenten, ook met uitstekende scores", w);
   });
 
   // 5 ─ Lange run: pauzeren, hervatten, stoppen; pauzetijd telt niet.
   await bewijs(5, "Lange run: start → pauze → hervat → stop; alleen actieve tijd telt", ["cyclusduur (klok)", "PRE/POST-meting"], async (w) => {
+    vergeet();
     let t = Date.parse("2026-09-29T00:00:00Z");
     const nu = () => (t += 4 * 60_000);
     let n = 0;
@@ -299,6 +322,47 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
     eis(release.getActiveLyraVersion(releaseMap).versionId === "lyra-prod-baseline" && platformOverride() === null, "baseline actief; platform zonder toevoeging", w);
     const soorten = release.releaseHistory(releaseMap).map((r) => `${r.kind}:${r.approvedBy?.id}`);
     eis(soorten.join() === `ACTIVATE:${MENS.door.id},ROLLBACK:${MENS.door.id}`, `geschiedenis: ${soorten.join(", ")} (activeren van een nieuwere versie is ACTIVATE, terug is ROLLBACK)`, w);
+  });
+
+  // 11 ─ De volledige autonome leercyclus in een lange run, gecontroleerd met
+  // dezelfde controle als een echte run (verify-long-run.ts).
+  await bewijs(11, "Autonome leercyclus: diagnose → hypothese → kandidaat → validator → experiment → adversarial → rechter → besluit → leren → volgende cyclus", ["PRE/POST-meting", "adversarial meting", "klok"], async (w) => {
+    vergeet();
+    const { controleerLangeRun } = await import("./verify-long-run");
+    let t = Date.parse("2026-09-30T00:00:00Z");
+    const nu = () => (t += 7 * 60_000);
+    const deps = {
+      identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice" as const, weakestScore: 50, scores: { toolChoice: 50, grounding: 60, machinistTaal: 90 } }),
+      generateCandidate: gen.generateCandidateFromWeakness,
+      // Synthetisch en vooraf vastgelegd: op toolChoice werkt geen enkele strategie
+      // (regressie), op grounding werkt de eerste. De cyclus weet dat niet — hij moet het leren.
+      runProofOfValue: async (o: { variant?: { id: string; hypothesis?: { dimensie: string } } }) => {
+        const dim = o.variant?.hypothesis?.dimensie;
+        const post = dim === "grounding" ? agent({ grounding: 92 }) : agent({ toolChoice: 70 });
+        return { ...synthetischeProof(o.variant?.id ?? "?", dim === "grounding" ? "PROMOTION_CANDIDATE" : "REJECTED", post), variantId: o.variant?.id ?? "?" };
+      },
+      createVersion: versions.createVersion,
+      runAdversarial: async () => ({ basis: 78, kandidaat: 78 }),
+    };
+    const run = await longRun.draaiLongRun({ runId: "E2E-LEERCYCLUS", profiel: "24h" }, {
+      nu,
+      productie: () => {
+        const a = release.getActiveLyraVersion(releaseMap);
+        return { versionId: a.versionId, generation: a.generation };
+      },
+      cyclus: async ({ runId, uitgesloten }) => {
+        const c = await cycleMod.runDevelopmentCycle({ runId, excludedCandidateIds: uitgesloten }, deps);
+        return { beslissing: c.decision, kandidaatId: c.candidate?.id ?? null, dimensie: c.weakness.weakestDimension ?? null, versieId: c.version?.id ?? null, verdict: c.judge?.verdict ?? null, stadia: c.stadia ?? [], lesId: c.les?.id ?? null, geleerdVan: c.geleerdVan ?? [], strategie: c.candidate?.hypothesis?.strategie ?? null };
+      },
+    });
+    const pad = run.cycli.map((c) => `${c.dimensie}/${c.strategie ?? "-"}→${c.verdict ?? c.beslissing}`);
+    eis(run.stopReden === "ALLES_GEPROBEERD", `zelfstandig gestopt: ${run.stopReden} na ${run.cycli.length} cycli (${pad.join(", ")})`, w);
+    eis(pad.slice(0, 3).join() === "toolChoice/REGEL→REJECT,toolChoice/ZELFCONTROLE→REJECT,toolChoice/WAAROM→REJECT", "op toolChoice na elke verwerping een andere strategie, nooit dezelfde tekst opnieuw", w);
+    eis(pad[3] === "grounding/REGEL→KEEP", "toolChoice uitgeput → de diagnose koos zelf de volgende zwakte (grounding), waar het wel werkte", w);
+    const v = controleerLangeRun(run as unknown as Record<string, unknown>, []);
+    const nietModel = v.controles.filter((c) => c.naam !== "een echt taalmodel deed de metingen");
+    eis(nietModel.every((c) => c.ok), `verify-long-run: ${nietModel.map((c) => `${c.ok ? "OK" : "FOUT"} ${c.naam}`).join("; ")}`, w);
+    eis(v.controles.some((c) => c.naam === "een echt taalmodel deed de metingen" && !c.ok), "de controle 'echt taalmodel' faalt hier terecht (synthetische meting) — die bewijst alleen een lokale run", w);
   });
 
   return bewijzen;

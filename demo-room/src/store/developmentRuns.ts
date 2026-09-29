@@ -74,7 +74,7 @@ export function listAllCandidates(): readonly CandidateRow[] {
   const rijen: CandidateRow[] = [];
   for (const run of runs) {
     for (const cycle of run.cycles) {
-      if (!cycle.candidate || !cycle.proof || cycle.decision === "NOT_EXECUTED") continue;
+      if (!cycle.candidate || !cycle.proof || cycle.decision === "NOT_EXECUTED" || cycle.decision === "UITGEPUT") continue;
       const preGem = averageOf(cycle.proof.pre.agent as unknown as Record<string, unknown>);
       const postGem = averageOf(cycle.proof.post.agent as unknown as Record<string, unknown>);
       const preHoldoutGem = averageOf(cycle.proof.preHoldout.agent as unknown as Record<string, unknown>);

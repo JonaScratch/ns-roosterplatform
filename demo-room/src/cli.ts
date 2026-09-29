@@ -15,7 +15,7 @@ import { runAutonomousDevelopmentRun } from "./develop/autonomousDevelopmentRun"
 import { runDevelopmentCycle } from "./develop/developmentCycle";
 import { draaiLongRun, PROFIEL_MINUTEN, vraagControle, type LongRunProfiel } from "./factory/longRun";
 import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
-import { currentVersionId, getVersion, listVersions } from "./publish/versions";
+import { currentVersionId, getVersion, listVersions, releaseInfo } from "./publish/versions";
 import { demoRoomActor } from "./actor";
 import { requireReadAccess } from "./safety";
 import { writeHandoff } from "./store/handoff";
@@ -284,9 +284,24 @@ async function cmdLongRun(): Promise<void> {
   await withRunLogbook(runId, { kind: "long-run", challengeOrGoal: `Hervatbare lange ontwikkelrun, profiel ${profiel} (actieve tijd; pauze telt niet).` }, async () => {
     const r = await draaiLongRun({ runId, profiel }, {
       nu: () => Date.now(),
+      productie: () => {
+        const { actief } = releaseInfo();
+        return { versionId: actief.versionId, generation: actief.generation };
+      },
       cyclus: async ({ runId: id, uitgesloten }) => {
         const c = await runDevelopmentCycle({ runId: id, excludedCandidateIds: uitgesloten });
-        return { beslissing: c.decision, kandidaatId: c.candidate?.id ?? null, dimensie: c.weakness.weakestDimension ?? null, versieId: c.version?.id ?? null, verdict: c.judge?.verdict ?? null };
+        return {
+          beslissing: c.decision,
+          kandidaatId: c.candidate?.id ?? null,
+          dimensie: c.weakness.weakestDimension ?? null,
+          versieId: c.version?.id ?? null,
+          verdict: c.judge?.verdict ?? null,
+          stadia: c.stadia ?? [],
+          lesId: c.les?.id ?? null,
+          geleerdVan: c.geleerdVan ?? [],
+          strategie: c.candidate?.hypothesis?.strategie ?? null,
+          model: process.env.NS_LOCAL_LLM_MODEL ?? null,
+        };
       },
     });
     console.log(JSON.stringify({ runId, status: r.status, stopReden: r.stopReden, cycli: r.cycli.length, actieveMinuten: +(r.actieveMs / 60000).toFixed(1), segmenten: r.segmenten }, null, 2));

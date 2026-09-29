@@ -1,6 +1,38 @@
 # Lyra Master Program — voortgang
 
-Bijgewerkt: 2026-09-29 (laat) — fasen G–T afgerond, zie direct hieronder en `final-report-master-program.md`. Daarvoor (avond): AFTER-run 20260929-151948 geverifieerd en geanalyseerd; claimgrendel, grader en plancontrole gerepareerd (zie de nieuwe sectie direct hieronder). Eerder op deze dag: UI/UX REBUILD-focusfase en de VISUAL FIDELITY CORRECTION-ronde **AFGEROND** (zie de betreffende secties hieronder). Daarna: de **BEFORE-freeze is bevestigd** (run `20260927-205217`, onafhankelijk herrekend uit de ruwe artifacts, zie "Master Program hervat: BEFORE-freeze bevestigd" hieronder) en het Master Program is zelfstandig verder opgepakt: Fase 1 nu COMPLETE, Fase 3 stap (b), Fase 7 (memoryProposal) en Fase 8 (claim-verificatie) gerepareerd/aangesloten, Fase 10 (consistency-checker) een eerste echte bouwsteen. Resterend: Fase 11/12-inzet blijven `BLOCKED (LOCAL REQUIRED)` (geen Ollama hier), Fase 13 blijft extern geblokkeerd (geen NS-platformtoegang) — zie de fasetracker voor de volledige, actuele status per fase. Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
+Bijgewerkt: 2026-09-30 — vervolgronde na AFTER-run 20260929-234655, zie direct hieronder. Daarvoor (2026-09-29, laat): fasen G–T afgerond, zie direct hieronder en `final-report-master-program.md`. Daarvoor (avond): AFTER-run 20260929-151948 geverifieerd en geanalyseerd; claimgrendel, grader en plancontrole gerepareerd (zie de nieuwe sectie direct hieronder). Eerder op deze dag: UI/UX REBUILD-focusfase en de VISUAL FIDELITY CORRECTION-ronde **AFGEROND** (zie de betreffende secties hieronder). Daarna: de **BEFORE-freeze is bevestigd** (run `20260927-205217`, onafhankelijk herrekend uit de ruwe artifacts, zie "Master Program hervat: BEFORE-freeze bevestigd" hieronder) en het Master Program is zelfstandig verder opgepakt: Fase 1 nu COMPLETE, Fase 3 stap (b), Fase 7 (memoryProposal) en Fase 8 (claim-verificatie) gerepareerd/aangesloten, Fase 10 (consistency-checker) een eerste echte bouwsteen. Resterend: Fase 11/12-inzet blijven `BLOCKED (LOCAL REQUIRED)` (geen Ollama hier), Fase 13 blijft extern geblokkeerd (geen NS-platformtoegang) — zie de fasetracker voor de volledige, actuele status per fase. Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
+
+
+## Na AFTER-run 20260929-234655 (2026-09-30)
+
+- **Kernbaseline nagerekend:**
+  - 43/43 ×3;
+  - agreement 1,0;
+  - strict 0 regressies;
+  - fabricatie 0/46.
+- **O/P/K generiek gerepareerd** (`3ee83aa`), zie
+  `after-analysis-20260929-234655.md`:
+  - O-MIX was een graderfout;
+  - O-LN was een grondwaarheid die haar eigen contract schond;
+  - P mistte de bronstatus en verzon een afwezigheid;
+  - K werd misleid door het woordenboek en daarna ten onrechte tegengehouden.
+- **Holdoutlek in eigen testcode gedicht**; `holdout-lek.test.ts` dwingt het
+  nu af.
+- **Autonome leercyclus compleet:**
+  - elf stappen met bewijs;
+  - leergeheugen over runs heen;
+  - drie strategieën per zwakte;
+  - validator vóór de meting;
+  - adversarial in de rechter (judge/2);
+  - `verify-long-run.ts` als bewijscontrole.
+- **Bewijs:** 11/11 (`proofs/e2e-20260929-230756.json`).
+- **Nog open (LOCAL REQUIRED):**
+  - herbeoordeling A;
+  - AFTER-run B;
+  - echte lange run C.
+
+  Commando's en stopvoorwaarden staan in `final-report-master-program.md`.
+  `LYRA_DEMO_ROOM_AUTONOMOUS_PROGRAM_COMPLETE` is bewust nog niet gezet.
 
 
 ## Fasen G–T afgerond in de cloud (2026-09-29, laat) — zie het eindrapport

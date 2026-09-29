@@ -28,7 +28,7 @@ import type { ChatModel } from "./model/types";
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 /** Een acteur uit de database, zodat de rechten echt zijn en niet verzonnen. */
-async function actorMet(rollen: readonly Role[]): Promise<Actor | null> {
+export async function actorMet(rollen: readonly Role[]): Promise<Actor | null> {
   const account = await prisma.userAccount.findFirst({
     where: { status: "ACTIVE", roles: { hasEvery: [...rollen] } },
     select: { id: true, employeeId: true, roles: true, employee: { select: { employeeNumber: true, depot: true } } },
