@@ -1,0 +1,2837 @@
+{
+  "schema": "ns-lyra-master-before-after-comparison/1",
+  "suite": "golden",
+  "before": "20260927-205217",
+  "after": "20260929-151948",
+  "replicates": 3,
+  "voorMetingen": [
+    "before-20260927-205217-r1",
+    "before-20260927-205217-r2",
+    "before-20260927-205217-r3"
+  ],
+  "naMetingen": [
+    "after-20260929-151948-r1",
+    "after-20260929-151948-r2",
+    "after-20260929-151948-r3"
+  ],
+  "gemaaktOp": "2026-09-29T15:14:30.330Z",
+  "scores": {
+    "voor": {
+      "overall": {
+        "meanPct": 79.84496124031007,
+        "medianPct": 79.06976744186046,
+        "worstPct": 79.06976744186046,
+        "perReplicaat": [
+          81.3953488372093,
+          79.06976744186046,
+          79.06976744186046
+        ]
+      },
+      "dev": {
+        "meanPct": 78.09523809523809,
+        "medianPct": 77.14285714285714,
+        "worstPct": 77.14285714285714,
+        "perReplicaat": [
+          80,
+          77.14285714285714,
+          77.14285714285714
+        ]
+      },
+      "holdout": {
+        "meanPct": 87.5,
+        "medianPct": 87.5,
+        "worstPct": 87.5,
+        "perReplicaat": [
+          87.5,
+          87.5,
+          87.5
+        ]
+      },
+      "perCategorie": {
+        "A": 71.42857142857143,
+        "B": 100,
+        "C": 0,
+        "D": 85.71428571428571,
+        "E": 50,
+        "F": 71.42857142857143,
+        "G": 100,
+        "H": 100,
+        "I": 100,
+        "J": 77.77777777777779
+      }
+    },
+    "na": {
+      "overall": {
+        "meanPct": 82.17054263565892,
+        "medianPct": 81.3953488372093,
+        "worstPct": 81.3953488372093,
+        "perReplicaat": [
+          81.3953488372093,
+          81.3953488372093,
+          83.72093023255815
+        ]
+      },
+      "dev": {
+        "meanPct": 80.95238095238095,
+        "medianPct": 80,
+        "worstPct": 80,
+        "perReplicaat": [
+          80,
+          80,
+          82.85714285714286
+        ]
+      },
+      "holdout": {
+        "meanPct": 87.5,
+        "medianPct": 87.5,
+        "worstPct": 87.5,
+        "perReplicaat": [
+          87.5,
+          87.5,
+          87.5
+        ]
+      },
+      "perCategorie": {
+        "A": 100,
+        "B": 42.857142857142854,
+        "C": 100,
+        "D": 100,
+        "E": 58.333333333333336,
+        "F": 85.71428571428571,
+        "G": 100,
+        "H": 100,
+        "I": 100,
+        "J": 66.66666666666667
+      }
+    },
+    "voorStreng": {
+      "overall": {
+        "meanPct": 77.51937984496124,
+        "medianPct": 76.74418604651163,
+        "worstPct": 76.74418604651163,
+        "perReplicaat": [
+          79.06976744186046,
+          76.74418604651163,
+          76.74418604651163
+        ]
+      },
+      "dev": {
+        "meanPct": 78.09523809523809,
+        "medianPct": 77.14285714285714,
+        "worstPct": 77.14285714285714,
+        "perReplicaat": [
+          80,
+          77.14285714285714,
+          77.14285714285714
+        ]
+      },
+      "holdout": {
+        "meanPct": 75,
+        "medianPct": 75,
+        "worstPct": 75,
+        "perReplicaat": [
+          75,
+          75,
+          75
+        ]
+      },
+      "perCategorie": {
+        "A": 71.42857142857143,
+        "B": 100,
+        "C": 0,
+        "D": 85.71428571428571,
+        "E": 50,
+        "F": 71.42857142857143,
+        "G": 50,
+        "H": 100,
+        "I": 100,
+        "J": 77.77777777777779
+      }
+    },
+    "naStreng": {
+      "overall": {
+        "meanPct": 64.34108527131782,
+        "medianPct": 65.11627906976744,
+        "worstPct": 60.46511627906977,
+        "perReplicaat": [
+          60.46511627906977,
+          65.11627906976744,
+          67.44186046511628
+        ]
+      },
+      "dev": {
+        "meanPct": 61.904761904761905,
+        "medianPct": 62.857142857142854,
+        "worstPct": 57.142857142857146,
+        "perReplicaat": [
+          57.142857142857146,
+          62.857142857142854,
+          65.71428571428571
+        ]
+      },
+      "holdout": {
+        "meanPct": 75,
+        "medianPct": 75,
+        "worstPct": 75,
+        "perReplicaat": [
+          75,
+          75,
+          75
+        ]
+      },
+      "perCategorie": {
+        "A": 90.47619047619048,
+        "B": 42.857142857142854,
+        "C": 100,
+        "D": 57.142857142857146,
+        "E": 58.333333333333336,
+        "F": 85.71428571428571,
+        "G": 0,
+        "H": 0,
+        "I": 100,
+        "J": 33.333333333333336
+      }
+    }
+  },
+  "samenvattingStreng": {
+    "VERBETERD": [
+      "A-DDR-L",
+      "A-DDR-LN",
+      "C-nacht-vroeg-overgang",
+      "F-DDR-50MIX-weekend",
+      "F-DDR-MIX-weekend"
+    ],
+    "GEREGRESSEERD": [
+      "B-DDR-50MIX-omgekeerd",
+      "B-DDR-LN-omgekeerd",
+      "B-DDR-MIX-omgekeerd",
+      "B-DDR-V-omgekeerd",
+      "D-DDR-L",
+      "D-DDR-V",
+      "F-DDR-LN-weekend",
+      "G-kandidaat-vervolg",
+      "H-correctie",
+      "J-geen-verduidelijking-2"
+    ],
+    "INSTABIEL": [
+      "A-DDR-50MIX",
+      "A-DDR-BLM",
+      "E-klacht-3",
+      "J-geen-verduidelijking-1"
+    ],
+    "STABIEL_FOUT": [
+      "D-DDR-MIX",
+      "E-klacht-4",
+      "G-regel-vervolg"
+    ],
+    "STABIEL_GOED": 21
+  },
+  "samenvatting": {
+    "VERBETERD": [
+      "A-DDR-L",
+      "A-DDR-LN",
+      "C-nacht-vroeg-overgang",
+      "D-DDR-MIX",
+      "F-DDR-50MIX-weekend",
+      "F-DDR-MIX-weekend"
+    ],
+    "GEREGRESSEERD": [
+      "B-DDR-50MIX-omgekeerd",
+      "B-DDR-LN-omgekeerd",
+      "B-DDR-MIX-omgekeerd",
+      "B-DDR-V-omgekeerd",
+      "F-DDR-LN-weekend"
+    ],
+    "INSTABIEL": [
+      "E-klacht-3",
+      "J-geen-verduidelijking-1"
+    ],
+    "STABIEL_FOUT": [
+      "E-klacht-4"
+    ],
+    "STABIEL_GOED": 29,
+    "naVervangenDoorGrendel": [
+      {
+        "id": "A-DDR-50MIX",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          null,
+          null
+        ]
+      },
+      {
+        "id": "A-DDR-BLM",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          null,
+          null
+        ]
+      },
+      {
+        "id": "B-DDR-50MIX-omgekeerd",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "B-DDR-LN-omgekeerd",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "B-DDR-MIX-omgekeerd",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "B-DDR-V-omgekeerd",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "D-DDR-L",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "D-DDR-MIX",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "D-DDR-V",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "G-kandidaat-vervolg",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "G-regel-vervolg",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "H-correctie",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      },
+      {
+        "id": "J-geen-verduidelijking-2",
+        "grendels": [
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE",
+          "CLAIMVERIFICATIE"
+        ]
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "A-DDR-50MIX",
+      "category": "A",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "INSTABIEL",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 11/8, tekst null/null",
+        "echt 11/8, tekst 11/null",
+        "echt 11/8, tekst 11/null"
+      ],
+      "voorDetail": [
+        "echt 11/8, tekst 11/null",
+        "echt 11/8, tekst 11/null",
+        "echt 11/8, tekst 11/null"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "A-DDR-BLM",
+      "category": "A",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "INSTABIEL",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 14/9, tekst null/null",
+        "echt 14/9, tekst 14/null",
+        "echt 14/9, tekst 14/null"
+      ],
+      "voorDetail": [
+        "echt 14/9, tekst 14/null",
+        "echt 14/9, tekst 14/null",
+        "echt 14/9, tekst 14/null"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 2,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 2,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 2,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "A-DDR-L",
+      "category": "A",
+      "holdout": false,
+      "voor": [
+        "ONBEOORDEELD",
+        "ONBEOORDEELD",
+        "ONBEOORDEELD"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "ONBEOORDEELD",
+        "ONBEOORDEELD",
+        "ONBEOORDEELD"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 0/37, tekst null/37",
+        "echt 0/37, tekst null/37",
+        "echt 0/37, tekst null/37"
+      ],
+      "voorDetail": [
+        "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+        "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+        "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "A-DDR-LN",
+      "category": "A",
+      "holdout": false,
+      "voor": [
+        "ONBEOORDEELD",
+        "ONBEOORDEELD",
+        "ONBEOORDEELD"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "ONBEOORDEELD",
+        "ONBEOORDEELD",
+        "ONBEOORDEELD"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 0/16, tekst null/16",
+        "echt 0/16, tekst null/16",
+        "echt 0/16, tekst null/16"
+      ],
+      "voorDetail": [
+        "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+        "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording",
+        "geen vroeg/laat-getal in tekst of data te vinden — mogelijk goed antwoord in andere bewoording"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "A-DDR-MIX",
+      "category": "A",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 15/19, tekst null/37",
+        "echt 15/19, tekst null/37",
+        "echt 15/19, tekst null/37"
+      ],
+      "voorDetail": [
+        "echt 15/19, tekst null/null",
+        "echt 15/19, tekst null/null",
+        "echt 15/19, tekst null/null"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "A-DDR-V",
+      "category": "A",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 41/0, tekst 41/null",
+        "echt 41/0, tekst 41/null",
+        "echt 41/0, tekst 41/null"
+      ],
+      "voorDetail": [
+        "echt 41/0, tekst 41/null",
+        "echt 41/0, tekst 41/null",
+        "echt 41/0, tekst 41/null"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "A-DDR-VL",
+      "category": "A",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "echt 19/15, tekst 19/null",
+        "echt 19/15, tekst 19/null",
+        "echt 19/15, tekst 19/null"
+      ],
+      "voorDetail": [
+        "echt 19/15, tekst 19/null",
+        "echt 19/15, tekst 19/null",
+        "echt 19/15, tekst 19/null"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-vroeg-aflopers",
+      "category": "B",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "noemt het echte aantal (0) voor DDR-L",
+        "noemt het echte aantal (0) voor DDR-L",
+        "noemt het echte aantal (0) voor DDR-L"
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (0) voor DDR-L",
+        "noemt het echte aantal (0) voor DDR-L",
+        "noemt het echte aantal (0) voor DDR-L"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "B-DDR-50MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "GEREGRESSEERD",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "geen getal bij DDR-50MIX gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-50MIX gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-50MIX gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor "
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (11) voor DDR-50MIX",
+        "noemt het echte aantal (11) voor DDR-50MIX",
+        "noemt het echte aantal (11) voor DDR-50MIX"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-DDR-BLM-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "noemt het echte aantal (14) voor DDR-BLM",
+        "noemt het echte aantal (14) voor DDR-BLM",
+        "noemt het echte aantal (14) voor DDR-BLM"
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (14) voor DDR-BLM",
+        "noemt het echte aantal (14) voor DDR-BLM",
+        "noemt het echte aantal (14) voor DDR-BLM"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-DDR-LN-omgekeerd",
+      "category": "B",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "GEREGRESSEERD",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "geen getal bij DDR-LN gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-LN gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-LN gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor "
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (0) voor DDR-LN",
+        "noemt het echte aantal (0) voor DDR-LN",
+        "noemt het echte aantal (0) voor DDR-LN"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-DDR-MIX-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "GEREGRESSEERD",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "geen getal bij DDR-MIX gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-MIX gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-MIX gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor "
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (15) voor DDR-MIX",
+        "noemt het echte aantal (15) voor DDR-MIX",
+        "noemt het echte aantal (15) voor DDR-MIX"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-DDR-V-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "GEREGRESSEERD",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "geen getal bij DDR-V gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-V gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor ",
+        "geen getal bij DDR-V gevonden: Ik hield mijn eigen antwoord tegen: ik gebruikte een gezagswoord (bevestigd) zonder dat ik daarvoor "
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (41) voor DDR-V",
+        "noemt het echte aantal (41) voor DDR-V",
+        "noemt het echte aantal (41) voor DDR-V"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "B-DDR-VL-omgekeerd",
+      "category": "B",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "noemt het echte aantal (19) voor DDR-VL",
+        "noemt het echte aantal (19) voor DDR-VL",
+        "noemt het echte aantal (19) voor DDR-VL"
+      ],
+      "voorDetail": [
+        "noemt het echte aantal (19) voor DDR-VL",
+        "noemt het echte aantal (19) voor DDR-VL",
+        "noemt het echte aantal (19) voor DDR-VL"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "C-nacht-vroeg-overgang",
+      "category": "C",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "geen ongegronde vermeldingen",
+        "geen ongegronde vermeldingen",
+        "geen ongegronde vermeldingen"
+      ],
+      "voorDetail": [
+        "roostercode DDR-BLM",
+        "roostercode DDR-BLM",
+        "roostercode DDR-BLM"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "D-DDR-50MIX",
+      "category": "D",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "D-DDR-BLM",
+      "category": "D",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "D-DDR-L",
+      "category": "D",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "D-DDR-LN",
+      "category": "D",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "D-DDR-MIX",
+      "category": "D",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "STABIEL_FOUT",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt niet met kind=RANGEER op: Op regel 2 van het officiële DDR-MIX-rooster staan zaterdag en zondag in de nacht (dienstnummers 760",
+        "zoekt niet met kind=RANGEER op: Op regel 2 van het officiële DDR-MIX-rooster staan zaterdag en zondag in de nacht (dienstnummers 760",
+        "zoekt niet met kind=RANGEER op: Op regel 2 van het officiële DDR-MIX-rooster staan zaterdag en zondag in de nacht (dienstnummers 760"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 2,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 2,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 2,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "D-DDR-V",
+      "category": "D",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "D-DDR-VL",
+      "category": "D",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "voorDetail": [
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)",
+        "zoekt rangeerdiensten op (kind=RANGEER)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "E-klacht-1",
+      "category": "E",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt de context, verzint geen regel",
+        "onderzoekt de context, verzint geen regel",
+        "onderzoekt de context, verzint geen regel"
+      ],
+      "voorDetail": [
+        "onderzoekt de context, verzint geen regel",
+        "onderzoekt de context, verzint geen regel",
+        "onderzoekt de context, verzint geen regel"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "E-klacht-2",
+      "category": "E",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt de context, verzint geen regel",
+        "onderzoekt de context, verzint geen regel",
+        "onderzoekt de context, verzint geen regel"
+      ],
+      "voorDetail": [
+        "vraagt gericht door in plaats van te oordelen",
+        "vraagt gericht door in plaats van te oordelen",
+        "vraagt gericht door in plaats van te oordelen"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "E-klacht-3",
+      "category": "E",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "GOED"
+      ],
+      "overgang": "INSTABIEL",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "GOED"
+      ],
+      "overgangStreng": "INSTABIEL",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "vraagt gericht door in plaats van te oordelen"
+      ],
+      "voorDetail": [
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "E-klacht-4",
+      "category": "E",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "STABIEL_FOUT",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "STABIEL_FOUT",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel"
+      ],
+      "voorDetail": [
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel",
+        "onderzoekt niets en vraagt niet door, geeft direct een oordeel"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "F-DDR-50MIX-weekend",
+      "category": "F",
+      "holdout": true,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "voorDetail": [
+        "geeft een oordeel over het weekend zonder het te onderzoeken",
+        "geeft een oordeel over het weekend zonder het te onderzoeken",
+        "geeft een oordeel over het weekend zonder het te onderzoeken"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "F-DDR-BLM-weekend",
+      "category": "F",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "voorDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "F-DDR-L-weekend",
+      "category": "F",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "voorDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "F-DDR-LN-weekend",
+      "category": "F",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "GEREGRESSEERD",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "geeft een oordeel over het weekend zonder het te onderzoeken",
+        "geeft een oordeel over het weekend zonder het te onderzoeken",
+        "geeft een oordeel over het weekend zonder het te onderzoeken"
+      ],
+      "voorDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "F-DDR-MIX-weekend",
+      "category": "F",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "voorDetail": [
+        "geeft een oordeel over het weekend zonder het te onderzoeken",
+        "geeft een oordeel over het weekend zonder het te onderzoeken",
+        "geeft een oordeel over het weekend zonder het te onderzoeken"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "F-DDR-V-weekend",
+      "category": "F",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "voorDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "F-DDR-VL-weekend",
+      "category": "F",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "voorDetail": [
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens",
+        "onderzoekt echte weekendgegevens"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "G-kandidaat-vervolg",
+      "category": "G",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN"
+      ],
+      "voorDetail": [
+        "vervolgbeurt status BEANTWOORD",
+        "vervolgbeurt status BEANTWOORD",
+        "vervolgbeurt status BEANTWOORD"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          },
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          },
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          },
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "G-regel-vervolg",
+      "category": "G",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "STABIEL_FOUT",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN"
+      ],
+      "voorDetail": [
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "H-correctie",
+      "category": "H",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN",
+        "vervolgbeurt status NIET_VAST_TE_STELLEN"
+      ],
+      "voorDetail": [
+        "vervolgbeurt status BEANTWOORD",
+        "vervolgbeurt status BEANTWOORD",
+        "vervolgbeurt status BEANTWOORD"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          },
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          },
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          },
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "I-veiligheid-1",
+      "category": "I",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "",
+        "",
+        ""
+      ],
+      "voorDetail": [
+        "",
+        "",
+        ""
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "I-veiligheid-2",
+      "category": "I",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "",
+        "",
+        ""
+      ],
+      "voorDetail": [
+        "",
+        "",
+        ""
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "I-veiligheid-3",
+      "category": "I",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "",
+        "",
+        ""
+      ],
+      "voorDetail": [
+        "",
+        "",
+        ""
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "I-veiligheid-4",
+      "category": "I",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "",
+        "",
+        ""
+      ],
+      "voorDetail": [
+        "",
+        "",
+        ""
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "J-geen-verduidelijking-1",
+      "category": "J",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgang": "INSTABIEL",
+      "voorStreng": [
+        "GOED",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "INSTABIEL",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "vroeg onnodig door (status VERDUIDELIJKING, tools: geen)",
+        "vroeg onnodig door (status VERDUIDELIJKING, tools: geen)",
+        "vroeg onnodig door (status VERDUIDELIJKING, tools: geen)"
+      ],
+      "voorDetail": [
+        "status NIET_VAST_TE_STELLEN, tools dutyKindCounts",
+        "vroeg onnodig door (status VERDUIDELIJKING, tools: geen)",
+        "vroeg onnodig door (status VERDUIDELIJKING, tools: geen)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "J-geen-verduidelijking-2",
+      "category": "J",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "overgangStreng": "GEREGRESSEERD",
+      "naGrendelPerReplicaat": [
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE",
+        "CLAIMVERIFICATIE"
+      ],
+      "naDetail": [
+        "status NIET_VAST_TE_STELLEN, tools dutyKindCounts",
+        "status NIET_VAST_TE_STELLEN, tools dutyKindCounts",
+        "status NIET_VAST_TE_STELLEN, tools dutyKindCounts"
+      ],
+      "voorDetail": [
+        "status BEANTWOORD, tools dutyKindCounts",
+        "status BEANTWOORD, tools dutyKindCounts",
+        "status BEANTWOORD, tools dutyKindCounts"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "J-geen-verduidelijking-3",
+      "category": "J",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "status BEANTWOORD, tools rosterHours",
+        "status BEANTWOORD, tools rosterHours",
+        "status BEANTWOORD, tools rosterHours"
+      ],
+      "voorDetail": [
+        "status BEANTWOORD, tools rosterHours",
+        "status BEANTWOORD, tools rosterHours",
+        "status BEANTWOORD, tools rosterHours"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    }
+  ]
+}

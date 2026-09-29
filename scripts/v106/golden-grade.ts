@@ -2,6 +2,7 @@ import "dotenv/config";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { gegevensTekst, ongegrondeVermeldingen } from "@/server/agent/grounding";
+import { pasGrendelregelToe } from "./grendel-regel";
 import { laadGrondwaarheid } from "./waarheid";
 
 /**
@@ -16,7 +17,14 @@ import { laadGrondwaarheid } from "./waarheid";
  * fout worden afgekeurd. De grader rekent daarom bij elke beoordeling opnieuw
  * de echte cijfers uit.
  *
- *   npx tsx --conditions=react-server scripts/v106/golden-grade.ts --meting n0
+ *   npx tsx --conditions=react-server scripts/v106/golden-grade.ts --meting n0 [--uitvoer golden-grade-v2.json]
+ *
+ * ## Schema /2: de grendelregel
+ *
+ * Een antwoord dat een grendel in agent.ts verving, telt bij een item dat
+ * inhoud verwacht niet meer als GOED — zie `grendel-regel.ts`. Een bestaand
+ * beoordelingsbestand wordt nooit stil overschreven: dat is bewijsmateriaal.
+ * Herbeoordelen van een oude meting gaat naar een eigen `--uitvoer`-bestand.
  */
 
 const argument = (naam: string): string | null => {
@@ -180,7 +188,7 @@ async function main(): Promise<void> {
 
   const waarheid = await laadGrondwaarheid();
   const beoordeeld = (rapport.results as Json[]).map((item) => {
-    const oordeel = beoordeelItem(item, waarheid);
+    const oordeel = pasGrendelregelToe(String(item.expect?.kind ?? ""), laatstAntwoord(item), beoordeelItem(item, waarheid));
     return { id: item.id, category: item.category, holdout: item.holdout, status: oordeel.status, detail: oordeel.detail, ms: item.ms };
   });
 
@@ -196,7 +204,7 @@ async function main(): Promise<void> {
   }
 
   const uit = {
-    schema: "ns-v106-golden-grade/1",
+    schema: "ns-v106-golden-grade/2",
     measurement: meting,
     gradedAt: new Date().toISOString(),
     model: rapport.model,
@@ -204,7 +212,11 @@ async function main(): Promise<void> {
     byHoldout: perHoldout,
     items: beoordeeld,
   };
-  writeFileSync(path.join(map, "golden-grade.json"), `${JSON.stringify(uit, null, 2)}\n`);
+  const uitvoer = path.join(map, argument("uitvoer") ?? "golden-grade.json");
+  if (existsSync(uitvoer)) {
+    throw new Error(`${uitvoer} bestaat al en is bewijsmateriaal; kies een eigen --uitvoer <bestand> om opnieuw te beoordelen.`);
+  }
+  writeFileSync(uitvoer, `${JSON.stringify(uit, null, 2)}\n`);
 
   console.log(`${meting} · ${beoordeeld.length} items beoordeeld`);
   for (const [cat, tel] of Object.entries(perCategorie).sort()) {

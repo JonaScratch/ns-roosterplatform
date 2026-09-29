@@ -103,6 +103,7 @@ async function main(): Promise<void> {
           toolInputs: antwoord.toolCalls.map((c) => c.input),
           data: antwoord.data,
           sources: antwoord.sources,
+          ...(antwoord.tegengehouden ? { tegengehouden: antwoord.tegengehouden } : {}),
         });
       }
       if (sessionId) gemaaktSessies.push(sessionId);

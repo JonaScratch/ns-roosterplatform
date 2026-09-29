@@ -2,6 +2,7 @@ import "dotenv/config";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { laadGrondwaarheid } from "./waarheid";
+import { pasGrendelregelToe } from "./grendel-regel";
 
 /**
  * De aanvullende golden-suite beoordelen (categorieën L, O), met verse
@@ -98,7 +99,7 @@ async function main(): Promise<void> {
 
   const waarheid = await laadGrondwaarheid();
   const beoordeeld = (rapport.results as Json[]).map((item) => {
-    const oordeel = beoordeelItem(item, waarheid);
+    const oordeel = pasGrendelregelToe(String(item.expect?.kind ?? ""), laatstAntwoord(item), beoordeelItem(item, waarheid));
     return { id: item.id, category: item.category, holdout: item.holdout, status: oordeel.status, detail: oordeel.detail, ms: item.ms };
   });
 
@@ -114,7 +115,7 @@ async function main(): Promise<void> {
   }
 
   const uit = {
-    schema: "ns-v106-golden-grade-extension/1",
+    schema: "ns-v106-golden-grade-extension/2",
     measurement: meting,
     gradedAt: new Date().toISOString(),
     model: rapport.model,
@@ -122,7 +123,10 @@ async function main(): Promise<void> {
     byHoldout: perHoldout,
     items: beoordeeld,
   };
-  writeFileSync(path.join(map, "golden-grade-extension.json"), `${JSON.stringify(uit, null, 2)}\n`);
+  // Schema /2 (grendelregel, zie grendel-regel.ts). Nooit een bestaand oordeel stil overschrijven.
+  const uitvoer = path.join(map, argument("uitvoer") ?? "golden-grade-extension.json");
+  if (existsSync(uitvoer)) throw new Error(`${uitvoer} bestaat al en is bewijsmateriaal; kies een eigen --uitvoer <bestand>.`);
+  writeFileSync(uitvoer, `${JSON.stringify(uit, null, 2)}\n`);
 
   console.log(`${meting} · ${beoordeeld.length} items beoordeeld`);
   for (const [cat, tel] of Object.entries(perCategorie).sort()) {

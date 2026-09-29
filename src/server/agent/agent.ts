@@ -65,6 +65,13 @@ export interface AskResult extends AgentAnswer {
   readonly level: "A" | "B" | "C";
   readonly capabilities: readonly string[];
   readonly contextUsed: Record<string, unknown>;
+  /**
+   * Als een grendel het modelantwoord verving: welke, en wat het model had
+   * willen zeggen. Het scherm toont alleen de melding; dit veld is er voor
+   * de analyse (benchmark, Demo Room), zodat een grendelbeslissing achteraf
+   * te beoordelen is zonder het activiteitenlog uit de database te halen.
+   */
+  readonly tegengehouden?: { readonly grendel: "ZONDER_BRON" | "GRONDING" | "CLAIMVERIFICATIE"; readonly tekst: string; readonly detail: unknown };
 }
 
 export async function askAgent(input: {
@@ -332,6 +339,13 @@ ${Object.values(schermContext).join(" ")}`);
       tegengehoudenTekst: naGronding.text,
     });
   }
+  const tegengehouden: AskResult["tegengehouden"] = ongedekteClaims.length > 0
+    ? { grendel: "CLAIMVERIFICATIE", tekst: naGronding.text, detail: ongedekteClaims }
+    : zonderBron
+      ? { grendel: "ZONDER_BRON", tekst: ruwAntwoord.text, detail: { intent: plan.intent } }
+      : los.length > 0
+        ? { grendel: "GRONDING", tekst: ruwAntwoord.text, detail: los }
+        : undefined;
   await stap(antwoord.status === "GEWEIGERD" ? "WEIGERING" : "ANTWOORD", antwoord.text.length > 200 ? `${antwoord.text.slice(0, 197)}…` : antwoord.text, {
     status: antwoord.status,
     sources: antwoord.sources,
@@ -362,10 +376,10 @@ ${Object.values(schermContext).join(" ")}`);
       objectId: sessionId,
       newValue: { intent: plan.intent, status: antwoord.status, tools: calls.map((c) => c.tool), model: model.name },
     });
-    return { ...basis, ...antwoord, sessionId, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls };
+    return { ...basis, ...antwoord, sessionId, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls, ...(tegengehouden ? { tegengehouden } : {}) };
   }
 
-  return { ...basis, ...antwoord, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls };
+  return { ...basis, ...antwoord, intent: plan.intent, reasoning: plan.reasoning, toolCalls: calls, ...(tegengehouden ? { tegengehouden } : {}) };
 }
 
 /**

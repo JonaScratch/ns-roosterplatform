@@ -109,6 +109,8 @@ async function main(): Promise<void> {
           toolInputs: antwoord.toolCalls.map((c) => c.input),
           data: antwoord.data,
           sources: antwoord.sources,
+          // Wat een grendel tegenhield (alleen aanwezig als dat gebeurde).
+          ...(antwoord.tegengehouden ? { tegengehouden: antwoord.tegengehouden } : {}),
         });
       }
       if (sessionId) gemaaktSessies.push(sessionId);
