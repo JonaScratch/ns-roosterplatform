@@ -1,0 +1,90 @@
+{
+  "schema": "ns-lyra-master-after-verification/1",
+  "runId": "20260929-193436",
+  "phase": "after",
+  "recordedAt": "2026-09-29T18:09:45.248Z",
+  "status": "FAIL",
+  "subject": {
+    "headCommit": "2d3e06a4e5e63536ffe82e3da2ed7b2f1828eeed",
+    "branch": "claude/admiring-edison-5y65j7",
+    "trackedClean": true
+  },
+  "model": {
+    "name": "qwen3:8b",
+    "reachable": true
+  },
+  "stubExplicitlyDisabled": true,
+  "replicates": 3,
+  "allReplicatesCompleted": true,
+  "gradingCompleted": true,
+  "rawArtifacts": [
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r1/golden.json",
+      "sha256": "577038e50cfc6702c55f7673bff57b92c2f35f3999d1987f3ad3b4caa05db529"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r1/golden-grade.json",
+      "sha256": "d6fa876734a0ec13de5e482df33e6b9cc00e349aaa68ba7890efeba7fa6544b9"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r1/golden-extension.json",
+      "sha256": "b5a82420a311a23209d4d990f0bf197f658f44bab9bcd0b59193b75a74fdab3d"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r1/golden-grade-extension.json",
+      "sha256": "e844d8d8493a705a09cabf7944b2c46bf5dfdffb49398e2b74be7f0ca947ff11"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r2/golden.json",
+      "sha256": "ebfcd7d32cb1a1a815baa516f3d1f567dd4c9c978d187fd3e2e4c39c940b536e"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r2/golden-grade.json",
+      "sha256": "57c712cf03b3ab442612912bc7b185ef617209cde417184799cfad706f9d35fe"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r2/golden-extension.json",
+      "sha256": "f9677e2df07c9f258d3292395b19104b13f3d6f5c440664b32ed31665b3c2106"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r2/golden-grade-extension.json",
+      "sha256": "b040312efe288bc68e4fa02befe6a270b51c38324a487e441be0816b7919457e"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r3/golden.json",
+      "sha256": "f830d05308b45544a81c6c15148c024ccfe50ea983393d80e134be822b304b9c"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r3/golden-grade.json",
+      "sha256": "90549170cead829d6dcca33bc92e216c9d5c7d186aca73d61f864ac4ac1224db"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r3/golden-extension.json",
+      "sha256": "68ea637829c33333f0c59b013770a09ac24e0fcc7188fc8f329776a216df52db"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260929-193436-r3/golden-grade-extension.json",
+      "sha256": "f3d9c33a35c269b1fcb68bdb864459c60ea346c2cfc8ed93963874b684531f33"
+    }
+  ],
+  "extension": {
+    "ranOk": true,
+    "note": "Golden-suite-extensie (categorieën L, O) — Fase 9. De BEFORE-run 20260927-205217 mat deze categorieën alleen als EXTENSION / NON-FROZEN (post-baseline code); vergelijken kan met scripts/lyra-master/compare-before-after.ts --suite extension, maar het is geen bevroren BEFORE-vergelijking."
+  },
+  "adversarial": {
+    "ranOk": true,
+    "meting": "adversarial-20260929-193436",
+    "path": "../adversarial/adversarial-20260929-193436/",
+    "note": "Fase 12 — 9 items uit adversarial-holdout-design.json. Item Q draait sinds de AFTER-analyse van 20260929 met een echte, gesimuleerde toolfout (askAgent({ toolFouten }), zichtbaar als toolGesimuleerd in adversarial.json)."
+  },
+  "comparison": {
+    "before": "20260927-205217",
+    "golden": "../../comparisons/before-20260927-205217__after-20260929-193436.json",
+    "extension": "../../comparisons/before-20260927-205217__after-20260929-193436.extension.json",
+    "note": "Streng (/2) is leidend: een antwoord dat een grendel verving, telt niet als GOED. Zie docs/lyra-knowledge/after-analysis-20260929.md §2."
+  },
+  "paths": {
+    "manifest": "manifest.json",
+    "aggregate": "aggregate.json"
+  }
+}
