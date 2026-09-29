@@ -8,6 +8,10 @@ import { type UiContext, resolveContext, uiContextSchema } from "./context";
 import { claimVerificatieMelding, ongedekteGezagsClaims } from "./claim-verification";
 import { bewaakPlan, type PlanCorrectie } from "./plan-guard";
 import { gegevensTekst, grondingsMelding, ongegrondeVermeldingen } from "./grounding";
+import { afwezigheidsMelding, citaatVoorbehoud, nietCiteerbareBronnen, verzonnenAfwezigheden, vraagtOmCitaat } from "./bron-afwezigheid";
+import { begrippenIn } from "./vocabulary";
+import { activeRuleset } from "@/server/rules-engine/ruleset/index";
+import { bronTekst } from "@/server/rules-engine/ruleset/source-text";
 import { localConfigFromEnv, localModel } from "./model/local";
 import { stubModel } from "./model/stub";
 import type { AgentAnswer, AgentPlan, ChatModel, PlanRequest } from "./model/types";
@@ -72,7 +76,7 @@ export interface AskResult extends AgentAnswer {
    * de analyse (benchmark, Demo Room), zodat een grendelbeslissing achteraf
    * te beoordelen is zonder het activiteitenlog uit de database te halen.
    */
-  readonly tegengehouden?: { readonly grendel: "ZONDER_BRON" | "GRONDING" | "CLAIMVERIFICATIE"; readonly tekst: string; readonly detail: unknown };
+  readonly tegengehouden?: { readonly grendel: "ZONDER_BRON" | "GRONDING" | "CLAIMVERIFICATIE" | "AFWEZIGHEID"; readonly tekst: string; readonly detail: unknown };
   /** Wat de plancontrole aan het modelplan veranderde (plan-guard.ts); alleen aanwezig als er iets veranderde. */
   readonly planCorrecties?: readonly PlanCorrectie[];
 }
@@ -316,11 +320,26 @@ export async function askAgent(input: {
     });
   }
 
+  // Wat het platform het model zelf aanreikte (de begrippen uit het
+  // domeinwoordenboek bij deze vraag) is geen verzinsel van het model: een
+  // profielcode die het woordenboek noemde, mag het antwoord herhalen
+  // (AFTER-run 20260929-234655: VROEG_LAAT werd als "verzonnen regel" tegengehouden,
+  // terwijl de systeeminstructie hem zelf had genoemd).
+  const platformContext = begrippenIn(input.text).map((b) => b.betekenis).join(" ");
+  const nietsGevonden = calls.flatMap((c, i) => {
+    const data = results[i]?.data as { hits?: unknown[] } | null;
+    const zoekterm = (c.input as { query?: unknown } | undefined)?.query;
+    return c.tool === "ruleSearch" && results[i]?.ok && Array.isArray(data?.hits) && data.hits.length === 0 && typeof zoekterm === "string"
+      ? [{ waar: "het regelbestand", zoekterm }]
+      : [];
+  });
+
   const los =
     ruwAntwoord.status === "GEWEIGERD"
       ? []
       : ongegrondeVermeldingen(ruwAntwoord.text, `${gegevensTekst(results)}
-${Object.values(schermContext).join(" ")}`);
+${Object.values(schermContext).join(" ")}
+${platformContext}`);
   const naGronding: typeof ruwAntwoord = zonderBron
     ? {
         ...ruwAntwoord,
@@ -340,7 +359,7 @@ ${Object.values(schermContext).join(" ")}`);
       }
     : los.length === 0
       ? ruwAntwoord
-      : { ...ruwAntwoord, text: grondingsMelding(los), status: "NIET_VAST_TE_STELLEN" };
+      : { ...ruwAntwoord, text: grondingsMelding(los, { intent: plan.intent, nietsGevonden }), status: "NIET_VAST_TE_STELLEN" };
   if (los.length > 0) {
     // De oorspronkelijke tekst gaat niet verloren: hij hoort in het
     // activiteitenlog thuis, waar hij te onderzoeken is, en niet op het scherm,
@@ -360,15 +379,42 @@ ${Object.values(schermContext).join(" ")}`);
    * inhoudelijke gezagsclaim meer om te controleren. Zie claim-verification.ts.
    */
   const ongedekteClaims = naGronding.status === "BEANTWOORD" ? ongedekteGezagsClaims(naGronding.text, results) : [];
-  const antwoord: typeof ruwAntwoord =
+  const naClaims: typeof ruwAntwoord =
     ongedekteClaims.length === 0 ? naGronding : { ...naGronding, text: claimVerificatieMelding(ongedekteClaims), status: "NIET_VAST_TE_STELLEN" };
+
+  /**
+   * Verzonnen afwezigheid en citaatverzoeken (bron-afwezigheid.ts). Het
+   * platform ziet nooit een heel document, alleen gevonden regels; wat een
+   * document níet bevat, kan het dus niet weten. En bij een vraag om de
+   * letterlijke tekst hoort de gebruiker het als de bron alleen als scan
+   * bestaat — ook als het model dat vergeet.
+   */
+  const uitlegVoor = (titel: string) => {
+    const regel = activeRuleset().rules.find((r) => r.source.documentTitle === titel);
+    return regel ? (bronTekst(regel.source.document)?.uitleg ?? null) : null;
+  };
+  const scanBronnen = nietCiteerbareBronnen(results, uitlegVoor);
+  const afwezigheden = naClaims.status === "BEANTWOORD" ? verzonnenAfwezigheden(naClaims.text) : [];
+  if (afwezigheden.length > 0) {
+    await stap("FOUT", `Antwoord tegengehouden: verzonnen afwezigheid ("${afwezigheden[0].slice(0, 120)}").`, {
+      afwezigheden,
+      tegengehoudenTekst: naClaims.text,
+    });
+  }
+  const naAfwezigheid: typeof ruwAntwoord =
+    afwezigheden.length === 0 ? naClaims : { ...naClaims, text: afwezigheidsMelding(results, scanBronnen), status: "NIET_VAST_TE_STELLEN" };
+  const voorbehoud = afwezigheden.length === 0 && vraagtOmCitaat(input.text) ? citaatVoorbehoud(scanBronnen) : null;
+  const antwoord: typeof ruwAntwoord = voorbehoud ? { ...naAfwezigheid, text: `${naAfwezigheid.text}\n\n${voorbehoud}` } : naAfwezigheid;
+  if (voorbehoud) await stap("STAP", "Bronstatus toegevoegd: citaatverzoek bij een document zonder machineleesbare tekst.", { bronnen: scanBronnen });
   if (ongedekteClaims.length > 0) {
     await stap("FOUT", `Antwoord tegengehouden: ongedekte gezagsclaim (${ongedekteClaims.map((c) => c.signaalwoord).join(", ")}).`, {
       ongedekteClaims,
       tegengehoudenTekst: naGronding.text,
     });
   }
-  const tegengehouden: AskResult["tegengehouden"] = ongedekteClaims.length > 0
+  const tegengehouden: AskResult["tegengehouden"] = afwezigheden.length > 0
+    ? { grendel: "AFWEZIGHEID", tekst: naClaims.text, detail: afwezigheden }
+    : ongedekteClaims.length > 0
     ? { grendel: "CLAIMVERIFICATIE", tekst: naGronding.text, detail: ongedekteClaims }
     : zonderBron
       ? { grendel: "ZONDER_BRON", tekst: ruwAntwoord.text, detail: { intent: plan.intent } }

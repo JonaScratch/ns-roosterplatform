@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { laadGrondwaarheid } from "./waarheid";
 import { pasGrendelregelToe } from "./grendel-regel";
+import { langsteReeksUitTekst } from "./nachtreeks-getal";
 
 /**
  * De aanvullende golden-suite beoordelen (categorieën L, O), met verse
@@ -36,12 +37,6 @@ function noemtJuisteRoosterAlsZwaarder(tekst: string, zwaarderRoster: string): b
   return t.includes(naam) && /meer|zwaarder|hoger|vaker/.test(t);
 }
 
-function haalGetalUitTekst(tekst: string, sleutelwoord: string): number | null {
-  const t = tekst.toLowerCase();
-  const match = t.match(new RegExp(`(\\d+)\\s*(?:×|x|keer)?\\s*${sleutelwoord}`)) ?? t.match(new RegExp(`${sleutelwoord}[^.]{0,20}?(\\d+)`));
-  return match ? Number(match[1]) : null;
-}
-
 function beoordeelItem(item: Json, waarheid: Awaited<ReturnType<typeof laadGrondwaarheid>>): { status: string; detail: string } {
   if (item.error) return { status: "FOUT", detail: `crash: ${String(item.error).slice(0, 200)}` };
   const laatste = laatstAntwoord(item);
@@ -66,7 +61,8 @@ function beoordeelItem(item: Json, waarheid: Awaited<ReturnType<typeof laadGrond
     case "night_series_length": {
       const echt = waarheid.nachtreeksen.filter((r) => r.roster === params.roster);
       const langsteEcht = echt.length > 0 ? Math.max(...echt.map((r) => r.lengte)) : 0;
-      const uitTekst = haalGetalUitTekst(tekst, "nacht");
+      // Grader /3 voor deze soort: regel-/weekdagnummers zijn geen lengte (zie nachtreeks-getal.ts).
+      const uitTekst = langsteReeksUitTekst(tekst);
       if (langsteEcht === 0) {
         // Correct antwoord is hier: geen nachtreeks. Een tekst die zelf geen
         // getal > 0 noemt (of expliciet "geen" zegt) is goed.
@@ -115,7 +111,7 @@ async function main(): Promise<void> {
   }
 
   const uit = {
-    schema: "ns-v106-golden-grade-extension/2",
+    schema: "ns-v106-golden-grade-extension/3",
     measurement: meting,
     gradedAt: new Date().toISOString(),
     model: rapport.model,
@@ -134,7 +130,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((fout) => {
-  console.error(fout);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
+  main().catch((fout) => {
+    console.error(fout);
+    process.exit(1);
+  });
+}

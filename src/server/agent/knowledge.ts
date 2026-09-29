@@ -1,4 +1,5 @@
 import "server-only";
+import { bronTekst, type TekstToegang } from "@/server/rules-engine/ruleset/source-text";
 import { samenstellingsStam as stamVan } from "@/lib/nl-woorden";
 import { activeRuleset } from "@/server/rules-engine";
 import { prisma } from "@/server/data/prisma";
@@ -80,6 +81,8 @@ export interface RuleHit {
     readonly legalAuthority: string;
     readonly legalStatus: string;
     readonly userChecked: GebruikersControle | null;
+    /** Of er een tekst is waaruit letterlijk geciteerd kan worden (source-text.ts); `null` = onbekend. */
+    readonly textAccess: TekstToegang | null;
   };
   /** Geldt deze regel voor de gevraagde groep, standplaats en datum? */
   readonly applicable: boolean;
@@ -225,6 +228,7 @@ export function searchRules(
         legalStatus: currentLegalStatus(geldend.source, context.onDate),
         /** Voorlopig nagelopen door een mens; nadrukkelijk geen NS-bevestiging. */
         userChecked: controles.get(geldend.source.document) ?? null,
+        textAccess: bronTekst(geldend.source.document)?.access ?? null,
       },
       applicable: resolutie.kind === "RESOLVED",
       score,

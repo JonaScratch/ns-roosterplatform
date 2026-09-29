@@ -127,8 +127,34 @@ export function begripIn(tekst: string): Begrip | null {
 export function begrippenIn(tekst: string): readonly Begrip[] {
   const laag = tekst.toLowerCase();
   return VAKWOORDEN.filter((begrip) =>
-    begrip.termen.some((term) =>
-      new RegExp(`(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z0-9]|$)`).test(laag),
-    ),
+    begrip.termen.some((term) => {
+      const patroon = new RegExp(`(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[^a-z0-9]|$)`, "g");
+      for (const m of laag.matchAll(patroon)) {
+        const start = (m.index ?? 0) + m[1].length;
+        if (!binnenLangereDagdeelcombinatie(laag, start, start + term.length, term)) return true;
+      }
+      return false;
+    }),
   );
+}
+
+const DAGDELEN = /^(vroeg|laat|nacht)$/;
+const dagdelenIn = (woord: string) => woord.split(/[-/]/).filter((d) => DAGDELEN.test(d)).length;
+
+/**
+ * Staat de term midden in een langere combinatie van dagdelen?
+ *
+ * "vroeg-laat" is het Vroeg/Laat-rooster, maar in "vroeg-laat-nacht" is het
+ * een stuk van iets anders — de koppeltekens maakten van een langere
+ * samenstelling twee losse treffers (Vroeg/Laat én Laat/Nacht), en het model
+ * kreeg dan twee roosters voorgelegd waar niemand naar vroeg (AFTER-run
+ * 20260929-234655). Een achtervoegsel dat geen dagdeel is ("laat/nacht-rooster")
+ * maakt de term niet langer: dat blijft een treffer.
+ */
+function binnenLangereDagdeelcombinatie(tekst: string, start: number, eind: number, term: string): boolean {
+  let links = start;
+  while (links > 0 && /[a-z0-9/-]/.test(tekst[links - 1])) links -= 1;
+  let rechts = eind;
+  while (rechts < tekst.length && /[a-z0-9/-]/.test(tekst[rechts])) rechts += 1;
+  return dagdelenIn(tekst.slice(links, rechts)) > dagdelenIn(term);
 }

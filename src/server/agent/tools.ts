@@ -1,4 +1,5 @@
 import "server-only";
+import { bronTekst } from "@/server/rules-engine/ruleset/source-text";
 import { z } from "zod";
 import { dutyClass } from "@/domain/duty-class";
 import { rosterCredit } from "@/domain/operational-requirements";
@@ -267,7 +268,7 @@ const ruleLookup = tool({
         title: resolutie.rule.title,
         value: resolutie.rule.value,
         unit: resolutie.rule.unit,
-        source: resolutie.rule.source,
+        source: { ...resolutie.rule.source, textAccess: bronTekst(resolutie.rule.source.document)?.access ?? null },
         legalStatus: resolutie.sourceStatus,
         verified: resolutie.sourceStatus === "IN_ORIGINAL_TERM",
       };
@@ -351,6 +352,13 @@ const dutyKindPerLine = tool({
   },
 });
 
+/** De uitleg bij een niet-machineleesbaar document, één keer per document in de notitie. */
+function bronTekstVoorTitel(hits: readonly { readonly ruleId: string; readonly source: { readonly documentTitle: string } }[], titel: string): string {
+  const hit = hits.find((h) => h.source.documentTitle === titel);
+  const regel = hit ? activeRuleset().rules.find((r) => r.id === hit.ruleId) : undefined;
+  return (regel && bronTekst(regel.source.document)?.uitleg) ?? "geen machineleesbare brontekst.";
+}
+
 const ruleSearch = tool({
   name: "ruleSearch",
   description: "Regels zoeken op wat iemand vraagt (in gewone woorden), met waarde, bron, artikel en status — en wat er ontbreekt.",
@@ -374,7 +382,15 @@ const ruleSearch = tool({
         note:
           uitkomst.hits.length === 0
             ? `Niets gevonden met de zoekterm "${input.query}". Dat is geen bewijs dat een document of regel hier niets over zegt: zeg dat je het niet hebt kunnen vinden, niet dat het er niet staat.`
-            : "Een waarde zonder bevestigde status is geen juridisch oordeel.",
+            : [
+                "Een waarde zonder bevestigde status is geen juridisch oordeel.",
+                // Alleen bij een document zonder tekstlaag: dan hoort de lezer dat
+                // er geen vaststaande brontekst is (source-text.ts). Bij een
+                // machineleesbare bron verandert de notitie niet.
+                ...[...new Set(uitkomst.hits.filter((h) => h.source.textAccess === "SCAN_NO_TEXT_LAYER").map((h) => h.source.documentTitle))].map(
+                  (titel) => `${titel}: ${bronTekstVoorTitel(uitkomst.hits, titel)}`,
+                ),
+              ].join(" "),
       },
       sources: [`regelbestand ${uitkomst.rulesetVersion}`],
     };

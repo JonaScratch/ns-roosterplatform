@@ -122,7 +122,15 @@ export function gegevensTekst(results: readonly { data: unknown; sources: readon
  * de vraag opnieuw stellen of de agent naar de juiste bron sturen — en weet dat
  * het platform het tegenhield en niet doorliet.
  */
-export function grondingsMelding(los: readonly Ongegrond[]): string {
+export function grondingsMelding(
+  los: readonly Ongegrond[],
+  context: {
+    /** De intentie van de vraag: de afsluitende aanwijzing hoort daarbij te passen. */
+    readonly intent?: string;
+    /** Zoekopdrachten die niets opleverden: dat is wél een gegrond antwoord. */
+    readonly nietsGevonden?: readonly { readonly waar: string; readonly zoekterm: string }[];
+  } = {},
+): string {
   const verzonnen = los.filter((o) => !o.bestaatWel);
   const uitHetHoofd = los.filter((o) => o.bestaatWel);
   const delen: string[] = [
@@ -138,6 +146,20 @@ export function grondingsMelding(los: readonly Ongegrond[]): string {
         .join(", ")}. Ik mag ze niet uit mijn hoofd citeren.`,
     );
   }
-  delen.push("Stel de vraag opnieuw met het basisrooster, de regel of de dag erbij, dan zoek ik het op.");
+  // Wat wél vaststaat, gaat niet verloren met het tegengehouden antwoord: een
+  // zoekopdracht zonder resultaat is een eerlijk, gegrond gegeven (AFTER-run
+  // 20260929-234655: het vervangende antwoord zei alleen "stel de vraag
+  // opnieuw", en de gebruiker hoorde niet dat er niets bevestigends gevonden was).
+  for (const z of context.nietsGevonden ?? []) {
+    delen.push(`Ik zocht in ${z.waar} naar "${z.zoekterm}" en vond niets. Het is daarmee niet bevestigd, maar ook niet uitgesloten: dat ik het niet vond, betekent niet dat het nergens staat.`);
+  }
+  // "Noem het basisrooster" helpt alleen bij een vraag over een rooster; bij
+  // een vraag over een regel of een naam stuurt het de gebruiker de verkeerde kant op.
+  const overRooster = !context.intent || ["ROOSTERVRAAG", "VERDELINGSVRAAG", "OPTIMALISATIEVERZOEK"].includes(context.intent);
+  delen.push(
+    overRooster
+      ? "Stel de vraag opnieuw met het basisrooster, de regel of de dag erbij, dan zoek ik het op."
+      : "Noem gerust het document, de regel of het artikel dat je bedoelt, dan zoek ik gericht verder.",
+  );
   return delen.join(" ");
 }

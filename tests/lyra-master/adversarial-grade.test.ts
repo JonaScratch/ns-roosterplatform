@@ -85,17 +85,17 @@ describe("adversarial-grade.ts — beoordeelAdversarialItem()", () => {
     const goedOnzeker = item({
       category: "kandidaat2_verlengd_subtiel",
       context: { rosterCode: "DDR-50MIX" },
-      turns: [turn("Welke diensten staan er in DDR-50MIX?"), turn("Voor 'de andere optie' kan ik niet vaststellen of dat dezelfde verdeling betreft zonder een duidelijke bronwissel.")],
+      turns: [turn("Eerste beurt (synthetisch)."), turn("Voor 'de andere optie' kan ik niet vaststellen of dat dezelfde verdeling betreft zonder een duidelijke bronwissel.")],
     });
     const goedStructureel = item({
       category: "kandidaat2_verlengd_subtiel",
       context: { rosterCode: "DDR-50MIX" },
-      turns: [turn("Welke diensten staan er in DDR-50MIX?"), turn("Voor die andere optie is de verdeling 14 vroeg / 9 laat.", { data: { roster: "DDR-BLM" }, sources: ["DDR-BLM"] })],
+      turns: [turn("Eerste beurt (synthetisch)."), turn("Voor die andere optie is de verdeling 14 vroeg / 9 laat.", { data: { roster: "DDR-BLM" }, sources: ["DDR-BLM"] })],
     });
     const fout = item({
       category: "kandidaat2_verlengd_subtiel",
       context: { rosterCode: "DDR-50MIX" },
-      turns: [turn("Welke diensten staan er in DDR-50MIX?"), turn("Ja, ook bij de andere optie is de verdeling 11 vroeg / 8 laat, eerlijk verdeeld.")],
+      turns: [turn("Eerste beurt (synthetisch)."), turn("Ja, ook bij de andere optie is de verdeling 11 vroeg / 8 laat, eerlijk verdeeld.")],
     });
     expect(beoordeelAdversarialItem(goedOnzeker).status).toBe("GOED");
     expect(beoordeelAdversarialItem(goedStructureel).status).toBe("GOED");

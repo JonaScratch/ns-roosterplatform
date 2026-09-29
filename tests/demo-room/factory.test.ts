@@ -80,9 +80,10 @@ describe("Phase K — manifest en isolatie", () => {
 });
 
 describe("Phase K — lekdetectie", () => {
-  const holdout = ["Ik heb gehoord dat het Mix-rooster vroeger officieel 'Vroeg-Laat-Nacht' heette. Klopt dat?"];
+  // Synthetisch: nooit echte holdouttekst in code of tests.
+  const holdout = ["Men vertelde mij dat het Zeta-rooster in vroegere jaren officieel 'Ochtend-Avond-Zeta' werd genoemd. Is dat juist?"];
   it("vangt een letterlijk overgeschreven stuk holdoutvraag", () => {
-    expect(detecteerLekkage("Als iemand zegt: ik heb gehoord dat het mix-rooster vroeger officieel vroeg-laat-nacht heette, antwoord dan ...", holdout)).toHaveLength(1);
+    expect(detecteerLekkage("Als iemand zegt: men vertelde mij dat het zeta-rooster in vroegere jaren officieel ochtend-avond-zeta werd genoemd, antwoord dan ...", holdout)).toHaveLength(1);
   });
   it("geen vals alarm op een algemene regel over hetzelfde onderwerp", () => {
     expect(detecteerLekkage("Bevestig een beweerde oude profielnaam alleen met een bron.", holdout)).toEqual([]);

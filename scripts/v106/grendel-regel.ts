@@ -24,12 +24,13 @@
  * tegengehouden antwoord juist het gewenste gedrag (niets verzinnen).
  */
 
-export type Grendel = "CLAIMVERIFICATIE" | "GRONDING" | "ZONDER_BRON";
+export type Grendel = "CLAIMVERIFICATIE" | "GRONDING" | "ZONDER_BRON" | "AFWEZIGHEID";
 
 /** Welke grendel verving dit antwoord? Herkend aan de vaste meldingsteksten uit agent.ts / grounding.ts / claim-verification.ts. */
 export function grendelVan(tekst: string, status: string): Grendel | null {
   if (status !== "NIET_VAST_TE_STELLEN" || !tekst.startsWith("Ik hield mijn eigen antwoord tegen")) return null;
   if (/gezagswoord/.test(tekst)) return "CLAIMVERIFICATIE";
+  if (/wat een document níet bevat/.test(tekst)) return "AFWEZIGHEID";
   if (/geen enkele bron|kreeg geen bruikbaar gegeven terug/.test(tekst)) return "ZONDER_BRON";
   return "GRONDING";
 }

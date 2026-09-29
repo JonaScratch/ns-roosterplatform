@@ -136,6 +136,7 @@ export function rangeerPerRooster(ctx: EvaluationContext): readonly RangeerLocat
 
 export interface NachtreeksLengte {
   readonly roster: string;
+  /** De regel waarop de reeks begint; de reeks kan over de regelgrens doorlopen. */
   readonly line: number;
   readonly lengte: number;
   /** Begin van de reeks, voor herleidbaarheid: "wk<weekIndex> dag<weekday>". */
@@ -157,43 +158,37 @@ export interface NachtreeksLengte {
  * werken: dit is een extra veld, geen wijziging van een bestaand veld.
  */
 export function nachtreeksLengtePerRooster(ctx: EvaluationContext): readonly NachtreeksLengte[] {
+  // Reparatie na AFTER-run 20260929-234655: deze functie groepeerde per regel
+  // en liet elke regel op zijn eigen maandag terugvallen — in strijd met het
+  // contract hierboven én met `src/domain/roster-flow.ts` ("De cyclus is een
+  // cirkel… Zondag van regel N ligt dus direct vóór maandag van regel N+1").
+  // Gevolg: een reeks van vrijdag (regel 2) t/m woensdag (regel 3) telde als
+  // twee reeksen van drie. Nu: één cirkel over het hele rooster, in de
+  // volgorde regel → week → weekdag. De nachtdefinitie blijft `kinds`
+  // (NACHT), onafhankelijk van de tool, die `categoryOf()` gebruikt.
   const uit: NachtreeksLengte[] = [];
   for (const roster of ctx.quality.official) {
-    const perLine = new Map<number, (typeof roster.days)[number][]>();
-    for (const dag of roster.days) {
-      const arr = perLine.get(dag.lineNumber) ?? [];
-      arr.push(dag);
-      perLine.set(dag.lineNumber, arr);
-    }
-    for (const [line, dagen] of perLine) {
-      const sorted = dagen.slice().sort((a, b) => a.weekIndex - b.weekIndex || a.weekday - b.weekday);
-      const isNacht = sorted.map((dag) => {
-        if (!dag.dutyCode) return false;
-        const duty = ctx.quality.duties.get(dutyKey(dag.dutyCode, dag.weekday));
-        return duty?.kinds.includes("NACHT") ?? false;
-      });
-      // Cyclisch: begin bij de eerste niet-nacht-dag zodat een reeks die over
-      // het einde van de rotatie heen doorloopt (bijv. laatste 2 + eerste 4
-      // dagen) als één reeks wordt gelezen, niet als twee losse stukken.
-      const eersteNietNacht = isNacht.indexOf(false);
-      if (eersteNietNacht === -1) continue; // volledig nacht — geen zinvolle cyclische start, negeren (komt in dit pakket niet voor)
-      let i = 0;
-      let lopendeLengte = 0;
-      let lopendeStart: string | null = null;
-      const totaal = sorted.length;
-      while (i < totaal) {
-        const idx = (eersteNietNacht + 1 + i) % totaal;
-        if (isNacht[idx]) {
-          if (lopendeLengte === 0) lopendeStart = `wk${sorted[idx].weekIndex} dag${sorted[idx].weekday}`;
-          lopendeLengte += 1;
-        } else if (lopendeLengte > 0) {
-          uit.push({ roster: roster.code, line, lengte: lopendeLengte, startAanduiding: lopendeStart ?? "onbekend" });
-          lopendeLengte = 0;
-          lopendeStart = null;
-        }
-        i += 1;
+    const sorted = roster.days.slice().sort((a, b) => a.lineNumber - b.lineNumber || a.weekIndex - b.weekIndex || a.weekday - b.weekday);
+    const isNacht = sorted.map((dag) => {
+      if (!dag.dutyCode) return false;
+      const duty = ctx.quality.duties.get(dutyKey(dag.dutyCode, dag.weekday));
+      return duty?.kinds.includes("NACHT") ?? false;
+    });
+    const eersteNietNacht = isNacht.indexOf(false);
+    if (eersteNietNacht === -1) continue; // volledig nacht — komt in dit pakket niet voor
+    const totaal = sorted.length;
+    let lopendeLengte = 0;
+    let lopendeStart: (typeof sorted)[number] | null = null;
+    for (let i = 1; i <= totaal; i += 1) {
+      const idx = (eersteNietNacht + i) % totaal;
+      if (isNacht[idx]) {
+        if (lopendeLengte === 0) lopendeStart = sorted[idx];
+        lopendeLengte += 1;
+      } else if (lopendeLengte > 0 && lopendeStart) {
+        uit.push({ roster: roster.code, line: lopendeStart.lineNumber, lengte: lopendeLengte, startAanduiding: `regel ${lopendeStart.lineNumber} wk${lopendeStart.weekIndex} dag${lopendeStart.weekday}` });
+        lopendeLengte = 0;
+        lopendeStart = null;
       }
-      if (lopendeLengte > 0) uit.push({ roster: roster.code, line, lengte: lopendeLengte, startAanduiding: lopendeStart ?? "onbekend" });
     }
   }
   return uit.sort((a, b) => b.lengte - a.lengte);
