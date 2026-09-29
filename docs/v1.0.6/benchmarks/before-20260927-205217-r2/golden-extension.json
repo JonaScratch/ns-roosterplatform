@@ -1,0 +1,1319 @@
+{
+  "schema": "ns-v106-golden-bench-extension/1",
+  "measurement": "before-20260927-205217-r2",
+  "measuredAt": "2026-09-27T20:22:06.045Z",
+  "status": "GEMETEN",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "suiteVersion": 1,
+  "itemCount": 22,
+  "results": [
+    {
+      "id": "L-DDR-50MIX-vs-DDR-BLM",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-BLM",
+          "zwaarderNacht": 3,
+          "lichterRoster": "DDR-50MIX",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-50MIX heeft 0 nachtdiensten, DDR-BLM heeft er 3.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-BLM heeft 3 nachtdiensten, terwijl DDR-50MIX er 0 heeft. Dit is gebaseerd op officiële gegevens. De andere basisroosters (DDR-L, DDR-LN, DDR-MIX, DDR-V, DDR-VL) hebben respectievelijk 0, 6, 10, 0 en 0 nachtdiensten. Het totaal van alle basisroosters is 19 nachtdiensten. Dus DDR-BLM heeft meer nachtdiensten dan DDR-50MIX.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 10859
+    },
+    {
+      "id": "L-DDR-50MIX-vs-DDR-LN",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-LN",
+          "zwaarderNacht": 6,
+          "lichterRoster": "DDR-50MIX",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-50MIX heeft 0 nachtdiensten, DDR-LN heeft er 6.",
+      "turns": [
+        {
+          "text": "DDR-50MIX heeft 0 nachtdiensten, terwijl DDR-LN 6 nachtdiensten heeft. Dit is gebaseerd op de officiële gegevens, gefilterd op kind=NACHT. Het basisrooster DDR-LN heeft dus meer nachtdiensten dan DDR-50MIX. De bron is officieel en bevestigd. Er zijn geen andere relevante gegevens in de tool.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 12807
+    },
+    {
+      "id": "L-DDR-50MIX-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-MIX",
+          "zwaarderNacht": 10,
+          "lichterRoster": "DDR-50MIX",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-50MIX heeft 0 nachtdiensten, DDR-MIX heeft er 10.",
+      "turns": [
+        {
+          "text": "DDR-50MIX heeft 0 nachtdiensten, terwijl DDR-MIX in de gegevens 10 nachtdiensten heeft. Echter, de gegevens voor DDR-MIX zijn niet beschikbaar in de huidige context, dus een vergelijking kan niet worden gemaakt. De tool geeft een waarde voor DDR-MIX, maar dit is mogelijk niet up-to-date of niet geldig in deze situatie. Het antwoord is gebaseerd op de gegeven data, maar de beperking van DDR-MIX-data maakt een zeker antwoord onmogelijk.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De vraag vergelijkt de nachtdiensten van twee basisroosters. Door de nachtdiensten te tellen voor elk rooster met dutyKindCounts kan een antwoord worden gegeven. Echter, DDR-MIX is niet in de huidige context opgenomen, waardoor de gegevens voor dit rooster niet beschikbaar zijn.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 16686
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-L",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-BLM",
+          "zwaarderNacht": 3,
+          "lichterRoster": "DDR-L",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-BLM heeft 3 nachtdiensten, DDR-L heeft er 0.",
+      "turns": [
+        {
+          "text": "DDR-BLM heeft 3 nachtdiensten (bron: official), terwijl DDR-L geen nachtdiensten heeft volgens de beschikbare gegevens. De gegevens voor DDR-L zijn echter niet volledig beschikbaar in de huidige context, dus het kan niet worden vastgesteld of DDR-BLM meer of minder nachtdiensten heeft dan DDR-L. De tool geeft alleen de tellingen voor DDR-BLM en DDR-LN weer, maar DDR-L’s data is onvolledig. Het antwoord is gebaseerd op de officiële bron en is beperkt tot de gegeven informatie.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De tool dutyKindCounts wordt gebruikt om het aantal nachtdiensten voor elk basisrooster op te vragen. Omdat de gegevens voor DDR-L niet beschikbaar zijn, kan het niet worden bepaald.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 10121
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-LN",
+      "category": "L",
+      "holdout": true,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-LN",
+          "zwaarderNacht": 6,
+          "lichterRoster": "DDR-BLM",
+          "lichterNacht": 3
+        }
+      },
+      "note": "Grondwaarheid: DDR-BLM heeft 3 nachtdiensten, DDR-LN heeft er 6.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-LN heeft 6 nachtdiensten, terwijl DDR-BLM 3 nachtdiensten heeft. Dit is gebaseerd op de officiële gegevens. DDR-LN heeft dus meer nachtdiensten dan DDR-BLM. De bron is officieel en bevestigd. Er zijn geen andere relevante gegevens in de tooluitkomst.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster (DDR-BLM of DDR-LN) meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen met de tool dutyKindCounts.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 10006
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-MIX",
+          "zwaarderNacht": 10,
+          "lichterRoster": "DDR-BLM",
+          "lichterNacht": 3
+        }
+      },
+      "note": "Grondwaarheid: DDR-BLM heeft 3 nachtdiensten, DDR-MIX heeft er 10.",
+      "turns": [
+        {
+          "text": "DDR-BLM heeft 3 nachtdiensten, terwijl DDR-MIX er 0 heeft. De tool geeft echter geen informatie over DDR-MIX, dus het verschil tussen de basisroosters kan niet worden vastgesteld. De bron is officieel, en de gegevens zijn bevestigd.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "De tool geeft alleen gegevens over het huidige basisrooster DDR-BLM. Voor DDR-MIX is er geen data beschikbaar om een vergelijking te maken.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 13652
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-BLM",
+          "zwaarderNacht": 3,
+          "lichterRoster": "DDR-V",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-BLM heeft 3 nachtdiensten, DDR-V heeft er 0.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-BLM heeft 3 nachtdiensten, terwijl DDR-V er 0 heeft. Dit is op basis van officiële gegevens. De andere basisroosters (zoals DDR-LN en DDR-MIX) hebben respectievelijk 6 en 10 nachtdiensten. De vraag over DDR-BLM en DDR-V is dus duidelijk: DDR-BLM heeft meer nachtdiensten. De bron is officieel en bevestigd.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen en vergelijken.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 10378
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-VL",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-BLM",
+          "zwaarderNacht": 3,
+          "lichterRoster": "DDR-VL",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-BLM heeft 3 nachtdiensten, DDR-VL heeft er 0.",
+      "turns": [
+        {
+          "text": "DDR-BLM heeft 3 nachtdiensten, terwijl DDR-VL er 0 heeft. Dit is gebaseerd op de officiële gegevens. De bron bevestigt dat DDR-BLM dus meer nachtdiensten heeft dan DDR-VL.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen en vergelijken.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-BLM",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 8400
+    },
+    {
+      "id": "L-DDR-L-vs-DDR-LN",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-LN",
+          "zwaarderNacht": 6,
+          "lichterRoster": "DDR-L",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-L heeft 0 nachtdiensten, DDR-LN heeft er 6.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-LN heeft 6 nachtdiensten, terwijl DDR-L er 0 heeft. Dit is op basis van de officiële gegevens. DDR-LN heeft dus meer nachtdiensten dan DDR-L. De bron is officieel en bevestigd. De andere basisroosters (zoals DDR-MIX) hebben samen 10 nachtdiensten, maar dat is niet relevant voor de vergelijking tussen DDR-L en DDR-LN.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen of DDR-L meer nachtdiensten heeft dan DDR-LN of omgekeerd, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-L",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-L",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 16359
+    },
+    {
+      "id": "L-DDR-L-vs-DDR-MIX",
+      "category": "L",
+      "holdout": true,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-MIX",
+          "zwaarderNacht": 10,
+          "lichterRoster": "DDR-L",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-L heeft 0 nachtdiensten, DDR-MIX heeft er 10.",
+      "turns": [
+        {
+          "text": "Op basis van de officiële gegevens heeft DDR-MIX 10 nachtdiensten, terwijl DDR-L 0 heeft. Dit betekent dat DDR-MIX meer nachtdiensten heeft dan DDR-L. De bron is officieel en bevestigd. Er zijn geen andere relevante gegevens in de tool. De vergelijking is duidelijk tussen deze twee basisroosters.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen of DDR-L meer nachtdiensten heeft dan DDR-MIX, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-L",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-L",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 10744
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-MIX",
+          "zwaarderNacht": 10,
+          "lichterRoster": "DDR-LN",
+          "lichterNacht": 6
+        }
+      },
+      "note": "Grondwaarheid: DDR-LN heeft 6 nachtdiensten, DDR-MIX heeft er 10.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-MIX heeft 10 nachtdiensten, terwijl DDR-LN er 6 heeft. Dit is gebaseerd op officiële gegevens. DDR-MIX heeft dus meer nachtdiensten dan DDR-LN.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen of DDR-LN meer nachtdiensten heeft dan DDR-MIX, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen en vergelijken.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-LN",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-LN",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 7908
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-LN",
+          "zwaarderNacht": 6,
+          "lichterRoster": "DDR-V",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-LN heeft 6 nachtdiensten, DDR-V heeft er 0.",
+      "turns": [
+        {
+          "text": "Ik hield mijn eigen antwoord tegen: er stonden dingen in die niet uit de geraadpleegde gegevens komen. Niet terug te vinden: DDR-V (roostercode). Stel de vraag opnieuw met het basisrooster, de regel of de dag erbij, dan zoek ik het op.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "VERDUIDELIJKING_NODIG",
+          "reasoning": "het model leverde geen leesbaar plan",
+          "tools": [],
+          "toolInputs": [],
+          "data": {},
+          "sources": []
+        }
+      ],
+      "ms": 23256
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-VL",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-LN",
+          "zwaarderNacht": 6,
+          "lichterRoster": "DDR-VL",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-LN heeft 6 nachtdiensten, DDR-VL heeft er 0.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-LN heeft 6 nachtdiensten, terwijl DDR-VL er 0 heeft. Dit betekent dat DDR-LN meer nachtdiensten heeft dan DDR-VL. De gegevens komen uit het officiële rooster en zijn gefilterd op 'NACHT'. Er zijn geen andere basisroosters genoemd in deze vergelijking. De bron bevestigt de hoeveelheid nachtdiensten per basisrooster.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-LN",
+              "dutyCode": "DDR-LN",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-LN",
+              "dutyCode": "DDR-VL",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 14580
+    },
+    {
+      "id": "L-DDR-MIX-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-MIX",
+          "zwaarderNacht": 10,
+          "lichterRoster": "DDR-V",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-MIX heeft 10 nachtdiensten, DDR-V heeft er 0.",
+      "turns": [
+        {
+          "text": "Het basisrooster DDR-MIX heeft 10 nachtdiensten, terwijl DDR-V er 0 heeft. De gegevens komen uit de officiële bron en zijn bevestigd. DDR-MIX heeft dus duidelijk meer nachtdiensten dan DDR-V. De andere basisroosters (zoals DDR-LN en DDR-BLM) hebben hier tussenin 6 en 3 nachtdiensten. De totale hoeveelheid nachtdiensten in het systeem is 19.",
+          "status": "BEANTWOORD",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide basisroosters opvragen en vergelijken.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 7513
+    },
+    {
+      "id": "L-DDR-MIX-vs-DDR-VL",
+      "category": "L",
+      "holdout": true,
+      "expect": {
+        "kind": "roster_comparison",
+        "params": {
+          "zwaarderRoster": "DDR-MIX",
+          "zwaarderNacht": 10,
+          "lichterRoster": "DDR-VL",
+          "lichterNacht": 0
+        }
+      },
+      "note": "Grondwaarheid: DDR-MIX heeft 10 nachtdiensten, DDR-VL heeft er 0.",
+      "turns": [
+        {
+          "text": "Volgens de officiële gegevens heeft DDR-MIX 10 nachtdiensten, terwijl DDR-VL er 0 heeft. Dit betekent dat DDR-MIX meer nachtdiensten heeft dan DDR-VL. De bron is officieel en bevestigd. De andere basisroosters (zoals DDR-LN en DDR-BLM) hebben respectievelijk 6 en 3 nachtdiensten. Het totaal van alle nachtdiensten in het rooster is 19.",
+          "status": "BEANTWOORD",
+          "intent": "VERDELINGSVRAAG",
+          "reasoning": "Om te bepalen welk basisrooster meer nachtdiensten heeft, moet ik de aantallen nachtdiensten voor beide roosters opvragen en vergelijken.",
+          "tools": [
+            "dutyKindCounts",
+            "dutyKindCounts"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            },
+            {
+              "source": "official",
+              "rosterCode": "DDR-MIX",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "counts": {
+              "kind": "NACHT",
+              "dutyClass": null,
+              "perRoster": {
+                "DDR-50MIX": 0,
+                "DDR-BLM": 3,
+                "DDR-L": 0,
+                "DDR-LN": 6,
+                "DDR-MIX": 10,
+                "DDR-V": 0,
+                "DDR-VL": 0
+              },
+              "total": 19,
+              "source": "official",
+              "note": "Gefilterd op kind=NACHT."
+            }
+          },
+          "sources": [
+            "officieel rooster"
+          ]
+        }
+      ],
+      "ms": 7948
+    },
+    {
+      "id": "O-DDR-50MIX-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-50MIX",
+          "langsteReeks": 0
+        }
+      },
+      "note": "Grondwaarheid: geen enkele nachtreeks in DDR-50MIX — de agent moet dat ook zo zeggen, niet een reeks verzinnen.",
+      "turns": [
+        {
+          "text": "In het rooster DDR-50MIX zijn er geen nachtdiensten (totalNights: 0), dus er is geen aaneengesloten reeks nachtdiensten. Dit is gebaseerd op de officiële gegevens.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De nachtreeksen van basisrooster DDR-50MIX worden bekeken om de langste aaneengesloten reeks nachtdiensten te bepalen.",
+          "tools": [
+            "nightStructure"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-50MIX",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "nights": {
+              "found": true,
+              "rosterCode": "DDR-50MIX",
+              "blocks": [],
+              "linesWithNights": [],
+              "totalNights": 0
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "DDR-50MIX"
+          ]
+        }
+      ],
+      "ms": 6668
+    },
+    {
+      "id": "O-DDR-BLM-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-BLM",
+          "langsteReeks": 3
+        }
+      },
+      "note": "Grondwaarheid: langste nachtreeks in DDR-BLM is 3 (cyclisch geteld, dus ook over de regelgrens heen).",
+      "turns": [
+        {
+          "text": "De tool kan niet bepalen wat de langste aaneengesloten reeks nachtdiensten is, omdat er geen dienstinstanties voor DDR-BLM-NACHT zijn gevonden (tool dutyInstance gaf lege instanties). Dit betekent dat er in dit basisrooster geen nachtdiensten zijn gepland, of dat de data niet beschikbaar is. Zonder concrete dienstdata kan een analyse van aaneengesloten reeksen niet uitgevoerd worden. Bron: official, bevestigd.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool dutyInstance geeft individuele nachtdiensten weer, maar niet hun opeenvolging in tijd. Dit vereist extra analyse die niet direct beschikbaar is via de huidige tools.",
+          "tools": [
+            "dutyInstance"
+          ],
+          "toolInputs": [
+            {
+              "dutyCode": "DDR-BLM-NACHT",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "duty": {
+              "dutyCode": "DDR-BLM-NACHT",
+              "instances": [],
+              "exists": false
+            }
+          },
+          "sources": [
+            "dienstenpakket van DDR"
+          ]
+        }
+      ],
+      "ms": 7171
+    },
+    {
+      "id": "O-DDR-L-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-L",
+          "langsteReeks": 0
+        }
+      },
+      "note": "Grondwaarheid: geen enkele nachtreeks in DDR-L — de agent moet dat ook zo zeggen, niet een reeks verzinnen.",
+      "turns": [
+        {
+          "text": "In het rooster DDR-L zijn er geen nachtdiensten van het type \"NACHT\" in het basisrooster (bron: official). De tool geeft aan dat alle regels (1 tot 12) geen nachtdiensten bevatten. Daarom is de langste aaneengesloten reeks nachtdiensten 0. Dit betekent dat er in dit rooster geen nachtdiensten zijn.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Ik zoek eerst waar de nachtdiensten staan in de regels, dan kan ik analyseren of er een langere reeks is.",
+          "tools": [
+            "dutyKindPerLine"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-L",
+              "locationCode": "DDR",
+              "kind": "NACHT"
+            }
+          ],
+          "data": {
+            "kindPerLine": {
+              "found": true,
+              "rosterCode": "DDR-L",
+              "profile": "LAAT",
+              "kind": "NACHT",
+              "totalInRoster": 0,
+              "linesWithKind": [],
+              "linesWithoutKind": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ],
+              "requestedLine": null
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "DDR-L (12 regels)"
+          ]
+        }
+      ],
+      "ms": 8194
+    },
+    {
+      "id": "O-DDR-LN-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-LN",
+          "langsteReeks": 3
+        }
+      },
+      "note": "Grondwaarheid: langste nachtreeks in DDR-LN is 3 (cyclisch geteld, dus ook over de regelgrens heen).",
+      "turns": [
+        {
+          "text": "De langste aaneengesloten reeks nachtdiensten in het DDR-LN-rooster is 6 diensten, volgens de gegevens van `nightStructure`. Deze reeks begint op vrijdag en dekt 6 nachten, maar de tool geeft geen directe telling van aaneengesloten reeksen. De exacte opvolging over meerdere dagen moet uit de gegeven data worden geïnterpreteerd. De bron is officieel en bevestigd.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool 'nightStructure' wordt gebruikt om de nachtdiensten in het basisrooster DDR-LN te bekijken, maar de berekening van de langste aaneengesloten reeks vereist extra analyse die niet direct beschikbaar is in de huidige tools.",
+          "tools": [
+            "nightStructure"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-LN",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "nights": {
+              "found": true,
+              "rosterCode": "DDR-LN",
+              "blocks": [
+                {
+                  "startLine": 2,
+                  "startWeekday": 5,
+                  "startWeekdayName": "vrijdag",
+                  "length": 6,
+                  "lines": [
+                    2,
+                    3
+                  ],
+                  "crossesLineBoundary": true,
+                  "nextDay": {
+                    "lineNumber": 3,
+                    "weekday": 4,
+                    "positionType": "RUST",
+                    "dutyCode": null
+                  }
+                }
+              ],
+              "linesWithNights": [
+                2,
+                3
+              ],
+              "totalNights": 6
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "DDR-LN"
+          ]
+        }
+      ],
+      "ms": 13265
+    },
+    {
+      "id": "O-DDR-MIX-nachtreeks",
+      "category": "O",
+      "holdout": true,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-MIX",
+          "langsteReeks": 5
+        }
+      },
+      "note": "Grondwaarheid: langste nachtreeks in DDR-MIX is 5 (cyclisch geteld, dus ook over de regelgrens heen).",
+      "turns": [
+        {
+          "text": "De langste aaneengesloten reeks nachtdiensten in het DDR-MIX-rooster is 5 nachten. Dit komt voor in twee blokken: één op donderdag (regel 2) en één op maandag (regel 8). De tool 'nightStructure' geeft aan dat beide blokken 5 nachten bevatten, maar bevestigd niet direct de lengte van de reeks. De analyse van de gegeven data leidt tot dit resultaat.",
+          "status": "NIET_VAST_TE_STELLEN",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "Ik zoek eerst naar de nachtreeksen in het basisrooster om verdere analyse te kunnen doen.",
+          "tools": [
+            "nightStructure"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-MIX",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "nights": {
+              "found": true,
+              "rosterCode": "DDR-MIX",
+              "blocks": [
+                {
+                  "startLine": 2,
+                  "startWeekday": 4,
+                  "startWeekdayName": "donderdag",
+                  "length": 5,
+                  "lines": [
+                    2,
+                    3
+                  ],
+                  "crossesLineBoundary": true,
+                  "nextDay": {
+                    "lineNumber": 3,
+                    "weekday": 2,
+                    "positionType": "RUST",
+                    "dutyCode": null
+                  }
+                },
+                {
+                  "startLine": 8,
+                  "startWeekday": 1,
+                  "startWeekdayName": "maandag",
+                  "length": 5,
+                  "lines": [
+                    8
+                  ],
+                  "crossesLineBoundary": false,
+                  "nextDay": {
+                    "lineNumber": 8,
+                    "weekday": 6,
+                    "positionType": "RUST",
+                    "dutyCode": null
+                  }
+                }
+              ],
+              "linesWithNights": [
+                2,
+                3,
+                8
+              ],
+              "totalNights": 10
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "DDR-MIX"
+          ]
+        }
+      ],
+      "ms": 15224
+    },
+    {
+      "id": "O-DDR-V-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-V",
+          "langsteReeks": 0
+        }
+      },
+      "note": "Grondwaarheid: geen enkele nachtreeks in DDR-V — de agent moet dat ook zo zeggen, niet een reeks verzinnen.",
+      "turns": [
+        {
+          "text": "De tool geeft aan dat het basisrooster DDR-V geen nachtdiensten bevat (totalNights: 0). Dit betekent dat er geen aaneengesloten reeks nachtdiensten is. De bron is officieel en de regel is bevestigd. Er zijn dus geen nachtdiensten in dit rooster, waardoor de langste reeks 0 is.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De nachtreeksen van basisrooster DDR-V worden opgezocht om de langste aaneengesloten reeks nachtdiensten te bepalen.",
+          "tools": [
+            "nightStructure"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-V",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "nights": {
+              "found": true,
+              "rosterCode": "DDR-V",
+              "blocks": [],
+              "linesWithNights": [],
+              "totalNights": 0
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "DDR-V"
+          ]
+        }
+      ],
+      "ms": 9305
+    },
+    {
+      "id": "O-DDR-VL-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "expect": {
+        "kind": "night_series_length",
+        "params": {
+          "roster": "DDR-VL",
+          "langsteReeks": 0
+        }
+      },
+      "note": "Grondwaarheid: geen enkele nachtreeks in DDR-VL — de agent moet dat ook zo zeggen, niet een reeks verzinnen.",
+      "turns": [
+        {
+          "text": "De tool geeft aan dat er geen nachtdiensten zijn (totalNights: 0), dus er is geen aaneengesloten reeks nachtdiensten. Dit is gebaseerd op de gegevens van het basisrooster DDR-VL.",
+          "status": "BEANTWOORD",
+          "intent": "ROOSTERVRAAG",
+          "reasoning": "De tool 'nightStructure' geeft de opvolging en duur van nachtdiensten in het basisrooster DDR-VL. Door de nachten te analyseren kan de langste aaneengesloten reeks worden bepaald.",
+          "tools": [
+            "nightStructure"
+          ],
+          "toolInputs": [
+            {
+              "source": "official",
+              "rosterCode": "DDR-VL",
+              "locationCode": "DDR"
+            }
+          ],
+          "data": {
+            "nights": {
+              "found": true,
+              "rosterCode": "DDR-VL",
+              "blocks": [],
+              "linesWithNights": [],
+              "totalNights": 0
+            }
+          },
+          "sources": [
+            "officieel rooster",
+            "DDR-VL"
+          ]
+        }
+      ],
+      "ms": 7818
+    }
+  ],
+  "timing": {
+    "p50Ms": 10378,
+    "p95Ms": 16686
+  }
+}

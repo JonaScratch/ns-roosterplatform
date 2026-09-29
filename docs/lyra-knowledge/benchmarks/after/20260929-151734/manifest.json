@@ -1,0 +1,220 @@
+{
+  "schema": "ns-lyra-master-before-manifest/1",
+  "phase": "after",
+  "runId": "20260929-151734",
+  "recordedAt": "2026-09-29T13:17:37.433Z",
+  "purpose": "Combineert de agent-kant-manifesttraditie (n0-manifest.ts) en de engine-kant-manifesttraditie (optimizer-benchmark.ts) tot één voor-manifest voor de LYRA MASTER PROGRAM-ronde, met de vier expliciet beloofde-maar-eerder-ontbrekende velden: databaseVersion, engineVersion, qualityModelVersion, rulesetVersion.",
+  "git": {
+    "headCommit": "1cad67ef8b214917d80dea1e0903f30bca74579f",
+    "headSubject": "Master Program: build the local AFTER-run + adversarial-holdout orchestrator",
+    "headDate": "2026-09-29T12:24:08Z",
+    "branch": "claude/admiring-edison-5y65j7",
+    "baselineHead": "588c1e5",
+    "headMatchesBaseline": false,
+    "trackedBaselineClean": true,
+    "trackedModifiedPaths": [],
+    "orchestratorArtifacts": [],
+    "benchmarkOutputPaths": [
+      "docs/lyra-knowledge/benchmarks/before/20260927-205217/raw/before-20260927-205217-r1/golden-grade.json",
+      "docs/lyra-knowledge/benchmarks/before/20260927-205217/raw/before-20260927-205217-r1/golden.json",
+      "docs/lyra-knowledge/benchmarks/before/20260927-205217/raw/before-20260927-205217-r2/golden-grade.json",
+      "docs/lyra-knowledge/benchmarks/before/20260927-205217/raw/before-20260927-205217-r2/golden.json",
+      "docs/lyra-knowledge/benchmarks/before/20260927-205217/raw/before-20260927-205217-r3/golden-grade.json",
+      "docs/lyra-knowledge/benchmarks/before/20260927-205217/raw/before-20260927-205217-r3/golden.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r1/golden-extension.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r1/golden-grade-extension.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r1/golden-grade.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r1/golden.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r2/golden-extension.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r2/golden-grade-extension.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r2/golden-grade.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r2/golden.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r3/golden-extension.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r3/golden-grade-extension.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r3/golden-grade.json",
+      "docs/v1.0.6/benchmarks/before-20260927-205217-r3/golden.json"
+    ],
+    "generatedIgnoredArtifacts": [
+      ".env",
+      ".next/",
+      "demo-room/data/",
+      "demo-room/logs/",
+      "demo-room/reports/improvements/",
+      "demo-room/reports/latest.json",
+      "demo-room/reports/latest.md",
+      "next-env.d.ts",
+      "node_modules/",
+      "src/lib/generated/"
+    ],
+    "unexpectedUntrackedPaths": [
+      "backup-before-20260927-205217/BEFORE-VERIFICATION.json",
+      "backup-before-20260927-205217/aggregate.json",
+      "backup-before-20260927-205217/manifest.json",
+      "demo-room/reports/history/DR-20260926-1339-ee5fd3dd-5d97-42de-8f19-98a424867958.md",
+      "demo-room/reports/history/DR-20260926-1349-f3344be6-a68e-4596-bb5b-7c3cf76c6e22.md",
+      "docs/v1.0.6/golden-suite-extension.json"
+    ]
+  },
+  "databaseVersion": "20260925041247_technische_experimenten",
+  "engineVersion": "1.0.3",
+  "qualityModelVersion": "quality-model-v3",
+  "rulesetVersion": "2026.1-cao-2024-2025-transcribed",
+  "hashes": {
+    "ruleset": "6dd5d1619bd3d3d74f8115bf683a9d9a44efda269f4aec6c666ca8e5ab76cdf1",
+    "toolCatalogue": "3f05077874a83b885e45acf81513d3f046eb78fdc229310d3e05efd374685b29",
+    "goldenSuite": "1cbb1d5dbff5242aa4ec287f2e01d57b6768c525c7776759cec6a604c3d203cd"
+  },
+  "dutyPackage": {
+    "id": "1b37aeff-eb6b-4d33-8768-a46ccb26f6cc",
+    "label": "DDR-BDU-05-10-2026-V1",
+    "sourceChecksum": "425b37902bf70752fd9f9ca7f5326f823516ce212c3024bbe7afcec883fe3d83"
+  },
+  "localModel": {
+    "configured": true,
+    "url": "http://127.0.0.1:11434/v1",
+    "model": "qwen3:8b",
+    "temperature": 0,
+    "maxTokens": 2000,
+    "timeoutMs": 120000,
+    "reachable": true,
+    "detail": "1 model(len) beschikbaar",
+    "ollamaVersion": "ollama version is 0.34.4",
+    "gpu": "NVIDIA GeForce RTX 3080, 10240 MiB"
+  },
+  "stubExplicitlyDisabled": true,
+  "agentCapabilities": {
+    "all": [
+      "agent:chat",
+      "agent:job:create",
+      "agent:autonomous",
+      "agent:memory:write",
+      "agent:preference:propose",
+      "agent:preference:approve",
+      "agent:crosslocation:read",
+      "agent:experiment:propose",
+      "agent:experiment:run"
+    ],
+    "levels": {
+      "A": [
+        "agent:chat"
+      ],
+      "B": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write"
+      ],
+      "C": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write",
+        "agent:autonomous"
+      ]
+    },
+    "currentGrantDDR": {
+      "capabilities": [
+        "agent:chat",
+        "agent:job:create",
+        "agent:memory:write"
+      ],
+      "maxRounds": 2,
+      "maxSolverSeconds": 120,
+      "allowedStrategies": [],
+      "protectedRosters": [],
+      "suspendedAt": null
+    }
+  },
+  "toolCatalogue": [
+    {
+      "name": "rosterProject",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "rosterLine",
+      "allowed": true,
+      "requires": [
+        "lineNumber"
+      ]
+    },
+    {
+      "name": "dutyInstance",
+      "allowed": true,
+      "requires": [
+        "dutyCode"
+      ]
+    },
+    {
+      "name": "dutyKindCounts",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "dutyKindPerLine",
+      "allowed": true,
+      "requires": [
+        "kind"
+      ]
+    },
+    {
+      "name": "rosterHours",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "ruleLookup",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "ruleSearch",
+      "allowed": true,
+      "requires": [
+        "query"
+      ]
+    },
+    {
+      "name": "qualityReport",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "nightStructure",
+      "allowed": true,
+      "requires": [
+        "rosterCode"
+      ]
+    },
+    {
+      "name": "knowledgeSearch",
+      "allowed": true,
+      "requires": []
+    },
+    {
+      "name": "experimentHistory",
+      "allowed": true,
+      "requires": []
+    }
+  ],
+  "goldenSuite": {
+    "version": 1,
+    "itemCount": 43,
+    "counts": {
+      "total": 43,
+      "holdout": 8,
+      "dev": 35,
+      "perCategory": {
+        "A": 7,
+        "B": 7,
+        "C": 1,
+        "D": 7,
+        "E": 4,
+        "F": 7,
+        "G": 2,
+        "H": 1,
+        "I": 4,
+        "J": 3
+      }
+    },
+    "note": "de bevroren 43-item suite; ongewijzigd sinds v1.0.6"
+  }
+}

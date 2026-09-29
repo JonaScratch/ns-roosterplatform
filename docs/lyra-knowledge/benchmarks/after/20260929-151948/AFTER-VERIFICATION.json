@@ -1,0 +1,60 @@
+{
+  "schema": "ns-lyra-master-after-verification/1",
+  "runId": "20260929-151948",
+  "phase": "after",
+  "recordedAt": "2026-09-29T13:55:18.088Z",
+  "status": "PASS",
+  "subject": {
+    "headCommit": "1cad67ef8b214917d80dea1e0903f30bca74579f",
+    "branch": "claude/admiring-edison-5y65j7",
+    "trackedClean": true
+  },
+  "model": {
+    "name": "qwen3:8b",
+    "reachable": true
+  },
+  "stubExplicitlyDisabled": true,
+  "replicates": 3,
+  "allReplicatesCompleted": true,
+  "gradingCompleted": true,
+  "rawArtifacts": [
+    {
+      "pad": "../../v1.0.6/benchmarks/after-20260929-151948-r1/golden.json",
+      "sha256": "49dc9520ebffe6e5343cce845e34d22c081ae3cda0e49de661d285324bd8aab2"
+    },
+    {
+      "pad": "../../v1.0.6/benchmarks/after-20260929-151948-r1/golden-grade.json",
+      "sha256": "94d47ef32a9cd7f4aa693704a3e2ed187ded6537e3a61b56305a3ceeca503dc7"
+    },
+    {
+      "pad": "../../v1.0.6/benchmarks/after-20260929-151948-r2/golden.json",
+      "sha256": "793f884e4134d35db95b93456f9738d7c28bb1e411b82e08fd9fe40d90dc86fc"
+    },
+    {
+      "pad": "../../v1.0.6/benchmarks/after-20260929-151948-r2/golden-grade.json",
+      "sha256": "9c8d984b4e00d66db4ef3571f142a6b1c7637f56cd5624890ce6bc099fed68d2"
+    },
+    {
+      "pad": "../../v1.0.6/benchmarks/after-20260929-151948-r3/golden.json",
+      "sha256": "761538e8bc8052d4ce9bc1144606aa57c15587cf753524ece3d4c9380386a860"
+    },
+    {
+      "pad": "../../v1.0.6/benchmarks/after-20260929-151948-r3/golden-grade.json",
+      "sha256": "948cbd3a0deaeebe73048b2dd1b670670edcc1f3c5dc6593590d0cbfc38689ed"
+    }
+  ],
+  "extension": {
+    "ranOk": true,
+    "note": "Golden-suite-extensie (categorieën L, O) — Fase 9. Voor het eerst uitgevoerd bij deze AFTER-run; er bestaat geen BEFORE-tegenhanger om tegen te vergelijken (de BEFORE-run mat deze categorieën nooit), dus dit is een AFTER-only nulmeting."
+  },
+  "adversarial": {
+    "ranOk": true,
+    "meting": "adversarial-20260929-151948",
+    "path": "../adversarial/adversarial-20260929-151948/",
+    "note": "Fase 12 — 9 items uit adversarial-holdout-design.json. Item Q-DDR-BLM-NIGHTSTRUCTURE-TOOLFOUT vereist een gesimuleerde toolfout die dit script bewust niet uitvoert (geen fault-injection-mechanisme in tools.ts) — dat item krijgt daarom een eerlijke error/FOUT, geen echte modelbeoordeling. Zie adversarial-bench.ts."
+  },
+  "paths": {
+    "manifest": "manifest.json",
+    "aggregate": "aggregate.json"
+  }
+}
