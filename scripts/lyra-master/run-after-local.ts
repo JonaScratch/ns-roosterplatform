@@ -255,7 +255,7 @@ async function main(): Promise<void> {
       aggregatieOk = false;
     }
 
-    // ── Fase 9: golden-suite-extensie (categorieën L, O) — apart gerapporteerd, geen BEFORE-tegenhanger ──
+    // ── Fase 9: golden-suite-extensie (categorieën L, O) — apart gerapporteerd; BEFORE-tegenhanger is NON-FROZEN ──
     stap("Golden-suite-extensie (categorieën L, O) — Fase 9, voor het eerst daadwerkelijk uitgevoerd");
     let extensieOk = true;
     try {
@@ -292,9 +292,12 @@ async function main(): Promise<void> {
     const ruweBestanden: { pad: string; sha256: string }[] = [];
     for (let r = 1; r <= REPLICATES; r += 1) {
       const meting = `after-${runId}-r${r}`;
-      for (const naam of ["golden.json", "golden-grade.json"]) {
+      for (const naam of ["golden.json", "golden-grade.json", "golden-extension.json", "golden-grade-extension.json"]) {
         const p = path.join(CONTROL_ROOT, "docs", "v1.0.6", "benchmarks", meting, naam);
-        if (existsSync(p)) ruweBestanden.push({ pad: `../../v1.0.6/benchmarks/${meting}/${naam}`, sha256: sha256Van(p) });
+        // Relatief aan de map van AFTER-VERIFICATION.json zelf (zoals BEFORE's
+        // "raw/…"). Tot run 20260929-151948 stond hier een vaste
+        // "../../v1.0.6/…", die alleen klopte vanaf docs/lyra-knowledge/benchmarks.
+        if (existsSync(p)) ruweBestanden.push({ pad: path.relative(outDir, p).split(path.sep).join("/"), sha256: sha256Van(p) });
       }
     }
 
@@ -316,7 +319,7 @@ async function main(): Promise<void> {
       rawArtifacts: ruweBestanden,
       extension: {
         ranOk: extensieOk,
-        note: "Golden-suite-extensie (categorieën L, O) — Fase 9. Voor het eerst uitgevoerd bij deze AFTER-run; er bestaat geen BEFORE-tegenhanger om tegen te vergelijken (de BEFORE-run mat deze categorieën nooit), dus dit is een AFTER-only nulmeting.",
+        note: "Golden-suite-extensie (categorieën L, O) — Fase 9. De BEFORE-run 20260927-205217 mat deze categorieën alleen als EXTENSION / NON-FROZEN (post-baseline code); vergelijken kan met scripts/lyra-master/compare-before-after.ts --suite extension, maar het is geen bevroren BEFORE-vergelijking.",
       },
       adversarial: {
         ranOk: adversarialOk,

@@ -319,10 +319,18 @@ ${Object.values(schermContext).join(" ")}`);
   const naGronding: typeof ruwAntwoord = zonderBron
     ? {
         ...ruwAntwoord,
+        // Eerlijk over wát er misging: niets opgezocht, of wel opgezocht maar
+        // niets bruikbaars teruggekregen (G-regel-vervolg, BEFORE-run
+        // 20260927-205217: rosterLine faalde op de vervolgbeurt, en de melding
+        // beweerde dat er niets was geraadpleegd).
         text:
-          "Ik hield mijn eigen antwoord tegen: ik heb hier geen enkele bron voor geraadpleegd. " +
-          "Wat ik dan opschrijf komt uit het gesprek of uit mijzelf, en niet uit de roostergegevens. " +
-          "Stel de vraag opnieuw, dan zoek ik het op.",
+          results.length === 0
+            ? "Ik hield mijn eigen antwoord tegen: ik heb hier geen enkele bron voor geraadpleegd. " +
+              "Wat ik dan opschrijf komt uit het gesprek of uit mijzelf, en niet uit de roostergegevens. " +
+              "Stel de vraag opnieuw, dan zoek ik het op."
+            : `Ik hield mijn eigen antwoord tegen: ik raadpleegde ${[...new Set(results.map((r) => r.tool))].join(", ")}, maar kreeg geen bruikbaar gegeven terug. ` +
+              "Wat ik dan opschrijf komt niet uit de roostergegevens. " +
+              "Noem het basisrooster en de regel of dag erbij, dan zoek ik het opnieuw op.",
         status: "NIET_VAST_TE_STELLEN",
       }
     : los.length === 0

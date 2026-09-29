@@ -22,11 +22,15 @@ describe("grendelVan herkent de echte meldingsteksten", () => {
     expect(grendelVan(CLAIM, "NIET_VAST_TE_STELLEN")).toBe("CLAIMVERIFICATIE");
     expect(grendelVan(ZONDER_BRON, "NIET_VAST_TE_STELLEN")).toBe("ZONDER_BRON");
     expect(grendelVan(GRONDING, "NIET_VAST_TE_STELLEN")).toBe("GRONDING");
+    expect(
+      grendelVan("Ik hield mijn eigen antwoord tegen: ik raadpleegde rosterLine, maar kreeg geen bruikbaar gegeven terug. Wat ik dan opschrijf …", "NIET_VAST_TE_STELLEN"),
+    ).toBe("ZONDER_BRON");
   });
 
   it("de melding in agent.ts is nog steeds de tekst die de regel herkent", () => {
     const agent = readFileSync(path.resolve(__dirname, "..", "..", "src", "server", "agent", "agent.ts"), "utf8");
     expect(agent).toContain('"Ik hield mijn eigen antwoord tegen: ik heb hier geen enkele bron voor geraadpleegd. "');
+    expect(agent).toContain("maar kreeg geen bruikbaar gegeven terug. ");
     const grounding = readFileSync(path.resolve(__dirname, "..", "..", "src", "server", "agent", "grounding.ts"), "utf8");
     expect(grounding).toContain("Ik hield mijn eigen antwoord tegen");
   });

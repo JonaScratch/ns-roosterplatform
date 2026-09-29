@@ -30,7 +30,7 @@ export type Grendel = "CLAIMVERIFICATIE" | "GRONDING" | "ZONDER_BRON";
 export function grendelVan(tekst: string, status: string): Grendel | null {
   if (status !== "NIET_VAST_TE_STELLEN" || !tekst.startsWith("Ik hield mijn eigen antwoord tegen")) return null;
   if (/gezagswoord/.test(tekst)) return "CLAIMVERIFICATIE";
-  if (/geen enkele bron/.test(tekst)) return "ZONDER_BRON";
+  if (/geen enkele bron|kreeg geen bruikbaar gegeven terug/.test(tekst)) return "ZONDER_BRON";
   return "GRONDING";
 }
 
