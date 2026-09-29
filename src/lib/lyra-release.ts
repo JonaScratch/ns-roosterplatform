@@ -200,7 +200,8 @@ export function commitRelease(dir: string, input: CommitReleaseInput, hooks: { n
     activatedAt: input.now ?? new Date().toISOString(),
     approvedBy: input.approvedBy,
     reason: input.reason,
-    previousVersionId: vorige?.activeVersionId ?? null,
+    // Geen eerdere wijzer = het platform draaide de kale standaardinstructie.
+    previousVersionId: vorige?.activeVersionId ?? BASELINE_LYRA_VERSION_ID,
     kind: input.kind,
   };
   atomisch(pointerPad(dir), `${JSON.stringify(pointer, null, 2)}\n`); // ← commitmoment

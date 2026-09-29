@@ -324,7 +324,11 @@ export async function rollbackTo(versionId: string, runId: string | undefined, g
     throw new Error(`Onbekende versie: ${versionId}`);
   }
   logbook.log(effectiefRunId, { kind: "ROLLBACK", experimentId: null, message: `Handmatig herstel: ${from} → ${versionId}.`, change: { beforeVersion: from, afterVersion: versionId, affectedFiles: ["NS_PRODUCTION_PROMPT_FILE"], causedByExperimentId: null, rollbackReference: from, diffReference: null } });
-  activateVersion(versionId, { ...goedkeuring, soort: "ROLLBACK" });
+  // "Activeren" in de UI loopt ook via deze functie; een nieuwere versie
+  // activeren is geen terugdraaien en heet in de releasegeschiedenis ook zo.
+  const huidige = getVersion(from);
+  const soort = huidige && doel.createdAt > huidige.createdAt ? "ACTIVATE" : "ROLLBACK";
+  activateVersion(versionId, { ...goedkeuring, soort });
   await naPublicatie(null, versionId, from, true);
   logbook.log(effectiefRunId, { kind: "ROLLBACK", experimentId: null, message: "Rollback completed (handmatig)." });
   return { fromVersionId: from, toVersionId: versionId };
