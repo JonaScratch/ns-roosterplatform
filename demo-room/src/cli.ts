@@ -286,6 +286,19 @@ async function cmdChat(): Promise<void> {
   const sessionId = arg("session-id") ?? null;
   const versionId = arg("version-id") ?? null;
   const locationCode = arg("location-code", "DDR")!;
+  // Schermcontext zoals het echte platform die meegeeft (foto 2: "Voorbeeldrooster:
+  // DDR VL – regel 1"). Zonder deze velden kon Test Room nooit een vraag over
+  // een bepaald rooster of een bepaalde regel stellen — elk antwoord begon dan
+  // bij "welk rooster bedoel je?".
+  const rosterCode = arg("roster-code") ?? null;
+  const lineNumberRuw = arg("line-number");
+  const lineNumber = lineNumberRuw ? Number(lineNumberRuw) : null;
+  if (lineNumber !== null && (!Number.isInteger(lineNumber) || lineNumber < 1)) throw new Error("--line-number moet een positief geheel getal zijn.");
+  const weekdayRuw = arg("weekday");
+  const weekday = weekdayRuw ? Number(weekdayRuw) : null;
+  if (weekday !== null && (!Number.isInteger(weekday) || weekday < 1 || weekday > 7)) throw new Error("--weekday moet 1 (maandag) t/m 7 (zondag) zijn.");
+  const candidateLabel = arg("candidate-label") ?? null;
+  const source = candidateLabel ? "candidate" : "official";
   const runId = nieuwRunId("CHAT");
 
   await withRunLogbook(runId, { kind: "chat", challengeOrGoal: `Test Room-bericht (versie: ${versionId ?? "actief"}): "${text.slice(0, 120)}"` }, async () => {
@@ -309,7 +322,7 @@ async function cmdChat(): Promise<void> {
       persist: false,
       sessionId,
       modelOverride,
-      uiContext: { source: "official", candidateId: null, candidateLabel: null, rosterCode: null, lineNumber: null, weekday: null, dutyCode: null, locationCode },
+      uiContext: { source, candidateId: null, candidateLabel, rosterCode, lineNumber, weekday, dutyCode: null, locationCode },
     });
 
     logbook.log(runId, {
@@ -330,6 +343,11 @@ async function cmdChat(): Promise<void> {
       sources: resultaat.sources,
       toolCalls: resultaat.toolCalls,
       contextUsed: resultaat.contextUsed,
+      reasoning: resultaat.reasoning,
+      // Voor de ontwikkelaar in Test Room: wat een grendel tegenhield en wat
+      // de plancontrole aan het modelplan veranderde (alleen als het gebeurde).
+      tegengehouden: resultaat.tegengehouden ?? null,
+      planCorrecties: resultaat.planCorrecties ?? [],
     }));
   });
 }

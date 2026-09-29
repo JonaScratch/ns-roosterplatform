@@ -513,6 +513,27 @@ const server = http.createServer((req, res) => {
       if (body.sessionId) args.push("--session-id", String(body.sessionId));
       if (body.versionId) args.push("--version-id", String(body.versionId));
       if (body.locationCode) args.push("--location-code", String(body.locationCode));
+      // Schermcontext, strikt gevalideerd vóór hij als CLI-argument meegaat.
+      const roosterCode = typeof body.rosterCode === "string" ? body.rosterCode.trim() : "";
+      if (roosterCode) {
+        if (!/^[A-Za-z0-9-]{1,32}$/.test(roosterCode)) return json(res, 400, { error: "ongeldige roostercode" });
+        args.push("--roster-code", roosterCode.toUpperCase());
+      }
+      if (body.lineNumber !== undefined && body.lineNumber !== null && body.lineNumber !== "") {
+        const regel = Number(body.lineNumber);
+        if (!Number.isInteger(regel) || regel < 1 || regel > 999) return json(res, 400, { error: "ongeldig regelnummer" });
+        args.push("--line-number", String(regel));
+      }
+      if (body.weekday !== undefined && body.weekday !== null && body.weekday !== "") {
+        const dag = Number(body.weekday);
+        if (!Number.isInteger(dag) || dag < 1 || dag > 7) return json(res, 400, { error: "ongeldige weekdag" });
+        args.push("--weekday", String(dag));
+      }
+      const kandidaatLabel = typeof body.candidateLabel === "string" ? body.candidateLabel.trim() : "";
+      if (kandidaatLabel) {
+        if (kandidaatLabel.length > 60) return json(res, 400, { error: "ongeldig kandidaatlabel" });
+        args.push("--candidate-label", kandidaatLabel);
+      }
       try {
         const { stdout, stderr, exitCode } = await runCliOnceAndCapture(args);
         if (exitCode !== 0) return json(res, 502, { error: `Test Room-bericht mislukte (afsluitcode ${exitCode}).`, detail: stderr.slice(-2000) || stdout.slice(-2000) });

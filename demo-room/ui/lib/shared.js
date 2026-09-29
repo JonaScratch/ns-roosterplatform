@@ -69,7 +69,8 @@ export function nlPct(v, digits) {
   return v === null || v === undefined ? "—" : `${v.toLocaleString("nl-NL", { minimumFractionDigits: digits ?? 0, maximumFractionDigits: digits ?? 0 })}%`;
 }
 export function esc(s) {
-  return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  // Ook > en aanhalingstekens: esc() wordt ook binnen attributen gebruikt.
+  return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 export function fmtPp(delta, digits) {
   if (delta === null || delta === undefined) return "—";

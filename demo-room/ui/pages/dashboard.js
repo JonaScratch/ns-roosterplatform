@@ -19,18 +19,22 @@ let gekozenDuurMinuten = 360;
 function html() {
   return `
     <div class="row" style="align-items:stretch;">
-      <div class="col" style="max-width:400px;">
-        <div class="card" style="height:100%; display:flex; gap:14px;">
-          <div id="dash-active-icon"></div>
-          <div>
-            <div style="color:var(--muted); text-transform:uppercase; font-size:11px; letter-spacing:.05em; font-weight:700;">Actieve Lyra</div>
-            <div style="display:flex; align-items:baseline; gap:10px; margin:4px 0;">
-              <span id="dash-active-version" style="font-size:24px; font-weight:800; color:var(--bg);">—</span>
-              <span class="tag good" id="dash-active-tag">ACTIEF</span>
+      <div class="col" style="flex:1.25;">
+        <div class="card dash-actief" style="height:100%;">
+          <div class="dash-actief-links">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div id="dash-active-icon"></div>
+              <div>
+                <div style="font-weight:700; font-size:14px; color:#16233d;">Actieve Lyra</div>
+                <div style="display:flex; align-items:center; gap:10px; margin:2px 0 6px;">
+                  <span id="dash-active-version" style="font-size:26px; font-weight:800; color:var(--bg);">—</span>
+                  <span class="tag good" id="dash-active-tag">ACTIEF</span>
+                </div>
+              </div>
             </div>
-            <table style="font-size:12px; margin-top:6px;"><tbody id="dash-active-fields"></tbody></table>
-            <p id="dash-active-sub" style="margin:8px 0 0; color:#7a8aa3; font-size:12px; line-height:1.5;">Dit is de huidige productieve baseline. Gebruik de Test Room en ontwikkelruns om verbeterde kandidaten te maken en te testen tegen deze versie.</p>
+            <div class="field-list" id="dash-active-fields"></div>
           </div>
+          <p id="dash-active-sub" class="dash-actief-rechts">Dit is de huidige productieve baseline. Gebruik de <a href="#/test-room">Test Room</a> en ontwikkelruns om verbeterde kandidaten te maken en te testen tegen deze versie.</p>
         </div>
       </div>
       <div class="col">
@@ -43,7 +47,7 @@ function html() {
         <div class="card" style="height:100%;">
           <h3>${titleIcon("bolt", "#1f5fd0")}Nieuwe ontwikkelrun starten<span class="card-sub"></span></h3>
           <p class="sub" style="margin:-8px 0 10px; color:#7a8aa3; font-size:12px;">Start een nieuwe run om verbeterde kandidaten te genereren.</p>
-          <div class="row" id="dash-duur-tiles" style="gap:8px; flex-wrap:wrap;"></div>
+          <div class="row" id="dash-duur-tiles" style="gap:8px; flex-wrap:nowrap;"></div>
           <div id="dash-duur-custom" style="display:none; margin-top:8px;">
             <label>Aantal minuten</label>
             <input type="number" id="dash-duur-custom-input" min="5" value="120" style="max-width:140px;" />
@@ -53,7 +57,7 @@ function html() {
       </div>
     </div>
 
-    <div class="grid" id="dash-kpis" style="margin-bottom:14px;"></div>
+    <div class="grid" id="dash-kpis" style="margin:14px 0;"></div>
 
     <div class="row">
       <div class="col">
@@ -94,13 +98,13 @@ function html() {
           <div id="dash-bevindingen"></div>
         </div>
       </div>
-      <div class="col" style="max-width:320px;">
+      <div class="col" style="flex:0.9;">
         <div class="card">
           <h3>${titleIcon("bolt", "#1f5fd0")}Snelle acties</h3>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <button class="primary" id="dash-quick-testroom" style="justify-content:flex-start;">${ICONS.chat}Open Test Room</button>
-            <button class="ghost" id="dash-quick-startrun" style="justify-content:flex-start; padding:9px 12px;">${ICONS.play}Start ontwikkelrun</button>
-            <button class="ghost" id="dash-quick-bestcandidate" style="display:none; justify-content:flex-start; padding:9px 12px;">${ICONS.trophy}Bekijk beste kandidaat</button>
+          <div class="dash-acties">
+            <button class="dash-actie" id="dash-quick-testroom">${iconChip("flask", "blue")}<span><b>Open Test Room</b><span>Tests uitvoeren met de huidige versie</span></span><span class="dash-pijl">→</span></button>
+            <button class="dash-actie" id="dash-quick-startrun">${iconChip("play", "blue")}<span><b>Start ontwikkelrun</b><span>Nieuwe kandidaten genereren</span></span><span class="dash-pijl">→</span></button>
+            <button class="dash-actie" id="dash-quick-bestcandidate" style="display:none;">${iconChip("trophy", "gold")}<span><b>Bekijk beste kandidaat</b><span>Details, benchmark en holdout</span></span><span class="dash-pijl">→</span></button>
           </div>
         </div>
       </div>
@@ -110,7 +114,7 @@ function html() {
 
 function renderDuurTiles(container) {
   container.innerHTML = DUUR_OPTIES.map((o, i) => `
-    <button type="button" class="option-tile${o.minutes === gekozenDuurMinuten ? " selected" : ""}" data-duur-index="${i}" style="flex:1; min-width:110px;">
+    <button type="button" class="option-tile${o.minutes === gekozenDuurMinuten ? " selected" : ""}" data-duur-index="${i}" style="flex:1; min-width:0;">
       <span class="option-icon">${o.minutes === null ? ICONS.gear : ICONS.clock}</span>
       <div class="option-title">${o.label}</div>
       <div class="option-sub">${o.sub}</div>
@@ -179,7 +183,7 @@ async function laadBesteKandidaat() {
   `;
   document.getElementById("dash-open-candidate").addEventListener("click", () => { location.hash = `#/candidates?id=${encodeURIComponent(beste.candidateId)}`; });
   document.getElementById("dash-compare-candidate").addEventListener("click", () => { location.hash = `#/vergelijken?target=${encodeURIComponent(beste.candidateId)}`; });
-  document.getElementById("dash-quick-bestcandidate").style.display = "block";
+  document.getElementById("dash-quick-bestcandidate").style.display = "flex";
   document.getElementById("dash-quick-bestcandidate").onclick = () => { location.hash = `#/candidates?id=${encodeURIComponent(beste.candidateId)}`; };
   return { beste, kandidaten };
 }
@@ -196,8 +200,8 @@ async function laadActieveVersie() {
     ["Variant", actief.variantId || "(baseline)"],
     ["Standplaats", "DDR — Dordrecht"],
     ["Benchmark (dev)", actief.benchmarkReference ? "aanwezig" : "nog geen meting"],
-    ["Betrouwbaarheid", actief.isBaseline ? "kale productie-instructie" : "sandbox-gevalideerd"],
-  ].map(([k, v]) => `<tr><td style="color:var(--muted); padding:2px 8px 2px 0;">${k}</td><td>${v}</td></tr>`).join("");
+    ["Betrouwbaarheid", `<span class="tag ${actief.isBaseline ? "" : "good"}">${actief.isBaseline ? "Kale productie-instructie" : "Sandbox-gevalideerd"}</span>`],
+  ].map(([k, v]) => `<div class="field-row" style="padding:6px 0;"><div style="flex:1;"><span class="field-label" style="text-transform:none; font-size:12.5px; letter-spacing:0;">${k}</span></div><div class="field-value">${v}</div></div>`).join("");
   return actief;
 }
 
@@ -238,24 +242,30 @@ function renderLaatsteRun(run) {
     return;
   }
   const laatsteCyclus = run.cycles[run.cycles.length - 1] ?? null;
+  const metKandidaat = run.cycles.filter((c) => c.candidate).length;
   const stages = [
-    { key: "diagnose", label: "Diagnose", status: laatsteCyclus?.weakness.executed ? "done" : run.stopReason === "NOT_EXECUTED" ? "failed" : "pending" },
-    { key: "experiment", label: "Experiment", status: laatsteCyclus?.candidate ? "done" : "pending" },
-    { key: "kandidaten", label: "Kandidaten", status: laatsteCyclus?.candidate ? "done" : "pending" },
-    { key: "benchmark", label: "Benchmark", status: laatsteCyclus?.proof?.executed ? "done" : "pending" },
-    { key: "validatie", label: "Validatie", status: laatsteCyclus?.proof ? "done" : "pending" },
-    { key: "beslissing", label: "Beslissing", status: laatsteCyclus && laatsteCyclus.decision !== "NOT_EXECUTED" ? "done" : "pending" },
+    { key: "diagnose", label: "Diagnose", sub: laatsteCyclus?.weakness?.weakestDimension ?? "", status: laatsteCyclus?.weakness.executed ? "done" : run.stopReason === "NOT_EXECUTED" ? "failed" : "pending" },
+    { key: "experiment", label: "Experiment", sub: metKandidaat ? `${metKandidaat} variant${metKandidaat === 1 ? "" : "en"}` : "", status: laatsteCyclus?.candidate ? "done" : "pending" },
+    { key: "kandidaten", label: "Kandidaten", sub: run.cycles.length ? `${run.cycles.length} gegenereerd` : "", status: laatsteCyclus?.candidate ? "done" : "pending" },
+    { key: "benchmark", label: "Benchmark", sub: laatsteCyclus?.proof?.executed ? "vergeleken" : "", status: laatsteCyclus?.proof?.executed ? "done" : "pending" },
+    { key: "validatie", label: "Validatie", sub: laatsteCyclus?.proof ? (run.cycles.some((c) => c.decision === "PROMOTION_CANDIDATE") ? "regels OK" : "gecontroleerd") : "", status: laatsteCyclus?.proof ? "done" : "pending" },
+    { key: "beslissing", label: "Beslissing", sub: run.acceptedCount > 0 ? "Promoveren" : laatsteCyclus ? "Niet promoveren" : "", status: laatsteCyclus && laatsteCyclus.decision !== "NOT_EXECUTED" ? "done" : "pending" },
   ];
   const conclusieTekst = run.acceptedCount > 0
     ? `Verbeterde kandidaat gevonden — ${run.acceptedCount} van ${run.cycles.length} kandida(a)t(en) gepromoveerd deze run.`
     : run.cycles.length === 0
       ? `Geen enkele cyclus kon starten (${STOPREDEN_LABEL[run.stopReason] || run.stopReason}).`
       : `Geen aantoonbare verbetering gevonden binnen deze run — een geldig resultaat, geen mislukking (${STOPREDEN_LABEL[run.stopReason] || run.stopReason}).`;
+  const geslaagd = run.acceptedCount > 0;
   el.innerHTML = `
-    <p style="margin:0 0 8px; font-size:13px; color:#556;">${run.runId} · ${new Date(run.startedAt).toLocaleString("nl-NL")}</p>
+    <p style="margin:0 0 8px; font-size:13px; color:#556;">Run ${run.runId} · ${new Date(run.startedAt).toLocaleString("nl-NL")}
+      <span class="tag ${run.stopReason === "NOT_EXECUTED" ? "bad" : "good"}" style="margin-left:8px;">${run.stopReason === "NOT_EXECUTED" ? "MISLUKT" : "AFGEROND"}</span>
+      ${geslaagd ? '<span class="tag" style="margin-left:4px;">PROMOTION_CANDIDATE</span>' : ""}</p>
     <div class="stepper" id="dash-laatste-run-stepper"></div>
-    <p style="margin-top:10px; font-weight:600; color:${run.acceptedCount > 0 ? "var(--good)" : "#334"};">${run.acceptedCount > 0 ? "Verbeterde kandidaat gevonden" : "Geen aantoonbare verbetering"}</p>
-    <p class="sub" style="margin:2px 0 0; font-size:13px; color:#556;">${conclusieTekst}</p>
+    <div class="dash-conclusie ${geslaagd ? "goed" : ""}">
+      <span class="dash-conclusie-icoon">${geslaagd ? ICONS.check : ICONS.alert}</span>
+      <div><b>${geslaagd ? "Verbeterde kandidaat gevonden" : "Geen aantoonbare verbetering"}</b><div>${conclusieTekst}</div></div>
+    </div>
   `;
   renderStepper(document.getElementById("dash-laatste-run-stepper"), stages);
 }
@@ -293,13 +303,13 @@ function renderKandidaatvergelijking(actief, kandidaten) {
   const top5 = [...kandidaten].sort((a, b) => (b.benchmarkDelta ?? -Infinity) - (a.benchmarkDelta ?? -Infinity)).slice(0, 5);
   const rijen = [
     `<tr><td><b>${actief.displayName}</b> <span class="tag info">actief</span></td><td>${actief.benchmarkReference ? "aanwezig" : "—"}</td><td>—</td><td>—</td><td><span class="tag good">ACTIEF</span></td></tr>`,
-    ...top5.map((c) => `
-      <tr class="clickable" data-candidate="${c.candidateId}">
+    ...top5.map((c, i) => `
+      <tr class="clickable${i === 0 && c.decision === "PROMOTION_CANDIDATE" ? " dash-beste-rij" : ""}" data-candidate="${c.candidateId}">
         <td>${c.candidateId}</td>
         <td>${c.benchmarkDev !== null ? c.benchmarkDev.toFixed(1) + "%" : "—"}</td>
         <td>${c.holdout !== null ? c.holdout.toFixed(1) + "%" : "—"}</td>
         <td>${c.validator === "PASS" ? "OK" : c.validator === "FAIL" ? "Overtreding" : "—"}</td>
-        <td><span class="tag ${statusTagClass(c.decision)}">${c.decision}</span></td>
+        <td><span class="tag ${statusTagClass(c.decision)}">${i === 0 && c.decision === "PROMOTION_CANDIDATE" ? "Beste kandidaat" : c.decision}</span></td>
       </tr>`),
   ];
   tbody.innerHTML = rijen.join("") || `<tr><td colspan="5" class="empty">Nog geen kandidaten</td></tr>`;

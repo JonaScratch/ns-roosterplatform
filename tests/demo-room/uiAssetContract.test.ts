@@ -142,6 +142,22 @@ describe("UI-asset-contract (echte server)", () => {
     expect(info.uiAssetsMissing).toEqual([]);
   });
 
+  it("/api/chat weigert ongeldige schermcontext vóór er een CLI-proces start", async () => {
+    const stuur = (body: Record<string, unknown>) =>
+      fetch(`http://127.0.0.1:${poort}/api/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "hoi", ...body }) });
+    for (const [body, fout] of [
+      [{ rosterCode: "DDR-VL; rm -rf /" }, "ongeldige roostercode"],
+      [{ lineNumber: 0 }, "ongeldig regelnummer"],
+      [{ lineNumber: "2abc" }, "ongeldig regelnummer"],
+      [{ weekday: 8 }, "ongeldige weekdag"],
+      [{ candidateLabel: "x".repeat(61) }, "ongeldig kandidaatlabel"],
+    ] as const) {
+      const r = await stuur(body);
+      expect(r.status, JSON.stringify(body)).toBe(400);
+      expect(((await r.json()) as { error: string }).error).toBe(fout);
+    }
+  });
+
   it("een tweede server op dezelfde poort sterft NIET stil, maar noemt de bezetter en stopt met exitcode 2", async () => {
     const tweede = startServer(poort, stateRoot);
     const code = await tweede.klaar;
