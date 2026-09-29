@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import path from "node:path";
 import { DATA_DIR } from "../config";
 import type { LyraVersion } from "../types";
+import { commitRelease, currentGeneration, getActiveLyraVersion, releaseHistory, type ActiveLyraVersion, type ReleaseApproval, type ReleaseKind, type ReleasePointer } from "../../../src/lib/lyra-release";
 
 /**
  * De versiegeschiedenis van "productie-Lyra" (§ aanvulling, "HANDMATIGE
@@ -66,7 +67,7 @@ function ensureDir(): void {
 
 export function listVersions(): readonly LyraVersion[] {
   ensureDir();
-  const bestanden = readdirSync(VERSIONS_DIR).filter((f) => f.endsWith(".json") && f !== "current.json");
+  const bestanden = readdirSync(VERSIONS_DIR).filter((f) => f.endsWith(".json") && f !== "current.json" && !f.endsWith(".tmp"));
   const versies = bestanden.map((f) => JSON.parse(readFileSync(path.join(VERSIONS_DIR, f), "utf8")) as LyraVersion);
   if (versies.length === 0) return [baselineVersion()];
   return [...versies].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -104,24 +105,52 @@ export function createVersion(input: Omit<LyraVersion, "id" | "createdAt" | "sta
   return version;
 }
 
+/** Wie besluit tot activatie, en waarom. Zonder dit geen activatie. */
+export interface Goedkeuring {
+  readonly door: ReleaseApproval;
+  readonly reden: string;
+  readonly soort?: ReleaseKind;
+  /** Optimistische vergrendeling: de releasegeneratie die de beslisser zag. */
+  readonly verwachteGeneratie?: number;
+}
+
+/** Precies wat het platform ziet: dezelfde leesfunctie, dezelfde map. */
+export function releaseInfo(): { readonly actief: ActiveLyraVersion; readonly geschiedenis: readonly ReleasePointer[] } {
+  ensureDir();
+  return { actief: getActiveLyraVersion(VERSIONS_DIR), geschiedenis: releaseHistory(VERSIONS_DIR) };
+}
+
+export function huidigeGeneratie(): number {
+  ensureDir();
+  return currentGeneration(VERSIONS_DIR);
+}
+
 /**
- * Maakt `versionId` live: schrijft de prompttekst naar `current-prompt.txt`,
- * zet de wijzer, en werkt de statussen bij. Dit is de daadwerkelijke
- * publicatiestap — `safePublish.ts` roept dit pas aan ná alle controles.
+ * Maakt `versionId` live via de canonieke releasedienst
+ * (`src/lib/lyra-release.ts`): prompttekst inhoud-geadresseerd, dan één
+ * atomische wijzerwissel — nooit een half-toestand. Vereist een benoemde mens.
+ * `safePublish.ts` roept dit pas aan ná alle controles. Versiestatussen
+ * (ACTIVE/SUPERSEDED) worden ná het commitmoment bijgewerkt; ze zijn afgeleid,
+ * de wijzer is de waarheid (`currentVersionId()` leest de wijzer).
  */
-export function activateVersion(versionId: string): void {
+export function activateVersion(versionId: string, goedkeuring: Goedkeuring): void {
   ensureDir();
   const versie = getVersion(versionId);
   if (!versie) throw new Error(`Onbekende versie: ${versionId}`);
 
   const huidigeId = currentVersionId();
+  commitRelease(VERSIONS_DIR, {
+    versionId,
+    promptText: versie.promptOverrideText,
+    approvedBy: goedkeuring?.door,
+    reason: goedkeuring?.reden,
+    kind: goedkeuring?.soort ?? "ACTIVATE",
+    expectedGeneration: goedkeuring?.verwachteGeneratie,
+  });
   if (huidigeId !== versionId) {
     const huidige = getVersion(huidigeId);
     if (huidige && huidige.id !== BASELINE_VERSION_ID) writeVersion({ ...huidige, status: "SUPERSEDED" });
   }
-
-  writeFileSync(CURRENT_PROMPT_FILE, versie.promptOverrideText ?? "", "utf8");
-  writeFileSync(CURRENT_POINTER, `${JSON.stringify({ activeVersionId: versionId }, null, 2)}\n`, "utf8");
   if (versie.id !== BASELINE_VERSION_ID) writeVersion({ ...versie, status: "ACTIVE" });
 }
 

@@ -196,6 +196,18 @@ describe("UI-asset-contract (echte server)", () => {
     expect(hervat.status).toBe(409);
   }, 30000);
 
+  it("Phase Q via de echte API: productie-activatie zonder bevestiging, naam of reden wordt geweigerd; actieve versie toont release-integriteit", async () => {
+    const post = (route: string, body: Record<string, unknown>) => fetch(`http://127.0.0.1:${poort}${route}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    for (const [route, basis] of [["/api/rollback/execute", { versionId: "lyra-prod-baseline" }], ["/api/publish/execute", { experimentId: "x" }]] as const) {
+      expect((await post(route, basis)).status, route).toBe(400);
+      expect((await post(route, { ...basis, confirm: true, role: "ROOSTERCOMMISSIE", reason: "omdat" })).status, route).toBe(400);
+      expect((await post(route, { ...basis, confirm: true, actorId: "rc1", role: "ROOSTERCOMMISSIE" })).status, route).toBe(400);
+    }
+    const actief = (await (await fetch(`http://127.0.0.1:${poort}/api/versions/active`)).json()) as { release: { integrity: string; generation: number } };
+    expect(actief.release.integrity).toBe("NO_RELEASE");
+    expect(actief.release.generation).toBe(0);
+  }, 30000);
+
   it("een tweede server op dezelfde poort sterft NIET stil, maar noemt de bezetter en stopt met exitcode 2", async () => {
     const tweede = startServer(poort, stateRoot);
     const code = await tweede.klaar;

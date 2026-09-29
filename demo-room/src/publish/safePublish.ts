@@ -10,7 +10,7 @@ import * as logbook from "../store/logbook";
 import { appendExperiment, readAllExperiments } from "../store/runlog";
 import type { ExperimentRecord, JournalEntry, PublishResult, PublishStepResult } from "../types";
 import { findPromptVariant } from "../variants/promptVariants";
-import { activateVersion, createVersion, currentVersionId, getVersion, listVersions, markVersionStatus } from "./versions";
+import { activateVersion, createVersion, currentVersionId, getVersion, listVersions, markVersionStatus, type Goedkeuring } from "./versions";
 
 /**
  * Injecteerbare stappen — uitsluitend voor tests (§ aanvulling "Bewijs
@@ -59,6 +59,8 @@ export interface PublishOptions {
   readonly runId?: string;
   /** Uitsluitend voor tests — zie `PublishSteps`. */
   readonly steps?: PublishSteps;
+  /** De mens die tot publicatie besloot. Ontbreekt: geweigerd vóór enige wijziging. */
+  readonly goedkeuring?: Goedkeuring;
 }
 
 export async function publishExperiment(experimentId: string, options: PublishOptions = {}): Promise<PublishResult> {
@@ -79,6 +81,11 @@ export async function publishExperiment(experimentId: string, options: PublishOp
   };
 
   // 1. PREFLIGHT
+  const goedkeuring = options.goedkeuring;
+  if (!goedkeuring?.door?.id?.trim() || !goedkeuring.door.role?.trim() || !goedkeuring.reden?.trim()) {
+    stapEnLog("PREFLIGHT", "FAILED", "Geen menselijke goedkeuring (naam, rol en reden) — productie-activatie vereist altijd een benoemde mens.");
+    return afgekeurd(runId, publishId, startedAt, fromVersionId, steps, log, noteer, "Menselijke goedkeuring ontbreekt.");
+  }
   const experiment = readAllExperiments().find((e) => e.id === experimentId);
   if (!experiment) {
     stapEnLog("PREFLIGHT", "FAILED", `Experiment ${experimentId} niet gevonden.`);
@@ -133,7 +140,7 @@ export async function publishExperiment(experimentId: string, options: PublishOp
 
   // 3. APPLY
   try {
-    activateVersion(nieuweVersie.id);
+    activateVersion(nieuweVersie.id, { ...goedkeuring, soort: "ACTIVATE" });
     stapEnLog("APPLY", "OK", `${nieuweVersie.id} is nu de actieve productieversie.`);
     logbook.log(runId, {
       kind: "CHANGE_APPLIED",
@@ -144,7 +151,7 @@ export async function publishExperiment(experimentId: string, options: PublishOp
     noteer(`Toegepast: ${fromVersionId} → ${nieuweVersie.id}.`);
   } catch (fout) {
     stapEnLog("APPLY", "FAILED", fout instanceof Error ? fout.message : String(fout));
-    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Kon de wijziging niet toepassen.");
+    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Kon de wijziging niet toepassen.", goedkeuring);
   }
 
   // 4. TYPECHECK
@@ -156,7 +163,7 @@ export async function publishExperiment(experimentId: string, options: PublishOp
   } catch (fout) {
     const detail = fout instanceof Error ? fout.message.slice(0, 2000) : String(fout);
     stapEnLog("TYPECHECK", "FAILED", detail);
-    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Typecheck faalde na publicatie.");
+    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Typecheck faalde na publicatie.", goedkeuring);
   }
 
   // 5. SMOKE BENCHMARK — via de productiepad (geen modelOverride): dit toetst
@@ -169,13 +176,13 @@ export async function publishExperiment(experimentId: string, options: PublishOp
     const mislukt = smokeResultaten.filter((r) => r.graded === "FOUT");
     if (mislukt.length > 0) {
       stapEnLog("SMOKE_BENCHMARK", "FAILED", `${mislukt.length}/${smokeResultaten.length} smoke-items mislukten: ${mislukt.map((m) => m.id).join(", ")}.`);
-      return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Smoke-benchmark op de nieuwe productieversie mislukte.");
+      return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Smoke-benchmark op de nieuwe productieversie mislukte.", goedkeuring);
     }
     stapEnLog("SMOKE_BENCHMARK", "OK", `${smokeResultaten.length}/${smokeResultaten.length} smoke-items geslaagd.`);
     noteer("Smoke-benchmark geslaagd.");
   } catch (fout) {
     stapEnLog("SMOKE_BENCHMARK", "FAILED", `Kon niet uitvoeren: ${fout instanceof Error ? fout.message : String(fout)} (waarschijnlijk geen lokaal model/database bereikbaar — LOCAL REQUIRED).`);
-    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Smoke-benchmark kon niet draaien.");
+    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Smoke-benchmark kon niet draaien.", goedkeuring);
   }
 
   // 6. GROUNDING/VEILIGHEIDSCONTROLE
@@ -184,7 +191,7 @@ export async function publishExperiment(experimentId: string, options: PublishOp
   if (veiligheidsregressie) {
     stapEnLog("GROUNDING_CHECK", "FAILED", "Eén of meer veiligheids-/groundingitems in de smoke-set faalden op de nieuwe versie.");
     logbook.log(runId, { kind: "REGRESSION_FOUND", experimentId, message: "Kritieke grondings-/veiligheidsregressie op de nieuwe versie." });
-    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Kritieke grondings-/veiligheidsregressie.");
+    return terugdraaien(runId, publishId, startedAt, fromVersionId, nieuweVersie.id, steps, log, noteer, "Kritieke grondings-/veiligheidsregressie.", goedkeuring);
   }
   stapEnLog("GROUNDING_CHECK", "OK", "Geen regressie op grounding/false-premise in de smoke-set.");
   noteer("Grondingscontrole geslaagd.");
@@ -208,13 +215,16 @@ async function terugdraaien(
   log: string[],
   noteer: (regel: string) => void,
   reden: string,
+  goedkeuring: Goedkeuring,
 ): Promise<PublishResult> {
   noteer(`Publish failed: ${reden}`);
   logbook.log(runId, { kind: "PUBLISH_RESULT", experimentId: null, message: `Publish failed: ${reden}`, data: { outcome: "FAILED" } });
   noteer("Rollback started");
   logbook.log(runId, { kind: "ROLLBACK", experimentId: null, message: "Rollback started", change: { beforeVersion: toVersionId, afterVersion: fromVersionId, affectedFiles: ["NS_PRODUCTION_PROMPT_FILE"], causedByExperimentId: null, rollbackReference: fromVersionId, diffReference: null } });
   try {
-    activateVersion(fromVersionId);
+    // Onder dezelfde menselijke goedkeuring: wie publiceert, keurt ook het
+    // automatische herstel bij falen goed — maar het staat apart gemarkeerd.
+    activateVersion(fromVersionId, { door: goedkeuring.door, reden: `automatisch herstel na mislukte publicatie: ${reden}`, soort: "AUTO_ROLLBACK" });
     // De mislukte versie blijft bestaan (voor nader onderzoek) maar wordt nooit meer als actief beschouwd.
     const mislukte = getVersion(toVersionId);
     if (mislukte) markVersionStatus(toVersionId, "FAILED");
@@ -305,7 +315,7 @@ export function currentProductionVersionLabel(): string {
  * alleen de wijzer — de huidige versie blijft dus gewoon bestaan, met status
  * SUPERSEDED, en is zelf weer met deze functie terug te halen.
  */
-export async function rollbackTo(versionId: string, runId?: string): Promise<{ readonly fromVersionId: string; readonly toVersionId: string }> {
+export async function rollbackTo(versionId: string, runId: string | undefined, goedkeuring: Goedkeuring): Promise<{ readonly fromVersionId: string; readonly toVersionId: string }> {
   const from = currentVersionId();
   const doel = getVersion(versionId);
   const effectiefRunId = runId ?? `DR-ROLLBACK-${randomUUID().slice(0, 8)}`;
@@ -314,7 +324,7 @@ export async function rollbackTo(versionId: string, runId?: string): Promise<{ r
     throw new Error(`Onbekende versie: ${versionId}`);
   }
   logbook.log(effectiefRunId, { kind: "ROLLBACK", experimentId: null, message: `Handmatig herstel: ${from} → ${versionId}.`, change: { beforeVersion: from, afterVersion: versionId, affectedFiles: ["NS_PRODUCTION_PROMPT_FILE"], causedByExperimentId: null, rollbackReference: from, diffReference: null } });
-  activateVersion(versionId);
+  activateVersion(versionId, { ...goedkeuring, soort: "ROLLBACK" });
   await naPublicatie(null, versionId, from, true);
   logbook.log(effectiefRunId, { kind: "ROLLBACK", experimentId: null, message: "Rollback completed (handmatig)." });
   return { fromVersionId: from, toVersionId: versionId };

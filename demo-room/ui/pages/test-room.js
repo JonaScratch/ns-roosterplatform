@@ -13,6 +13,7 @@
 // kiesbaar, met de reden erbij.
 
 import { j, post, veilig, titleIcon, ICONS, esc, fmtPp } from "../lib/shared.js";
+import { mountLearningPanel, metPaneel } from "../lib/panels.js";
 
 const QUICK_ACTIONS = [
   { icon: "search", label: "Analyseer rooster", text: "Analyseer dit rooster op knelpunten: welke diensten of reeksen vallen op?" },
@@ -336,4 +337,6 @@ export async function mount(container, params) {
   });
 
   renderAlles();
+  // Phase P: feedback en concepten, onder het gesprek — geen apart tabblad.
+  return await metPaneel(container, mountLearningPanel, "learning");
 }

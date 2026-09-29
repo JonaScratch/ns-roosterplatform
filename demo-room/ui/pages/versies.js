@@ -4,7 +4,8 @@
 // /api/publish/execute (publiceert een experiment als nieuwe versie) aan;
 // er is geen Demo-Room-only "actieve status".
 
-import { j, post, veilig, titleIcon, iconChip, ICONS } from "../lib/shared.js";
+import { j, post, veilig, titleIcon, iconChip, ICONS, esc } from "../lib/shared.js";
+import { mountReleasePanel, metPaneel } from "../lib/panels.js";
 import { confirmAction } from "../app.js";
 
 const STATUS_LABEL = { ACTIVE: "ACTIEF", SUPERSEDED: "GEARCHIVEERD", ROLLED_BACK: "TERUGGEDRAAID", FAILED: "MISLUKT" };
@@ -129,13 +130,22 @@ function toonDetail(versie) {
 
 async function activeerVersie(versie) {
   if (!versie) return;
+  const actief = await j("/api/versions/active");
   const bevestigd = await confirmAction({
     title: `${versie.displayName} activeren?`,
-    bodyHtml: `<p>Dit maakt <b>${versie.displayName}</b> de nieuwe actieve productie-Lyra (via de canonieke versieservice — dezelfde weg als een echte publicatie/rollback). De huidige actieve versie wordt gearchiveerd, niet verwijderd.</p>${versie.reasonForPromotion ? `<p class="sub">${versie.reasonForPromotion}</p>` : ""}`,
+    bodyHtml: `<p>Dit maakt <b>${esc(versie.displayName)}</b> de nieuwe actieve productie-Lyra (via de canonieke versieservice — dezelfde weg als een echte publicatie/rollback). De huidige actieve versie wordt gearchiveerd, niet verwijderd.</p>${versie.reasonForPromotion ? `<p class="sub">${esc(versie.reasonForPromotion)}</p>` : ""}
+      <p class="sub">Productie-activatie is altijd een menselijk besluit, op naam.</p>
+      <label class="sub">Naam<br><input type="text" id="vs-akkoord-naam" autocomplete="name" style="width:100%"></label><br>
+      <label class="sub">Rol<br><select id="vs-akkoord-rol" style="width:100%"><option value="ROOSTERCOMMISSIE">Roostercommissie</option><option value="PLANNER">Planner</option><option value="NS_FORMEEL">NS (formeel)</option><option value="ONTWIKKELAAR">Ontwikkelaar</option></select></label><br>
+      <label class="sub">Reden<br><input type="text" id="vs-akkoord-reden" style="width:100%"></label>`,
     confirmLabel: "Activeren",
   });
   if (!bevestigd) return;
-  const result = await post("/api/rollback/execute", { versionId: versie.id });
+  const actorId = document.getElementById("vs-akkoord-naam").value.trim();
+  const role = document.getElementById("vs-akkoord-rol").value;
+  const reason = document.getElementById("vs-akkoord-reden").value.trim();
+  if (!actorId || reason.length < 3) { alert("Naam en reden zijn verplicht: een benoemde mens besluit over productie."); return; }
+  const result = await post("/api/rollback/execute", { versionId: versie.id, confirm: true, actorId, role, reason, generation: actief?.release?.generation });
   if (result.error) { alert(`Kon niet activeren: ${result.error}`); return; }
 }
 
@@ -169,5 +179,10 @@ export async function mount(container, params) {
   }
 
   const interval = setInterval(() => veilig("versies", laad), 8000);
-  return () => clearInterval(interval);
+  // Phase P: onderaan deze pagina, geen apart tabblad.
+  const stopPaneel = await metPaneel(container, mountReleasePanel, "releases");
+  return () => {
+    clearInterval(interval);
+    stopPaneel();
+  };
 }

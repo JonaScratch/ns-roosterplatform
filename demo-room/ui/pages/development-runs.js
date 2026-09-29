@@ -2,6 +2,7 @@
 // Lyra-development runs. Configureren + live meekijken wat de Sandbox doet.
 
 import { j, post, veilig, titleIcon, iconChip, ICONS, renderStepper, lineChart, esc } from "../lib/shared.js";
+import { mountLongRunsPanel, metPaneel } from "../lib/panels.js";
 import { confirmAction } from "../app.js";
 
 const DUUR_OPTIES = [
@@ -388,5 +389,10 @@ export async function mount(container) {
 
   await veilig("development-runs", ververs);
   const interval = setInterval(() => veilig("development-runs", ververs), 4000);
-  return () => clearInterval(interval);
+  // Phase P: onderaan deze pagina, geen apart tabblad.
+  const stopPaneel = await metPaneel(container, mountLongRunsPanel, "long-runs");
+  return () => {
+    clearInterval(interval);
+    stopPaneel();
+  };
 }

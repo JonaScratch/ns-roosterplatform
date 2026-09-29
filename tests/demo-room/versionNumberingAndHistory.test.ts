@@ -18,6 +18,9 @@ import type { LyraVersion } from "../../demo-room/src/types";
  *   niet automatisch de huidige actieve versie."
  */
 
+// Productie-activatie vereist altijd een benoemde mens (src/lib/lyra-release.ts).
+const TEST_AKKOORD = { door: { id: "test-mens", role: "ROOSTERCOMMISSIE" }, reden: "test" } as const;
+
 let tmpRoot: string;
 let versionsDir: string;
 let versionsMod: typeof import("../../demo-room/src/publish/versions");
@@ -80,13 +83,13 @@ describe("Demo Room v0.9 — publish/activate/rollback delen dezelfde canonical 
   it("safePublish.rollbackTo() respecteert exact dezelfde invarianten als een directe activateVersion() — nooit een tweede actieve versie, nooit een bypass", async () => {
     const v1 = versionsMod.createVersion({ sourceExperimentId: null, variantId: null, promptOverrideText: "v1-tekst", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
     const v2 = versionsMod.createVersion({ sourceExperimentId: null, variantId: null, promptOverrideText: "v2-tekst", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
-    versionsMod.activateVersion(v1.id);
-    versionsMod.activateVersion(v2.id);
+    versionsMod.activateVersion(v1.id, TEST_AKKOORD);
+    versionsMod.activateVersion(v2.id, TEST_AKKOORD);
     expect(versionsMod.currentVersionId()).toBe(v2.id);
 
     // "Activeren" van een eerdere versie loopt via safePublish.rollbackTo(), niet
     // via een los, tweede activatiepad.
-    const { fromVersionId, toVersionId } = await safePublishMod.rollbackTo(v1.id, "TEST-CANONICAL-ROLLBACK");
+    const { fromVersionId, toVersionId } = await safePublishMod.rollbackTo(v1.id, "TEST-CANONICAL-ROLLBACK", TEST_AKKOORD);
     expect(fromVersionId).toBe(v2.id);
     expect(toVersionId).toBe(v1.id);
 
@@ -107,7 +110,7 @@ describe("Demo Room v0.9 — publish/activate/rollback delen dezelfde canonical 
 describe("Demo Room v0.9 — historische run toont de versie die tóén actief was", () => {
   it("een latere activatie verandert de al-vastgelegde productieversie van een eerdere run niet met terugwerkende kracht", async () => {
     const oud = versionsMod.createVersion({ sourceExperimentId: null, variantId: null, promptOverrideText: "oude-versie", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
-    versionsMod.activateVersion(oud.id);
+    versionsMod.activateVersion(oud.id, TEST_AKKOORD);
 
     const runId = "TEST-HISTORISCHE-VERSIE-RUN";
     logbookMod.startRun(runId, {
@@ -134,7 +137,7 @@ describe("Demo Room v0.9 — historische run toont de versie die tóén actief w
 
     // Nu wordt een NIEUWE versie geactiveerd — ná het einde van de run hierboven.
     const nieuw = versionsMod.createVersion({ sourceExperimentId: null, variantId: null, promptOverrideText: "nieuwe-versie", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
-    versionsMod.activateVersion(nieuw.id);
+    versionsMod.activateVersion(nieuw.id, TEST_AKKOORD);
     expect(versionsMod.currentVersionId()).toBe(nieuw.id); // vandaag actief
 
     const geschiedenis = aggMod.runHistory();

@@ -24,6 +24,9 @@ import type { ExperimentRecord } from "../../demo-room/src/types";
  * die na afloop volledig wordt verwijderd.
  */
 
+// Productie-activatie vereist altijd een benoemde mens (src/lib/lyra-release.ts).
+const TEST_AKKOORD = { door: { id: "test-mens", role: "ROOSTERCOMMISSIE" }, reden: "test" } as const;
+
 let tmpRoot: string;
 let versionsMod: typeof import("../../demo-room/src/publish/versions");
 let safePublishMod: typeof import("../../demo-room/src/publish/safePublish");
@@ -59,7 +62,7 @@ beforeAll(async () => {
     knownIssues: [],
     reasonForPromotion: "Testbaseline vóór de rollback-injectietest.",
   });
-  versionsMod.activateVersion(baseline.id);
+  versionsMod.activateVersion(baseline.id, TEST_AKKOORD);
 
   // Seed: een PROMOTION_CANDIDATE-experiment dat verwijst naar een echte,
   // bestaande variant (zodat de preflight-stap slaagt en de pijplijn
@@ -91,12 +94,29 @@ afterAll(() => {
 });
 
 describe("Demo Room v0.3 — rollback bij een gecontroleerd mislukte publicatie (geïsoleerde test-productionstate)", () => {
+  it("zonder menselijke goedkeuring: geweigerd vóór enige wijziging, geen nieuwe versie", async () => {
+    const voor = versionsMod.currentVersionId();
+    const aantal = versionsMod.listVersions().length;
+    const result = await safePublishMod.publishExperiment(TEST_EXPERIMENT_ID, { runId: `${TEST_RUN_ID}-GEEN-AKKOORD` });
+    expect(result.steps[0]).toMatchObject({ step: "PREFLIGHT", status: "FAILED" });
+    expect(result.steps[0].detail).toMatch(/menselijke goedkeuring/);
+    expect(versionsMod.currentVersionId()).toBe(voor);
+    expect(versionsMod.listVersions().length).toBe(aantal);
+    expect(() => versionsMod.activateVersion(voor, undefined as never)).toThrow(/benoemde mens/);
+  });
+
+  it("het automatische herstel staat als AUTO_ROLLBACK op naam van wie publiceerde in de releasegeschiedenis", async () => {
+    const { geschiedenis } = versionsMod.releaseInfo();
+    expect(geschiedenis.every((r) => r.approvedBy?.id)).toBe(true);
+  });
+
   it("backup → apply → gecontroleerde smoke-failure → automatische rollback, met alles programmatisch geverifieerd", async () => {
     const voorVersionId = versionsMod.currentVersionId();
     expect(voorVersionId).not.toBe(versionsMod.BASELINE_VERSION_ID); // onze eigen seed-baseline, niet de globale baseline
 
     const result = await safePublishMod.publishExperiment(TEST_EXPERIMENT_ID, {
       runId: TEST_RUN_ID,
+      goedkeuring: TEST_AKKOORD,
       steps: {
         typecheck: () => {
           /* gecontroleerd: doet niets, slaagt altijd in deze test */
@@ -114,6 +134,12 @@ describe("Demo Room v0.3 — rollback bij een gecontroleerd mislukte publicatie 
 
     // 2. Vorige production-versie is weer actief.
     expect(versionsMod.currentVersionId()).toBe(voorVersionId);
+
+    // 2b. Het platform ziet precies dit: geverifieerd, en het herstel staat op naam.
+    const { actief, geschiedenis } = versionsMod.releaseInfo();
+    expect(actief).toMatchObject({ versionId: voorVersionId, integrity: "OK" });
+    expect(geschiedenis.slice(-2).map((r) => r.kind)).toEqual(["ACTIVATE", "AUTO_ROLLBACK"]);
+    expect(geschiedenis.at(-1)?.approvedBy).toEqual(TEST_AKKOORD.door);
 
     // 3. Prompt/config is EXACT hersteld — geen benadering, letterlijk dezelfde tekst.
     const huidigeVersie = versionsMod.getVersion(versionsMod.currentVersionId());

@@ -14,7 +14,7 @@ import { readAllExperiments, listRunIds, readRunlog } from "./store/runlog";
 import { getAutonomyResult, listAutonomyResults } from "./store/autonomyResults";
 import { getDevelopmentRunResult, listAllCandidates, listDevelopmentRunResults } from "./store/developmentRuns";
 import { compareVersions, displayNameForVersionId, latestFindings, promotionHistory, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
-import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
+import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions, releaseInfo } from "./publish/versions";
 import { routerPageNames, uiAssetReport } from "./uiAssets";
 import { genereerUitdagingen } from "./learning/challengeGenerator";
 import { ConceptFout } from "./learning/concepts";
@@ -63,6 +63,17 @@ const SERVER_INFO = {
   pid: process.pid,
   uiAssetHash: UI_ASSETS.hash,
 };
+
+/** Productie-activatie: altijd een benoemde mens met rol en reden, en expliciet bevestigd. */
+function goedkeuringArgs(body: Record<string, unknown>): { args: string[] } | { error: string } {
+  if (body.confirm !== true) return { error: "productie-activatie vereist confirm: true" };
+  const door = String(body.actorId ?? "").trim().slice(0, 60);
+  const rol = String(body.role ?? "").trim().slice(0, 40);
+  const reden = String(body.reason ?? "").trim().slice(0, 300);
+  if (!door || !rol) return { error: "naam (actorId) en rol zijn verplicht: een benoemde mens besluit" };
+  if (reden.length < 3) return { error: "een reden is verplicht" };
+  return { args: ["--door", door, "--rol", rol, "--reden", reden] };
+}
 
 function json(res: http.ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
@@ -186,6 +197,12 @@ function apiActiveVersion() {
     benchmarkReference: versie?.benchmarkReference ?? null,
     status: versie?.status ?? "ACTIVE",
     isBaseline: id === BASELINE_VERSION_ID,
+    // Wat het NS Roosterplatform zelf leest (src/lib/lyra-release.ts): integriteit,
+    // generatie (voor optimistische vergrendeling) en wie het goedkeurde.
+    release: (() => {
+      const { actief } = releaseInfo();
+      return { integrity: actief.integrity, detail: actief.detail, generation: actief.generation, approvedBy: actief.approvedBy, activatedAt: actief.activatedAt, promptSha256: actief.promptSha256 };
+    })(),
   };
 }
 
@@ -371,6 +388,7 @@ const server = http.createServer((req, res) => {
       "/api/versions": apiVersions,
       "/api/versions/active": apiActiveVersion,
       "/api/versions/performance": versionPerformanceSeries,
+      "/api/versions/releases": () => releaseInfo().geschiedenis,
       "/api/versions/deltas": versionDeltas,
       "/api/current-run": () => currentRunWithElapsed(),
       "/api/autonomy/results": () => listAutonomyResults(),
@@ -511,10 +529,12 @@ const server = http.createServer((req, res) => {
       const body = await readBody(req);
       const experimentId = String(body.experimentId ?? "");
       if (!experimentId) return json(res, 400, { error: "experimentId ontbreekt" });
+      const akkoord = goedkeuringArgs(body);
+      if ("error" in akkoord) return json(res, 400, akkoord);
       const runId = `DR-PUBLISH-${randomUUID().slice(0, 8)}`;
       try {
         meldRunAangevraagd(runId, "publish", { experimentId });
-        const state = startCliRun(runId, "publish", ["publish", "--experiment-id", experimentId, "--confirm", "--run-id", runId]);
+        const state = startCliRun(runId, "publish", ["publish", "--experiment-id", experimentId, "--confirm", ...akkoord.args, "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
         logbook.log(runId, { kind: "ERROR", experimentId, message: fout instanceof Error ? fout.message : String(fout) });
@@ -525,10 +545,12 @@ const server = http.createServer((req, res) => {
       const body = await readBody(req);
       const versionId = String(body.versionId ?? "");
       if (!versionId) return json(res, 400, { error: "versionId ontbreekt" });
+      const akkoord = goedkeuringArgs(body);
+      if ("error" in akkoord) return json(res, 400, akkoord);
       const runId = `DR-ROLLBACK-${randomUUID().slice(0, 8)}`;
       try {
         meldRunAangevraagd(runId, "rollback", { versionId });
-        const state = startCliRun(runId, "rollback", ["rollback", "--version-id", versionId, "--confirm", "--run-id", runId]);
+        const state = startCliRun(runId, "rollback", ["rollback", "--version-id", versionId, "--confirm", ...akkoord.args, ...(Number.isInteger(body.generation) ? ["--generatie", String(body.generation)] : []), "--run-id", runId]);
         return json(res, 200, state);
       } catch (fout) {
         logbook.log(runId, { kind: "ERROR", experimentId: null, message: fout instanceof Error ? fout.message : String(fout) });

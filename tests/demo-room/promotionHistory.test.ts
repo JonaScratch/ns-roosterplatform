@@ -20,6 +20,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
  * loos-positieve treffer uit een ANDERE test kunnen oppikken.
  */
 
+// Productie-activatie vereist altijd een benoemde mens (src/lib/lyra-release.ts).
+const TEST_AKKOORD = { door: { id: "test-mens", role: "ROOSTERCOMMISSIE" }, reden: "test" } as const;
+
 let tmpRoot: string;
 let versionsMod: typeof import("../../demo-room/src/publish/versions");
 let safePublishMod: typeof import("../../demo-room/src/publish/safePublish");
@@ -46,7 +49,7 @@ describe("promotionHistory()", () => {
 
     const gepubliceerd = versionsMod.createVersion({ sourceExperimentId: "exp-publish", variantId: "v-publish", promptOverrideText: "publish-tekst", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
     const vanVersie = versionsMod.currentVersionId();
-    versionsMod.activateVersion(gepubliceerd.id);
+    versionsMod.activateVersion(gepubliceerd.id, TEST_AKKOORD);
     const publishRunId = "TEST-PROMOTIONHISTORY-PUBLISH";
     logbookMod.startRun(publishRunId, { kind: "publish", productionVersion: vanVersie, sandboxParent: null, modelConfig: null, challengeOrGoal: null });
     logbookMod.log(publishRunId, {
@@ -62,7 +65,7 @@ describe("promotionHistory()", () => {
     // `promotionHistory()` mag daar terecht van uitgaan.
     await new Promise((resolve) => setTimeout(resolve, 5));
     const terugVersie = versionsMod.createVersion({ sourceExperimentId: null, variantId: null, promptOverrideText: "rollback-doel-tekst", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
-    await safePublishMod.rollbackTo(terugVersie.id, "TEST-PROMOTIONHISTORY-ROLLBACK");
+    await safePublishMod.rollbackTo(terugVersie.id, "TEST-PROMOTIONHISTORY-ROLLBACK", TEST_AKKOORD);
 
     const geschiedenis = aggMod.promotionHistory();
     expect(geschiedenis.some((e) => e.toVersionId === kandidaat.id)).toBe(false);

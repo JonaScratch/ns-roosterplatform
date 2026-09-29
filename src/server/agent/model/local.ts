@@ -1,5 +1,6 @@
 import "server-only";
 import { readFileSync } from "node:fs";
+import { getActiveLyraVersion } from "@/lib/lyra-release";
 import { REBUILD_GOAL_LABELS } from "@/server/optimizer/objective-weights";
 import { STRATEGIE_VOOR_DOEL, doelenLijst, isDoel, strategieLabel } from "../doelen";
 import { beschrijfVoorstel } from "../voorstel-tekst";
@@ -66,6 +67,19 @@ export interface LocalModelConfig {
  * het aanzet.
  */
 function productionOverrideFromDisk(): ((basis: string, request: PlanRequest) => string) | undefined {
+  // Eerst de canonieke releasedienst (src/lib/lyra-release.ts): een wijzer met
+  // hash die de tekst verifieert. Klopt de hash niet, dan géén toevoeging —
+  // liever de kale standaardinstructie dan een ongeverifieerde tekst.
+  const release = getActiveLyraVersion();
+  if (release.integrity === "OK") {
+    const tekst = release.promptText;
+    return tekst ? (basis: string) => `${basis}\n\n${tekst}` : undefined;
+  }
+  if (release.integrity === "MISMATCH") {
+    console.warn(`[lyra-release] ${release.detail}`);
+    return undefined;
+  }
+  // Geen (of een oude) wijzer: het oorspronkelijke gedrag, ongewijzigd.
   const file = process.env.NS_PRODUCTION_PROMPT_FILE?.trim();
   if (!file) return undefined;
   let toevoeging: string;

@@ -390,6 +390,15 @@ async function cmdVersions(): Promise<void> {
   }
 }
 
+/** Wie besluit: verplicht bij publiceren en herstellen, net als --confirm. */
+function goedkeuringUitArgs(): import("./publish/versions").Goedkeuring {
+  const door = arg("door")?.trim();
+  const rol = arg("rol")?.trim();
+  const reden = arg("reden")?.trim();
+  if (!door || !rol || !reden) throw new Error("Productie-activatie vereist --door <naam>, --rol <rol> en --reden <tekst>: een benoemde mens besluit, nooit de Demo Room zelf.");
+  return { door: { id: door, role: rol }, reden };
+}
+
 async function cmdPublish(): Promise<void> {
   const experimentId = arg("experiment-id");
   if (!experimentId) throw new Error("publish heeft --experiment-id nodig (zie 'demo-room report' of het dashboard voor promotion candidates).");
@@ -397,11 +406,12 @@ async function cmdPublish(): Promise<void> {
     console.log("Geannuleerd: geen --confirm. Demo Room publiceert nooit zonder expliciete bevestiging.");
     return;
   }
+  const goedkeuring = goedkeuringUitArgs();
   const runId = nieuwRunId("PUBLISH");
   await withRunLogbook(runId, { kind: "publish", sandboxParent: experimentId }, async () => {
     console.log(`Publiceren van experiment ${experimentId}...`);
     console.log("Voert de veilige publicatiepijplijn uit (preflight → backup → toepassen → typecheck → smoke benchmark → grondingscontrole).");
-    const result = await publishExperiment(experimentId, { runId });
+    const result = await publishExperiment(experimentId, { runId, goedkeuring });
     for (const stap of result.steps) console.log(`[${stap.step}] ${stap.status} — ${stap.detail}`);
     console.log(`\nUitkomst: ${result.outcome} (${result.fromVersionId} → ${result.toVersionId})`);
   });
@@ -414,9 +424,10 @@ async function cmdRollback(): Promise<void> {
     console.log("Geannuleerd: geen --confirm. Herstel vereist expliciete bevestiging (zie demo-room/README.md).");
     return;
   }
+  const goedkeuring = goedkeuringUitArgs();
   const runId = nieuwRunId("ROLLBACK");
   await withRunLogbook(runId, { kind: "rollback", sandboxParent: versionId }, async () => {
-    const { fromVersionId, toVersionId } = await rollbackTo(versionId, runId);
+    const { fromVersionId, toVersionId } = await rollbackTo(versionId, runId, { ...goedkeuring, verwachteGeneratie: arg("generatie") !== undefined ? Number(arg("generatie")) : undefined });
     console.log(`Hersteld: ${fromVersionId} → ${toVersionId}.`);
   });
 }

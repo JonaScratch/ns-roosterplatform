@@ -3,6 +3,7 @@
 // gepromoveerde, en nooit een verzonnen roosterkwaliteitscijfer.
 
 import { j, groupedBarChart, fmtPp, veilig, titleIcon, iconChip, ICONS, renderStepper } from "../lib/shared.js";
+import { mountFactoryPanel, metPaneel } from "../lib/panels.js";
 
 const STATUS_FILTERS = ["Alle", "BESTE", "PROMOTIEKLAAR", "IN TEST", "VERWORPEN"];
 const AGENT_DIMENSIES = ["contextResolution", "multiTurnContext", "machinistTaal", "toolChoice", "falsePremiseCorrection", "grounding", "causalClaims", "unnecessaryClarifications"];
@@ -302,5 +303,10 @@ export async function mount(container, params) {
     if (row) await veilig("candidates-detail", () => toonDetail(row));
   }
   const interval = setInterval(() => veilig("candidates", laad), 8000);
-  return () => clearInterval(interval);
+  // Phase P: onderaan deze pagina, geen apart tabblad.
+  const stopPaneel = await metPaneel(container, mountFactoryPanel, "factory");
+  return () => {
+    clearInterval(interval);
+    stopPaneel();
+  };
 }

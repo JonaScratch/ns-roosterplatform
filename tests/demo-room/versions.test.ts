@@ -1,8 +1,21 @@
 import { existsSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+// Geïsoleerd: vóór elke import een eigen staatmap, zodat deze test nooit de
+// echte demo-room/data raakt (de releasedienst schrijft ook prompts/ en een
+// activatielogboek, die de opruimlus hieronder niet kent).
+vi.hoisted(() => {
+  const { mkdtempSync } = require("node:fs") as typeof import("node:fs");
+  const { tmpdir } = require("node:os") as typeof import("node:os");
+  const { join } = require("node:path") as typeof import("node:path");
+  process.env.DEMO_ROOM_STATE_ROOT_OVERRIDE = mkdtempSync(join(tmpdir(), "demo-room-versions-test-"));
+});
 import { DATA_DIR } from "../../demo-room/src/config";
 import { BASELINE_VERSION_ID, activateVersion, createVersion, currentVersionId, getVersion, listVersions, nextVersionId } from "../../demo-room/src/publish/versions";
+
+// Productie-activatie vereist altijd een benoemde mens (src/lib/lyra-release.ts).
+const TEST_AKKOORD = { door: { id: "test-mens", role: "ROOSTERCOMMISSIE" }, reden: "test" } as const;
 
 describe("Demo Room v0.2 — versienummering (puur)", () => {
   it("begint bij 01 voor een nieuwe dag", () => {
@@ -57,7 +70,7 @@ describe("Demo Room v0.2 — versiestore (bestandssysteem)", () => {
     expect(v.id).toMatch(/^lyra-prod-\d{4}-\d{2}-\d{2}-\d{2}$/);
     expect(getVersion(v.id)?.status).toBe("SUPERSEDED");
 
-    activateVersion(v.id);
+    activateVersion(v.id, TEST_AKKOORD);
     expect(currentVersionId()).toBe(v.id);
     expect(getVersion(v.id)?.status).toBe("ACTIVE");
 
@@ -67,8 +80,8 @@ describe("Demo Room v0.2 — versiestore (bestandssysteem)", () => {
   it("een tweede activatie zet de eerste terug op SUPERSEDED", () => {
     const v1 = createVersion({ sourceExperimentId: "test-exp-a", variantId: null, promptOverrideText: "a", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
     const v2 = createVersion({ sourceExperimentId: "test-exp-b", variantId: null, promptOverrideText: "b", benchmarkReference: null, changedFiles: [], knownIssues: [], reasonForPromotion: "" });
-    activateVersion(v1.id);
-    activateVersion(v2.id);
+    activateVersion(v1.id, TEST_AKKOORD);
+    activateVersion(v2.id, TEST_AKKOORD);
     expect(getVersion(v1.id)?.status).toBe("SUPERSEDED");
     expect(getVersion(v2.id)?.status).toBe("ACTIVE");
     expect(currentVersionId()).toBe(v2.id);
