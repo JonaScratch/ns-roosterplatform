@@ -1,6 +1,6 @@
 # Lyra Master Program — voortgang
 
-Bijgewerkt: 2026-09-28 — UI/UX REBUILD-focusfase **AFGEROND**, gevolgd door een **VISUAL FIDELITY CORRECTION-ronde (ook AFGEROND)** die alle 7 pagina's visueel dichter bij de 6 referentiescreenshots heeft gebracht (zie "UI VISUAL FIDELITY CORRECTION" hieronder); Master Program hervat, Fase 12 (adversarial holdout) uitgebreid naar 9 items + een nieuwe grader (zie "Master Program hervat: Fase 12-vervolg" hieronder). Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
+Bijgewerkt: 2026-09-29 — UI/UX REBUILD-focusfase en de VISUAL FIDELITY CORRECTION-ronde **AFGEROND** (zie de betreffende secties hieronder). Daarna: de **BEFORE-freeze is bevestigd** (run `20260927-205217`, onafhankelijk herrekend uit de ruwe artifacts, zie "Master Program hervat: BEFORE-freeze bevestigd" hieronder) en het Master Program is zelfstandig verder opgepakt: Fase 1 nu COMPLETE, Fase 3 stap (b), Fase 7 (memoryProposal) en Fase 8 (claim-verificatie) gerepareerd/aangesloten, Fase 10 (consistency-checker) een eerste echte bouwsteen. Resterend: Fase 11/12-inzet blijven `BLOCKED (LOCAL REQUIRED)` (geen Ollama hier), Fase 13 blijft extern geblokkeerd (geen NS-platformtoegang) — zie de fasetracker voor de volledige, actuele status per fase. Zie `docs/lyra-knowledge/` voor alle output van eerdere ronden.
 
 ## UI/UX REBUILD — AFGEROND (tijdelijke focusfase, Master Program hervat hieronder)
 
@@ -103,6 +103,64 @@ en `adversarial-holdout-design.json` voor de volledige inhoud/motivatie):
 gecombineerde items (8 via R, 15 via S) — er blijven dus alleen de 4
 expliciet `LOCAL REQUIRED` categorieën (5, 6, 7, 13) over, die pas verder
 kunnen zodra een levend dienstenpakket beschikbaar is.
+
+## Master Program hervat: BEFORE-freeze bevestigd, resterende fases losgemaakt
+
+De hierboven genoemde blokkade is opgeheven. De gebruiker leverde de inhoud
+van `BEFORE-VERIFICATION.json`, `manifest.json` en `aggregate.json` voor run
+`20260927-205217` aan; deze sessie heeft ze — conform de eigen eis van
+`run-before-local.ps1` zelf ("verifieer dit uit de artifacts zelf, neem het
+niet op vertrouwen aan") — onafhankelijk herrekend uit de ruwe item-/
+replicaatdata in plaats van het `status: "PASS"`-veld te vertrouwen: alle
+43 items matchen `manifest.json`'s `goldenSuite.counts.perCategory` exact,
+elke categorie-`perReplicaat`-array herleid uit de losse item-statussen komt
+exact overeen met `aggregate.json`'s eigen cijfers, `itemAgreementRate`
+(42/43 stabiele items) klopt tot volledige float-precisie, en
+`overall.meanPct` (het gemiddelde van de drie replicaat-percentages) komt
+exact uit. Baseline (`588c1e5`), model (`qwen3:8b`) en stub-uit kruisen
+correct tussen de twee bestanden. De drie artifacts zijn gecommit in
+`docs/lyra-knowledge/benchmarks/before/20260927-205217/`.
+
+**Wat dit voor de fasetracker betekent**: Fase 1 is nu `COMPLETE`, niet meer
+`BLOCKED`. De fases die letterlijk aan deze freeze gekoppeld waren (§33/§34)
+zijn losgemaakt en zijn deze ronde voor zover verantwoord opgepakt — zie de
+bijgewerkte fasetracker hierboven voor de volledige status per fase:
+
+- **Fase 3 (migratie)**: stap (b) uit `migration-report.md` §4 uitgevoerd —
+  de twee optionele, ongevulde schemavelden (`conflictsWith`, `sourceExcerptHash`)
+  toegevoegd als eigen, geïsoleerde no-op-commit, precies zoals het rapport zelf
+  voorschrijft. Stap (c) (daadwerkelijk vullen) blijft liggen: dat is een
+  claim over regelinhoud en vereist mens-in-de-lus-goedkeuring per conflict.
+- **Fase 7 (memoryProposal)** en **Fase 8 (claim-verificatie)**: allebei
+  gerepareerd/aangesloten — zie de fasetracker voor het volledige mechanisme.
+  Onderscheid dat hierbij bewust is aangehouden: Lyra-agent-plumbing (geen
+  scheduling-domeinrisico) is zelfstandig gerepareerd; wijzigingen die het
+  live NS Roosterplatform buiten Lyra raken (de MIX-weergavelabel, de
+  60-minuten-drempel in `categoryOf()`) zijn dat bewust NIET — die blijven
+  open, met naam benoemd, wachtend op een menselijke beslissing die niet aan
+  deze sessie is.
+- **Fase 10 (consistency-checker)**: eerste, echte bouwsteen gebouwd
+  (`conflictsWithIssues()`), plus een regressietoets die aantoont dat het
+  46-uurs-nachtherstelgetal (conflict-report.md #4) al single-source-of-truth
+  is in code (`resolveRule()`, geen losse hardcoded kopie) — dat deel van het
+  conflict is dus een documentatie-/bronvraag, geen code-drift-risico. Het
+  CP-SAT-vs-kwaliteitsmodel-gewichtsverschil (conflict #5) blijft bewust
+  ongemeten: een eerlijke ratio vereist optimizer-brede archeologie die
+  buiten deze ronde valt.
+- **Fase 11 (AFTER) en Fase 12-inzet (adversarial holdout tegen een echt
+  model)** blijven `BLOCKED (LOCAL REQUIRED)`: beide vereisen een lokaal
+  bereikbaar Ollama/qwen3:8b, niet aanwezig in deze cloud-omgeving. Dit is nu
+  de enige resterende harde blokkade voor het grootste deel van het
+  Master Program.
+- **Fase 13 (promotion-compatibiliteitstest)** blijft geblokkeerd om een
+  andere, externe reden: geen toegang tot het echte NS-platform om
+  daadwerkelijk tegen te testen — geen LOCAL REQUIRED-vraag, een
+  buiten-bereik-vraag.
+
+Volledige `vitest run`: 1109/1136 groen (dezelfde 27 vooraf bestaande,
+gedocumenteerde ortools-fouten, plus alle nieuwe tests van deze ronde groen).
+`tsc --noEmit`: dezelfde vooraf bestaande baseline-foutregels, buiten
+`demo-room/` en ongerelateerd aan deze wijzigingen.
 
 ## Uitgangssituatie (Fase 0, vastgesteld)
 
@@ -250,19 +308,19 @@ Elke commit hierboven is getypecheckt en getest (volledige vitest-suite) vóór 
 | Fase | Omschrijving | Status | Notities |
 |---|---|---|---|
 | 0 | Snapshot + inspectie | **COMPLETE** | 4 inventarisatierapporten, bronverificatie (`npm run verify:bronnen`, 8/8). |
-| 1 | Immutable BEFORE-benchmark | **BLOCKED (LOCAL REQUIRED)** — tooling COMPLETE | Geen Ollama in deze cloud-omgeving. `run-before-local.ps1` + `before-manifest.ts` + `aggregate-replicates.ts` volledig gebouwd, getypecheckt, syntax-gevalideerd (PowerShell-parser) — nooit end-to-end uitgevoerd (LOCAL REQUIRED). Zie onderaan voor het exacte commando. |
+| 1 | Immutable BEFORE-benchmark | **COMPLETE (bevestigd)** | Run `20260927-205217`, baseline `588c1e5`, model `qwen3:8b`, stub expliciet uit, 3 replicaten. Artifacts (`BEFORE-VERIFICATION.json`/`manifest.json`/`aggregate.json`) staan nu in `docs/lyra-knowledge/benchmarks/before/20260927-205217/` en zijn onafhankelijk herrekend uit de ruwe item-/replicaatdata (43/43 items, elke categorie-percentage, agreement rate, overall mean — allemaal exact herleid, niet alleen het `status: "PASS"`-veld vertrouwd). `raw/` zelf (de golden.json/golden-grade.json per replicaat) is niet aangeleverd — alleen de sha256-hashes ervan staan vast. |
 | 2 | Kennis/bron-inventaris | **COMPLETE** | 4 fase-0-rapporten + source-coverage.md + rule-audit.md + preference-audit.md + human-pattern-audit.md. |
-| 3 | Canonical model / migratie | **ONTWERP COMPLETE, UITVOERING NOT_STARTED** | `knowledge-model.md` (ontwerp) + `src/server/knowledge/canonical-status.ts` (additieve projectielaag, 13 tests) gebouwd. `migration-report.md`: expliciet een plan, niets gemigreerd. |
-| 4 | Rules/source-consolidatie | **NOT_STARTED (bewust)** | Elke inhoudelijke regelwijziging wacht op de BEFORE-freeze (§33/§34). Kandidaten al concreet vastgelegd in `conflict-report.md`/`knowledge-gap-report.md`. |
-| 5 | Menselijke voorkeuren-consolidatie | **AUDIT COMPLETE** | `preference-audit.md` + `human-pattern-audit.md`: vrijwel alles uit §7-§27 al correct geïmplementeerd en gesourced; 2 concrete risico's gevonden (MIX-alias, 60-min-drempel) — zie hieronder. |
+| 3 | Canonical model / migratie | **STAP (a)+(b) COMPLETE, (c)-(e) NOT_STARTED** | `knowledge-model.md` (ontwerp) + `canonical-status.ts` (13 tests). Na de bevestigde freeze: stap (b) uit `migration-report.md` §4 uitgevoerd als eigen, geïsoleerde wijziging — `conflictsWith?: readonly string[]` op `RuleDefinition` en `sourceExcerptHash?: string` op `RuleSource` toegevoegd aan `ruleset/types.ts`, optioneel en door niets gevuld of gelezen (bevestigd no-op: volledige testsuite ongewijzigd groen). Stap (c) — `conflictsWith` daadwerkelijk vullen — blijft bewust liggen: dat is een claim over de inhoud van het regelbestand en vereist mens-in-de-lus-goedkeuring per conflict (§4c), niet iets deze sessie zelf beslist. |
+| 4 | Rules/source-consolidatie | **DEELS HERBEOORDEELD — 1 van 2 audit-risico's intern gerepareerd, rest blijft SOURCE_INPUT_REQUIRED** | De BEFORE-freeze-blokkade is opgeheven; zie Fase 5 hieronder voor wat dat voor de twee gepinde risico's concreet betekende. |
+| 5 | Menselijke voorkeuren-consolidatie | **AUDIT COMPLETE, 1 van 2 risico's intern gerepareerd** | MIX-alias: de interne `DAY_DUTY_WEIGHTS.MIX`-bronvermelding (`profile-affinity.ts`, nooit gebruikersgericht) markeert de alias nu expliciet als onbevestigd. Het weergavelabel `rosterProfileLabel(MIX)` = "Mix (Vroeg-Laat-Nacht)" zelf blijft bewust ongewijzigd: echte productie-UI-tekst op 16+ pagina's van het live platform die machinisten dagelijks zien — een naamswijziging is een productbeslissing voor NS, niet iets dit sessie zelf mag beslissen op basis van één bron die de alias "niet kan bevestigen" (iets anders dan "weerlegt"). SOURCE_INPUT_REQUIRED, zie `tests/knowledge/known-gaps-pin.test.ts`. De 60-minuten-drempel in `categoryOf()` is NIET aangepast: dat is kern-roosterkwaliteitscode die het optimizer-/vergelijkingsgedrag van het hele platform raakt, geen Lyra-agent-only code — een expliciete menselijke beslissing nodig, geen unilaterale fix. |
 | 6 | Officiële menselijke roosterpatronen-consolidatie | **COMPLETE (bevestigd, niet opnieuw gebouwd)** | 7 roosterbladen al volledig geparsed (223 diensten, 0 discrepanties), herbevestigd. |
-| 7 | Agent retrieval/tool/grounding-integratie | **GAT GEPIND, REPARATIE NOT_STARTED** | `memoryProposal`-gat aangetoond en gepind (`tests/knowledge/known-gaps-pin.test.ts`) — niet gerepareerd (wacht op BEFORE-freeze). |
-| 8 | Claim-verificatie | **DETECTOR COMPLETE, NIET AANGESLOTEN** | `claim-verification.ts` + 15 tests gebouwd — bewust NIET aangeroepen vanuit `agent.ts` (zou BEFORE-gedrag veranderen). |
-| 9 | Regressiesuite uitbreiden | **GEDEELTELIJK COMPLETE** | `jsonUit()`-test (commit `588c1e5`, 8 tests) + golden-suite-extensie (categorieën L, O, geschreven maar NOOIT gedraaid — DB ontbreekt hier) + 3 pin-tests voor bekende gaten. |
-| 10 | Kennisconsistentie + broncoverage | **DEELS COMPLETE** | `source-coverage.md` bestaat. Een geautomatiseerde, doorlopende cross-component-consistency-checker (§47) is ONTWERP-only (zie conflict-report.md) — niet gebouwd. |
-| 11 | AFTER-benchmark | **BLOCKED (LOCAL REQUIRED)** | Afhankelijk van Fase 1 — kan pas na de lokale BEFORE-run. |
+| 7 | Agent retrieval/tool/grounding-integratie | **memoryProposal-gat GEREPAREERD** | `local.ts`'s `planInstructie()` beschrijft nu memoryProposal (net als proposal); nieuwe `memoryProposalUit()` (zelfde validatiediscipline als `voorstelUit()`) geeft het door vanuit `plan()`, gated op `agent:memory:write` — pariteit met stub.ts. Blijft een voorstel dat een mens moet goedkeuren, niets wordt autonoom. Verplaatst van de pin-suite naar `tests/agent/memory-proposal-lokaal-model.test.ts` (7 tests). |
+| 8 | Claim-verificatie | **AANGESLOTEN OP agent.ts** | `ongedekteGezagsClaims()` draait nu na `model.compose()`, in dezelfde poort als grounding.ts (identiek voor stub/lokaal model): een gezagswoord ("bevestigd", "CAO-verplicht", "officieel") zonder `legalStatus: VALIDATED`-signaal in de toolresultaten van deze beurt wordt tegengehouden en vervangen door `claimVerificatieMelding()`, status `NIET_VAST_TE_STELLEN` — nooit stilzwijgend, oorspronkelijke tekst blijft in het activiteitenlog. Draait alleen op tekst die grounding ongemoeid liet. |
+| 9 | Regressiesuite uitbreiden | **GEDEELTELIJK COMPLETE** | `jsonUit()`-test (commit `588c1e5`, 8 tests) + golden-suite-extensie (categorieën L, O, geschreven maar NOOIT gedraaid — DB ontbreekt hier) + pin-tests voor de resterende bekende gaten + nieuwe Fase 7/8/10-regressietests deze ronde. |
+| 10 | Kennisconsistentie + broncoverage | **CHECKER-INFRA GEBOUWD (eerste, echte stap)** | Nieuw `src/server/knowledge/consistency-check.ts`: `conflictsWithIssues()` — valideert dat elke `conflictsWith`-verwijzing een bestaande regel-id noemt én wederkerig is vastgelegd (5 tests, `tests/knowledge/consistency-check.test.ts`); geeft vandaag `[]` terug (er is nog niets gevuld — verwacht, geen fout) maar is nu klaar zodra Fase 3-stap (c) ooit iets invult. Ook toegevoegd: een regressietoets die vastlegt dat `NIGHT_SEQUENCE_RECOVERY` (conflict-report.md #4) écht dynamisch via `resolveRule()` wordt gelezen door `quality-evaluation-service.ts` — géén losse hardcoded 46 op de kwaliteitsmodel-kant, dus dat deel van conflict #4 is een documentatie-/bronvraag, geen code-drift-risico. Het CP-SAT-vs-kwaliteitsmodel-gewichtsverschil (conflict #5, "~27× lichter") blijft bewust ONgemeten: een eerlijke ratio vereist optimizer-brede archeologie in de CP-SAT-kostenfunctie die buiten deze ronde valt — met naam benoemd, niet stilzwijgend weggelaten. Een Knowledge-UI-scherm (migratierapport §4e) is niet gebouwd. |
+| 11 | AFTER-benchmark | **BLOCKED (LOCAL REQUIRED)** | Fase 1 is nu bevestigd; de AFTER-meting zelf vereist nog steeds een lokaal bereikbaar Ollama/qwen3:8b, niet aanwezig in deze cloud-omgeving. Zelfde `run-before-local.ps1`-harnas (of een AFTER-variant), tegen de huidige code, dezelfde golden suite, hetzelfde aantal replicaten — zie migratierapport §4f-g voor de vergelijkingsmethode (itemniveau, niet alleen het totaalpercentage). |
 | 12 | Locked holdout/adversarial | **ONTWERP + 9 ITEMS + GRADER COMPLETE, INZET (LOCAL REQUIRED) NOT_STARTED** | `adversarial-holdout-design.md` (architectuur, vries-/auditregel, alle 15 §56-categorieën beoordeeld) + `benchmarks/adversarial-holdout-design.json` (9 volledig gegronde items na de tweede batch — 1+15-gecombineerd, 4-verlengd, 12 — status `DESIGNED_NOT_GRADED`) + `scripts/v106/adversarial-grade.ts` (nieuwe grader, 11 tests, tegen zelfgeschreven GOED/FOUT-voorbeelden — nooit tegen een echt modelantwoord gekalibreerd). Het daadwerkelijk als locked holdout inzetten (Fase 12 zelf, de AFTER-meting) is LOCAL REQUIRED vervolgwerk; 6 categorieën blijven ontwerp-only (4 ervan expliciet LOCAL REQUIRED). |
-| 13 | Promotion-compatibiliteitstest | **CONTRACT COMPLETE, TEST NOT_STARTED** | `promotion-contract.md`: criteria + brain-manifest-ontwerp + cross-system-adapterontwerp. Een daadwerkelijke compatibiliteitstest tegen het echte NS-platform is buiten de zichtbaarheid van deze ronde (geen toegang tot dat platform). |
+| 13 | Promotion-compatibiliteitstest | **CONTRACT COMPLETE, TEST NOT_STARTED** | `promotion-contract.md`: criteria + brain-manifest-ontwerp + cross-system-adapterontwerp. Een daadwerkelijke compatibiliteitstest tegen het echte NS-platform is buiten de zichtbaarheid van deze ronde (geen toegang tot dat platform) — **externe blokkade**, niet local-required. |
 | 14 | Eindrapport + commits | **IN_PROGRESS** | Dit document + het antwoord aan het einde van deze beurt zijn het tussentijdse eindrapport; commits lopen door zolang er onafhankelijk werk is. |
 
 ## Concrete, al bevestigde bevindingen
@@ -324,4 +382,4 @@ cd "C:\Users\Jonathan Schram\ClaudeCode\ns-roosterplatform-demo-room"
 
 ## Checkpoint-regel
 
-Zodra deze sessie moet stoppen vóór het einde van de opdracht: dit bestand bevat het exacte checkpoint. Vervolg begint bij de eerste fase die niet `COMPLETE`/`TESTED` is — vandaag is dat Fase 12 (adversarial-holdout-ontwerp, loopt) en, zodra de gebruiker het lokale commando heeft gedraaid, Fase 1/11 (BEFORE/AFTER).
+Zodra deze sessie moet stoppen vóór het einde van de opdracht: dit bestand bevat het exacte checkpoint. De BEFORE-freeze is bevestigd (Fase 1 COMPLETE). Vervolg begint bij de eerste fase die niet `COMPLETE`/`TESTED` is en niet LOCAL REQUIRED/extern geblokkeerd is — vandaag is dat Fase 3 stap (c) (conflictsWith vullen, mens-in-de-lus per conflict) of Fase 10's Knowledge-UI-scherm (migratierapport §4e). Fase 11 (AFTER) en Fase 12's daadwerkelijke inzet blijven `BLOCKED (LOCAL REQUIRED)` tot Ollama/qwen3:8b lokaal bereikbaar is; Fase 13 blijft extern geblokkeerd (geen NS-platformtoegang).

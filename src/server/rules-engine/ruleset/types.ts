@@ -169,6 +169,15 @@ export interface RuleSource {
   readonly terminationKnown: TerminationStatus;
   /** De opvolger, wanneer die bekend is. */
   readonly supersededBy: string | null;
+  /**
+   * Sha256 van het specifiek getranscribeerde fragment (niet het hele
+   * document — dat staat al op documentniveau in `sources/manifest.json`).
+   * Laat zien of de transcriptie van een artikel nog exact overeenkomt met
+   * wat ooit is overgenomen. Optioneel en vandaag door niets gevuld of
+   * gelezen — schema-stap (b) uit `docs/lyra-knowledge/migration-report.md`
+   * §4, bewust los van het vullen ervan (§4c, mens-in-de-lus per bron).
+   */
+  readonly sourceExcerptHash?: string;
 }
 
 /**
@@ -279,6 +288,17 @@ export interface RuleDefinition {
   readonly validatedAt: string | null;
   /** Toelichting bij een status die niet VALIDATED is. */
   readonly note?: string;
+  /**
+   * Regel-id's waarmee deze regel een bekend, vastgesteld conflict heeft —
+   * een statisch, inspecteerbaar veld náást de bestaande impliciete
+   * conflictoplossing in `resolveRule()` hieronder. Vervangt `resolveRule()`
+   * niet en maakt op zichzelf niets ACTIVE HARD; alleen een toekomstige
+   * consistency-checker kan dit lezen om drift te signaleren. Optioneel en
+   * vandaag door niets gevuld of gelezen — schema-stap (b) uit
+   * `docs/lyra-knowledge/migration-report.md` §4, bewust los van het vullen
+   * ervan (§4c, mens-in-de-lus per conflict; zie ook §3.3 aldaar).
+   */
+  readonly conflictsWith?: readonly string[];
 }
 
 /** Een heel regelpakket dat ontbreekt, niet één losse waarde. */
