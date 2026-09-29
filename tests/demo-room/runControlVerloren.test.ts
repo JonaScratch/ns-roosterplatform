@@ -58,3 +58,22 @@ describe("procesLeeft", () => {
     expect(procesLeeft(2_147_483_000)).toBe(false);
   });
 });
+
+describe("uitkomstZonderEinde — runhistorie zonder RUN_END", async () => {
+  const { uitkomstZonderEinde, LOSSE_RUN_VENSTER_MS } = await import("../../demo-room/src/report/dashboardAggregates");
+  const nu = T0 + 42 * 3_600_000;
+
+  it("de lopende current-run blijft 'loopt'", () => {
+    expect(uitkomstZonderEinde("DR-X", START, { runId: "DR-X", status: "RUNNING" }, nu)).toBe("RUNNING_OF_ONBEKEND");
+  });
+  it("de current-run die als verloren FAILED is gemarkeerd, is ONDERBROKEN", () => {
+    expect(uitkomstZonderEinde("DR-X", START, { runId: "DR-X", status: "FAILED" }, nu)).toBe("RUN_INTERRUPTED");
+  });
+  it("een oude run die niet (meer) de current-run is, loopt niet meer", () => {
+    expect(uitkomstZonderEinde("DR-OUD", START, { runId: "DR-NIEUW", status: "RUNNING" }, nu)).toBe("RUN_INTERRUPTED");
+    expect(uitkomstZonderEinde("DR-OUD", START, null, nu)).toBe("RUN_INTERRUPTED");
+  });
+  it("een losse run (bv. Test Room-gesprek) van net gestart geldt nog als lopend", () => {
+    expect(uitkomstZonderEinde("DR-CHAT", START, null, T0 + LOSSE_RUN_VENSTER_MS - 1)).toBe("RUNNING_OF_ONBEKEND");
+  });
+});

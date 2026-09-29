@@ -74,16 +74,19 @@ function html() {
           <button class="ghost" id="cd-detail-goto-vergelijken" style="display:none;">${ICONS.compare}Vergelijk →</button>
         </span>
       </h3>
-      <div id="cd-detail-chart"></div>
-      <div class="row" style="margin-top:14px;">
-        <div class="col">
+      <div class="cd-detail-grid">
+        <div>
+          <p class="sub" style="margin:0 0 6px; font-size:12px;">Basis vs kandidaat per gemeten dimensie.</p>
+          <div id="cd-detail-chart"></div>
+        </div>
+        <div class="cd-detail-wijzigingen">
           <h4 style="margin:0 0 8px; font-size:12.5px; color:#16233d; display:flex; align-items:center; gap:7px;">${titleIcon("lightbulb", "#c8791a", "sm")}Belangrijkste wijzigingen</h4>
-          <ul id="cd-detail-changes" style="margin:0; padding-left:18px; font-size:13px;"></ul>
+          <ul id="cd-detail-changes" style="margin:0; padding-left:18px; font-size:13px; line-height:1.6;"></ul>
         </div>
-        <div class="col">
-          <h4 style="margin:0 0 8px; font-size:12.5px; color:#16233d; display:flex; align-items:center; gap:7px;">${titleIcon("clock", "#1f5fd0", "sm")}Levenscyclus</h4>
-          <div class="stepper" id="cd-detail-stepper"></div>
-        </div>
+      </div>
+      <div class="cd-levenscyclus">
+        <h4 style="margin:0 0 10px; font-size:12.5px; color:#16233d; display:flex; align-items:center; gap:7px;">${titleIcon("clock", "#1f5fd0", "sm")}Kandidaatgeschiedenis</h4>
+        <div class="stepper" id="cd-detail-stepper"></div>
       </div>
     </div>
   `;
@@ -226,10 +229,12 @@ async function toonDetail(row) {
     { icon: "chart", label: "Benchmark", status: cycle.proof.executed ? "PASS" : "NIET VOLTOOID" },
     { icon: "shield", label: "Validator", status: cycle.proof.regressions.length === 0 ? "PASS" : "FAIL" },
     { icon: "book", label: "Holdout", status: cycle.proof.holdout ? "PASS" : "NOG NIET VOLTOOID" },
-    { icon: "trophy", label: "Promotie", status: cycle.decision === "PROMOTION_CANDIDATE" ? "TOEGESTAAN" : cycle.decision === "REJECTED" ? "AFGEWEZEN" : "NOG NIET TOEGESTAAN" },
+    // Nooit "TOEGESTAAN": ook een promotiekandidaat wordt pas actief na een
+    // menselijke goedkeuring (zelfde regel als op Development Runs).
+    { icon: "trophy", label: "Promotie", status: cycle.decision === "PROMOTION_CANDIDATE" ? "WACHT OP MENS" : cycle.decision === "REJECTED" ? "AFGEWEZEN" : "NOG NIET TOEGESTAAN" },
   ];
   gatesEl.innerHTML = gates.map((g) => `
-    <div class="gate-row"><span class="gate-label"><span style="width:15px; height:15px; color:#9fb0c9; display:inline-flex;">${ICONS[g.icon]}</span>${g.label}</span><span class="tag ${g.status === "PASS" || g.status === "TOEGESTAAN" ? "good" : g.status === "FAIL" || g.status === "AFGEWEZEN" ? "bad" : ""}">${g.status}</span></div>
+    <div class="gate-row"><span class="gate-label"><span style="width:15px; height:15px; color:#9fb0c9; display:inline-flex;">${ICONS[g.icon]}</span>${g.label}</span><span class="tag ${g.status === "PASS" ? "good" : g.status === "FAIL" || g.status === "AFGEWEZEN" ? "bad" : g.status === "WACHT OP MENS" ? "warn" : ""}">${g.status}</span></div>
   `).join("");
 
   const categories = AGENT_DIMENSIES.filter((d) => typeof cycle.proof.pre.agent[d] === "number" || typeof cycle.proof.post.agent[d] === "number");
@@ -244,11 +249,11 @@ async function toonDetail(row) {
     : `<li class="empty" style="list-style:none; margin-left:-18px;">Geen betekenisvol verschil met de basisversie gemeten.</li>`;
 
   const stages = [
-    { label: "Gegenereerd", status: "done" },
-    { label: "Benchmark", status: cycle.proof.executed ? "done" : "failed" },
-    { label: "Holdout", status: cycle.proof.holdout ? "done" : "failed" },
-    { label: "Validator", status: cycle.proof.regressions.length === 0 ? "done" : "failed" },
-    { label: "Beslissing", sub: cycle.decision, status: cycle.decision === "PROMOTION_CANDIDATE" ? "done" : cycle.decision === "REJECTED" ? "failed" : "active" },
+    { label: "Gegenereerd", sub: cycle.proof?.startedAt ? new Date(cycle.proof.startedAt).toLocaleString("nl-NL", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }) : "", status: "done" },
+    { label: "Benchmark", sub: cycle.proof.executed ? "gemeten" : "niet uitgevoerd", status: cycle.proof.executed ? "done" : "failed" },
+    { label: "Holdout", sub: cycle.proof.holdout ? "gemeten" : "niet voltooid", status: cycle.proof.holdout ? "done" : "failed" },
+    { label: "Validator", sub: cycle.proof.regressions.length === 0 ? "geen regressie" : `${cycle.proof.regressions.length} regressie(s)`, status: cycle.proof.regressions.length === 0 ? "done" : "failed" },
+    { label: "Beslissing", sub: cycle.decision === "PROMOTION_CANDIDATE" ? "promotiekandidaat" : cycle.decision === "REJECTED" ? "verworpen" : "in afwachting", status: cycle.decision === "PROMOTION_CANDIDATE" ? "done" : cycle.decision === "REJECTED" ? "failed" : "active" },
   ];
   renderStepper(stepperEl, stages);
 }

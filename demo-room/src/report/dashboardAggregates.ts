@@ -1,4 +1,5 @@
 import { listVersions } from "../publish/versions";
+import { currentRun, type RunControlState } from "../runControl";
 import { listRunLogs, readRunEvents } from "../store/logbook";
 import { readAllExperiments } from "../store/runlog";
 import type { AgentQualityCategory, ExperimentRecord, LyraVersion } from "../types";
@@ -172,11 +173,36 @@ export interface RunHistoryEntry {
   readonly productionVersionDisplayName: string | null;
 }
 
+/** Zo lang mag een run zonder RUN_END en buiten current-run.json (bijv. een Test Room-gesprek) nog als "loopt" gelden. */
+export const LOSSE_RUN_VENSTER_MS = 10 * 60 * 1000;
+
+/**
+ * De uitkomst van een run zonder RUN_END-regel. Tot 2026-09-29 was dat altijd
+ * "RUNNING_OF_ONBEKEND", ook voor een run waarvan het proces al dagen weg
+ * was. Er kan maar één run tegelijk via current-run.json lopen, en die weet
+ * (sinds `verlorenRunCorrectie`) of zijn proces nog leeft. Puur, zodat het te
+ * toetsen is.
+ */
+export function uitkomstZonderEinde(
+  runId: string,
+  startedAt: string | null,
+  huidige: Pick<RunControlState, "runId" | "status"> | null,
+  nowMs: number,
+): RunHistoryEntry["outcome"] {
+  if (huidige && huidige.runId === runId) {
+    return huidige.status === "RUNNING" || huidige.status === "STARTING" ? "RUNNING_OF_ONBEKEND" : huidige.status === "FAILED" ? "RUN_INTERRUPTED" : "RUN_COMPLETED";
+  }
+  const start = startedAt ? new Date(startedAt).getTime() : NaN;
+  return Number.isFinite(start) && nowMs - start < LOSSE_RUN_VENSTER_MS ? "RUNNING_OF_ONBEKEND" : "RUN_INTERRUPTED";
+}
+
 /** Nieuwste eerst — combineert het logboek (alle ooit gestarte runs) met het experimentgeheugen (alleen runs die een experiment opleverden). */
 export function runHistory(): readonly RunHistoryEntry[] {
   const experimentenPerRun = new Map<string, ExperimentRecord>();
   for (const e of readAllExperiments()) if (!experimentenPerRun.has(e.runId)) experimentenPerRun.set(e.runId, e);
 
+  const huidige = currentRun();
+  const nu = Date.now();
   return listRunLogs().map((r) => {
     const events = readRunEvents(r.runId);
     const startEvent = events.find((e) => e.kind === "RUN_START");
@@ -191,7 +217,7 @@ export function runHistory(): readonly RunHistoryEntry[] {
     // werkelijke uitkomst (RUN_FAILED/RUN_INTERRUPTED bleven onzichtbaar).
     const outcome: RunHistoryEntry["outcome"] = endEvent
       ? (((endEvent as unknown as { summary?: { outcome?: string } }).summary?.outcome as RunHistoryEntry["outcome"] | undefined) ?? "RUN_COMPLETED")
-      : "RUNNING_OF_ONBEKEND";
+      : uitkomstZonderEinde(r.runId, startEvent?.timestamp ?? r.startedAt ?? null, huidige, nu);
     // `productionVersion` in de RUN_START-data is `currentProductionVersionLabel()`
     // (zie cli.ts): "<versie-id>" of "<versie-id> (<variantId>)" — het eerste
     // woord is altijd de kale, spatie-vrije technische ID.
