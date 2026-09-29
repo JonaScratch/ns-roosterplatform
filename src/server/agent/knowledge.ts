@@ -1,4 +1,5 @@
 import "server-only";
+import { samenstellingsStam as stamVan } from "@/lib/nl-woorden";
 import { activeRuleset } from "@/server/rules-engine";
 import { prisma } from "@/server/data/prisma";
 import { BLOCKING_STATUSES, type RuleContext, type RuleDefinition, currentLegalStatus, resolveRule } from "@/server/rules-engine/ruleset/types";
@@ -129,24 +130,14 @@ const woorden = (tekst: string): string[] =>
     .filter((w) => w.length > 2 && !STOPWOORDEN.has(w));
 
 /**
- * Kernwoorden achteraan Nederlandse samenstellingen: "weekendnorm",
- * "rusttijd", "nachtgrens". Het regelbestand gebruikt vaak een ándere
- * samenstelling met dezelfde stam ("Weekendbalans"), dus zonder deze stap
- * vond "weekendnorm" niets — en maakte het model daar in de AFTER-run
- * 20260929-193436 "er staat niets in het document" van, terwijl de regel
- * gewoon bestaat (adversarial P; S vond hem wél met "Regio West" erbij).
+ * De stam van een samenstelling ("weekendnorm" → "weekend"), nooit een
+ * stopwoord. Zonder deze stap vond "weekendnorm" niets — en maakte het model
+ * daar in de AFTER-run 20260929-193436 "er staat niets in het document" van,
+ * terwijl de regel ("Weekendbalans Regio West") gewoon bestaat (adversarial P).
+ * De logica zelf staat in src/lib/nl-woorden.ts (gedeeld met de Demo Room).
  */
-const KERNWOORDEN = ["normen", "norm", "balans", "grenzen", "grens", "limiet", "eisen", "eis", "tijden", "tijd", "duur", "periode", "kaders", "kader", "regels", "regel", "aantal"];
-
-/** De stam van een samenstelling met een kernwoord achteraan, of `null`. */
 export function samenstellingsStam(woord: string): string | null {
-  for (const kern of KERNWOORDEN) {
-    if (woord.length > kern.length + 3 && woord.endsWith(kern)) {
-      const stam = woord.slice(0, -kern.length).replace(/s$/, "");
-      if (stam.length >= 4 && !STOPWOORDEN.has(stam)) return stam;
-    }
-  }
-  return null;
+  return stamVan(woord, STOPWOORDEN);
 }
 
 /** De zoekwoorden van een vraag, aangevuld met wat ze in het regelbestand heten. */

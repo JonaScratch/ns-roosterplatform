@@ -158,6 +158,30 @@ describe("UI-asset-contract (echte server)", () => {
     }
   });
 
+  it("Phase G–J via de echte API: feedback → concept → meting → activatie alleen door een mens met bevestiging", async () => {
+    const post = async (route: string, body: Record<string, unknown>) => {
+      const r = await fetch(`http://127.0.0.1:${poort}${route}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      return { status: r.status, body: (await r.json()) as Record<string, any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    };
+    const fb = await post("/api/learning/feedback", { text: "Volgens de CAO mag je na drie nachten niet vroeg.", role: "MACHINIST", authorId: "m1" });
+    expect(fb.status).toBe(200);
+    expect(fb.body.classification.claimsAuthority).toBe(true);
+    expect(fb.body.classification.mayBecomeLegalRule).toBe(false);
+
+    const vk = await post("/api/learning/feedback", { text: "Wij willen liever geen vroege dienst direct na een nachtreeks in Dordrecht.", role: "MACHINIST", authorId: "m2" });
+    const id = vk.body.concept.id as string;
+    expect((await post("/api/learning/concepts/measure", { id })).body.concept.status).toBe("VALIDATED");
+    expect((await post("/api/learning/concepts/activate", { id, role: "ROOSTERCOMMISSIE", actorId: "rc1", reason: "besproken" })).status).toBe(400);
+    expect((await post("/api/learning/concepts/activate", { id, role: "MACHINIST", actorId: "m2", reason: "zelf", confirm: true })).status).toBe(409);
+    expect((await post("/api/learning/concepts/activate", { id, role: "ROOSTERCOMMISSIE", actorId: "rc1", reason: "besproken in de RC", confirm: true })).body.status).toBe("ACTIVE");
+
+    const concepten = (await (await fetch(`http://127.0.0.1:${poort}/api/learning/concepts`)).json()) as { status: string }[];
+    expect(concepten.map((c) => c.status)).toEqual(["PROPOSED", "ACTIVE"]);
+    const uitdagingen = (await (await fetch(`http://127.0.0.1:${poort}/api/learning/challenges`)).json()) as { category: string; hiddenInvariants: { description: string }[] }[];
+    expect(uitdagingen.map((u) => u.category)).toContain("ADVERSARIAL_USER");
+    expect(JSON.stringify(uitdagingen)).not.toContain("check");
+  }, 30000);
+
   it("een tweede server op dezelfde poort sterft NIET stil, maar noemt de bezetter en stopt met exitcode 2", async () => {
     const tweede = startServer(poort, stateRoot);
     const code = await tweede.klaar;

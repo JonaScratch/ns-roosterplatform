@@ -16,6 +16,10 @@ import { getDevelopmentRunResult, listAllCandidates, listDevelopmentRunResults }
 import { compareVersions, displayNameForVersionId, latestFindings, promotionHistory, runHistory, runsSummary, versionDeltas, versionPerformanceSeries } from "./report/dashboardAggregates";
 import { BASELINE_VERSION_ID, currentVersionId, getVersion, listVersions } from "./publish/versions";
 import { routerPageNames, uiAssetReport } from "./uiAssets";
+import { genereerUitdagingen } from "./learning/challengeGenerator";
+import { ConceptFout } from "./learning/concepts";
+import type { AuteurRol } from "./learning/feedback";
+import { activeer, kiesInConflict, leesConcepten, leesFeedback, meetConcept, registreerFeedback, verwerp } from "./learning/store";
 
 /**
  * Het lokale dashboard (§20/§21 en v0.2 §4-§10).
@@ -369,6 +373,16 @@ const server = http.createServer((req, res) => {
       "/api/autonomy/results": () => listAutonomyResults(),
       "/api/development-runs": () => listDevelopmentRunResults(),
       "/api/candidates": () => listAllCandidates(),
+      // Phase G–J: feedback, concepten en daaruit gegenereerde uitdagingen.
+      "/api/learning/feedback": () => leesFeedback(),
+      "/api/learning/concepts": () => leesConcepten(),
+      "/api/learning/challenges": () =>
+        genereerUitdagingen({ concepten: leesConcepten() }).map((d) => ({
+          id: d.id, name: d.name, category: d.category, difficulty: d.difficulty, visibleTask: d.visibleTask,
+          turns: d.turns, expectedInvariants: d.expectedInvariants,
+          // De checkfuncties zelf gaan niet over de lijn; alleen hun beschrijving.
+          hiddenInvariants: d.hiddenInvariants.map((h) => ({ id: h.id, description: h.description })),
+        })),
       "/api/runs/history": runHistory,
       "/api/runs/summary": runsSummary,
       "/api/logbook/promotions": promotionHistory,
@@ -505,6 +519,40 @@ const server = http.createServer((req, res) => {
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
       }
     }
+    if (req.method === "POST" && url.pathname.startsWith("/api/learning/")) {
+      const body = await readBody(req);
+      const ROLLEN: readonly AuteurRol[] = ["MACHINIST", "PLANNER", "ROOSTERCOMMISSIE", "NS_FORMEEL", "ONTWIKKELAAR"];
+      const rol = String(body.role ?? "") as AuteurRol;
+      try {
+        if (url.pathname === "/api/learning/feedback") {
+          const text = String(body.text ?? "").trim();
+          if (text.length < 3 || text.length > 1000) return json(res, 400, { error: "text ontbreekt of is te lang" });
+          if (!ROLLEN.includes(rol)) return json(res, 400, { error: "onbekende rol" });
+          return json(res, 200, registreerFeedback({
+            author: { id: String(body.authorId ?? "onbekend").slice(0, 60), role: rol },
+            text,
+            context: { locationCode: String(body.locationCode ?? "DDR").slice(0, 10), rosterCode: body.rosterCode ? String(body.rosterCode).slice(0, 32) : null },
+            source: "TEST_ROOM",
+            formalReference: body.formalReference ? String(body.formalReference).slice(0, 200) : null,
+          }));
+        }
+        const id = String(body.id ?? "");
+        if (url.pathname === "/api/learning/concepts/measure") return json(res, 200, meetConcept(id));
+        // Menselijke beslissingen: altijd met expliciete bevestiging en een benoemd persoon.
+        if (body.confirm !== true) return json(res, 400, { error: "menselijke beslissing vereist confirm: true" });
+        const actor = { id: String(body.actorId ?? "").slice(0, 60), role: rol };
+        if (!actor.id || !ROLLEN.includes(rol)) return json(res, 400, { error: "actorId en rol zijn verplicht" });
+        const reden = String(body.reason ?? "").trim();
+        if (reden.length < 3) return json(res, 400, { error: "een reden is verplicht" });
+        if (url.pathname === "/api/learning/concepts/activate") return json(res, 200, activeer(id, actor, reden));
+        if (url.pathname === "/api/learning/concepts/reject") return json(res, 200, verwerp(id, actor, reden));
+        if (url.pathname === "/api/learning/concepts/resolve") return json(res, 200, kiesInConflict(id, actor, reden));
+        return json(res, 404, { error: "onbekende learning-route" });
+      } catch (fout) {
+        return json(res, fout instanceof ConceptFout ? 409 : 500, { error: fout instanceof Error ? fout.message : String(fout) });
+      }
+    }
+
     if (req.method === "POST" && url.pathname === "/api/chat") {
       const body = await readBody(req);
       const text = String(body.text ?? "").trim();
