@@ -187,6 +187,40 @@ describe("Development Sandbox — volledige end-to-end ontwikkelcyclus (SCOPE CO
     expect(eventKinds.has("HYPOTHESIS")).toBe(true);
     expect(eventKinds.has("CANDIDATE_GENERATED")).toBe(true);
     expect(eventKinds.has("INFO")).toBe(true);
+
+    // Phase K/L: herkomst vastgelegd vóór de meting, en de onafhankelijke rechter is het eens.
+    expect(result.manifest?.candidateId).toBe(candidate.id);
+    expect(result.manifest?.inputs.weaknessDimension).toBe("toolChoice");
+    expect(result.judge?.verdict).toBe("KEEP");
+  });
+
+  it("de rechter kan een positieve proof tegenhouden (nooit andersom): winst naast het doel is geen bewezen verbetering van het doel", async () => {
+    const runId = `TEST-DEVCYCLE-VETO-${Date.now()}`;
+    const idsVoor = versionsMod.listVersions().length;
+    const proof = fakeProof({
+      runId,
+      variantId: "placeholder",
+      variantLabel: "Gegenereerde kandidaat — toolChoice",
+      decision: "PROMOTION_CANDIDATE",
+      regressions: [],
+      improvements: ["contextResolution +15"],
+      reasoning: "Positief op contextResolution.",
+      postAgent: agentCategory({ contextResolution: 95 }),
+    });
+    const result = await developmentCycleMod.runDevelopmentCycle(
+      { runId },
+      {
+        identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
+        generateCandidate: (await import("../../demo-room/src/develop/generateCandidate")).generateCandidateFromWeakness,
+        runProofOfValue: async (options) => ({ ...proof, variantId: options.variant?.id ?? proof.variantId }),
+        createVersion: versionsMod.createVersion,
+      },
+    );
+    expect(result.judge?.verdict).toBe("REJECT");
+    expect(result.decision).toBe("REJECTED");
+    expect(result.version).toBeNull();
+    expect(versionsMod.listVersions().length).toBe(idsVoor);
+    expect(logbookMod.readRunText(runId) ?? "").toMatch(/rechter verwierp/);
   });
 
   it("focusDimension overschrijft de zwakte die de kandidaatgenerator target, en de echte diagnose blijft alsnog gelogd", async () => {

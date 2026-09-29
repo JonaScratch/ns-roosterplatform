@@ -19,6 +19,9 @@ import { routerPageNames, uiAssetReport } from "./uiAssets";
 import { genereerUitdagingen } from "./learning/challengeGenerator";
 import { ConceptFout } from "./learning/concepts";
 import type { AuteurRol } from "./learning/feedback";
+import { lijstKandidaten, leesArchief } from "./factory/store";
+import { leesCheckpoint, lijstLongRuns, PROFIEL_MINUTEN, vraagControle } from "./factory/longRun";
+import { arena } from "./factory/arena";
 import { activeer, kiesInConflict, leesConcepten, leesFeedback, meetConcept, registreerFeedback, verwerp } from "./learning/store";
 
 /**
@@ -374,6 +377,19 @@ const server = http.createServer((req, res) => {
       "/api/development-runs": () => listDevelopmentRunResults(),
       "/api/candidates": () => listAllCandidates(),
       // Phase G–J: feedback, concepten en daaruit gegenereerde uitdagingen.
+      "/api/factory/candidates": () => lijstKandidaten(),
+      "/api/factory/archive": () => leesArchief({}),
+      "/api/factory/arena": () =>
+        // Arena over wat de rechter al mat: per kandidaat per dimensie de
+        // delta tegen de basis, genormaliseerd naar 0–1. Geen nieuwe meting.
+        arena(
+          lijstKandidaten().flatMap((k) =>
+            Object.entries(k.oordeel?.deltas ?? {})
+              .filter(([, d]) => Number.isFinite(d))
+              .map(([dim, d]) => ({ kandidaat: k.manifest.candidateId, opgave: dim, score: Math.max(0, Math.min(1, 0.5 + d / 100)) })),
+          ),
+        ),
+      "/api/long-runs": () => lijstLongRuns(),
       "/api/learning/feedback": () => leesFeedback(),
       "/api/learning/concepts": () => leesConcepten(),
       "/api/learning/challenges": () =>
@@ -516,6 +532,29 @@ const server = http.createServer((req, res) => {
         return json(res, 200, state);
       } catch (fout) {
         logbook.log(runId, { kind: "ERROR", experimentId: null, message: fout instanceof Error ? fout.message : String(fout) });
+        return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
+      }
+    }
+    if (req.method === "POST" && url.pathname.startsWith("/api/long-runs/")) {
+      const body = await readBody(req);
+      try {
+        if (url.pathname === "/api/long-runs/start" || url.pathname === "/api/long-runs/resume") {
+          const hervat = url.pathname.endsWith("resume");
+          const runId = hervat ? String(body.runId ?? "") : `DR-LONG-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
+          const bestaand = hervat ? leesCheckpoint(runId) : null;
+          if (hervat && bestaand?.status !== "PAUSED") return json(res, 409, { error: `alleen een gepauzeerde run kan hervat worden (status: ${bestaand?.status ?? "onbekend"})` });
+          const profiel = String(bestaand?.profiel ?? body.profiel ?? "1h");
+          if (!(profiel in PROFIEL_MINUTEN)) return json(res, 400, { error: "onbekend profiel" });
+          meldRunAangevraagd(runId, "long-run", { profiel, hervat });
+          return json(res, 200, startCliRun(runId, "long-run", ["long-run", "--profiel", profiel, "--run-id", runId]));
+        }
+        if (url.pathname === "/api/long-runs/pause" || url.pathname === "/api/long-runs/stop") {
+          const runId = String(body.runId ?? "");
+          vraagControle(runId, url.pathname.endsWith("pause") ? "PAUSE" : "STOP", String(body.actorId ?? "dashboard").slice(0, 60));
+          return json(res, 200, leesCheckpoint(runId));
+        }
+        return json(res, 404, { error: "onbekende long-run-route" });
+      } catch (fout) {
         return json(res, 409, { error: fout instanceof Error ? fout.message : String(fout) });
       }
     }

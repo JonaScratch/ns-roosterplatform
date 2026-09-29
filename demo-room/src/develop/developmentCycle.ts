@@ -7,6 +7,10 @@ import { createVersion } from "../publish/versions";
 import { generateCandidateFromWeakness } from "./generateCandidate";
 import type { PromptVariant } from "../variants/promptVariants";
 import type { AgentQualityCategory, LyraVersion, ProofOfValueResult } from "../types";
+import { bewijsUitProof } from "../factory/judge";
+import { maakManifest, type CandidateManifest } from "../factory/manifest";
+import { archiveerKeep, beoordeelEnBewaar, bewaarManifest, leesManifest, sandboxVoor, type OpgeslagenOordeel } from "../factory/store";
+import { currentVersionId } from "../publish/versions";
 
 /**
  * De volledige, bewijsbare ontwikkelcyclus van de Development Sandbox
@@ -79,6 +83,10 @@ export interface DevelopmentCycleResult {
   readonly decision: ProofOfValueResult["decision"] | "NOT_EXECUTED";
   /** Niet-`null` uitsluitend wanneer `decision === "PROMOTION_CANDIDATE"` — de nieuwe, NIET-actieve versie. */
   readonly version: LyraVersion | null;
+  /** Herkomst van de kandidaat (Phase K) — `null` als er geen kandidaat was. */
+  readonly manifest?: CandidateManifest | null;
+  /** Oordeel van de onafhankelijke rechter (Phase L) — `null` als er geen meting was. */
+  readonly judge?: OpgeslagenOordeel | null;
 }
 
 export async function runDevelopmentCycle(
@@ -130,10 +138,53 @@ export async function runDevelopmentCycle(
     data: { variantId: candidate.id, category: candidate.category },
   });
 
+  // Phase K: het manifest legt de herkomst en de hashes van meetlat en
+  // holdout vast VÓÓR er gemeten wordt. Een kandidaat-id dat al een manifest
+  // heeft (herhaalde run), houdt zijn oorspronkelijke manifest.
+  const manifest =
+    leesManifest(candidate.id) ??
+    (() => {
+      const m = maakManifest({
+        candidateId: candidate.id,
+        parentVersionId: currentVersionId(),
+        generator: { name: "generateCandidateFromWeakness", version: "1" },
+        hypothesis: candidate.description,
+        changeKind: candidate.category,
+        productionText: candidate.productionText,
+        weaknessDimension: gerichteZwakte.weakestDimension ?? null,
+        sandboxRoot: sandboxVoor(candidate.id),
+        now: new Date().toISOString(),
+      });
+      bewaarManifest(m);
+      return m;
+    })();
+
   const proof = await deps.runProofOfValue({ runId, variant: candidate, postRuns: 2, locationCode });
 
+  // Phase L: de rechter kijkt apart, met eigen bevroren criteria, en kan een
+  // promotie tegenhouden (nooit er een afdwingen): een REJECT van de rechter
+  // (bv. geknoeide meetlat of holdoutlek) wint van een positieve proof.
+  const judge = proof.executed
+    ? beoordeelEnBewaar(candidate.id, candidate.productionText, bewijsUitProof(proof, gerichteZwakte.weakestDimension ?? "onbekend"), new Date().toISOString())
+    : null;
+  if (judge) {
+    logbook.log(runId, {
+      kind: "INFO",
+      experimentId: proof.id,
+      message: `Rechter (${judge.criteriaVersie}) over ${candidate.id}: ${judge.verdict} — ${judge.redenen.join("; ")}`,
+      data: { verdict: judge.verdict },
+    });
+    archiveerKeep(
+      { id: candidate.id, label: candidate.label, metrics: Object.fromEntries(Object.entries(judge.deltas).filter(([, v]) => Number.isFinite(v))) },
+      judge,
+      Object.fromEntries(Object.keys(judge.deltas).map((k) => [k, true])),
+      new Date().toISOString(),
+    );
+  }
+  const rechterVeto = judge?.verdict === "REJECT";
+
   let version: LyraVersion | null = null;
-  if (proof.decision === "PROMOTION_CANDIDATE") {
+  if (proof.decision === "PROMOTION_CANDIDATE" && !rechterVeto) {
     version = deps.createVersion({
       sourceExperimentId: proof.id,
       variantId: candidate.id,
@@ -153,9 +204,12 @@ export async function runDevelopmentCycle(
     logbook.log(runId, {
       kind: "VARIANT_REJECTED",
       experimentId: proof.id,
-      message: `Kandidaat ${candidate.id} niet gepromoveerd (${proof.decision}): ${proof.reasoning}`,
+      message: rechterVeto && proof.decision === "PROMOTION_CANDIDATE"
+        ? `Kandidaat ${candidate.id} niet gepromoveerd: proof-of-value was positief, maar de rechter verwierp hem (${judge?.redenen.join("; ")}).`
+        : `Kandidaat ${candidate.id} niet gepromoveerd (${proof.decision}): ${proof.reasoning}`,
     });
   }
 
-  return { runId, weakness: gerichteZwakte, candidate, proof, decision: proof.decision, version };
+  const decision = rechterVeto && proof.decision === "PROMOTION_CANDIDATE" ? "REJECTED" : proof.decision;
+  return { runId, weakness: gerichteZwakte, candidate, proof, decision, version, manifest, judge };
 }

@@ -182,6 +182,20 @@ describe("UI-asset-contract (echte server)", () => {
     expect(JSON.stringify(uitdagingen)).not.toContain("check");
   }, 30000);
 
+  it("Phase K–O via de echte API: factory-, arena- en long-runroutes antwoorden; een onbekende run pauzeren is 409", async () => {
+    for (const route of ["/api/factory/candidates", "/api/factory/arena", "/api/long-runs"]) {
+      const r = await fetch(`http://127.0.0.1:${poort}${route}`);
+      expect(r.status, route).toBe(200);
+      expect(Array.isArray(await r.json()), route).toBe(true);
+    }
+    const archief = (await (await fetch(`http://127.0.0.1:${poort}/api/factory/archive`)).json()) as { items: unknown[] };
+    expect(archief.items).toEqual([]);
+    const pauze = await fetch(`http://127.0.0.1:${poort}/api/long-runs/pause`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ runId: "bestaat-niet" }) });
+    expect(pauze.status).toBe(409);
+    const hervat = await fetch(`http://127.0.0.1:${poort}/api/long-runs/resume`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ runId: "bestaat-niet" }) });
+    expect(hervat.status).toBe(409);
+  }, 30000);
+
   it("een tweede server op dezelfde poort sterft NIET stil, maar noemt de bezetter en stopt met exitcode 2", async () => {
     const tweede = startServer(poort, stateRoot);
     const code = await tweede.klaar;

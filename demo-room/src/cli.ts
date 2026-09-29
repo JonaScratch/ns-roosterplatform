@@ -12,6 +12,8 @@ import { runSuite, runSuiteWithVariance } from "./benchmark/run";
 import { runProofOfValue } from "./proof/proofOfValue";
 import { runAutonomyCapabilityTest } from "./autonomy/capabilityTest";
 import { runAutonomousDevelopmentRun } from "./develop/autonomousDevelopmentRun";
+import { runDevelopmentCycle } from "./develop/developmentCycle";
+import { draaiLongRun, PROFIEL_MINUTEN, vraagControle, type LongRunProfiel } from "./factory/longRun";
 import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
 import { currentVersionId, getVersion, listVersions } from "./publish/versions";
 import { demoRoomActor } from "./actor";
@@ -272,6 +274,34 @@ async function cmdDevelopmentRun(): Promise<void> {
 }
 
 /**
+ * Hervatbare lange run (Phase O). Zelfde `--run-id` opnieuw starten = hervatten.
+ * Elke cyclus is een echte `runDevelopmentCycle` (met manifest en rechter).
+ */
+async function cmdLongRun(): Promise<void> {
+  const profiel = (arg("profiel", "1h") ?? "1h") as LongRunProfiel;
+  if (!(profiel in PROFIEL_MINUTEN)) throw new Error(`--profiel moet een van ${Object.keys(PROFIEL_MINUTEN).join(", ")} zijn.`);
+  const runId = nieuwRunId("LONG");
+  await withRunLogbook(runId, { kind: "long-run", challengeOrGoal: `Hervatbare lange ontwikkelrun, profiel ${profiel} (actieve tijd; pauze telt niet).` }, async () => {
+    const r = await draaiLongRun({ runId, profiel }, {
+      nu: () => Date.now(),
+      cyclus: async ({ runId: id, uitgesloten }) => {
+        const c = await runDevelopmentCycle({ runId: id, excludedCandidateIds: uitgesloten });
+        return { beslissing: c.decision, kandidaatId: c.candidate?.id ?? null, dimensie: c.weakness.weakestDimension ?? null, versieId: c.version?.id ?? null, verdict: c.judge?.verdict ?? null };
+      },
+    });
+    console.log(JSON.stringify({ runId, status: r.status, stopReden: r.stopReden, cycli: r.cycli.length, actieveMinuten: +(r.actieveMs / 60000).toFixed(1), segmenten: r.segmenten }, null, 2));
+  });
+}
+
+async function cmdLongRunControl(): Promise<void> {
+  const runId = arg("run-id");
+  const commando = arg("commando");
+  if (!runId || (commando !== "PAUSE" && commando !== "STOP")) throw new Error("long-run-control heeft --run-id en --commando PAUSE|STOP nodig.");
+  vraagControle(runId, commando, arg("door", "cli")!);
+  console.log(`${commando} aangevraagd voor ${runId}; wordt op de eerstvolgende cyclusgrens uitgevoerd.`);
+}
+
+/**
  * Test Room (§ UI/UX REBUILD, foto 2): één echte gespreksbeurt, via dezelfde
  * `askAgent()` als productie — geen aparte "demo-chat"-implementatie. Een
  * `--version-id` selecteert welke Lyra-versie meepraat: de actieve versie
@@ -454,6 +484,8 @@ async function main(): Promise<void> {
     "proof-of-value": cmdProofOfValue,
     "autonomy-test": cmdAutonomyTest,
     "development-run": cmdDevelopmentRun,
+    "long-run": cmdLongRun,
+    "long-run-control": cmdLongRunControl,
     chat: cmdChat,
     versions: cmdVersions,
     publish: cmdPublish,
