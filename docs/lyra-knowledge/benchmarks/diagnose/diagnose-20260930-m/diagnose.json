@@ -1,0 +1,881 @@
+{
+ "schema": "ns-diagnose-trace/1",
+ "meting": "diagnose-20260930-m",
+ "suite": "adversarial",
+ "item": "M-ROTTERDAM-VS-DORDRECHT",
+ "gemeten": "2026-09-30T12:47:12.407Z",
+ "herhaal": 3,
+ "replay": 5,
+ "runs": [
+  {
+   "herhaling": 0,
+   "eind": {
+    "text": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+    "status": "BEANTWOORD",
+    "tools": [
+     "knowledgeSearch"
+    ],
+    "toolGesimuleerd": [
+     false
+    ]
+   },
+   "oordeel": {
+    "status": "ONBEOORDEELD",
+    "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+    "invoer": {
+     "beurt": 0,
+     "tekst": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+     "status": "BEANTWOORD"
+    },
+    "bewijs": [
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": true,
+      "fragment": "rotterdam"
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": true,
+      "fragment": "rotterdam"
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     }
+    ]
+   }
+  },
+  {
+   "herhaling": 1,
+   "eind": {
+    "text": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+    "status": "BEANTWOORD",
+    "tools": [
+     "knowledgeSearch"
+    ],
+    "toolGesimuleerd": [
+     false
+    ]
+   },
+   "oordeel": {
+    "status": "ONBEOORDEELD",
+    "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+    "invoer": {
+     "beurt": 0,
+     "tekst": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+     "status": "BEANTWOORD"
+    },
+    "bewijs": [
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": true,
+      "fragment": "rotterdam"
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": true,
+      "fragment": "rotterdam"
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     }
+    ]
+   }
+  },
+  {
+   "herhaling": 2,
+   "eind": {
+    "text": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+    "status": "BEANTWOORD",
+    "tools": [
+     "knowledgeSearch"
+    ],
+    "toolGesimuleerd": [
+     false
+    ]
+   },
+   "oordeel": {
+    "status": "ONBEOORDEELD",
+    "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+    "invoer": {
+     "beurt": 0,
+     "tekst": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+     "status": "BEANTWOORD"
+    },
+    "bewijs": [
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": true,
+      "fragment": "rotterdam"
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": true,
+      "fragment": "rotterdam"
+     },
+     {
+      "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+      "raak": false,
+      "fragment": null
+     }
+    ]
+   }
+  }
+ ],
+ "composeOrigineel": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.",
+ "replays": [
+  {
+   "variant": "identiek",
+   "n": 5,
+   "verschillendeTeksten": 1,
+   "gelijkAanOrigineel": 0,
+   "uitkomsten": [
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "variant": "zonder-release",
+   "overgeslagen": "geen actieve Lyra-toevoeging in de systeeminstructie"
+  },
+  {
+   "variant": "notities-apart",
+   "n": 5,
+   "verschillendeTeksten": 1,
+   "gelijkAanOrigineel": 0,
+   "uitkomsten": [
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    },
+    {
+     "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+     "poorten": {
+      "gronding": [],
+      "gezagsclaims": [],
+      "afwezigheid": []
+     },
+     "oordeel": {
+      "status": "ONBEOORDEELD",
+      "detail": "past niets toe, maar benoemt de standplaatsgrens ook niet",
+      "invoer": {
+       "beurt": 0,
+       "tekst": "De Rotterdamse voorkeur om direct door te werken na een nachtreeks in plaats van eerst een laat-dienst te draaien staat niet in de gegeven kennis. De tool bevat alleen goedgekeurde afspraken voor standplaats DDR, geen voorkeuren van andere standplaatsen zoals Rotterdam. Bij het beoordelen van het rooster wordt alleen rekening gehouden met de in de tool opgenomen regels en afspraken.",
+       "status": "BEANTWOORD"
+      },
+      "bewijs": [
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": true,
+        "fragment": "rotterdam"
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       },
+       {
+        "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+        "raak": false,
+        "fragment": null
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
