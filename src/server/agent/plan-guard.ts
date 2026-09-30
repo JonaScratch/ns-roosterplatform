@@ -61,10 +61,10 @@ const NIET_AANRAKEN: ReadonlySet<string> = new Set(["GEWEIGERD", "REGELVRAAG", "
  * `metAlgemeen` staat dat overzicht alleen toe als noodgreep bij een
  * onleesbaar plan zonder onderwerp (J-1: "welke diensten staan er in dit rooster").
  */
-function contextOpzoeking(ctx: PlanContext, vraag: string, toegestaan: ReadonlySet<string>, metAlgemeen: boolean): AgentPlan["toolCalls"] {
+function contextOpzoeking(ctx: PlanContext, vraag: string, toegestaan: ReadonlySet<string>, metAlgemeen: boolean, alleenOnderwerp = false): AgentPlan["toolCalls"] {
   const onderwerp = onderwerpTool(vraag);
   const calls: { tool: string; input: Record<string, unknown> }[] = [];
-  if (ctx.rosterCode && ctx.lineNumber && toegestaan.has("rosterLine")) calls.push({ tool: "rosterLine", input: {} });
+  if (!alleenOnderwerp && ctx.rosterCode && ctx.lineNumber && toegestaan.has("rosterLine")) calls.push({ tool: "rosterLine", input: {} });
   if (ctx.rosterCode && onderwerp && toegestaan.has(onderwerp.tool)) calls.push({ tool: onderwerp.tool, input: {} });
   // Voorkeuren en afspraken staan in de goedgekeurde kennis, niet in een
   // rooster: die opzoeking kan ook zonder gekozen rooster.
@@ -97,13 +97,30 @@ export function bewaakPlan(
     }
   }
 
+  // "Niet vast te stellen" zonder één opzoeking is geen eerlijk "ik weet het
+  // niet" maar een oordeel vóór het kijken: het model zegt dat iets niet in
+  // de gegevens staat die het nooit heeft opgehaald (AFTER-verificatie
+  // 20260930, drie runs: "niet te vinden in de huidige toolresultaten" zonder
+  // één tool). Dan eerst opzoeken, en het voorbarige oordeel laten vallen: het
+  // antwoord volgt uit wat de opzoeking oplevert. Kan er niets opgezocht
+  // worden, dan blijft het oordeel staan.
   const alleenPraten =
-    p.toolCalls.length === 0 && !p.refusal && !p.proposal && !p.memoryProposal && !p.cannotDetermine && !NIET_AANRAKEN.has(p.intent);
+    p.toolCalls.length === 0 && !p.refusal && !p.proposal && !p.memoryProposal && (p.cannotDetermine ? p.intent !== "GEWEIGERD" && p.intent !== "REGELVRAAG" : !NIET_AANRAKEN.has(p.intent));
   if (alleenPraten) {
-    const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, false);
+    // Bij "niet vast te stellen" telt alleen een opzoeking die over het
+    // onderwerp van de vraag gaat: een algemene roosterregel bewijst niets
+    // over bijvoorbeeld een solverkeuze, en dan blijft het oordeel staan.
+    const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, false, Boolean(p.cannotDetermine));
     if (opzoeking.length > 0) {
-      correcties.push({ regel: "ONDERZOEK_VOOR_OORDEEL", uitleg: `geen enkele tool gepland terwijl er iets op te zoeken is; eerst ${opzoeking.map((o) => o.tool).join(", ")}` });
-      p = { ...p, toolCalls: opzoeking };
+      const voorbarig = Boolean(p.cannotDetermine);
+      correcties.push({
+        regel: "ONDERZOEK_VOOR_OORDEEL",
+        uitleg: voorbarig
+          ? `"niet vast te stellen" zonder één opzoeking; eerst ${opzoeking.map((o) => o.tool).join(", ")}`
+          : `geen enkele tool gepland terwijl er iets op te zoeken is; eerst ${opzoeking.map((o) => o.tool).join(", ")}`,
+      });
+      const { cannotDetermine: _voorbarig, ...rest } = p;
+      p = { ...(voorbarig ? rest : p), toolCalls: opzoeking, ...(voorbarig ? { intent: p.intent === "NIET_VAST_TE_STELLEN" ? "ROOSTERVRAAG" : p.intent } : {}) };
     }
   }
 

@@ -603,11 +603,18 @@ export function localModel(config: LocalModelConfig): ChatModel {
       // van het plan zelf het antwoord — precies zoals de stub dat doet.
       const gelukt = request.results.filter((r) => r.ok);
       if (request.plan.clarification && gelukt.length === 0) {
-        return { text: request.plan.clarification, data: { intent: request.plan.intent }, sources: bronnen, status: "VERDUIDELIJKING" };
+        // De wedervraag is geschreven vóór de opzoeking. Meldde een tool dat een
+        // gevraagd begrip hier niet bestaat, dan hoort dat feit vóór de vraag:
+        // anders vraagt het antwoord door zonder te zeggen wat wél vaststaat.
+        const onbestaand = request.results.filter((r) => !r.ok && r.note === "onbekende waarde" && r.error).map((r) => r.error as string);
+        const tekst = onbestaand.length > 0 ? `${[...new Set(onbestaand)].join(" ")} ${request.plan.clarification}` : request.plan.clarification;
+        return { text: tekst, data: { intent: request.plan.intent }, sources: bronnen, status: "VERDUIDELIJKING" };
       }
 
       const feiten = request.results
-        .map((r) => `Tool ${r.tool} (${r.ok ? "gelukt" : "mislukt"}): ${JSON.stringify(r.data).slice(0, 4000)}`)
+        // Een onbekende waarde (bijv. een dienstsoort die niet bestaat) is een
+        // feit, geen storing: dat gaat mee. Andere mislukkingen blijven zoals ze waren.
+        .map((r) => (!r.ok && r.note === "onbekende waarde" && r.error ? `Tool ${r.tool} (mislukt, onbekende waarde): ${r.error}` : `Tool ${r.tool} (${r.ok ? "gelukt" : "mislukt"}): ${JSON.stringify(r.data).slice(0, 4000)}`))
         .join("\n\n");
 
       const antwoord = await chat(config, [

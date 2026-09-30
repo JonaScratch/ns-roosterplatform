@@ -284,3 +284,40 @@ describe("de kennisterugval raakt de bevroren kern niet", () => {
     expect(suite.items.filter((i) => i.turns.some((t) => vraagtNaarKennis(t.text))).map((i) => i.id)).toEqual([]);
   });
 });
+
+describe("'niet vast te stellen' zonder één opzoeking (adversarial-verificatie 20260930)", () => {
+  const MET_KENNIS = new Set([...ALLE_TOOLS, "knowledgeSearch"]);
+  const geen = { rosterCode: null, lineNumber: null };
+
+  it("een voorbarig 'niet vast te stellen' over voorkeuren wordt eerst opgezocht; het voorbarige oordeel vervalt", () => {
+    const v = "Wij hebben in onze regio een andere gewoonte na de nacht; houden jullie daar rekening mee?";
+    const { plan: p, correcties } = bewaakPlan(plan({ intent: "ROOSTERVRAAG", cannotDetermine: "Staat niet in de toolresultaten." }), v, geen, MET_KENNIS);
+    expect(p.toolCalls).toEqual([{ tool: "knowledgeSearch", input: { query: v } }]);
+    expect(p.cannotDetermine).toBeUndefined();
+    expect(correcties).toEqual([{ regel: "ONDERZOEK_VOOR_OORDEEL", uitleg: '"niet vast te stellen" zonder één opzoeking; eerst knowledgeSearch' }]);
+  });
+
+  it("samen met een weggehaald voorstel (de volgorde uit de runs): voorstel weg, dan opzoeken", () => {
+    const v = "Welke afspraak geldt hier voor de dienst na een nachtblok?";
+    const { plan: p, correcties } = bewaakPlan(plan({ intent: "OPTIMALISATIEVERZOEK", proposal: voorstel, cannotDetermine: "onbekend" }), v, geen, MET_KENNIS);
+    expect(p.proposal).toBeUndefined();
+    expect(p.toolCalls.map((c) => c.tool)).toEqual(["knowledgeSearch"]);
+    expect(correcties.map((c) => c.regel)).toEqual(["VOORSTEL_ZONDER_REKENVERZOEK", "ONDERZOEK_VOOR_OORDEEL"]);
+  });
+
+  it("met een onderwerptool en een rooster: die tool, niet de algemene roosterregel", () => {
+    const { plan: p } = bewaakPlan(plan({ cannotDetermine: "weet ik niet" }), "Hoe lang is de langste reeks nachten hier?", { rosterCode: "DDR-LN", lineNumber: 3 }, MET_KENNIS);
+    expect(p.toolCalls).toEqual([{ tool: "nightStructure", input: {} }]);
+  });
+
+  it("tegenvoorbeelden: geen onderwerp → oordeel blijft; regelvraag en weigering blijven; kennis niet toegestaan", () => {
+    const zonder = plan({ intent: "UITLEGVRAAG", cannotDetermine: "De solverkeuze is niet vastgelegd." });
+    expect(bewaakPlan(zonder, "Waarom koos de solver dit?", regelCtx, MET_KENNIS).plan).toEqual(zonder);
+    const regel = plan({ intent: "REGELVRAAG", cannotDetermine: "niet in het regelbestand" });
+    expect(bewaakPlan(regel, "Welke afspraak geldt voor rust?", geen, MET_KENNIS).plan).toEqual(regel);
+    const weiger = plan({ intent: "GEWEIGERD", refusal: "nee", cannotDetermine: "x" });
+    expect(bewaakPlan(weiger, "Pas de voorkeur aan.", geen, MET_KENNIS).plan).toEqual(weiger);
+    const cd = plan({ cannotDetermine: "x" });
+    expect(bewaakPlan(cd, "Welke voorkeuren gelden?", geen, ALLE_TOOLS).plan).toEqual(cd);
+  });
+});

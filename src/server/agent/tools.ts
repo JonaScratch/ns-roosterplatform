@@ -597,6 +597,29 @@ export function toolCatalogue(actor: Actor) {
  * Faalt de rechtencontrole, dan is dat geen fout maar een antwoord: de agent
  * moet aan de gebruiker kunnen uitleggen wát hij niet mag.
  */
+/** Namen in de taal van het domein voor velden met een vaste keuzelijst. */
+const VELDNAAM: Readonly<Record<string, string>> = { kind: "dienstsoort", source: "bron", employeeGroup: "personeelsgroep" };
+
+/** Zinnen voor elke waarde die buiten een vaste keuzelijst valt; leeg als er geen zulke fout is. */
+export function onbekendeKeuzes(issues: readonly { code: string; path: readonly PropertyKey[]; values?: readonly unknown[] }[], invoer: unknown): string[] {
+  return issues
+    .filter((i) => i.code === "invalid_value" && Array.isArray(i.values) && i.values.length > 0)
+    .map((i) => ({ i, waarde: i.path.reduce<unknown>((o, k) => (o && typeof o === "object" ? (o as Record<string, unknown>)[String(k)] : undefined), invoer) }))
+    // Alleen wat echt niet bestaat. "vroeg" (andere schrijfwijze) of een lijst
+    // "VROEG,LAAT" deelt een woord met de keuzelijst: dat is een fout in de
+    // invoer, geen onbestaand begrip — die houden de oude melding.
+    .filter(({ i, waarde }) => {
+      const woorden = String(waarde ?? "").toUpperCase().split(/[^A-Z0-9_]+/).filter(Boolean);
+      const bestaand = new Set((i.values ?? []).map((v) => String(v).toUpperCase()));
+      return woorden.length > 0 && !woorden.some((w) => bestaand.has(w));
+    })
+    .map(({ i, waarde }) => {
+      const veld = i.path.map(String).join(".");
+      const naam = VELDNAAM[veld] ?? `toegestane waarde voor ${veld}`;
+      return `"${String(waarde)}" is geen ${naam} in dit platform (veld ${veld}); er is dus niets voor geteld of opgezocht. Wel bestaan: ${(i.values ?? []).map(String).join(", ")}.`;
+    });
+}
+
 export async function callTool(actor: Actor, name: string, rawInput: unknown, gesimuleerdeFout?: ToolFout): Promise<{ result: ToolResult | null; call: ToolCall; error?: string }> {
   const t0 = Date.now();
   const definitie = AGENT_TOOLS.find((x) => x.name === name);
@@ -609,6 +632,14 @@ export async function callTool(actor: Actor, name: string, rawInput: unknown, ge
   }
   const geparsed = definitie.input.safeParse(rawInput);
   if (!geparsed.success) {
+    // Een waarde buiten een vaste keuzelijst (bijv. kind: "OMLOOP") is geen
+    // storing maar een feit over het domein: die term bestaat hier niet. Dat
+    // benoemen, met de bestaande waarden erbij, in plaats van "de invoer
+    // klopt niet" — anders moet het model zelf raden waarom de tool faalde.
+    const onbekend = onbekendeKeuzes(geparsed.error.issues, rawInput);
+    if (onbekend.length > 0) {
+      return { result: null, call: { tool: name, input: rawInput, ok: false, ms: Date.now() - t0, note: "onbekende waarde" }, error: onbekend.join(" ") };
+    }
     return { result: null, call: { tool: name, input: rawInput, ok: false, ms: Date.now() - t0, note: "ongeldige invoer" }, error: `De invoer voor ${name} klopt niet: ${geparsed.error.issues.map((i) => i.path.join(".")).join(", ")}` };
   }
   if (gesimuleerdeFout) {
