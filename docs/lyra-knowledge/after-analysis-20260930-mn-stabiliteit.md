@@ -92,3 +92,17 @@ Drie nieuwe lokale adversarial-runs (`adversarial-20260930-mn2-r1..r3`).
 Stopvoorwaarde vóór de 6-uursrun: M én N GOED in alle drie, K/P/Q/R/S/T/U GOED,
 en de kern/extensie-baseline (43/43 ×3, strict en agreement 100%, fabricatie
 0/46, L 15/15, O 7/7) blijft staan.
+
+```powershell
+git pull
+foreach ($r in 1,2,3) {
+  npx tsx --conditions=react-server scripts/v106/adversarial-bench.ts --meting adversarial-20260930-mn2-r$r
+  npx tsx --conditions=react-server scripts/v106/adversarial-grade.ts --meting adversarial-20260930-mn2-r$r
+}
+```
+
+Verwachting per run: bij M staat een onderwerpgerichte opzoeking in de tools
+(knowledgeSearch, eventueel met correctie ONDERZOEK_VOOR_OORDEEL) en geen
+"niet te vinden" zonder tool; bij N wordt een onbestaande dienstsoort benoemd
+met de bestaande erbij — via een wedervraag, een geslaagde telling of de
+feitzin "… is geen dienstsoort in dit platform …".
