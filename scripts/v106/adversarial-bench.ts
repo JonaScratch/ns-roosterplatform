@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { Role } from "@/lib/generated/prisma/enums";
 import { askAgent } from "@/server/agent/agent";
+import { MetingTraces, meetOmgeving } from "./meting-trace";
 import { localConfigFromEnv, localModelAvailable } from "@/server/agent/model/local";
 import { prisma } from "@/server/data/prisma";
 import type { Actor } from "@/server/auth/session";
@@ -87,6 +88,10 @@ async function main(): Promise<void> {
 
   const commissie = await actorMet([Role.ROSTER_COMMITTEE]);
   if (!commissie) throw new Error("Geen actief ROSTER_COMMITTEE-account. Draai eerst de seed.");
+  // Beurttraces en de meetomgeving (commit, agentcode, actieve Lyra-versie,
+  // modeldigest, bevoegdheid) gaan naast het meetbestand in traces.json.
+  const omgeving = await meetOmgeving();
+  const tracer = new MetingTraces(meting);
 
   const resultaten: Json[] = [];
   const gemaaktSessies: string[] = [];
@@ -107,7 +112,7 @@ async function main(): Promise<void> {
     const beurten: Json[] = [];
     try {
       for (let t = 0; t < item.turns.length; t += 1) {
-        const antwoord = await askAgent({ actor: commissie, text: item.turns[t].text, uiContext: context, sessionId, persist: true, toolFouten });
+        const antwoord = await tracer.beurt({ item: item.id, beurt: t }, () => askAgent({ actor: commissie, text: item.turns[t].text, uiContext: context, sessionId, persist: true, toolFouten }));
         sessionId = antwoord.sessionId ?? sessionId;
         beurten.push({
           text: antwoord.text,
@@ -152,6 +157,7 @@ async function main(): Promise<void> {
     results: resultaten,
   };
   writeFileSync(path.join(map, "adversarial.json"), `${JSON.stringify(uit, null, 2)}\n`);
+  tracer.schrijf(map, omgeving);
   console.log(`Geschreven: ${path.join(map, "adversarial.json")}`);
 
   if (gemaaktSessies.length > 0) {

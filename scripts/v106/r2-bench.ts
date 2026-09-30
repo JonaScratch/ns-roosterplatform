@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { Role } from "@/lib/generated/prisma/enums";
 import { askAgent } from "@/server/agent/agent";
+import { MetingTraces, meetOmgeving } from "./meting-trace";
 import { localConfigFromEnv, localModelAvailable } from "@/server/agent/model/local";
 import { prisma } from "@/server/data/prisma";
 import type { Actor } from "@/server/auth/session";
@@ -64,6 +65,10 @@ async function main(): Promise<void> {
   const suite = JSON.parse(readFileSync(path.join(WORTEL, "docs", "v1.0.6", "r2-suite.json"), "utf8")) as Json;
   const commissie = await actorMet([Role.ROSTER_COMMITTEE]);
   if (!commissie) throw new Error("Geen actief ROSTER_COMMITTEE-account. Draai eerst de seed.");
+  // Beurttraces en de meetomgeving (commit, agentcode, actieve Lyra-versie,
+  // modeldigest, bevoegdheid) gaan naast het meetbestand in traces.json.
+  const omgeving = await meetOmgeving();
+  const tracer = new MetingTraces(meting);
 
   const resultaten: Json[] = [];
   const gemaaktSessies: string[] = [];
@@ -79,7 +84,7 @@ async function main(): Promise<void> {
     try {
       for (let t = 0; t < item.turns.length; t += 1) {
         const beurtStart = Date.now();
-        const antwoord = await askAgent({ actor: commissie, text: item.turns[t].text, uiContext: context, sessionId, persist: true });
+        const antwoord = await tracer.beurt({ item: item.id, beurt: t }, () => askAgent({ actor: commissie, text: item.turns[t].text, uiContext: context, sessionId, persist: true }));
         sessionId = antwoord.sessionId ?? sessionId;
         beurten.push({
           text: antwoord.text,
@@ -128,6 +133,7 @@ async function main(): Promise<void> {
     },
   };
   writeFileSync(path.join(map, "r2.json"), `${JSON.stringify(uit, null, 2)}\n`);
+  tracer.schrijf(map, omgeving);
   console.log(`Geschreven: ${path.join(map, "r2.json")}`);
   console.log(`  p50 ${uit.timing.p50Ms} ms · p95 ${uit.timing.p95Ms} ms · gemiddeld ${uit.timing.gemiddeldMs} ms`);
 

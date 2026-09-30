@@ -19,6 +19,8 @@ import { projectGoals } from "./project-goals";
 import { geldendeGeheugenDoelen } from "./promotion";
 import { verbodenHandeling } from "./refusals";
 import { type ToolCall, type ToolFout, callTool, toolCatalogue } from "./tools";
+import { actieveTrace, momentopname } from "./trace";
+import { getActiveLyraVersion } from "@/lib/lyra-release";
 
 /**
  * De agent: één beurt in het gesprek, van vraag tot antwoord.
@@ -163,6 +165,17 @@ export async function askAgent(input: {
     suspended: grant.suspendedAt !== null,
   };
 
+  // Beurttrace (trace.ts): alleen als de aanroeper er één heeft geopend.
+  const trace = actieveTrace();
+  if (trace) {
+    const release = getActiveLyraVersion();
+    trace.model = { naam: model.name, taalmodel: model.isLanguageModel, instellingen: model.instellingen ? { ...model.instellingen } : null };
+    trace.release = { versionId: release.versionId ?? null, generation: release.generation ?? null, promptSha256: release.promptSha256 ?? null, integrity: release.integrity };
+    trace.actor = { rollen: [...input.actor.roles], niveau: String(basis.level), bevoegdheden: [...verzoek.capabilities], geschorst: verzoek.suspended };
+    trace.toegestaneTools = verzoek.tools.filter((t) => t.allowed).map((t) => t.name);
+    trace.invoer = { tekst: input.text, uiContext: momentopname(input.uiContext), context: momentopname(verzoek.context) };
+  }
+
   // Vanaf hier is er iets te volgen. Het activiteitenpaneel leest mee, ook als
   // dit tabblad wordt gesloten: de stappen staan in de database.
   const activiteit = input.persist === false ? null : await startActivity({
@@ -191,7 +204,9 @@ export async function askAgent(input: {
    * van een taalmodel is geen weigering.
    */
   const verboden = verbodenHandeling(input.text);
+  if (trace) trace.platformWeigering = verboden ? verboden.uitleg : null;
   if (verboden) {
+    if (trace) trace.eind = { status: "GEWEIGERD", intent: "GEWEIGERD", tekst: verboden.uitleg, bronnen: [], geheugenvoorstel: { uitPlan: false, naBewaking: false, inAntwoord: false } };
     await stap("WEIGERING", verboden.uitleg, { reden: "verboden handeling", model: model.name });
     if (activiteit) await finishActivity(activiteit, "DONE");
     await recordAudit({
@@ -228,11 +243,13 @@ export async function askAgent(input: {
     new Set(verzoek.tools.filter((t) => t.allowed).map((t) => t.name)),
   );
   const ruwPlan = bewaakt.plan;
+  if (trace) trace.plan = { ...trace.plan, geparsed: momentopname(modelPlan), bewaking: bewaakt.stappen };
   // Laag 2 hoort in elk voorstel terecht te komen, ook als het model er niet om
   // vroeg: het zijn de doelen die de commissie voor dit project heeft gezet.
   // Het model bedenkt ze niet en kan ze ook niet wegnemen; ze worden hier
   // toegevoegd en in het antwoord genoemd.
   const plan = await metProjectdoelen(ruwPlan, resolved.locationCode);
+  if (trace && trace.plan) trace.plan.definitief = momentopname(plan);
   await stap("PLAN", plan.reasoning || "geen toelichting", {
     intent: plan.intent,
     tools: plan.toolCalls.map((c) => c.tool),
@@ -273,6 +290,17 @@ export async function askAgent(input: {
     const { result, call, error } = await callTool(input.actor, toolStap.tool, metContext(toolStap.input), input.toolFouten?.[toolStap.tool]);
     calls.push(call);
     results.push({ tool: toolStap.tool, ok: result !== null, data: result?.data ?? null, sources: result?.sources ?? [], error, note: call.note });
+    trace?.tools.push({
+      tool: toolStap.tool,
+      invoer: momentopname(call.input),
+      ok: call.ok,
+      ms: call.ms,
+      note: call.note ?? null,
+      fout: error ?? null,
+      gesimuleerd: Boolean(call.gesimuleerd),
+      data: momentopname(result?.data ?? null),
+      bronnen: [...(result?.sources ?? [])],
+    });
     await stap(
       call.ok ? "TOOL" : "FOUT",
       call.ok ? `${toolStap.tool} geraadpleegd (${call.ms} ms)` : `${toolStap.tool} leverde niets op: ${call.note ?? error ?? "onbekend"}`,
@@ -281,6 +309,15 @@ export async function askAgent(input: {
   }
 
   const ruwAntwoord = await model.compose({ ...verzoek, plan, results });
+  if (trace) {
+    trace.compose = {
+      pad: trace.composePad ?? (model.isLanguageModel ? "onbekend" : "stub"),
+      status: ruwAntwoord.status,
+      tekst: ruwAntwoord.text,
+      dataSleutels: Object.keys((ruwAntwoord.data as Record<string, unknown> | null) ?? {}),
+      bronnen: [...ruwAntwoord.sources],
+    };
+  }
 
   /**
    * De grondingscontrole staat hier, en niet in de modeladapter.
@@ -411,6 +448,53 @@ ${platformContext}`);
       ongedekteClaims,
       tegengehoudenTekst: naGronding.text,
     });
+  }
+  if (trace) {
+    const poort = (naam: string, uitkomst: "PASS" | "BLOCK" | "APPEND" | "NVT", reden: string, bewijs: unknown, voor?: string, na?: string) =>
+      trace.poorten.push({ naam, uitkomst, reden, bewijs: momentopname(bewijs), ...(voor !== undefined ? { tekstVoor: voor, tekstNa: na } : {}) });
+    poort(
+      "ZONDER_BRON",
+      zonderBron ? "BLOCK" : ruwAntwoord.status === "BEANTWOORD" ? "PASS" : "NVT",
+      zonderBron ? "beantwoord zonder één geslaagde tool" : ruwAntwoord.status === "BEANTWOORD" ? `${gelukt.length} geslaagde tool(s)` : `status ${ruwAntwoord.status}: geen bron vereist`,
+      { geslaagd: gelukt.map((r) => r.tool) },
+      ...(zonderBron ? [ruwAntwoord.text, naGronding.text] : []),
+    );
+    poort(
+      "GRONDING",
+      ruwAntwoord.status === "GEWEIGERD" ? "NVT" : los.length > 0 ? "BLOCK" : "PASS",
+      ruwAntwoord.status === "GEWEIGERD" ? "weigering" : los.length > 0 ? "vermelding(en) niet in de gegevens" : "alle vermeldingen staan in de gegevens",
+      los,
+      ...(los.length > 0 && !zonderBron ? [ruwAntwoord.text, naGronding.text] : []),
+    );
+    poort(
+      "CLAIMVERIFICATIE",
+      naGronding.status !== "BEANTWOORD" ? "NVT" : ongedekteClaims.length > 0 ? "BLOCK" : "PASS",
+      naGronding.status !== "BEANTWOORD" ? `status ${naGronding.status}` : ongedekteClaims.length > 0 ? "ongedekte gezagsclaim" : "geen ongedekte gezagsclaim",
+      ongedekteClaims,
+      ...(ongedekteClaims.length > 0 ? [naGronding.text, naClaims.text] : []),
+    );
+    poort(
+      "AFWEZIGHEID",
+      naClaims.status !== "BEANTWOORD" ? "NVT" : afwezigheden.length > 0 ? "BLOCK" : "PASS",
+      naClaims.status !== "BEANTWOORD" ? `status ${naClaims.status}` : afwezigheden.length > 0 ? "verzonnen afwezigheid" : "geen verzonnen afwezigheid",
+      afwezigheden,
+      ...(afwezigheden.length > 0 ? [naClaims.text, naAfwezigheid.text] : []),
+    );
+    poort(
+      "CITAATVOORBEHOUD",
+      voorbehoud ? "APPEND" : "NVT",
+      voorbehoud ? "citaatverzoek bij een bron zonder machineleesbare tekst" : vraagtOmCitaat(input.text) ? "citaatverzoek, maar geen scanbron of al tegengehouden" : "geen citaatverzoek",
+      scanBronnen,
+      ...(voorbehoud ? [naAfwezigheid.text, antwoord.text] : []),
+    );
+    const dataUit = (antwoord.data as Record<string, unknown> | null) ?? {};
+    trace.eind = {
+      status: antwoord.status,
+      intent: plan.intent,
+      tekst: antwoord.text,
+      bronnen: [...antwoord.sources],
+      geheugenvoorstel: { uitPlan: Boolean(modelPlan.memoryProposal), naBewaking: Boolean(plan.memoryProposal), inAntwoord: "memoryProposal" in dataUit },
+    };
   }
   const tegengehouden: AskResult["tegengehouden"] = afwezigheden.length > 0
     ? { grendel: "AFWEZIGHEID", tekst: naClaims.text, detail: afwezigheden }

@@ -1,5 +1,6 @@
 import type { AgentPlan } from "./model/types";
 import { onderwerpTool, vraagtNaarKennis, vraagtOmTeRekenen } from "./request-shape";
+import { type BewakingsStap, gewijzigdeVelden, momentopname } from "./trace";
 
 /**
  * Plancontrole: twee grenzen die niet van de welwillendheid van een taalmodel
@@ -78,24 +79,48 @@ export function bewaakPlan(
   vraag: string,
   ctx: PlanContext,
   toegestaan: ReadonlySet<string>,
-): { plan: AgentPlan; correcties: readonly PlanCorrectie[] } {
+): { plan: AgentPlan; correcties: readonly PlanCorrectie[]; stappen: readonly BewakingsStap[] } {
   const correcties: PlanCorrectie[] = [];
+  const stappen: BewakingsStap[] = [];
   let p = plan;
+  // Per regel vastgelegd (trace.ts): getriggerd of niet, waarom, en wat er
+  // veranderde. Gedrag verandert hier niet door — alleen de verantwoording.
+  const noteer = (regel: PlanCorrectie["regel"], voor: AgentPlan, reden: string) =>
+    stappen.push({
+      regel,
+      getriggerd: voor !== p,
+      reden,
+      gewijzigd: gewijzigdeVelden(voor as unknown as Record<string, unknown>, p as unknown as Record<string, unknown>),
+      voor: momentopname(voor),
+      na: momentopname(p),
+    });
+
+  const voor1 = p;
 
   if (p.proposal && !vraagtOmTeRekenen(vraag)) {
     correcties.push({ regel: "VOORSTEL_ZONDER_REKENVERZOEK", uitleg: "het model stelde een rekenopdracht voor, maar de vraag vraagt nergens om te rekenen" });
     const { proposal: _weg, ...rest } = p;
     p = { ...rest, intent: p.toolCalls.length > 0 ? p.intent : "ROOSTERVRAAG" };
   }
+  noteer("VOORSTEL_ZONDER_REKENVERZOEK", voor1, !voor1.proposal ? "geen rekenvoorstel in het plan" : p !== voor1 ? "rekenvoorstel zonder rekenverzoek in de vraag" : "de vraag vraagt om te rekenen");
 
+  const voor2 = p;
   if (p.onleesbaar) {
     const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, true);
     if (opzoeking.length > 0) {
       correcties.push({ regel: "ONLEESBAAR_PLAN", uitleg: "geen leesbaar plan; de bekende schermcontext opgezocht in plaats van algemeen door te vragen" });
       const { clarification: _weg, onleesbaar: _ook, ...rest } = p;
-      return { plan: { ...rest, intent: "ROOSTERVRAAG", toolCalls: opzoeking, reasoning: "plan onleesbaar; schermcontext opgezocht" }, correcties };
+      p = { ...rest, intent: "ROOSTERVRAAG", toolCalls: opzoeking, reasoning: "plan onleesbaar; schermcontext opgezocht" };
+      noteer("ONLEESBAAR_PLAN", voor2, `onleesbaar plan; opgezocht: ${opzoeking.map((o) => o.tool).join(", ")}`);
+      for (const regel of ["ONDERZOEK_VOOR_OORDEEL", "ONTBREKENDE_ONDERWERPTOOL"] as const) {
+        stappen.push({ regel, getriggerd: false, reden: "niet geëvalueerd: de bewaking stopt na ONLEESBAAR_PLAN", gewijzigd: [], voor: momentopname(p), na: momentopname(p) });
+      }
+      return { plan: p, correcties, stappen };
     }
   }
+  noteer("ONLEESBAAR_PLAN", voor2, p.onleesbaar ? "onleesbaar plan, maar geen bekende context of onderwerp om op te zoeken" : "plan is leesbaar");
+
+  const voor3 = p;
 
   // "Niet vast te stellen" zonder één opzoeking is geen eerlijk "ik weet het
   // niet" maar een oordeel vóór het kijken: het model zegt dat iets niet in
@@ -135,6 +160,23 @@ export function bewaakPlan(
       p = { ...(voorbarig ? rest : p), toolCalls: opzoeking, ...(voorbarig ? { intent: p.intent === "NIET_VAST_TE_STELLEN" ? "ROOSTERVRAAG" : p.intent } : {}) };
     }
   }
+  noteer(
+    "ONDERZOEK_VOOR_OORDEEL",
+    voor3,
+    p !== voor3
+      ? correcties[correcties.length - 1].uitleg
+      : voor3.toolCalls.length > 0
+        ? `het plan haalt al iets op (${voor3.toolCalls.map((c) => c.tool).join(", ")})`
+        : voor3.refusal
+          ? "weigering"
+          : voor3.proposal
+            ? "rekenvoorstel"
+            : !alleenPraten
+              ? `intent ${voor3.intent} valt buiten deze regel`
+              : `niets om op te zoeken (onderwerp: ${onderwerpTool(vraag)?.tool ?? "geen"}, rooster: ${ctx.rosterCode ?? "geen"}, kennisvraag: ${vraagtNaarKennis(vraag) ? "ja" : "nee"}, knowledgeSearch toegestaan: ${toegestaan.has("knowledgeSearch") ? "ja" : "nee"})`,
+  );
+
+  const voor4 = p;
 
   // Regel 4: de tool die bij het onderwerp hoort ontbreekt in een plan dat wél
   // gegevens ophaalt. Aanvullen, niets weghalen. Regelvragen, voorstellen en
@@ -155,6 +197,21 @@ export function bewaakPlan(
     correcties.push({ regel: "ONTBREKENDE_ONDERWERPTOOL", uitleg: `de vraag gaat over ${onderwerp.onderwerp.toLowerCase()}; ${onderwerp.tool} aangevuld naast ${p.toolCalls.map((c) => c.tool).join(", ")}` });
     p = { ...p, toolCalls: [...p.toolCalls, { tool: onderwerp.tool, input: {} }] };
   }
+  noteer(
+    "ONTBREKENDE_ONDERWERPTOOL",
+    voor4,
+    p !== voor4
+      ? correcties[correcties.length - 1].uitleg
+      : !onderwerp
+        ? "geen onderwerptool bij deze vraag"
+        : !ctx.rosterCode
+          ? "geen rooster gekozen"
+          : voor4.toolCalls.length === 0
+            ? "het plan haalt niets op"
+            : voor4.toolCalls.some((c) => c.tool === onderwerp.tool)
+              ? `${onderwerp.tool} staat al in het plan`
+              : "regelvraag, voorstel, weigering of tool niet toegestaan",
+  );
 
-  return { plan: p, correcties };
+  return { plan: p, correcties, stappen };
 }

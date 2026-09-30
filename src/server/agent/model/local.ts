@@ -5,6 +5,7 @@ import { REBUILD_GOAL_LABELS } from "@/server/optimizer/objective-weights";
 import { STRATEGIE_VOOR_DOEL, doelenLijst, isDoel, strategieLabel } from "../doelen";
 import { beschrijfVoorstel } from "../voorstel-tekst";
 import { begrippenIn } from "../vocabulary";
+import { actieveTrace, momentopname } from "../trace";
 import { DATA_SLEUTEL } from "./types";
 import type { AgentAnswer, AgentPlan, ChatModel, ComposeRequest, PlanRequest } from "./types";
 
@@ -301,22 +302,28 @@ export function planInstructie(): string {
   ].join("\n");
 }
 
-async function chat(config: LocalModelConfig, berichten: readonly ChatBericht[]): Promise<string> {
-  const res = await fetch(`${config.baseUrl}/chat/completions`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: config.model,
-      messages: berichten,
-      temperature: config.temperature,
-      max_tokens: config.maxTokens,
-      stream: false,
-    }),
-    signal: AbortSignal.timeout(config.timeoutMs),
-  });
-  if (!res.ok) throw new Error(`het lokale model antwoordde met ${res.status}`);
-  const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-  return body.choices?.[0]?.message?.content ?? "";
+async function chat(config: LocalModelConfig, berichten: readonly ChatBericht[], fase: "plan" | "compose"): Promise<string> {
+  const verzoek = { model: config.model, messages: berichten, temperature: config.temperature, max_tokens: config.maxTokens };
+  const t0 = Date.now();
+  // In een beurttrace (trace.ts) komt precies dit verzoek en het ongeparste
+  // antwoord terecht — ook bij een fout. Buiten een trace: niets extra's.
+  const trace = actieveTrace();
+  try {
+    const res = await fetch(`${config.baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...verzoek, stream: false }),
+      signal: AbortSignal.timeout(config.timeoutMs),
+    });
+    if (!res.ok) throw new Error(`het lokale model antwoordde met ${res.status}`);
+    const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+    const inhoud = body.choices?.[0]?.message?.content ?? "";
+    trace?.modelAanroepen.push({ fase, verzoek: momentopname(verzoek), ruweUitvoer: inhoud, fout: null, ms: Date.now() - t0 });
+    return inhoud;
+  } catch (fout) {
+    trace?.modelAanroepen.push({ fase, verzoek: momentopname(verzoek), ruweUitvoer: null, fout: fout instanceof Error ? fout.message : String(fout), ms: Date.now() - t0 });
+    throw fout;
+  }
 }
 
 /**
@@ -521,13 +528,21 @@ export function localModel(config: LocalModelConfig): ChatModel {
   return {
     name: config.systemPromptOverride ? `lokaal:${config.model}:variant` : `lokaal:${config.model}`,
     isLanguageModel: true,
+    instellingen: {
+      baseUrl: config.baseUrl,
+      model: config.model,
+      temperature: config.temperature,
+      maxTokens: config.maxTokens,
+      timeoutMs: config.timeoutMs,
+      systeemToevoeging: Boolean(config.systemPromptOverride),
+    },
 
     async plan(request: PlanRequest): Promise<AgentPlan> {
       const antwoord = await chat(config, [
         { role: "system", content: instructieVoor(config, request) },
         ...request.history.map((h) => ({ role: h.role === "USER" ? ("user" as const) : ("assistant" as const), content: h.text })),
         { role: "user", content: `${request.text}\n\n${planInstructie()}` },
-      ]);
+      ], "plan");
 
       // Met NS_LOCAL_LLM_DEBUG=1 komt het ruwe antwoord in de serverlog. Zonder
       // dat is "het model leverde geen leesbaar plan" een doodlopend spoor: je
@@ -537,6 +552,8 @@ export function localModel(config: LocalModelConfig): ChatModel {
       }
 
       const plan = jsonUit(antwoord);
+      const trace = actieveTrace();
+      if (trace) trace.plan = { ...trace.plan, parse: { ok: plan !== null, terugval: plan ? null : "onleesbaar: geen JSON-object in het modelantwoord" } };
       if (!plan) {
         // Geen bruikbaar plan is geen reden om te gokken.
         return {
@@ -568,7 +585,12 @@ export function localModel(config: LocalModelConfig): ChatModel {
     },
 
     async compose(request: ComposeRequest): Promise<AgentAnswer> {
+      const pad = (naam: string) => {
+        const trace = actieveTrace();
+        if (trace) trace.composePad = naam;
+      };
       if (request.plan.refusal) {
+        pad("weigering uit het plan (geen modelaanroep)");
         return { text: request.plan.refusal, data: null, sources: [], status: "GEWEIGERD" };
       }
       const bronnen = [...new Set(request.results.flatMap((r) => r.sources))];
@@ -579,6 +601,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
       // antwoordstap werd weggegooid — en dan is niveau B onbereikbaar zodra er
       // een echt model onder hangt.
       if (request.plan.proposal) {
+        pad("rekenvoorstel uit het plan (geen modelaanroep)");
         return {
           text: beschrijfVoorstel(request.plan.proposal),
           data: { proposal: request.plan.proposal },
@@ -588,6 +611,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
       }
       const geweigerd = request.results.find((r) => !r.ok && r.note === "geen recht");
       if (geweigerd) {
+        pad("tool zonder recht (geen modelaanroep)");
         return {
           text: `Die vraag kan ik voor jou niet beantwoorden: daarvoor moet ik ${geweigerd.tool} raadplegen, en daar heb jij geen recht op.`,
           data: null,
@@ -608,6 +632,7 @@ export function localModel(config: LocalModelConfig): ChatModel {
         // anders vraagt het antwoord door zonder te zeggen wat wél vaststaat.
         const onbestaand = request.results.filter((r) => !r.ok && r.note === "onbekende waarde" && r.error).map((r) => r.error as string);
         const tekst = onbestaand.length > 0 ? `${[...new Set(onbestaand)].join(" ")} ${request.plan.clarification}` : request.plan.clarification;
+        pad("wedervraag zonder geslaagde tool (geen modelaanroep)");
         return { text: tekst, data: { intent: request.plan.intent }, sources: bronnen, status: "VERDUIDELIJKING" };
       }
 
@@ -645,7 +670,8 @@ export function localModel(config: LocalModelConfig): ChatModel {
             .filter(Boolean)
             .join("\n"),
         },
-      ]);
+      ], "compose");
+      pad("model");
 
       // Geprobeerd en teruggedraaid: dit antwoord als JSON laten leveren, met de
       // status erin. Bij lokaal-5 kostte dat meer dan het opleverde — één vraag

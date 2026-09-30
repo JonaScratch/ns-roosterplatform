@@ -167,6 +167,8 @@ export interface ChatModel {
   readonly name: string;
   /** Kan dit model echte taal? Een stub niet; dat mag nooit als taalvaardigheid tellen. */
   readonly isLanguageModel: boolean;
+  /** Instellingen die het gedrag bepalen (voor de beurttrace); geen geheimen. */
+  readonly instellingen?: Readonly<Record<string, unknown>>;
   plan(request: PlanRequest): Promise<AgentPlan>;
   compose(request: ComposeRequest): Promise<AgentAnswer>;
 }
