@@ -9,7 +9,7 @@ import { verzonnenAfwezigheden } from "@/server/agent/bron-afwezigheid";
 import { ongedekteGezagsClaims } from "@/server/agent/claim-verification";
 import { gegevensTekst, ongegrondeVermeldingen } from "@/server/agent/grounding";
 import { localConfigFromEnv, localModelAvailable } from "@/server/agent/model/local";
-import type { AgentTrace, ModelAanroep } from "@/server/agent/trace";
+import { type AgentTrace, type ModelAanroep, sha256 } from "@/server/agent/trace";
 import { begrippenIn } from "@/server/agent/vocabulary";
 import { prisma } from "@/server/data/prisma";
 import { beoordeelMetBewijs } from "./adversarial-grade";
@@ -29,7 +29,12 @@ import { MetingTraces, meetOmgeving } from "./meting-trace";
  *     opnieuw naar het model — dezelfde bytes. Verschillen de antwoorden, dan is
  *     de compose bij gelijke invoer niet reproduceerbaar.
  *  3. Varianten van datzelfde verzoek, elk K keer (alleen diagnose, geen
- *     productiegedrag):
+ *     productiegedrag). Elke aanroep staat met verzoek- en uitvoerhash in
+ *     `volgorde`, omdat de uitvoer van het vorige verzoek kan afhangen
+ *     (diagnose-20260930-m):
+ *       - `na-plan`: eerst het planverzoek uit de trace, dan het compose-verzoek
+ *         — dezelfde volgorde als in de keten;
+ *       - `na-herladen`: eerst het model uit Ollama halen, dan het verzoek;
  *       - `zonder-release`: de systeeminstructie zonder de toevoeging van de
  *         actieve Lyra-versie (als die er is);
  *       - `notities-apart`: elke `note` uit de toolgegevens óók als losse regel
@@ -60,7 +65,11 @@ function items(suite: string): Json[] {
   return (JSON.parse(readFileSync(pad, "utf8")) as Json).items as Json[];
 }
 
-async function stuur(verzoek: ModelAanroep["verzoek"]): Promise<string> {
+/** Elke aanroep van dit script, in volgorde: welk verzoek (hash), met welk label, en welke uitvoer (hash). */
+const volgorde: { label: string; verzoek: string; uitvoer: string }[] = [];
+const hashVan = (verzoek: ModelAanroep["verzoek"]) => sha256(JSON.stringify({ ...verzoek, stream: false }));
+
+async function stuur(verzoek: ModelAanroep["verzoek"], label = "replay"): Promise<string> {
   const config = localConfigFromEnv();
   if (!config) throw new Error("geen lokaal model ingesteld");
   const res = await fetch(`${config.baseUrl}/chat/completions`, {
@@ -71,7 +80,26 @@ async function stuur(verzoek: ModelAanroep["verzoek"]): Promise<string> {
   });
   if (!res.ok) throw new Error(`model antwoordde met ${res.status}`);
   const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-  return (body.choices?.[0]?.message?.content ?? "").trim();
+  const tekst = (body.choices?.[0]?.message?.content ?? "").trim();
+  volgorde.push({ label, verzoek: hashVan(verzoek).slice(0, 16), uitvoer: sha256(tekst).slice(0, 16) });
+  return tekst;
+}
+
+/**
+ * Het model uit het geheugen van Ollama halen (`keep_alive: 0`), zodat het
+ * volgende verzoek zonder hergebruikte promptcache begint. Verandert niets aan
+ * het model zelf; het wordt bij het volgende verzoek opnieuw geladen.
+ */
+async function herlaad(): Promise<void> {
+  const config = localConfigFromEnv();
+  if (!config) return;
+  await fetch(`${config.baseUrl.replace(/\/v1$/, "")}/api/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model: config.model, keep_alive: 0 }),
+    signal: AbortSignal.timeout(config.timeoutMs),
+  }).catch(() => undefined);
+  volgorde.push({ label: "herladen", verzoek: "-", uitvoer: "-" });
 }
 
 /** De poorten die op modeltekst werken, zoals agent.ts ze toepast (zuivere functies). */
@@ -86,21 +114,27 @@ function poorten(tekst: string, trace: AgentTrace): Json {
   };
 }
 
-function notitiesApart(verzoek: ModelAanroep["verzoek"], trace: AgentTrace): ModelAanroep["verzoek"] | null {
+/**
+ * Variant: elke toolnotitie óók als losse regel vóór de instructieregels.
+ * Geeft `null` als het anker ontbreekt — een variant die niets verandert mag
+ * nooit als experiment meetellen (diagnose-20260930-m: het oude anker
+ * "\n\nGebruik uitsluitend" bestond niet, want lege regels worden eruit
+ * gefilterd, en de variant was ongemerkt identiek aan het origineel).
+ */
+export function notitiesApart(verzoek: ModelAanroep["verzoek"], trace: Pick<AgentTrace, "tools">): ModelAanroep["verzoek"] | null {
   const notities = trace.tools.flatMap((t) => {
     const d = t.data as Json | null;
     return d && typeof d.note === "string" ? [`- ${t.tool}: ${d.note}`] : [];
   });
   if (notities.length === 0) return null;
-  const messages = verzoek.messages.map((m, i) =>
-    i === verzoek.messages.length - 1 && m.role === "user"
-      ? { ...m, content: m.content.replace("\n\nGebruik uitsluitend", `\n\nVastgesteld door de tools:\n${notities.join("\n")}\n\nGebruik uitsluitend`) }
-      : m,
-  );
-  return { ...verzoek, messages };
+  const laatste = verzoek.messages[verzoek.messages.length - 1];
+  const anker = "\nGebruik uitsluitend";
+  if (!laatste || laatste.role !== "user" || !laatste.content.includes(anker)) return null;
+  const nieuw = laatste.content.replace(anker, `\nVastgesteld door de tools:\n${notities.join("\n")}${anker}`);
+  return { ...verzoek, messages: [...verzoek.messages.slice(0, -1), { ...laatste, content: nieuw }] };
 }
 
-function zonderRelease(verzoek: ModelAanroep["verzoek"]): ModelAanroep["verzoek"] | null {
+export function zonderRelease(verzoek: ModelAanroep["verzoek"]): ModelAanroep["verzoek"] | null {
   const toevoeging = getActiveLyraVersion().promptText;
   if (!toevoeging) return null;
   const messages = verzoek.messages.map((m) => (m.role === "system" && m.content.endsWith(`\n\n${toevoeging}`) ? { ...m, content: m.content.slice(0, -(toevoeging.length + 2)) } : m));
@@ -163,31 +197,54 @@ async function main(): Promise<void> {
   const compose = eerste?.modelAanroepen.find((a) => a.fase === "compose" && a.ruweUitvoer !== null);
   const replays: Json[] = [];
   if (eerste && compose && replay > 0) {
-    const varianten: [string, ModelAanroep["verzoek"] | null][] = [
-      ["identiek", compose.verzoek],
-      ["zonder-release", zonderRelease(compose.verzoek)],
-      ["notities-apart", notitiesApart(compose.verzoek, eerste)],
+    const planVerzoek = eerste.modelAanroepen.find((a) => a.fase === "plan")?.verzoek ?? null;
+    // [naam, verzoek, wat er vlak vóór elk verzoek naar het model gaat]
+    const varianten: [string, ModelAanroep["verzoek"] | null, "niets" | "plan" | "herladen"][] = [
+      ["identiek", compose.verzoek, "niets"],
+      // Mechanisme van H8: hangt de uitvoer af van het vorige verzoek (de
+      // promptcache van de server)? In de keten gaat het planverzoek vooraf.
+      ["na-plan", planVerzoek ? compose.verzoek : null, "plan"],
+      ["na-herladen", compose.verzoek, "herladen"],
+      ["zonder-release", zonderRelease(compose.verzoek), "niets"],
+      // H9 eerlijk vergeleken met "na-plan": zelfde voorafgaand verzoek, alleen
+      // de presentatie van de toolnotities verschilt.
+      ["notities-apart", planVerzoek ? notitiesApart(compose.verzoek, eerste) : null, "plan"],
     ];
     const beurt = { status: eerste.compose?.status ?? null, tools: eerste.tools.map((t) => t.tool) };
-    for (const [naam, verzoek] of varianten) {
+    for (const [naam, verzoek, vooraf] of varianten) {
       if (!verzoek) {
-        replays.push({ variant: naam, overgeslagen: naam === "zonder-release" ? "geen actieve Lyra-toevoeging in de systeeminstructie" : "geen notities in de toolgegevens" });
+        replays.push({
+          variant: naam,
+          overgeslagen:
+            naam === "zonder-release" ? "geen actieve Lyra-toevoeging in de systeeminstructie" : naam === "na-plan" ? "geen planverzoek in de trace" : "geen notities of geen anker in het compose-verzoek",
+        });
         continue;
       }
       const uitkomsten: Json[] = [];
       for (let k = 0; k < replay; k += 1) {
-        const tekst = await stuur(verzoek);
+        if (vooraf === "plan" && planVerzoek) await stuur(planVerzoek, `${naam}:plan`);
+        if (vooraf === "herladen") await herlaad();
+        const tekst = await stuur(verzoek, naam);
         uitkomsten.push({ tekst, poorten: poorten(tekst, eerste), oordeel: oordeel(tekst, beurt) });
       }
       const verschillend = new Set(uitkomsten.map((u) => u.tekst)).size;
-      replays.push({ variant: naam, n: replay, verschillendeTeksten: verschillend, gelijkAanOrigineel: uitkomsten.filter((u) => u.tekst === compose.ruweUitvoer?.trim()).length, uitkomsten });
+      replays.push({
+        variant: naam,
+        vooraf,
+        verzoekHash: hashVan(verzoek).slice(0, 16),
+        gelijkAanOrigineelVerzoek: hashVan(verzoek) === hashVan(compose.verzoek),
+        n: replay,
+        verschillendeTeksten: verschillend,
+        gelijkAanOrigineel: uitkomsten.filter((u) => u.tekst === compose.ruweUitvoer?.trim()).length,
+        uitkomsten,
+      });
       console.log(`replay ${naam}: ${verschillend} verschillende tekst(en) op ${replay}${suite === "adversarial" ? `; oordelen ${uitkomsten.map((u) => u.oordeel?.status).join(", ")}` : ""}`);
     }
   }
 
   writeFileSync(
     path.join(map, "diagnose.json"),
-    `${JSON.stringify({ schema: "ns-diagnose-trace/1", meting, suite, item: item.id, gemeten: new Date().toISOString(), herhaal, replay, runs, composeOrigineel: compose?.ruweUitvoer ?? null, replays }, null, 1)}\n`,
+    `${JSON.stringify({ schema: "ns-diagnose-trace/1", meting, suite, item: item.id, gemeten: new Date().toISOString(), herhaal, replay, runs, composeOrigineel: compose?.ruweUitvoer ?? null, composeVerzoekHash: compose ? hashVan(compose.verzoek).slice(0, 16) : null, replays, volgorde }, null, 1)}\n`,
     { flag: "wx" },
   );
   tracer.schrijf(map, omgeving);

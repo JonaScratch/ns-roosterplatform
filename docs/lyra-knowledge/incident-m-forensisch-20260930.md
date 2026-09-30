@@ -144,3 +144,87 @@ het netwerkbeleid). Dat is de lokale blocker.
 - Het ruwe plan van eerdere runs is gereconstrueerd, niet waargenomen.
 - n=1 GOED-run: of het doorgeven van de grens een kans is of een gevolg van
   een omgevingsverschil, beslist de replay.
+
+## 9. Diagnose `diagnose-20260930-m` — analyse volgens de beslisregel
+
+Meetomgeving (uit `traces.json`): commit `3e68f06` (de geïnstrumenteerde code),
+geen releasemap ingesteld, integriteit `NO_RELEASE`, geen activaties; Ollama
+0.34.4, qwen3:8b (modelfile-standaard temperature 0.6 / top_k 20 / top_p 0.95,
+per verzoek overschreven met temperature 0); agentniveau B met
+`agent:memory:write`.
+
+### Directe waarnemingen
+
+| stap | verzoek (hash) | uitvoer |
+|---|---|---|
+| plan, herhaling 0 | `4d81c8b3702c` | het model plant zelf `knowledgeSearch` (dit is het 234655-gedrag) |
+| plan, herhaling 1 en 2 | `4d81c8b3702c` (**zelfde bytes**) | rekenvoorstel + geheugenvoorstel, geen tools (het latere gedrag) |
+| compose, herhaling 0–2 (in de keten, na het planverzoek) | `9afa905a643c` | tekst A (= mn3), 3/3 |
+| compose-replay "identiek" (na een compose-verzoek) | `9afa905a643c` (**zelfde bytes**) | tekst B, 5/5; 0/5 gelijk aan A |
+
+Tekst B noemt: "De tool bevat alleen goedgekeurde afspraken voor standplaats
+DDR, geen voorkeuren van andere standplaatsen zoals [X]." De grader (bewijs:
+geen van de vier grenspatronen raakt) geeft ONBEOORDEELD. Grader ongewijzigd.
+
+### Toepassing van de beslisregel
+
+- **H7 (release/omgeving): weerlegd.** Geen actieve Lyra-toevoeging; de
+  variant `zonder-release` was niet van toepassing. De omslag in het plan na
+  234655 is hier *zonder* omgevingswijziging gereproduceerd (herhaling 0 vs 1).
+- **H8 (niet reproduceerbaar): bevestigd, rechtstreeks.** Byte-gelijke
+  verzoeken gaven verschillende uitvoer — bij het plan (twee plannen) én bij de
+  compose (A in de keten, B bij replay). Letterlijk zei de regel "replay
+  identiek geeft verschillende teksten"; binnen de vijf replays was de tekst
+  gelijk, maar afwijkend van dezelfde bytes in de keten. Het patroon wijst op
+  afhankelijkheid van het *voorafgaande* verzoek (servertoestand /
+  promptcache): na het planverzoek steeds A, na een compose-verzoek steeds B,
+  het eerste plan (na iets anders) anders dan de volgende twee. Dat mechanisme
+  is aannemelijk maar nog niet bewezen — zie v2 hieronder.
+- **H9 (presentatie): niet onderscheiden — fout in mijn diagnose.** De variant
+  `notities-apart` zocht het anker `"\n\nGebruik uitsluitend"`, maar de compose
+  filtert lege regels weg (`.filter(Boolean)`), dus dat anker bestaat niet. De
+  variant stuurde ongemerkt het originele verzoek (identieke uitvoer bevestigt
+  dat). Gerepareerd: juist anker, `null` (= overgeslagen) als het anker
+  ontbreekt, verzoekhash per variant, en een toets die de variant tegen een
+  echt compose-verzoek controleert (`tests/lyra-master/diagnose-varianten.test.ts`).
+
+Gevolg: H7 weerlegd, H8 bevestigd, H9 open. Volgens de afspraak (geen fix vóór
+H7/H8/H9 onderscheiden) is er **nog geen reparatie** gedaan.
+
+### Gevolg voor de meetmethode (zonder de stopvoorwaarden te wijzigen)
+
+Als de uitvoer afhangt van het voorafgaande verzoek, zijn drie replicaten met
+dezelfde volgorde van verzoeken geen onafhankelijke steekproeven: mn2-r1..r3 en
+mn3-r1..r3 waren elk onderling letterlijk gelijk. Een wijziging elders (een
+ander item, een andere tool-uitkomst) kan een item omzetten zonder dat aan dat
+item iets veranderde — dat past bij de omslag van M na 234655. Dit wordt hier
+alleen gemeld; de afgesproken stopvoorwaarden blijven ongewijzigd.
+
+### Diagnose v2 — vooraf vastgelegde voorspellingen
+
+Nieuwe varianten (elk met verzoek- en uitvoerhash in `volgorde`):
+`na-plan` (eerst het planverzoek, dan het compose-verzoek — de volgorde in de
+keten), `na-herladen` (model eerst uit Ollama gehaald), en `notities-apart`
+(gerepareerd, óók na het planverzoek, zodat alleen de presentatie verschilt
+van `na-plan`).
+
+- `na-plan` levert tekst A → mechanisme van H8 bewezen: de uitvoer hangt af van
+  het voorafgaande verzoek.
+- `notities-apart` noemt de grens waar `na-plan` dat niet doet (zelfde
+  voorafgaand verzoek) → H9 bevestigd; anders H9 weerlegd.
+- Reparatiekeuze (vooraf vastgelegd): omdat H8 bevestigd is, kan een
+  presentatiewijziging alleen de uitkomst niet stabiel maken — die blijft van
+  servertoestand afhangen. De reparatie wordt daarom dat het platform een door
+  de tool vastgesteld bereikfeit bij een kennisopzoeking zonder resultaat zelf,
+  deterministisch, in het antwoord zet (generiek, niet per vraag). De uitkomst
+  van H9 bepaalt alleen of daarnaast de presentatie van toolnotities verandert.
+  Openheid: zo'n vaste zin gebruikt woorden die de grader herkent; dat is geen
+  graderwijziging, maar wel precies waarom daarna drie échte replicaten nodig
+  zijn.
+
+### Incident tijdens deze analyse
+
+Bij het opruimen van een nep-rookproef verwijderde ik per ongeluk de hele map
+`benchmarks/diagnose/`, inclusief `diagnose-20260930-m`. Direct hersteld uit
+git (`git checkout --`), byte-gelijk geverifieerd (sha256 van beide bestanden
+gelijk aan HEAD); de verwijdering is nooit gecommit of gepusht.
