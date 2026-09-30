@@ -243,3 +243,44 @@ describe("regel 4 en de nieuwe contextopzoeking", () => {
     expect(correcties).toEqual([]);
   });
 });
+
+describe("voorkeuren en afspraken — kennis opzoeken, ook zonder rooster (AFTER-run 20260930-021137)", () => {
+  const MET_KENNIS = new Set([...ALLE_TOOLS, "knowledgeSearch"]);
+  const geen = { rosterCode: null, lineNumber: null };
+
+  it("een weggehaald voorstel laat geen leeg plan achter: eerst de goedgekeurde kennis", () => {
+    const v = "Bij ons is de afspraak dat je na een late dienst nooit vroeg begint. Nemen jullie die werkwijze over?";
+    const { plan: p, correcties } = bewaakPlan(plan({ intent: "OPTIMALISATIEVERZOEK", proposal: voorstel }), v, geen, MET_KENNIS);
+    expect(p.proposal).toBeUndefined();
+    expect(p.toolCalls).toEqual([{ tool: "knowledgeSearch", input: { query: v } }]);
+    expect(correcties.map((c) => c.regel)).toEqual(["VOORSTEL_ZONDER_REKENVERZOEK", "ONDERZOEK_VOOR_OORDEEL"]);
+  });
+
+  it("ook bij een plan zonder tools en zonder voorstel, en ook met een rooster maar zonder regel", () => {
+    const v = "Welke voorkeuren gelden hier voor het weekend?";
+    expect(bewaakPlan(plan({}), v, geen, MET_KENNIS).plan.toolCalls).toEqual([{ tool: "knowledgeSearch", input: { query: v } }]);
+    expect(bewaakPlan(plan({}), v, roosterCtx, MET_KENNIS).plan.toolCalls).toEqual([{ tool: "knowledgeSearch", input: { query: v } }]);
+  });
+
+  it("tegenvoorbeelden: geen voorkeursvraag, een plan dat al opzoekt, een weigering, of kennis niet toegestaan", () => {
+    expect(bewaakPlan(plan({}), "Hoe laat begint dienst 201?", geen, MET_KENNIS).plan.toolCalls).toEqual([]);
+    const opzoekend = plan({ toolCalls: [{ tool: "ruleSearch", input: { query: "rust" } }] });
+    expect(bewaakPlan(opzoekend, "Welke afspraken gelden voor rust?", geen, MET_KENNIS).plan.toolCalls).toEqual(opzoekend.toolCalls);
+    expect(bewaakPlan(plan({ refusal: "nee" }), "Pas mijn voorkeur aan in het rooster.", geen, MET_KENNIS).plan.toolCalls).toEqual([]);
+    expect(bewaakPlan(plan({}), "Welke voorkeuren gelden hier?", geen, ALLE_TOOLS).plan.toolCalls).toEqual([]);
+  });
+
+  it("met een bekende regel blijft rosterLine voorgaan (de kennisterugval vult alleen een leeg plan)", () => {
+    expect(bewaakPlan(plan({}), "Past deze regel bij mijn voorkeur?", regelCtx, MET_KENNIS).plan.toolCalls).toEqual([{ tool: "rosterLine", input: {} }]);
+  });
+});
+
+describe("de kennisterugval raakt de bevroren kern niet", () => {
+  it("geen enkele vraag uit de bevroren golden suite gaat over voorkeuren of afspraken", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { vraagtNaarKennis } = await import("@/server/agent/request-shape");
+    const suite = JSON.parse(readFileSync("docs/v1.0.6/golden-suite.json", "utf8")) as { items: { id: string; turns: { text: string }[] }[] };
+    expect(suite.items.length).toBe(43);
+    expect(suite.items.filter((i) => i.turns.some((t) => vraagtNaarKennis(t.text))).map((i) => i.id)).toEqual([]);
+  });
+});

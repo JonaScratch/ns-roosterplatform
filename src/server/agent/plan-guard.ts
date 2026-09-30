@@ -1,5 +1,5 @@
 import type { AgentPlan } from "./model/types";
-import { onderwerpTool, vraagtOmTeRekenen } from "./request-shape";
+import { onderwerpTool, vraagtNaarKennis, vraagtOmTeRekenen } from "./request-shape";
 
 /**
  * Plancontrole: twee grenzen die niet van de welwillendheid van een taalmodel
@@ -53,7 +53,9 @@ const NIET_AANRAKEN: ReadonlySet<string> = new Set(["GEWEIGERD", "REGELVRAAG", "
  * De opzoeking die bij de bekende context en het onderwerp van de vraag hoort.
  *
  * Met een bekende regel: die regel (`rosterLine`), plus de onderwerptool.
- * Met alleen een rooster: uitsluitend de onderwerptool. Een algemeen
+ * Met alleen een rooster: uitsluitend de onderwerptool. Een vraag over
+ * voorkeuren of afspraken zonder andere opzoeking: `knowledgeSearch`, ook
+ * zonder rooster. Een algemeen
  * `rosterProject` gaf daar in run 20260929-193436 geen antwoord maar wel een
  * misleidende bijzin ("223 diensten in DDR-50MIX" — dat is het hele pakket).
  * `metAlgemeen` staat dat overzicht alleen toe als noodgreep bij een
@@ -64,6 +66,9 @@ function contextOpzoeking(ctx: PlanContext, vraag: string, toegestaan: ReadonlyS
   const calls: { tool: string; input: Record<string, unknown> }[] = [];
   if (ctx.rosterCode && ctx.lineNumber && toegestaan.has("rosterLine")) calls.push({ tool: "rosterLine", input: {} });
   if (ctx.rosterCode && onderwerp && toegestaan.has(onderwerp.tool)) calls.push({ tool: onderwerp.tool, input: {} });
+  // Voorkeuren en afspraken staan in de goedgekeurde kennis, niet in een
+  // rooster: die opzoeking kan ook zonder gekozen rooster.
+  if (calls.length === 0 && vraagtNaarKennis(vraag) && toegestaan.has("knowledgeSearch")) calls.push({ tool: "knowledgeSearch", input: { query: vraag.slice(0, 300) } });
   if (calls.length === 0 && metAlgemeen && ctx.rosterCode && toegestaan.has("rosterProject")) calls.push({ tool: "rosterProject", input: {} });
   return calls;
 }
@@ -97,7 +102,7 @@ export function bewaakPlan(
   if (alleenPraten) {
     const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, false);
     if (opzoeking.length > 0) {
-      correcties.push({ regel: "ONDERZOEK_VOOR_OORDEEL", uitleg: `geen enkele tool gepland terwijl de context bekend is; eerst ${opzoeking.map((o) => o.tool).join(", ")}` });
+      correcties.push({ regel: "ONDERZOEK_VOOR_OORDEEL", uitleg: `geen enkele tool gepland terwijl er iets op te zoeken is; eerst ${opzoeking.map((o) => o.tool).join(", ")}` });
       p = { ...p, toolCalls: opzoeking };
     }
   }

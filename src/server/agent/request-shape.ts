@@ -102,6 +102,18 @@ export const ONDERWERP_TOOLS: readonly OnderwerpTool[] = [
   },
 ];
 
+/**
+ * Gaat de vraag over voorkeuren, afspraken of werkwijzen? Die staan niet in
+ * een rooster maar in de goedgekeurde kennis (`knowledgeSearch`), en die is
+ * ook zonder gekozen rooster op te zoeken. Na AFTER-run 20260930-021137: een
+ * vraag over twee standplaatsvoorkeuren kreeg, nadat de plancontrole een
+ * onterecht voorstel had weggehaald, géén enkele opzoeking — het antwoord kwam
+ * dan uit het model zelf en werd terecht tegengehouden.
+ */
+export function vraagtNaarKennis(tekst: string): boolean {
+  return /\b(voorkeur(en)?|afspra(a)?k(en)?|gewoonte(n|s)?|werkwijze(n)?|gebruik(elijk)?\s+(is|om)|werken\s+(wij|we|jullie)\s+(altijd|meestal))\b/i.test(tekst);
+}
+
 /** De tool die bij het onderwerp van deze vraag hoort, of `null`. */
 export function onderwerpTool(tekst: string): OnderwerpTool | null {
   const t = tekst.toLowerCase();
