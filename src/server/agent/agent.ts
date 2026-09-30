@@ -10,6 +10,7 @@ import { bewaakPlan, type PlanCorrectie } from "./plan-guard";
 import { gegevensTekst, grondingsMelding, ongegrondeVermeldingen } from "./grounding";
 import { afwezigheidsMelding, citaatVoorbehoud, nietCiteerbareBronnen, verzonnenAfwezigheden, vraagtOmCitaat } from "./bron-afwezigheid";
 import { begrippenIn } from "./vocabulary";
+import { verankerKennisBereik } from "./kennis-bereik";
 import { activeRuleset } from "@/server/rules-engine/ruleset/index";
 import { bronTekst } from "@/server/rules-engine/ruleset/source-text";
 import { localConfigFromEnv, localModel } from "./model/local";
@@ -441,8 +442,18 @@ ${platformContext}`);
   const naAfwezigheid: typeof ruwAntwoord =
     afwezigheden.length === 0 ? naClaims : { ...naClaims, text: afwezigheidsMelding(results, scanBronnen), status: "NIET_VAST_TE_STELLEN" };
   const voorbehoud = afwezigheden.length === 0 && vraagtOmCitaat(input.text) ? citaatVoorbehoud(scanBronnen) : null;
-  const antwoord: typeof ruwAntwoord = voorbehoud ? { ...naAfwezigheid, text: `${naAfwezigheid.text}\n\n${voorbehoud}` } : naAfwezigheid;
+  const naVoorbehoud: typeof ruwAntwoord = voorbehoud ? { ...naAfwezigheid, text: `${naAfwezigheid.text}\n\n${voorbehoud}` } : naAfwezigheid;
   if (voorbehoud) await stap("STAP", "Bronstatus toegevoegd: citaatverzoek bij een document zonder machineleesbare tekst.", { bronnen: scanBronnen });
+
+  /**
+   * Het bereik van een kennisopzoeking (kennis-bereik.ts): wat de tool
+   * aantoonbaar vaststelt over waar die kennis voor geldt, staat in het antwoord
+   * ongeacht hoe het model het formuleerde. De modeluitvoer hing bij gelijke
+   * invoer af van servertoestand (diagnose-20260930-m2); een bereikgrens mag
+   * daar niet van afhangen. Niet bij een weigering, fout of voorstel.
+   */
+  const { antwoord, zinnen: bereikZinnen } = verankerKennisBereik(naVoorbehoud, input.text, results);
+  if (bereikZinnen.length > 0) await stap("STAP", "Bereik van de kennisopzoeking toegevoegd.", { zinnen: bereikZinnen });
   if (ongedekteClaims.length > 0) {
     await stap("FOUT", `Antwoord tegengehouden: ongedekte gezagsclaim (${ongedekteClaims.map((c) => c.signaalwoord).join(", ")}).`, {
       ongedekteClaims,
@@ -485,7 +496,18 @@ ${platformContext}`);
       voorbehoud ? "APPEND" : "NVT",
       voorbehoud ? "citaatverzoek bij een bron zonder machineleesbare tekst" : vraagtOmCitaat(input.text) ? "citaatverzoek, maar geen scanbron of al tegengehouden" : "geen citaatverzoek",
       scanBronnen,
-      ...(voorbehoud ? [naAfwezigheid.text, antwoord.text] : []),
+      ...(voorbehoud ? [naAfwezigheid.text, naVoorbehoud.text] : []),
+    );
+    poort(
+      "KENNISBEREIK",
+      bereikZinnen.length > 0 ? "APPEND" : "NVT",
+      bereikZinnen.length > 0
+        ? "bereik vastgesteld door knowledgeSearch en nodig voor deze vraag"
+        : results.some((r) => r.tool === "knowledgeSearch" && r.ok)
+          ? "kennisopzoeking, maar geen afwezigheid bij een kennisvraag en geen andere standplaats genoemd"
+          : "geen geslaagde kennisopzoeking",
+      bereikZinnen,
+      ...(bereikZinnen.length > 0 ? [naVoorbehoud.text, antwoord.text] : []),
     );
     const dataUit = (antwoord.data as Record<string, unknown> | null) ?? {};
     trace.eind = {

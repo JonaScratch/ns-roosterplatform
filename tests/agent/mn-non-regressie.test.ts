@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { kennisBereikUit, verankerKennisBereik } from "@/server/agent/kennis-bereik";
 import { onderwerpTool, vraagtNaarKennis } from "@/server/agent/request-shape";
 import { AGENT_TOOLS, onbekendeKeuzes } from "@/server/agent/tools";
 
@@ -49,6 +50,29 @@ describe("kern en extensie onveranderd door de reparatie van 20260930", () => {
     });
     expect(geraakt.map(({ f, id }) => `${path.basename(path.dirname(f))}/${id}`)).toEqual([]);
     expect(zonderTool.length).toBeGreaterThan(0);
+  });
+
+  it("kennisbereik (20260930-m2): geen enkele kern- of extensiebeurt krijgt een bereikzin — tekst, en dus elk later modelverzoek, blijft gelijk", () => {
+    const kern = new Map<string, { turns: { text: string }[] }>(
+      JSON.parse(readFileSync(path.join(process.cwd(), "docs", "v1.0.6", "golden-suite.json"), "utf8")).items.map((i: { id: string }) => [i.id, i]),
+    );
+    let getoetst = 0;
+    const aangevuld: string[] = [];
+    for (const f of BESTANDEN) {
+      for (const it of JSON.parse(readFileSync(f, "utf8")).results as { id: string; turns?: (Beurt & { text: string; toolOk?: boolean[]; data?: Record<string, unknown> })[] }[]) {
+        (it.turns ?? []).forEach((t, i) => {
+          const results = (t.tools ?? []).map((tool, k) => ({ tool, ok: t.toolOk?.[k] ?? true, data: tool === "knowledgeSearch" ? t.data?.memory : null }));
+          // Extensievragen staan niet in de meting; zonder kennisopzoeking is er per definitie geen bereik.
+          const vraag = kern.get(it.id)?.turns[i]?.text ?? "";
+          if (!kern.has(it.id)) expect(kennisBereikUit(results)).toBeNull();
+          const v = verankerKennisBereik({ text: t.text, status: t.status ?? "" }, vraag, results);
+          if (v.zinnen.length > 0 || v.antwoord.text !== t.text) aangevuld.push(`${path.basename(path.dirname(f))}/${it.id}`);
+          getoetst += 1;
+        });
+      }
+    }
+    expect(getoetst).toBeGreaterThanOrEqual(6 * (46 + 22));
+    expect(aangevuld).toEqual([]);
   });
 
   it("geen enkele opgeslagen toolinvoer wordt als 'onbekende waarde' aangemerkt", () => {

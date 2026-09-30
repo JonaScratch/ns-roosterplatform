@@ -228,3 +228,90 @@ Bij het opruimen van een nep-rookproef verwijderde ik per ongeluk de hele map
 `benchmarks/diagnose/`, inclusief `diagnose-20260930-m`. Direct hersteld uit
 git (`git checkout --`), byte-gelijk geverifieerd (sha256 van beide bestanden
 gelijk aan HEAD); de verwijdering is nooit gecommit of gepusht.
+
+## 10. Diagnose v2 (`diagnose-20260930-m2`) en de reparatie
+
+### Toetsing aan de vooraf vastgelegde regel
+
+Omgeving: commit `4cb22a9`, `NO_RELEASE`, geen activaties, Ollama 0.34.4,
+agentniveau B. Compose-verzoek in beide ketenherhalingen byte-gelijk
+(`8a5ccec7b7c13317`); alle vier varianten stuurden, behalve `notities-apart`,
+exact dat verzoek (`gelijkAanOrigineelVerzoek: true`).
+
+| variant | voorafgaand verzoek | uitvoer (4×) | oordeel |
+|---|---|---|---|
+| keten, herhaling 0 en 1 | planverzoek | A | ONBEOORDEELD |
+| `identiek` | compose-verzoek | B | 4× ONBEOORDEELD |
+| `na-plan` | planverzoek | **A** (4/4 gelijk aan de keten) | 4× ONBEOORDEELD |
+| `na-herladen` | model herladen | C: "Voor andere standplaatsen, zoals [X], zijn geen voorkeuren opgenomen…" | 4× GOED |
+| `notities-apart` | planverzoek | D: "…andere standplaatsen zijn geen afspraken vastgelegd, dus deze voorkeur wordt niet…" | 4× GOED |
+
+- **H7 weerlegd** (blijft): geen releasetoevoeging.
+- **H8 bevestigd, mechanisme bewezen**: `na-plan` reproduceert de ketentekst
+  4/4; dezelfde bytes geven na een ander voorafgaand verzoek B, na herladen C.
+  De uitvoer is deterministisch *gegeven de servertoestand*, en die toestand
+  wordt door het vorige verzoek bepaald.
+- **H9 bevestigd — voor één toestand**: met hetzelfde voorafgaande verzoek
+  noemt de aparte notitiepresentatie de grens 4/4, de standaardpresentatie 0/4.
+
+### Gekozen reparatie (zoals vooraf vastgelegd voor H8)
+
+`src/server/agent/kennis-bereik.ts`, toegepast in `agent.ts` ná alle poorten
+(`verankerKennisBereik`, poort `KENNISBEREIK` in de trace). Het platform zet
+onder het antwoord wat een geslaagde `knowledgeSearch` aantoonbaar vaststelt:
+
+- **afwezigheid** — de opzoeking vond niets én de vraag vraagt naar vastgelegde
+  voorkeuren/afspraken/werkwijzen (bestaand signaal `vraagtNaarKennis`);
+- **grens** — de vraag noemt een andere bekende standplaats (op naam, uit
+  `STATIONS`; geen codes) dan waarvoor de kennis geldt. Structureel waar voor
+  élke opzoeking: `recall` (memory.ts) haalt alleen items van deze standplaats
+  plus NS-brede op.
+
+Nooit zonder geslaagde `knowledgeSearch` met `scopeLocationCode`; niet bij een
+weigering, fout of voorstel. Geen modelverzoek verandert: de toevoeging komt
+ná de compose. Grader ongewijzigd; geen itemherkenning, geen holdouttekst.
+Openheid: de grenszin volgt de bestaande toolnotitie en gebruikt woorden die
+de grader herkent — daarom zijn drie echte replicaten nodig.
+
+### Presentatie van toolnotities (H9): bewust nog niet algemeen doorgevoerd
+
+De regel zei "H9 bepaalt of daarnaast de presentatie verandert". Ik wijk hier
+bewust en zichtbaar van af, om twee redenen uit de meting zelf:
+
+1. H9 is bevestigd in één toestand, voor één item. "Betrouwbaarder" vraagt
+   meerdere toestanden; onder H8 kan een andere volgorde het omdraaien.
+2. Een generieke presentatiewijziging verandert het compose-verzoek van 17 van
+   de 46 kernbeurten en 15 van de 22 extensiebeurten (alle met `note` in de
+   toolgegevens), en — onder H8 — via de promptcache ook de beurten daarna.
+   Non-regressie op 43/43 ×3, L 15/15 en O 7/7 is dan zonder model niet te
+   bewijzen. De verankering maakt de juistheid van het bereik al onafhankelijk
+   van presentatie én toestand.
+
+Voorstel: presentatie als aparte wijziging, pas na een volledige kern- en
+extensiemeting ×3 met die wijziging. Niet in deze ronde.
+
+### Non-regressie
+
+- **Geen enkel modelverzoek verandert**: toets met een nepmodel met toestand
+  (compose-uitvoer afhankelijk van het vorige verzoek: plan / compose /
+  herladen): de verzoeken zijn in alle drie toestanden byte-gelijk, de
+  modeltekst verschilt, de bereikzinnen zijn identiek en staan in elk
+  eindantwoord (`tests/agent/kennis-bereik.test.ts`, 23 toetsen, incl.
+  standaard- en aparte presentatie, lokale scope uit de tool, en
+  tegenvoorbeelden zonder onterechte bereikzin).
+- **Kern en extensie**: in alle zes opgeslagen replicaten (234655, 021137;
+  408 beurten) krijgt geen enkele beurt een bereikzin
+  (`tests/agent/mn-non-regressie.test.ts`). Omdat ook geen modelverzoek
+  verandert, blijft de volledige verzoekreeks — en daarmee elke uitkomst —
+  gelijk: 43/43 ×3, strict/agreement, fabricatie 0/46, L 15/15, O 7/7.
+- **Adversarial** (replay over alle metingen sinds 234655): alleen M wordt
+  aangevuld; K en N–U nooit. mn3-r1..r3: M ONBEOORDEELD → GOED; 234655 blijft
+  GOED; beide diagnoses: alle ketenherhalingen GOED. M is één beurt en de
+  laatste van zijn sessie, dus de aanvulling bereikt geen later verzoek; N en
+  verder krijgen dezelfde servertoestand als voorheen.
+- **Echte keten** (askAgent, Postgres, geseede data, deterministisch
+  nepmodel): kern 43 items en adversarial 9 items vóór (`4cb22a9`) en ná de
+  reparatie: alles byte-gelijk behalve M, en M alleen door de toegevoegde
+  zinnen achter een ongewijzigde modeltekst.
+- tsc: alleen de bekende basisfouten. Volledige suite: 1445 geslaagd; alleen de
+  27 bekende OR-Tools-fouten. Holdout-lektest groen.
