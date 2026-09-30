@@ -1,11 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { onderwerpTool, vraagtNaarKennis } from "@/server/agent/request-shape";
 import { AGENT_TOOLS, onbekendeKeuzes } from "@/server/agent/tools";
 
 /**
- * Bewijs dat de reparatie van 20260930 (voorbarig "niet vast te stellen" eerst
- * laten opzoeken; een onbestaande keuzewaarde als feit benoemen) de bevroren
+ * Bewijs dat de reparaties van 20260930 (voorbarig "niet vast te stellen" of
+ * een los geheugenvoorstel eerst laten opzoeken; een onbestaande keuzewaarde
+ * als feit benoemen) de bevroren
  * kern en de extensie niet verandert. Gemeten tegen de opgeslagen toolinvoer en
  * uitkomsten van de laatste twee geldige AFTER-runs (elk drie replicaten).
  */
@@ -26,6 +28,27 @@ describe("kern en extensie onveranderd door de reparatie van 20260930", () => {
   it("geen enkele kern- of extensiebeurt eindigde in 'niet vast te stellen' zonder één tool — de verscherpte planbewaking raakt er dus geen", () => {
     const geraakt = beurten().filter(({ t }) => t.status === "NIET_VAST_TE_STELLEN" && (t.tools ?? []).length === 0 && !t.tegengehouden);
     expect(geraakt.map((g) => g.bron)).toEqual([]);
+  });
+
+  it("geheugenvoorstel-regel (20260930-mn2): elke opgeslagen beurt zonder tool heeft geen onderwerp- of kennissignaal, dus de regel kan er niets aan veranderen", () => {
+    const kern = new Map<string, { turns: { text: string }[]; context: { rosterCode?: string | null } }>(
+      JSON.parse(readFileSync(path.join(process.cwd(), "docs", "v1.0.6", "golden-suite.json"), "utf8")).items.map((i: { id: string }) => [i.id, i]),
+    );
+    const extensie = BESTANDEN.filter((f) => f.endsWith("golden-extension.json"));
+    const zonderTool = BESTANDEN.flatMap((f) =>
+      (JSON.parse(readFileSync(f, "utf8")).results as { id: string; turns?: Beurt[] }[]).flatMap((it) =>
+        (it.turns ?? []).map((t, i) => ({ f, id: it.id, i, t })).filter(({ t }) => (t.tools ?? []).length === 0),
+      ),
+    );
+    // De extensie (L, O) haalt altijd iets op.
+    expect(zonderTool.filter(({ f }) => extensie.includes(f))).toEqual([]);
+    const geraakt = zonderTool.filter(({ id, i }) => {
+      const item = kern.get(id);
+      const vraag = item?.turns[i]?.text ?? "";
+      return !item || vraagtNaarKennis(vraag) || Boolean(item.context.rosterCode && onderwerpTool(vraag));
+    });
+    expect(geraakt.map(({ f, id }) => `${path.basename(path.dirname(f))}/${id}`)).toEqual([]);
+    expect(zonderTool.length).toBeGreaterThan(0);
   });
 
   it("geen enkele opgeslagen toolinvoer wordt als 'onbekende waarde' aangemerkt", () => {

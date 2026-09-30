@@ -31,8 +31,8 @@ import { onderwerpTool, vraagtNaarKennis, vraagtOmTeRekenen } from "./request-sh
  *     zoekt eerst die context op — ook als het model wil doorvragen. Een echte
  *     wedervraag blijft staan (een onbekend begrip, een onduidelijk doel); hij
  *     wordt alleen gesteld ná het kijken, zodat de vraag gericht kan zijn.
- *     Weigeringen, "niet vast te stellen", regelvragen en geheugenvoorstellen
- *     blijven ongemoeid.
+ *     Weigeringen en regelvragen blijven ongemoeid. Bij "niet vast te stellen"
+ *     en bij een geheugenvoorstel telt alleen een onderwerpgerichte opzoeking.
  *  4. Hoort bij het onderwerp één bepaalde tool (`ONDERWERP_TOOLS`, bv.
  *     nachtreeksen → nightStructure) en ontbreekt die, dan wordt hij aangevuld.
  */
@@ -104,20 +104,32 @@ export function bewaakPlan(
   // één tool). Dan eerst opzoeken, en het voorbarige oordeel laten vallen: het
   // antwoord volgt uit wat de opzoeking oplevert. Kan er niets opgezocht
   // worden, dan blijft het oordeel staan.
+  //
+  // Een geheugenvoorstel ("zal ik dit onthouden?") is evenmin een reden om
+  // niet te kijken: het beantwoordt de vraag niet, het biedt alleen aan iets
+  // voor later vast te leggen — en wat al vastligt, blijkt pas ná de opzoeking.
+  // Adversarial-verificatie 20260930 (mn2, drie runs, en eerder m-r1..r3 en
+  // 021137): elk plan dat het opgeslagen spoor reproduceert (geen tool, alleen
+  // de voorstelcorrectie) droeg een geheugenvoorstel; zonder dat voorstel voegt
+  // deze regel de opzoeking wél toe. Het voorstel blijft staan.
+  const bijzaak = Boolean(p.cannotDetermine) || Boolean(p.memoryProposal);
   const alleenPraten =
-    p.toolCalls.length === 0 && !p.refusal && !p.proposal && !p.memoryProposal && (p.cannotDetermine ? p.intent !== "GEWEIGERD" && p.intent !== "REGELVRAAG" : !NIET_AANRAKEN.has(p.intent));
+    p.toolCalls.length === 0 && !p.refusal && !p.proposal && (bijzaak ? p.intent !== "GEWEIGERD" && p.intent !== "REGELVRAAG" : !NIET_AANRAKEN.has(p.intent));
   if (alleenPraten) {
-    // Bij "niet vast te stellen" telt alleen een opzoeking die over het
-    // onderwerp van de vraag gaat: een algemene roosterregel bewijst niets
-    // over bijvoorbeeld een solverkeuze, en dan blijft het oordeel staan.
-    const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, false, Boolean(p.cannotDetermine));
+    // Bij "niet vast te stellen" of een geheugenvoorstel telt alleen een
+    // opzoeking die over het onderwerp van de vraag gaat: een algemene
+    // roosterregel bewijst niets over bijvoorbeeld een solverkeuze, en dan
+    // blijft het plan zoals het was.
+    const opzoeking = contextOpzoeking(ctx, vraag, toegestaan, false, bijzaak);
     if (opzoeking.length > 0) {
       const voorbarig = Boolean(p.cannotDetermine);
       correcties.push({
         regel: "ONDERZOEK_VOOR_OORDEEL",
         uitleg: voorbarig
           ? `"niet vast te stellen" zonder één opzoeking; eerst ${opzoeking.map((o) => o.tool).join(", ")}`
-          : `geen enkele tool gepland terwijl er iets op te zoeken is; eerst ${opzoeking.map((o) => o.tool).join(", ")}`,
+          : p.memoryProposal
+            ? `alleen een geheugenvoorstel, zonder één opzoeking; eerst ${opzoeking.map((o) => o.tool).join(", ")}`
+            : `geen enkele tool gepland terwijl er iets op te zoeken is; eerst ${opzoeking.map((o) => o.tool).join(", ")}`,
       });
       const { cannotDetermine: _voorbarig, ...rest } = p;
       p = { ...(voorbarig ? rest : p), toolCalls: opzoeking, ...(voorbarig ? { intent: p.intent === "NIET_VAST_TE_STELLEN" ? "ROOSTERVRAAG" : p.intent } : {}) };
