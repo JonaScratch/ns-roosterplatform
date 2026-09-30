@@ -1,0 +1,75 @@
+{
+  "schema": "ns-lyra-long-run-verification/1",
+  "runId": "DR-UI-20260930165141-d5a8",
+  "status": "PASS",
+  "controles": [
+    {
+      "naam": "minstens twee gemeten cycli",
+      "ok": true,
+      "detail": "16 gemeten van 17"
+    },
+    {
+      "naam": "elke gemeten cyclus doorliep alle stappen",
+      "ok": true,
+      "detail": "16 volledige cycli"
+    },
+    {
+      "naam": "een echt taalmodel deed de metingen",
+      "ok": true,
+      "detail": "486/486 items door lokaal:qwen3:8b, lokaal:qwen3:8b:variant; eindpunt: qwen3:8b @ ollama 0.34.4"
+    },
+    {
+      "naam": "onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel",
+      "ok": true,
+      "detail": "ja, in 16 cycli"
+    },
+    {
+      "naam": "elke cyclus leerde van de vorige",
+      "ok": true,
+      "detail": "elke volgende keuze steunde op de vorige les; geen verworpen strategie herhaald"
+    },
+    {
+      "naam": "productie onaangeroerd (geen autonome activatie)",
+      "ok": true,
+      "detail": "lyra-prod-baseline (generatie 0) → lyra-prod-baseline (generatie 0)"
+    },
+    {
+      "naam": "geldige stopreden",
+      "ok": true,
+      "detail": "DONE · ALLES_GEPROBEERD"
+    },
+    {
+      "naam": "canoniek checkpoint (verkenningsbudget en omgevingsvingerafdruk)",
+      "ok": true,
+      "detail": "6h (360 min), 1 segment(en), commit 51292c452d"
+    },
+    {
+      "naam": "lokale uitputting beëindigde de run niet",
+      "ok": true,
+      "detail": "geen zwakte lokaal uitgeput"
+    }
+  ],
+  "samenvatting": {
+    "cycli": 17,
+    "volledigeCycli": 16,
+    "verdicts": {
+      "REJECT": 16
+    },
+    "dimensies": [
+      "contextResolution",
+      "multiTurnContext",
+      "toolChoice",
+      "grounding",
+      "falsePremiseCorrection",
+      "causalClaims"
+    ],
+    "strategieen": [
+      "WAAROM",
+      "REGEL",
+      "ZELFCONTROLE"
+    ],
+    "actieveMinuten": 131.5,
+    "stopReden": "ALLES_GEPROBEERD"
+  },
+  "verifiedAt": "2026-09-30T21:48:50.143Z"
+}

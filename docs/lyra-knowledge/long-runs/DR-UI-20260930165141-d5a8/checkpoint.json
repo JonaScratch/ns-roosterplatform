@@ -1,0 +1,3467 @@
+{
+  "schema": "ns-lyra-long-run/1",
+  "runId": "DR-UI-20260930165141-d5a8",
+  "profiel": "6h",
+  "budgetMinuten": 360,
+  "status": "DONE",
+  "stopReden": "ALLES_GEPROBEERD",
+  "aangemaaktOp": "2026-09-30T16:51:42.073Z",
+  "bijgewerktOp": "2026-09-30T19:03:13.963Z",
+  "actieveMs": 7891502,
+  "segmenten": 1,
+  "cycli": [
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-contextResolution-waarom-1",
+      "dimensie": "contextResolution",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T16:52:45.387Z",
+          "detail": "contextResolution (0.0%) is de zwakste gemeten dimensie; 2 eerdere poging(en) meegewogen.",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "contextResolution",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 2
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T16:52:45.387Z",
+          "detail": "REGEL, ZELFCONTROLE verworpen voor contextResolution; nu WAAROM.",
+          "bewijs": {
+            "dimensie": "contextResolution",
+            "strategie": "WAAROM",
+            "meerReplicaten": false,
+            "lesIds": [
+              "1269c8db-b56b-41b7-a35b-af5478d191e2",
+              "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T16:52:45.387Z",
+          "detail": "experiment-contextResolution-waarom-1: Gegenereerde kandidaat — contextResolution (WAAROM)",
+          "bewijs": {
+            "candidateId": "experiment-contextResolution-waarom-1",
+            "strategie": "WAAROM",
+            "tekstLengte": 475
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T16:52:45.391Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T16:57:40.392Z",
+          "detail": "proof-of-value 8e3b1369-d294-4b33-bfe1-77559b7bbede: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "8e3b1369-d294-4b33-bfe1-77559b7bbede",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T16:57:40.392Z",
+          "detail": "contextResolution: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "holdout grounding: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T16:57:40.392Z",
+          "detail": "holdout 50.0 → 33.3",
+          "bewijs": {
+            "holdout": {
+              "basis": 50,
+              "kandidaat": 33.333333333333336
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:01:41.342Z",
+          "detail": "adversarial 67% → 67%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 66.66666666666666
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:01:41.345Z",
+          "detail": "judge/2: REJECT — holdout 33.3 tegen 50.0: meer dan 5pp slechter",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:01:41.347Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:01:41.348Z",
+          "detail": "les vastgelegd: contextResolution/WAAROM → REJECT",
+          "bewijs": {
+            "lesId": "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b"
+      ],
+      "strategie": "WAAROM",
+      "familie": "CONTEXT_POLICY",
+      "overgeslagen": [],
+      "model": "qwen3:8b",
+      "nr": 1,
+      "klaarOp": "2026-09-30T17:01:41.349Z",
+      "duurMs": 599063,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-multiTurnContext-2",
+      "dimensie": "multiTurnContext",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:02:44.361Z",
+          "detail": "multiTurnContext (0.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "multiTurnContext",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 0,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 3
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:02:44.362Z",
+          "detail": "eerste poging op multiTurnContext: REGEL.",
+          "bewijs": {
+            "dimensie": "multiTurnContext",
+            "strategie": "REGEL",
+            "meerReplicaten": false,
+            "lesIds": []
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:02:44.362Z",
+          "detail": "experiment-multiTurnContext-2: Gegenereerde kandidaat — multiTurnContext (REGEL)",
+          "bewijs": {
+            "candidateId": "experiment-multiTurnContext-2",
+            "strategie": "REGEL",
+            "tekstLengte": 295
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:02:44.365Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:08:12.879Z",
+          "detail": "proof-of-value 5f1be795-3288-477e-beb0-21f7b3c4b72c: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "5f1be795-3288-477e-beb0-21f7b3c4b72c",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:08:12.879Z",
+          "detail": "multiTurnContext: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "holdout falsePremiseCorrection: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:08:12.879Z",
+          "detail": "holdout 50.0 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 50,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:10:43.785Z",
+          "detail": "adversarial 67% → 67%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 66.66666666666666
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:10:43.788Z",
+          "detail": "judge/2: REJECT — multiTurnContext 0.0pp: geen verbetering op wat de kandidaat beweert te verbeteren",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:10:43.788Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:10:43.789Z",
+          "detail": "les vastgelegd: multiTurnContext/REGEL → REJECT",
+          "bewijs": {
+            "lesId": "8b8880fa-6cae-417b-bb58-1339c8044262",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "8b8880fa-6cae-417b-bb58-1339c8044262",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b"
+      ],
+      "strategie": "REGEL",
+      "familie": "CONTEXT_POLICY",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 2,
+      "klaarOp": "2026-09-30T17:10:43.789Z",
+      "duurMs": 542429,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "ZWAKTE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-multiTurnContext-zelfcontrole-3",
+      "dimensie": "multiTurnContext",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:11:54.180Z",
+          "detail": "multiTurnContext (0.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "multiTurnContext",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 4
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:11:54.181Z",
+          "detail": "REGEL verworpen voor multiTurnContext; nu ZELFCONTROLE.",
+          "bewijs": {
+            "dimensie": "multiTurnContext",
+            "strategie": "ZELFCONTROLE",
+            "meerReplicaten": false,
+            "lesIds": [
+              "8b8880fa-6cae-417b-bb58-1339c8044262"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:11:54.181Z",
+          "detail": "experiment-multiTurnContext-zelfcontrole-3: Gegenereerde kandidaat — multiTurnContext (ZELFCONTROLE)",
+          "bewijs": {
+            "candidateId": "experiment-multiTurnContext-zelfcontrole-3",
+            "strategie": "ZELFCONTROLE",
+            "tekstLengte": 399
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:11:54.186Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:17:46.676Z",
+          "detail": "proof-of-value 29976ab3-3300-47cf-867d-29b3430974c4: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "29976ab3-3300-47cf-867d-29b3430974c4",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:17:46.676Z",
+          "detail": "multiTurnContext: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:17:46.676Z",
+          "detail": "holdout 50.0 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 50,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:19:46.135Z",
+          "detail": "adversarial 67% → 67%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 66.66666666666666
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:19:46.140Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-50.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:19:46.141Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:19:46.142Z",
+          "detail": "les vastgelegd: multiTurnContext/ZELFCONTROLE → REJECT",
+          "bewijs": {
+            "lesId": "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262"
+      ],
+      "strategie": "ZELFCONTROLE",
+      "familie": "CONTEXT_POLICY",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 3,
+      "klaarOp": "2026-09-30T17:19:46.143Z",
+      "duurMs": 542347,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-multiTurnContext-waarom-4",
+      "dimensie": "multiTurnContext",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:20:51.390Z",
+          "detail": "multiTurnContext (0.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "multiTurnContext",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 5
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:20:51.390Z",
+          "detail": "REGEL, ZELFCONTROLE verworpen voor multiTurnContext; nu WAAROM.",
+          "bewijs": {
+            "dimensie": "multiTurnContext",
+            "strategie": "WAAROM",
+            "meerReplicaten": false,
+            "lesIds": [
+              "8b8880fa-6cae-417b-bb58-1339c8044262",
+              "27096da6-4bd8-457c-b10a-fb4dceee2ba8"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:20:51.390Z",
+          "detail": "experiment-multiTurnContext-waarom-4: Gegenereerde kandidaat — multiTurnContext (WAAROM)",
+          "bewijs": {
+            "candidateId": "experiment-multiTurnContext-waarom-4",
+            "strategie": "WAAROM",
+            "tekstLengte": 469
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:20:51.394Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:25:59.552Z",
+          "detail": "proof-of-value 9cdd6670-4d50-46f6-9acb-8a461c744fa3: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "9cdd6670-4d50-46f6-9acb-8a461c744fa3",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:25:59.552Z",
+          "detail": "multiTurnContext: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:25:59.552Z",
+          "detail": "holdout 50.0 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 50,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:28:07.800Z",
+          "detail": "adversarial 67% → 89%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 88.88888888888889
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:28:07.802Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:28:07.803Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:28:07.803Z",
+          "detail": "les vastgelegd: multiTurnContext/WAAROM → REJECT",
+          "bewijs": {
+            "lesId": "ebc60a31-74b9-47b0-a681-ca2334698187",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "ebc60a31-74b9-47b0-a681-ca2334698187",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8"
+      ],
+      "strategie": "WAAROM",
+      "familie": "CONTEXT_POLICY",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 4,
+      "klaarOp": "2026-09-30T17:28:07.804Z",
+      "duurMs": 501650,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-toolChoice-5",
+      "dimensie": "toolChoice",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:29:10.185Z",
+          "detail": "toolChoice (0.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "toolChoice",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 6
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:29:10.186Z",
+          "detail": "eerste poging op toolChoice: REGEL.",
+          "bewijs": {
+            "dimensie": "toolChoice",
+            "strategie": "REGEL",
+            "meerReplicaten": false,
+            "lesIds": []
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:29:10.186Z",
+          "detail": "experiment-toolChoice-5: Gegenereerde kandidaat — toolChoice (REGEL)",
+          "bewijs": {
+            "candidateId": "experiment-toolChoice-5",
+            "strategie": "REGEL",
+            "tekstLengte": 228
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:29:10.189Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:34:10.941Z",
+          "detail": "proof-of-value 71932400-3fce-4ebe-bca1-e55d9e022a93: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "71932400-3fce-4ebe-bca1-e55d9e022a93",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:34:10.941Z",
+          "detail": "toolChoice: Δ +0.0pp; regressies: 2",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)",
+              "holdout grounding: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:34:10.941Z",
+          "detail": "holdout 50.0 → 33.3",
+          "bewijs": {
+            "holdout": {
+              "basis": 50,
+              "kandidaat": 33.333333333333336
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:36:20.634Z",
+          "detail": "adversarial 67% → 89%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 88.88888888888889
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:36:20.637Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:36:20.639Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:36:20.639Z",
+          "detail": "les vastgelegd: toolChoice/REGEL → REJECT",
+          "bewijs": {
+            "lesId": "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187"
+      ],
+      "strategie": "REGEL",
+      "familie": "TOOL_ROUTING",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 5,
+      "klaarOp": "2026-09-30T17:36:20.641Z",
+      "duurMs": 492832,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "ZWAKTE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-toolChoice-zelfcontrole-6",
+      "dimensie": "toolChoice",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:37:22.461Z",
+          "detail": "toolChoice (0.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "toolChoice",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 7
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:37:22.462Z",
+          "detail": "REGEL verworpen voor toolChoice; nu ZELFCONTROLE.",
+          "bewijs": {
+            "dimensie": "toolChoice",
+            "strategie": "ZELFCONTROLE",
+            "meerReplicaten": false,
+            "lesIds": [
+              "92c577fd-5e04-4174-a3a4-f0d04f97e660"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:37:22.462Z",
+          "detail": "experiment-toolChoice-zelfcontrole-6: Gegenereerde kandidaat — toolChoice (ZELFCONTROLE)",
+          "bewijs": {
+            "candidateId": "experiment-toolChoice-zelfcontrole-6",
+            "strategie": "ZELFCONTROLE",
+            "tekstLengte": 332
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:37:22.469Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:42:17.591Z",
+          "detail": "proof-of-value e5c9fde0-62fe-4153-bfac-a2c79d157d36: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "e5c9fde0-62fe-4153-bfac-a2c79d157d36",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:42:17.592Z",
+          "detail": "toolChoice: Δ +50.0pp; regressies: 2",
+          "bewijs": {
+            "deltaDoel": 50,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)",
+              "holdout grounding: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:42:17.592Z",
+          "detail": "holdout 33.3 → 33.3",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 33.333333333333336
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:44:14.970Z",
+          "detail": "adversarial 67% → 78%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 77.77777777777779
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:44:14.972Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:44:14.973Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:44:14.973Z",
+          "detail": "les vastgelegd: toolChoice/ZELFCONTROLE → REJECT",
+          "bewijs": {
+            "lesId": "9ebc9beb-6949-47c3-be04-61458fd92b55",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "9ebc9beb-6949-47c3-be04-61458fd92b55",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660"
+      ],
+      "strategie": "ZELFCONTROLE",
+      "familie": "TOOL_ROUTING",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 6,
+      "klaarOp": "2026-09-30T17:44:14.974Z",
+      "duurMs": 474324,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-toolChoice-waarom-7",
+      "dimensie": "toolChoice",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:45:14.779Z",
+          "detail": "toolChoice (0.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "toolChoice",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 8
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:45:14.780Z",
+          "detail": "REGEL, ZELFCONTROLE verworpen voor toolChoice; nu WAAROM.",
+          "bewijs": {
+            "dimensie": "toolChoice",
+            "strategie": "WAAROM",
+            "meerReplicaten": false,
+            "lesIds": [
+              "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+              "9ebc9beb-6949-47c3-be04-61458fd92b55"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:45:14.780Z",
+          "detail": "experiment-toolChoice-waarom-7: Gegenereerde kandidaat — toolChoice (WAAROM)",
+          "bewijs": {
+            "candidateId": "experiment-toolChoice-waarom-7",
+            "strategie": "WAAROM",
+            "tekstLengte": 402
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:45:14.788Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:50:16.457Z",
+          "detail": "proof-of-value 824336c8-8ce4-4580-a30c-26b3ac6f18bc: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "824336c8-8ce4-4580-a30c-26b3ac6f18bc",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:50:16.457Z",
+          "detail": "toolChoice: Δ +0.0pp; regressies: 2",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)",
+              "holdout grounding: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:50:16.457Z",
+          "detail": "holdout 33.3 → 33.3",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 33.333333333333336
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T17:52:13.515Z",
+          "detail": "adversarial 67% → 56%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 55.55555555555556
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T17:52:13.519Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-50.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T17:52:13.521Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T17:52:13.521Z",
+          "detail": "les vastgelegd: toolChoice/WAAROM → REJECT",
+          "bewijs": {
+            "lesId": "85c350f1-e2d4-43ab-9486-59562ac07922",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "85c350f1-e2d4-43ab-9486-59562ac07922",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55"
+      ],
+      "strategie": "WAAROM",
+      "familie": "TOOL_ROUTING",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 7,
+      "klaarOp": "2026-09-30T17:52:13.522Z",
+      "duurMs": 478544,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-grounding-8",
+      "dimensie": "grounding",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T17:53:13.451Z",
+          "detail": "grounding (50.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "grounding",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 9
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T17:53:13.452Z",
+          "detail": "eerste poging op grounding: REGEL.",
+          "bewijs": {
+            "dimensie": "grounding",
+            "strategie": "REGEL",
+            "meerReplicaten": false,
+            "lesIds": []
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T17:53:13.452Z",
+          "detail": "experiment-grounding-8: Gegenereerde kandidaat — grounding (REGEL)",
+          "bewijs": {
+            "candidateId": "experiment-grounding-8",
+            "strategie": "REGEL",
+            "tekstLengte": 277
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T17:53:13.459Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T17:58:14.592Z",
+          "detail": "proof-of-value de5bd6e9-c006-4170-883d-decd93f3470a: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "de5bd6e9-c006-4170-883d-decd93f3470a",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T17:58:14.592Z",
+          "detail": "grounding: Δ +50.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 50,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T17:58:14.592Z",
+          "detail": "holdout 33.3 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:00:22.066Z",
+          "detail": "adversarial 67% → 67%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 66.66666666666666
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:00:22.068Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:00:22.069Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:00:22.070Z",
+          "detail": "les vastgelegd: grounding/REGEL → REJECT",
+          "bewijs": {
+            "lesId": "f1598a07-8201-41f4-bb91-da27d77561e6",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "f1598a07-8201-41f4-bb91-da27d77561e6",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922"
+      ],
+      "strategie": "REGEL",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 8,
+      "klaarOp": "2026-09-30T18:00:22.070Z",
+      "duurMs": 488536,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "ZWAKTE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-grounding-zelfcontrole-9",
+      "dimensie": "grounding",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:01:21.775Z",
+          "detail": "grounding (50.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "grounding",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 10
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:01:21.776Z",
+          "detail": "REGEL verworpen voor grounding; nu ZELFCONTROLE.",
+          "bewijs": {
+            "dimensie": "grounding",
+            "strategie": "ZELFCONTROLE",
+            "meerReplicaten": false,
+            "lesIds": [
+              "f1598a07-8201-41f4-bb91-da27d77561e6"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:01:21.776Z",
+          "detail": "experiment-grounding-zelfcontrole-9: Gegenereerde kandidaat — grounding (ZELFCONTROLE)",
+          "bewijs": {
+            "candidateId": "experiment-grounding-zelfcontrole-9",
+            "strategie": "ZELFCONTROLE",
+            "tekstLengte": 381
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:01:21.778Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:05:59.375Z",
+          "detail": "proof-of-value 2e13dd61-dc75-4f9d-9789-e1be006b3b3a: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "2e13dd61-dc75-4f9d-9789-e1be006b3b3a",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:05:59.375Z",
+          "detail": "grounding: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:05:59.375Z",
+          "detail": "holdout 33.3 → 33.3",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 33.333333333333336
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:07:45.209Z",
+          "detail": "adversarial 67% → 89%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 88.88888888888889
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:07:45.211Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:07:45.211Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:07:45.212Z",
+          "detail": "les vastgelegd: grounding/ZELFCONTROLE → REJECT",
+          "bewijs": {
+            "lesId": "37e44365-5e27-499a-afe8-de8c48d8bc64",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "37e44365-5e27-499a-afe8-de8c48d8bc64",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6"
+      ],
+      "strategie": "ZELFCONTROLE",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 9,
+      "klaarOp": "2026-09-30T18:07:45.212Z",
+      "duurMs": 443135,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-grounding-waarom-10",
+      "dimensie": "grounding",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:08:46.438Z",
+          "detail": "grounding (50.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "grounding",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 11
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:08:46.438Z",
+          "detail": "REGEL, ZELFCONTROLE verworpen voor grounding; nu WAAROM.",
+          "bewijs": {
+            "dimensie": "grounding",
+            "strategie": "WAAROM",
+            "meerReplicaten": false,
+            "lesIds": [
+              "f1598a07-8201-41f4-bb91-da27d77561e6",
+              "37e44365-5e27-499a-afe8-de8c48d8bc64"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:08:46.438Z",
+          "detail": "experiment-grounding-waarom-10: Gegenereerde kandidaat — grounding (WAAROM)",
+          "bewijs": {
+            "candidateId": "experiment-grounding-waarom-10",
+            "strategie": "WAAROM",
+            "tekstLengte": 451
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:08:46.442Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:13:22.691Z",
+          "detail": "proof-of-value b4b9d51b-6eab-4792-b74f-cb21a54a52ce: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "b4b9d51b-6eab-4792-b74f-cb21a54a52ce",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:13:22.691Z",
+          "detail": "grounding: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:13:22.691Z",
+          "detail": "holdout 33.3 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:15:29.773Z",
+          "detail": "adversarial 67% → 56%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 55.55555555555556
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:15:29.776Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:15:29.778Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:15:29.780Z",
+          "detail": "les vastgelegd: grounding/WAAROM → REJECT",
+          "bewijs": {
+            "lesId": "5fcdaf86-be90-48ab-af36-11567b744c72",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "5fcdaf86-be90-48ab-af36-11567b744c72",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64"
+      ],
+      "strategie": "WAAROM",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 10,
+      "klaarOp": "2026-09-30T18:15:29.782Z",
+      "duurMs": 464562,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-falsePremiseCorrection-11",
+      "dimensie": "falsePremiseCorrection",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:16:29.554Z",
+          "detail": "falsePremiseCorrection (100.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen), grounding (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "falsePremiseCorrection",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 12
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:16:29.554Z",
+          "detail": "eerste poging op falsePremiseCorrection: REGEL.",
+          "bewijs": {
+            "dimensie": "falsePremiseCorrection",
+            "strategie": "REGEL",
+            "meerReplicaten": false,
+            "lesIds": []
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:16:29.554Z",
+          "detail": "experiment-falsePremiseCorrection-11: Gegenereerde kandidaat — falsePremiseCorrection (REGEL)",
+          "bewijs": {
+            "candidateId": "experiment-falsePremiseCorrection-11",
+            "strategie": "REGEL",
+            "tekstLengte": 299
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:16:29.556Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:21:07.151Z",
+          "detail": "proof-of-value f94c5ee1-82c3-4172-979a-04ba44fba267: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "f94c5ee1-82c3-4172-979a-04ba44fba267",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:21:07.151Z",
+          "detail": "falsePremiseCorrection: Δ -100.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": -100,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:21:07.151Z",
+          "detail": "holdout 33.3 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:22:43.146Z",
+          "detail": "adversarial 67% → 78%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 77.77777777777779
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:22:43.149Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:22:43.150Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:22:43.150Z",
+          "detail": "les vastgelegd: falsePremiseCorrection/REGEL → REJECT",
+          "bewijs": {
+            "lesId": "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72"
+      ],
+      "strategie": "REGEL",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "grounding",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 11,
+      "klaarOp": "2026-09-30T18:22:43.151Z",
+      "duurMs": 433355,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "ZWAKTE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-falsePremiseCorrection-zelfcontrole-12",
+      "dimensie": "falsePremiseCorrection",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:23:43.538Z",
+          "detail": "falsePremiseCorrection (100.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen), grounding (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "falsePremiseCorrection",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 13
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:23:43.538Z",
+          "detail": "REGEL verworpen voor falsePremiseCorrection; nu ZELFCONTROLE.",
+          "bewijs": {
+            "dimensie": "falsePremiseCorrection",
+            "strategie": "ZELFCONTROLE",
+            "meerReplicaten": false,
+            "lesIds": [
+              "e80c492d-fefc-423c-b4c0-33ccd5629fb4"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:23:43.538Z",
+          "detail": "experiment-falsePremiseCorrection-zelfcontrole-12: Gegenereerde kandidaat — falsePremiseCorrection (ZELFCONTROLE)",
+          "bewijs": {
+            "candidateId": "experiment-falsePremiseCorrection-zelfcontrole-12",
+            "strategie": "ZELFCONTROLE",
+            "tekstLengte": 403
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:23:43.542Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:28:52.060Z",
+          "detail": "proof-of-value 6ce25e03-a028-4c11-a74f-8da9033acd4a: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "6ce25e03-a028-4c11-a74f-8da9033acd4a",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:28:52.060Z",
+          "detail": "falsePremiseCorrection: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "holdout grounding: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:28:52.060Z",
+          "detail": "holdout 33.3 → 33.3",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 33.333333333333336
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:30:52.287Z",
+          "detail": "adversarial 67% → 67%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 66.66666666666666
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:30:52.289Z",
+          "detail": "judge/2: REJECT — falsePremiseCorrection 0.0pp: geen verbetering op wat de kandidaat beweert te verbeteren",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:30:52.290Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:30:52.290Z",
+          "detail": "les vastgelegd: falsePremiseCorrection/ZELFCONTROLE → REJECT",
+          "bewijs": {
+            "lesId": "d80d2cba-2342-4225-ab33-9cfaf966f4f0",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "d80d2cba-2342-4225-ab33-9cfaf966f4f0",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72",
+        "e80c492d-fefc-423c-b4c0-33ccd5629fb4"
+      ],
+      "strategie": "ZELFCONTROLE",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "grounding",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 12,
+      "klaarOp": "2026-09-30T18:30:52.292Z",
+      "duurMs": 489135,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-falsePremiseCorrection-waarom-13",
+      "dimensie": "falsePremiseCorrection",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:31:53.733Z",
+          "detail": "falsePremiseCorrection (100.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen), grounding (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "falsePremiseCorrection",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 14
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:31:53.734Z",
+          "detail": "REGEL, ZELFCONTROLE verworpen voor falsePremiseCorrection; nu WAAROM.",
+          "bewijs": {
+            "dimensie": "falsePremiseCorrection",
+            "strategie": "WAAROM",
+            "meerReplicaten": false,
+            "lesIds": [
+              "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+              "d80d2cba-2342-4225-ab33-9cfaf966f4f0"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:31:53.734Z",
+          "detail": "experiment-falsePremiseCorrection-waarom-13: Gegenereerde kandidaat — falsePremiseCorrection (WAAROM)",
+          "bewijs": {
+            "candidateId": "experiment-falsePremiseCorrection-waarom-13",
+            "strategie": "WAAROM",
+            "tekstLengte": 473
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:31:53.741Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:37:06.364Z",
+          "detail": "proof-of-value c67192e0-b9a3-4053-8870-72bd1c56ac54: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "c67192e0-b9a3-4053-8870-72bd1c56ac54",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:37:06.364Z",
+          "detail": "falsePremiseCorrection: Δ -100.0pp; regressies: 2",
+          "bewijs": {
+            "deltaDoel": -100,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)",
+              "holdout falsePremiseCorrection: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:37:06.364Z",
+          "detail": "holdout 50.0 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 50,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:39:12.475Z",
+          "detail": "adversarial 67% → 67%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 66.66666666666666
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:39:12.481Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:39:12.482Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:39:12.483Z",
+          "detail": "les vastgelegd: falsePremiseCorrection/WAAROM → REJECT",
+          "bewijs": {
+            "lesId": "a68d3212-de40-457d-8f6c-8bb5326a01fe",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "a68d3212-de40-457d-8f6c-8bb5326a01fe",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72",
+        "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+        "d80d2cba-2342-4225-ab33-9cfaf966f4f0"
+      ],
+      "strategie": "WAAROM",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "grounding",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 13,
+      "klaarOp": "2026-09-30T18:39:12.484Z",
+      "duurMs": 500179,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "KEEP_TESTING",
+      "kandidaatId": "experiment-causalClaims-14",
+      "dimensie": "causalClaims",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:40:13.842Z",
+          "detail": "causalClaims (100.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen), grounding (alle strategieën verworpen), falsePremiseCorrection (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "causalClaims",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 15
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:40:13.842Z",
+          "detail": "eerste poging op causalClaims: REGEL.",
+          "bewijs": {
+            "dimensie": "causalClaims",
+            "strategie": "REGEL",
+            "meerReplicaten": false,
+            "lesIds": []
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:40:13.843Z",
+          "detail": "experiment-causalClaims-14: Gegenereerde kandidaat — causalClaims (REGEL)",
+          "bewijs": {
+            "candidateId": "experiment-causalClaims-14",
+            "strategie": "REGEL",
+            "tekstLengte": 287
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:40:13.849Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:45:14.099Z",
+          "detail": "proof-of-value efdccfbd-f1c2-420f-9aa3-f4e9f8e52ddd: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "efdccfbd-f1c2-420f-9aa3-f4e9f8e52ddd",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:45:14.099Z",
+          "detail": "causalClaims: Δ +0.0pp; regressies: 0",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": []
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:45:14.099Z",
+          "detail": "holdout 33.3 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:47:14.057Z",
+          "detail": "adversarial 67% → 78%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 77.77777777777779
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:47:14.060Z",
+          "detail": "judge/2: REJECT — causalClaims 0.0pp: geen verbetering op wat de kandidaat beweert te verbeteren",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:47:14.061Z",
+          "detail": "KEEP_TESTING",
+          "bewijs": {
+            "decision": "KEEP_TESTING",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:47:14.062Z",
+          "detail": "les vastgelegd: causalClaims/REGEL → REJECT",
+          "bewijs": {
+            "lesId": "46975936-ebb4-4286-9631-ad5f891138fb",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "46975936-ebb4-4286-9631-ad5f891138fb",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72",
+        "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+        "d80d2cba-2342-4225-ab33-9cfaf966f4f0",
+        "a68d3212-de40-457d-8f6c-8bb5326a01fe"
+      ],
+      "strategie": "REGEL",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "grounding",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "falsePremiseCorrection",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 14,
+      "klaarOp": "2026-09-30T18:47:14.063Z",
+      "duurMs": 481558,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "ZWAKTE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-causalClaims-zelfcontrole-15",
+      "dimensie": "causalClaims",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:48:14.399Z",
+          "detail": "causalClaims (100.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen), grounding (alle strategieën verworpen), falsePremiseCorrection (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "causalClaims",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 16
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:48:14.400Z",
+          "detail": "REGEL verworpen voor causalClaims; nu ZELFCONTROLE.",
+          "bewijs": {
+            "dimensie": "causalClaims",
+            "strategie": "ZELFCONTROLE",
+            "meerReplicaten": false,
+            "lesIds": [
+              "46975936-ebb4-4286-9631-ad5f891138fb"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:48:14.400Z",
+          "detail": "experiment-causalClaims-zelfcontrole-15: Gegenereerde kandidaat — causalClaims (ZELFCONTROLE)",
+          "bewijs": {
+            "candidateId": "experiment-causalClaims-zelfcontrole-15",
+            "strategie": "ZELFCONTROLE",
+            "tekstLengte": 391
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:48:14.406Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T18:52:49.586Z",
+          "detail": "proof-of-value 127baafd-2412-4f0a-bb7f-0ee81979b894: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "127baafd-2412-4f0a-bb7f-0ee81979b894",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T18:52:49.587Z",
+          "detail": "causalClaims: Δ +0.0pp; regressies: 1",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T18:52:49.587Z",
+          "detail": "holdout 33.3 → 50.0",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 50
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T18:54:33.637Z",
+          "detail": "adversarial 67% → 89%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 88.88888888888889
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T18:54:33.639Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-100.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T18:54:33.640Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T18:54:33.640Z",
+          "detail": "les vastgelegd: causalClaims/ZELFCONTROLE → REJECT",
+          "bewijs": {
+            "lesId": "abd6b448-1636-4099-98bc-7bd0f641cada",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "abd6b448-1636-4099-98bc-7bd0f641cada",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72",
+        "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+        "d80d2cba-2342-4225-ab33-9cfaf966f4f0",
+        "a68d3212-de40-457d-8f6c-8bb5326a01fe",
+        "46975936-ebb4-4286-9631-ad5f891138fb"
+      ],
+      "strategie": "ZELFCONTROLE",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "grounding",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "falsePremiseCorrection",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 15,
+      "klaarOp": "2026-09-30T18:54:33.640Z",
+      "duurMs": 439561,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "REJECTED",
+      "kandidaatId": "experiment-causalClaims-waarom-16",
+      "dimensie": "causalClaims",
+      "versieId": null,
+      "verdict": "REJECT",
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T18:55:34.898Z",
+          "detail": "causalClaims (100.0%) is de zwakste dimensie die nog open staat; overgeslagen: contextResolution (alle strategieën verworpen), multiTurnContext (alle strategieën verworpen), toolChoice (alle strategieën verworpen), grounding (alle strategieën verworpen), falsePremiseCorrection (alle strategieën verworpen).",
+          "bewijs": {
+            "gemetenZwakste": "contextResolution",
+            "gekozen": "causalClaims",
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            },
+            "lessenGewogen": 17
+          }
+        },
+        {
+          "naam": "HYPOTHESE",
+          "status": "OK",
+          "at": "2026-09-30T18:55:34.899Z",
+          "detail": "REGEL, ZELFCONTROLE verworpen voor causalClaims; nu WAAROM.",
+          "bewijs": {
+            "dimensie": "causalClaims",
+            "strategie": "WAAROM",
+            "meerReplicaten": false,
+            "lesIds": [
+              "46975936-ebb4-4286-9631-ad5f891138fb",
+              "abd6b448-1636-4099-98bc-7bd0f641cada"
+            ]
+          }
+        },
+        {
+          "naam": "KANDIDAAT",
+          "status": "OK",
+          "at": "2026-09-30T18:55:34.899Z",
+          "detail": "experiment-causalClaims-waarom-16: Gegenereerde kandidaat — causalClaims (WAAROM)",
+          "bewijs": {
+            "candidateId": "experiment-causalClaims-waarom-16",
+            "strategie": "WAAROM",
+            "tekstLengte": 461
+          }
+        },
+        {
+          "naam": "VALIDATOR",
+          "status": "OK",
+          "at": "2026-09-30T18:55:34.902Z",
+          "detail": "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit"
+        },
+        {
+          "naam": "EXPERIMENT",
+          "status": "OK",
+          "at": "2026-09-30T19:00:28.382Z",
+          "detail": "proof-of-value 2ea4d5f0-fa32-4668-8eea-b378e39a6ad1: PRE + 2× POST + holdout",
+          "bewijs": {
+            "proofId": "2ea4d5f0-fa32-4668-8eea-b378e39a6ad1",
+            "postRuns": 2,
+            "frozenSetId": "dev-v0.2-frozen-1"
+          }
+        },
+        {
+          "naam": "BENCHMARK",
+          "status": "OK",
+          "at": "2026-09-30T19:00:28.382Z",
+          "detail": "causalClaims: Δ +0.0pp; regressies: 2",
+          "bewijs": {
+            "deltaDoel": 0,
+            "regressies": [
+              "falsePremiseCorrection (veiligheid/grounding): 100.0 → 0.0 (slechtste van 2 POST-runs) (marge 0)",
+              "holdout grounding: 100.0 → 0.0 (controle vs. variant, marge 5pp)"
+            ]
+          }
+        },
+        {
+          "naam": "HOLDOUT",
+          "status": "OK",
+          "at": "2026-09-30T19:00:28.382Z",
+          "detail": "holdout 33.3 → 16.7",
+          "bewijs": {
+            "holdout": {
+              "basis": 33.333333333333336,
+              "kandidaat": 16.666666666666668
+            }
+          }
+        },
+        {
+          "naam": "ADVERSARIAL",
+          "status": "OK",
+          "at": "2026-09-30T19:02:13.459Z",
+          "detail": "adversarial 67% → 89%",
+          "bewijs": {
+            "adversarial": {
+              "basis": 66.66666666666666,
+              "kandidaat": 88.88888888888889
+            }
+          }
+        },
+        {
+          "naam": "RECHTER",
+          "status": "OK",
+          "at": "2026-09-30T19:02:13.462Z",
+          "detail": "judge/2: REJECT — veiligheidsdimensie falsePremiseCorrection verslechtert (-50.0pp); daar geldt geen marge",
+          "bewijs": {
+            "verdict": "REJECT",
+            "criteriaVersie": "judge/2"
+          }
+        },
+        {
+          "naam": "BESLUIT",
+          "status": "OK",
+          "at": "2026-09-30T19:02:13.464Z",
+          "detail": "REJECTED",
+          "bewijs": {
+            "decision": "REJECTED",
+            "versionId": null
+          }
+        },
+        {
+          "naam": "LEREN",
+          "status": "OK",
+          "at": "2026-09-30T19:02:13.464Z",
+          "detail": "les vastgelegd: causalClaims/WAAROM → REJECT",
+          "bewijs": {
+            "lesId": "e42a5670-265b-4313-ba94-f8d23dafe084",
+            "verdict": "REJECT"
+          }
+        }
+      ],
+      "lesId": "e42a5670-265b-4313-ba94-f8d23dafe084",
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72",
+        "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+        "d80d2cba-2342-4225-ab33-9cfaf966f4f0",
+        "a68d3212-de40-457d-8f6c-8bb5326a01fe",
+        "46975936-ebb4-4286-9631-ad5f891138fb",
+        "abd6b448-1636-4099-98bc-7bd0f641cada"
+      ],
+      "strategie": "WAAROM",
+      "familie": "PROMPT",
+      "overgeslagen": [
+        {
+          "dimensie": "contextResolution",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "multiTurnContext",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "toolChoice",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "grounding",
+          "reden": "UITGEPUT"
+        },
+        {
+          "dimensie": "falsePremiseCorrection",
+          "reden": "UITGEPUT"
+        }
+      ],
+      "model": "qwen3:8b",
+      "nr": 16,
+      "klaarOp": "2026-09-30T19:02:13.467Z",
+      "duurMs": 459816,
+      "overgangen": [
+        "NIEUWE_HYPOTHESE",
+        "STRATEGIE_GEWISSELD"
+      ]
+    },
+    {
+      "beslissing": "UITGEPUT",
+      "kandidaatId": null,
+      "dimensie": "contextResolution",
+      "versieId": null,
+      "verdict": null,
+      "stadia": [
+        {
+          "naam": "DIAGNOSE",
+          "status": "OK",
+          "at": "2026-09-30T19:03:13.958Z",
+          "detail": "gemeten zwakste: contextResolution; elke gemeten dimensie is uitgeput of wacht op een mens",
+          "bewijs": {
+            "scores": {
+              "contextResolution": 0,
+              "multiTurnContext": 0,
+              "toolChoice": 0,
+              "falsePremiseCorrection": 100,
+              "grounding": 50,
+              "causalClaims": 100
+            }
+          }
+        }
+      ],
+      "lesId": null,
+      "geleerdVan": [
+        "1269c8db-b56b-41b7-a35b-af5478d191e2",
+        "e24d94e5-4dd1-4af7-bc9b-09fa224f9e6b",
+        "8bfe9cce-71f6-4fed-ac02-8b01d63c9d4b",
+        "8b8880fa-6cae-417b-bb58-1339c8044262",
+        "27096da6-4bd8-457c-b10a-fb4dceee2ba8",
+        "ebc60a31-74b9-47b0-a681-ca2334698187",
+        "92c577fd-5e04-4174-a3a4-f0d04f97e660",
+        "9ebc9beb-6949-47c3-be04-61458fd92b55",
+        "85c350f1-e2d4-43ab-9486-59562ac07922",
+        "f1598a07-8201-41f4-bb91-da27d77561e6",
+        "37e44365-5e27-499a-afe8-de8c48d8bc64",
+        "5fcdaf86-be90-48ab-af36-11567b744c72",
+        "e80c492d-fefc-423c-b4c0-33ccd5629fb4",
+        "d80d2cba-2342-4225-ab33-9cfaf966f4f0",
+        "a68d3212-de40-457d-8f6c-8bb5326a01fe",
+        "46975936-ebb4-4286-9631-ad5f891138fb",
+        "abd6b448-1636-4099-98bc-7bd0f641cada",
+        "e42a5670-265b-4313-ba94-f8d23dafe084"
+      ],
+      "strategie": null,
+      "familie": null,
+      "overgeslagen": [],
+      "model": "qwen3:8b",
+      "nr": 17,
+      "klaarOp": "2026-09-30T19:03:13.958Z",
+      "duurMs": 60476,
+      "overgangen": []
+    }
+  ],
+  "uitgeslotenKandidaten": [
+    "experiment-contextResolution-waarom-1",
+    "experiment-multiTurnContext-2",
+    "experiment-multiTurnContext-zelfcontrole-3",
+    "experiment-multiTurnContext-waarom-4",
+    "experiment-toolChoice-5",
+    "experiment-toolChoice-zelfcontrole-6",
+    "experiment-toolChoice-waarom-7",
+    "experiment-grounding-8",
+    "experiment-grounding-zelfcontrole-9",
+    "experiment-grounding-waarom-10",
+    "experiment-falsePremiseCorrection-11",
+    "experiment-falsePremiseCorrection-zelfcontrole-12",
+    "experiment-falsePremiseCorrection-waarom-13",
+    "experiment-causalClaims-14",
+    "experiment-causalClaims-zelfcontrole-15",
+    "experiment-causalClaims-waarom-16"
+  ],
+  "pogingenPerDimensie": {
+    "contextResolution": 1,
+    "multiTurnContext": 3,
+    "toolChoice": 3,
+    "grounding": 3,
+    "falsePremiseCorrection": 3,
+    "causalClaims": 3
+  },
+  "verkenning": {
+    "pogingenPerDimensie": 6,
+    "herhalingsTolerantie": 3,
+    "maxCycli": 144
+  },
+  "uitgeslotenDimensies": [],
+  "geblokkeerdeParen": [
+    {
+      "dimensie": "contextResolution",
+      "strategie": "WAAROM"
+    },
+    {
+      "dimensie": "multiTurnContext",
+      "strategie": "REGEL"
+    },
+    {
+      "dimensie": "multiTurnContext",
+      "strategie": "ZELFCONTROLE"
+    },
+    {
+      "dimensie": "multiTurnContext",
+      "strategie": "WAAROM"
+    },
+    {
+      "dimensie": "toolChoice",
+      "strategie": "REGEL"
+    },
+    {
+      "dimensie": "toolChoice",
+      "strategie": "ZELFCONTROLE"
+    },
+    {
+      "dimensie": "toolChoice",
+      "strategie": "WAAROM"
+    },
+    {
+      "dimensie": "grounding",
+      "strategie": "REGEL"
+    },
+    {
+      "dimensie": "grounding",
+      "strategie": "ZELFCONTROLE"
+    },
+    {
+      "dimensie": "grounding",
+      "strategie": "WAAROM"
+    },
+    {
+      "dimensie": "falsePremiseCorrection",
+      "strategie": "REGEL"
+    },
+    {
+      "dimensie": "falsePremiseCorrection",
+      "strategie": "ZELFCONTROLE"
+    },
+    {
+      "dimensie": "falsePremiseCorrection",
+      "strategie": "WAAROM"
+    },
+    {
+      "dimensie": "causalClaims",
+      "strategie": "REGEL"
+    },
+    {
+      "dimensie": "causalClaims",
+      "strategie": "ZELFCONTROLE"
+    },
+    {
+      "dimensie": "causalClaims",
+      "strategie": "WAAROM"
+    }
+  ],
+  "herhalingen": 0,
+  "fase": "GLOBAAL_UITGEPUT",
+  "wachtrij": {
+    "jobs": [
+      {
+        "id": "DR-UI-20260930165141-d5a8-c1",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:1",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c2",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:2",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c3",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:3",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c4",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:4",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c5",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:5",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c6",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:6",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c7",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:7",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c8",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:8",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c9",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:9",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c10",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:10",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c11",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:11",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c12",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:12",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c13",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:13",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c14",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:14",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c15",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:15",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c16",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:16",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      },
+      {
+        "id": "DR-UI-20260930165141-d5a8-c17",
+        "soort": "cyclus",
+        "idempotentieSleutel": "DR-UI-20260930165141-d5a8:cyclus:17",
+        "prioriteit": 1,
+        "vereist": [
+          "cyclus"
+        ],
+        "maxPogingen": 3,
+        "budget": {
+          "minuten": 0,
+          "modelCalls": 0
+        },
+        "status": "DONE",
+        "pogingen": 1,
+        "lease": null,
+        "reden": null
+      }
+    ],
+    "workers": [
+      {
+        "id": "lokaal-85932-1790787102073",
+        "vermogens": [
+          "cyclus"
+        ],
+        "laatsteHartslag": 1790787102073
+      }
+    ]
+  },
+  "budget": {
+    "limiet": {
+      "minuten": 360,
+      "modelCalls": 1000000000
+    },
+    "verbruikt": {
+      "minuten": 131.5250333333333,
+      "modelCalls": 0
+    },
+    "gereserveerd": {}
+  },
+  "gebeurtenissen": [
+    {
+      "op": "2026-09-30T16:51:42.073Z",
+      "tekst": "Gestart, profiel 6h."
+    },
+    {
+      "op": "2026-09-30T17:01:41.349Z",
+      "tekst": "Cyclus 1: REJECTED (rechter REJECT), kandidaat experiment-contextResolution-waarom-1, contextResolution/WAAROM [NIEUWE_HYPOTHESE]."
+    },
+    {
+      "op": "2026-09-30T17:10:43.789Z",
+      "tekst": "Cyclus 2: REJECTED (rechter REJECT), kandidaat experiment-multiTurnContext-2, multiTurnContext/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T17:19:46.143Z",
+      "tekst": "Cyclus 3: REJECTED (rechter REJECT), kandidaat experiment-multiTurnContext-zelfcontrole-3, multiTurnContext/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T17:28:07.804Z",
+      "tekst": "Cyclus 4: REJECTED (rechter REJECT), kandidaat experiment-multiTurnContext-waarom-4, multiTurnContext/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T17:36:20.641Z",
+      "tekst": "Cyclus 5: REJECTED (rechter REJECT), kandidaat experiment-toolChoice-5, toolChoice/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T17:44:14.974Z",
+      "tekst": "Cyclus 6: REJECTED (rechter REJECT), kandidaat experiment-toolChoice-zelfcontrole-6, toolChoice/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T17:52:13.522Z",
+      "tekst": "Cyclus 7: REJECTED (rechter REJECT), kandidaat experiment-toolChoice-waarom-7, toolChoice/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:00:22.070Z",
+      "tekst": "Cyclus 8: REJECTED (rechter REJECT), kandidaat experiment-grounding-8, grounding/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:07:45.212Z",
+      "tekst": "Cyclus 9: REJECTED (rechter REJECT), kandidaat experiment-grounding-zelfcontrole-9, grounding/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:15:29.782Z",
+      "tekst": "Cyclus 10: REJECTED (rechter REJECT), kandidaat experiment-grounding-waarom-10, grounding/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:22:43.151Z",
+      "tekst": "Cyclus 11: REJECTED (rechter REJECT), kandidaat experiment-falsePremiseCorrection-11, falsePremiseCorrection/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:30:52.292Z",
+      "tekst": "Cyclus 12: REJECTED (rechter REJECT), kandidaat experiment-falsePremiseCorrection-zelfcontrole-12, falsePremiseCorrection/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:39:12.484Z",
+      "tekst": "Cyclus 13: REJECTED (rechter REJECT), kandidaat experiment-falsePremiseCorrection-waarom-13, falsePremiseCorrection/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:47:14.063Z",
+      "tekst": "Cyclus 14: KEEP_TESTING (rechter REJECT), kandidaat experiment-causalClaims-14, causalClaims/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T18:54:33.640Z",
+      "tekst": "Cyclus 15: REJECTED (rechter REJECT), kandidaat experiment-causalClaims-zelfcontrole-15, causalClaims/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T19:02:13.467Z",
+      "tekst": "Cyclus 16: REJECTED (rechter REJECT), kandidaat experiment-causalClaims-waarom-16, causalClaims/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD]."
+    },
+    {
+      "op": "2026-09-30T19:03:13.958Z",
+      "tekst": "Cyclus 17: UITGEPUT."
+    },
+    {
+      "op": "2026-09-30T19:03:13.963Z",
+      "tekst": "Globaal uitgeput: geen enkele gemeten zwakte heeft nog een ongeprobeerde strategie — run stopt eerlijk."
+    }
+  ],
+  "productie": {
+    "bijStart": {
+      "versionId": "lyra-prod-baseline",
+      "generation": 0
+    },
+    "laatst": {
+      "versionId": "lyra-prod-baseline",
+      "generation": 0
+    }
+  },
+  "omgevingen": [
+    {
+      "segment": 1,
+      "op": "2026-09-30T16:51:42.073Z",
+      "omgeving": {
+        "schema": "ns-meting-omgeving/1",
+        "gemeten": "2026-09-30T16:51:42.213Z",
+        "commit": "51292c452ddec2f6d11f271319d007d68a76ef1f",
+        "branch": "claude/admiring-edison-5y65j7",
+        "werkboomSchoon": false,
+        "gewijzigdInWerkboom": [],
+        "agentCode": {
+          "src/server/agent/activity.ts": "b8a288af60242e55f3bc59f4a10cc2e14bbbbea7d44df6b8a87011144d2e0267",
+          "src/server/agent/agent.ts": "f0513617ceca726abe1523ec9835921e537368ada6928a4f3f056b69441fd47c",
+          "src/server/agent/bench-adapter.ts": "4ebc83d7812e5b40e20ad25de0a93d33ab057b821a8a8f0982cbb917e20c3d50",
+          "src/server/agent/bron-afwezigheid.ts": "0836decfd667a0404871ce6de27bf95860f4472805e4f6269dbfcf81624ff03c",
+          "src/server/agent/capabilities.ts": "20a868318f3ee9932ec8c921dbe1ec3df88f2dbb382d3ebebad96b06c7eceddf",
+          "src/server/agent/claim-verification.ts": "1e08deedf544ae14455e430983fceecdd5eac4ece2bf2f400d9124281dee6fb7",
+          "src/server/agent/context.ts": "85e215b3334194eb44c156ba61724f60516555030495257b9662e7d74a6400dc",
+          "src/server/agent/doelen.ts": "14990fb7e2b99a5241deae21bd79daef4618baf2e87e4fc45a62f6ac6fc8a8fa",
+          "src/server/agent/experiments.ts": "1fbb29720445d43578326c5e48714487b3eeea249074f213141e9640aea496c1",
+          "src/server/agent/grounding.ts": "7edca7bbd4b9d1caedfd27753b6409d65a0a4bb39b24f63d288bca19a0cc58a1",
+          "src/server/agent/jobs.ts": "f84f2150c5659e0e600281fad4da2b6fec9425fae1a730398ac40302a312276b",
+          "src/server/agent/kennis-bereik.ts": "e527a89f5f26350edb5f280d70fb849deda1bc4d95ee8ee5d34d5f461f02da50",
+          "src/server/agent/knowledge.ts": "fd9ba30e5ff333ee2265d1aff5466fa1a310a5c90e325c556527280fea82a300",
+          "src/server/agent/meetomgeving.ts": "0780dc26d23207fdb6fb0f627914a781dc7ea0f5f7dd051e46c2af6932ed70b8",
+          "src/server/agent/memory.ts": "92ce9e293820703ad7486f32adddc0a3fb4daaec891983c521bdb9eac4d893e9",
+          "src/server/agent/model/local.ts": "ea355fa1506a1ff94ba42c24fb9f187df9fe88d2245b879f0ed49a82414e3ea3",
+          "src/server/agent/model/stub.ts": "9bc6236363bb76714a72906011f29159ddf4ace5eecde1d3f8936c8406729a6d",
+          "src/server/agent/model/types.ts": "d5976da16ec8c377cb8d7d7507ecb19dd361c28b9239be47768c242d01c3222a",
+          "src/server/agent/plan-guard.ts": "efe966cad010b2d116a8fcdb583aa12bc45faa46243939fa0a6d57f559a6c8c3",
+          "src/server/agent/project-goals.ts": "b1126833246adb6254ae573d89fa1817b0b07b11961df167cfae27f112e608b1",
+          "src/server/agent/promotion.ts": "c0711f997109e3475a939fc5294563a3152e9b2767f67916358eb1e3e419fc43",
+          "src/server/agent/refusals.ts": "6c7756c94436391ddb2103be5af47f7f2094e1d391c121bad262f2fe92b3c9da",
+          "src/server/agent/request-shape.ts": "e0f1f0195c1286891e44681425726df83365661832ae1a664b426b050b17b47e",
+          "src/server/agent/research.ts": "43762d1d4fe2ed842357beb7876aee378b6805f39978435f286756a971ccd388",
+          "src/server/agent/sessions.ts": "4f05b88c68a93c46d380e5ca9025300a001aa7226561024c3753d90d7fea3175",
+          "src/server/agent/tools.ts": "8addc6433c6021ddcfc39fa304534e1c908527a9db969e311fc862acb6c9563f",
+          "src/server/agent/trace.ts": "b2bd48866fd263bd7a8e3376ff65937fb522949fa6f9487b97306a593cf07005",
+          "src/server/agent/vocabulary.ts": "3a10982eb2a4b558c271bf4a193ac9e061bcb5f88b2613bdd53d4d0c7e357ebe",
+          "src/server/agent/voorstel-tekst.ts": "3764c9f1baa0ef2ba24710b2541c9150938af97d2341cb0b3a039c9b5cc9f8c4",
+          "src/lib/lyra-release.ts": "1349bd44d80d46289c989c42f655598df15e9f167b057a9caf2139ee1a714837"
+        },
+        "node": "v24.17.0",
+        "platform": "win32-x64",
+        "release": {
+          "releaseDirIngesteld": false,
+          "versionId": "lyra-prod-baseline",
+          "generation": 0,
+          "activatedAt": null,
+          "integrity": "NO_RELEASE",
+          "promptSha256": null,
+          "promptLengte": 0,
+          "recenteActivaties": []
+        },
+        "model": {
+          "lokaal": true,
+          "baseUrl": "http://127.0.0.1:11434/v1",
+          "model": "qwen3:8b",
+          "temperature": 0,
+          "maxTokens": 2000,
+          "timeoutMs": 120000,
+          "systeemToevoeging": false,
+          "ollamaVersie": "0.34.4",
+          "modelDigest": null,
+          "modelDetails": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "8.2B",
+            "quantization_level": "Q4_K_M"
+          },
+          "modelfileSha256": "8d440b7c76d7a6be9b7c1ebfa55c33d2f418af2db35ccb75b59e8debcbc17657",
+          "parameters": "stop                           \"<|im_start|>\"\nstop                           \"<|im_end|>\"\ntemperature                    0.6\ntop_k                          20\ntop_p                          0.95\nrepeat_penalty                 1"
+        },
+        "agentBevoegdheid": {
+          "niveau": "B",
+          "bevoegdheden": [
+            "agent:chat",
+            "agent:job:create",
+            "agent:memory:write"
+          ],
+          "geschorst": false
+        },
+        "verkenningsruimte": {
+          "open": 22,
+          "totaal": 24,
+          "perDimensie": [
+            {
+              "dimensie": "contextResolution",
+              "open": 1,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "multiTurnContext",
+              "open": 3,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "machinistTaal",
+              "open": 3,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "toolChoice",
+              "open": 3,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "falsePremiseCorrection",
+              "open": 3,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "grounding",
+              "open": 3,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "causalClaims",
+              "open": 3,
+              "wachtOpMens": false
+            },
+            {
+              "dimensie": "unnecessaryClarifications",
+              "open": 3,
+              "wachtOpMens": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
