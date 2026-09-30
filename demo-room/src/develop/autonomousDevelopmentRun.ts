@@ -1,54 +1,64 @@
 import "server-only";
 import { locationCode as defaultLocationCode } from "../config";
 import * as logbook from "../store/logbook";
-import { currentVersionId } from "../publish/versions";
-import { writeDevelopmentRunResult } from "../store/developmentRuns";
+import { currentVersionId, releaseInfo } from "../publish/versions";
+import { getDevelopmentRunResult, writeDevelopmentRunResult } from "../store/developmentRuns";
+import { draaiLongRun, profielVoorMinuten, type LongRunCheckpoint, type LongRunDeps, type LongRunFase, type LongRunProfiel, type LongRunStopReden } from "../factory/longRun";
 import { DEFAULT_DEVELOPMENT_CYCLE_DEPENDENCIES, runDevelopmentCycle, type DevelopmentCycleDependencies, type DevelopmentCycleResult } from "./developmentCycle";
 
 /**
- * De tijdgebonden autonome ontwikkelrun (§ SCOPE CORRECTION —
- * "Develop Lyra for: 1 hour / 6 hours / 24 hours / unlimited/manual stop").
+ * De tijdgebonden autonome ontwikkelrun — nu een dunne laag over de ene,
+ * canonieke lange run (factory/longRun.ts).
  *
- * Herhaalt `runDevelopmentCycle()` (diagnose → genereer kandidaat →
- * benchmark/validator → keep/reject → versie opslaan) totdat één van drie
- * dingen gebeurt:
+ * ## Waarom (incident DR-UI-202609301449)
  *
- * 1. het wandklokbudget (`maxMinutes`) is op;
- * 2. er is geen echte diagnose mogelijk (LOCAL REQUIRED) — de run stopt
- *    eerlijk in plaats van te gokken;
- * 3. **geen voortgang**: dezelfde gemeten zwakste dimensie wordt
- *    `maxAttemptsPerDimensionWithoutPromotion` keer ACHTEREEN verworpen
- *    zonder promotie. Zonder deze grens zou de lus voor altijd dezelfde
- *    zwakte blijven aanvallen (`identifyWeakness()` meet altijd tegen
- *    PRODUCTIE, dus een niet-gepromoveerde kandidaat verandert niets aan de
- *    volgende diagnose) — een vroege, herkenbare vorm van overfitting op één
- *    dimensie in plaats van brede verbetering. Een promotie op een dimensie
- *    reset zijn eigen teller.
+ * Er waren twee motoren. Het kaartje "6 uur" op Dashboard en Development Runs
+ * startte deze functie, met een eigen teller: twee verworpen kandidaten op
+ * dezelfde zwakte beëindigden de hele run (`NO_PROGRESS_ON_SAME_WEAKNESS`),
+ * terwijl het leergeheugen nog een derde strategie en andere zwaktes had. Er
+ * kwam geen checkpoint, geen hervatting en niets waar de verifier op kon
+ * werken. Het paneel "Lange runs" startte een ándere motor die dat wél had.
  *
- * Activeert NOOIT een versie — `endVersionId` hoort na elke run gelijk te
- * zijn aan `startVersionId`, ongeacht hoeveel kandidaten geaccepteerd zijn
- * (zie `developmentCycle.ts`: `activateVersion()` wordt hier nergens
- * aangeroepen). Dat is een expliciet geteste invariant, geen aanname.
+ * Nu is er één motor: elke cyclus is `runDevelopmentCycle` binnen
+ * `draaiLongRun`, met hetzelfde run-id, checkpoint, verkenningsbudget en
+ * dezelfde stopredenen, wie de run ook start. Deze functie levert daarnaast de
+ * vertrouwde samenvatting (`AutonomousDevelopmentRunResult`) voor de
+ * bestaande pagina's.
+ *
+ * Activeert NOOIT een versie — het checkpoint legt de productiestand bij start
+ * en na elke cyclus vast.
  */
 
 export interface AutonomousDevelopmentRunOptions {
   readonly runId?: string;
-  /** Verplicht — een open-eindige lus mag nooit een verborgen standaardbudget hebben. */
+  /** Verplicht — actieve minuten; 60/360/1440 worden de profielen 1h/6h/24h, Infinity "handmatig" (tot stop), iets anders "aangepast". */
   readonly maxMinutes: number;
   readonly locationCode?: string;
-  /** Hoeveel keer dezelfde zwakste dimensie zonder promotie verworpen mag worden vóór de run stopt. Standaard 2. */
+  /**
+   * Na zoveel pogingen zonder promotie wordt een zwakte in déze run lokaal
+   * uitgeput verklaard en gaat de run verder met een andere. Stopt de run niet.
+   * Standaard het verkenningsbudget van het profiel.
+   */
   readonly maxAttemptsPerDimensionWithoutPromotion?: number;
-  /** Doorgegeven aan elke cyclus — zie `DevelopmentCycleOptions.focusDimension` (§ Development Runs "Doel"). */
+  /** Doorgegeven aan elke cyclus — zie `DevelopmentCycleOptions.focusDimension`. */
   readonly focusDimension?: keyof import("../types").AgentQualityCategory;
+  /** Veiligheidsgrens op het aantal cycli (standaard het verkenningsbudget van het profiel). */
+  readonly maxCycles?: number;
 }
 
 export type AutonomousDevelopmentRunStopReason =
   | "MAX_MINUTES_REACHED"
   | "MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE"
+  /** Wordt niet meer gegeven; blijft voor het tonen van oude runs. */
   | "NO_PROGRESS_ON_SAME_WEAKNESS"
   /** Het leergeheugen heeft voor geen enkele gemeten dimensie nog een ongeprobeerde strategie. */
   | "ALL_HYPOTHESES_EXHAUSTED"
-  | "NOT_EXECUTED";
+  | "NOT_EXECUTED"
+  | "MANUALLY_STOPPED"
+  | "PAUSED"
+  | "MAX_CYCLES_REACHED"
+  /** Echte fout: een cyclus faalde herhaaldelijk, of een al verworpen strategie bleef terugkomen. */
+  | "BLOCKER";
 
 export interface TimelineEntry {
   readonly at: string;
@@ -60,157 +70,149 @@ export interface AutonomousDevelopmentRunResult {
   readonly startedAt: string;
   /** Tijdstip van de laatst bekende toestand — bij `inProgress: true` is dit "laatst bijgewerkt", geen echt eindtijdstip. */
   readonly finishedAt: string;
-  /** De actieve productieversie bij start van de run. */
   readonly startVersionId: string;
-  /** De actieve productieversie bij (tot dusver) laatst bekende toestand — hoort ALTIJD gelijk te zijn aan `startVersionId` (nooit autonome activatie). */
+  /** Hoort ALTIJD gelijk te zijn aan `startVersionId` (nooit autonome activatie). */
   readonly endVersionId: string;
   readonly cycles: readonly DevelopmentCycleResult[];
   readonly acceptedCount: number;
   readonly rejectedCount: number;
-  /** De versie-ID van de laatst geaccepteerde kandidaat, indien die er is — niet automatisch "de beste", alleen "de meest recente promotie". */
   readonly bestCandidateVersionId: string | null;
-  /** `null` zolang de run nog loopt (`inProgress: true`) — pas bekend zodra de run echt stopt. */
   readonly stopReason: AutonomousDevelopmentRunStopReason | null;
   readonly timeline: readonly TimelineEntry[];
-  /** `true` = een tussentijdse momentopname van een nog lopende run (§ Development Runs, live voortgang); `false` = de definitieve, afgeronde uitkomst. */
   readonly inProgress: boolean;
+  /** De canonieke lange run achter deze samenvatting. */
+  readonly longRun?: {
+    readonly profiel: LongRunProfiel;
+    readonly budgetMinuten: number | null;
+    readonly actieveMinuten: number;
+    readonly status: LongRunCheckpoint["status"];
+    readonly stopReden: LongRunStopReden | null;
+    readonly fase: LongRunFase | null;
+    readonly uitgeslotenDimensies: readonly string[];
+    readonly geblokkeerdeParen: readonly { readonly dimensie: string; readonly strategie: string }[];
+  };
 }
+
+const STOP_NAAR_RESULTAAT: Readonly<Record<LongRunStopReden, AutonomousDevelopmentRunStopReason>> = {
+  BUDGET_OP: "MAX_MINUTES_REACHED",
+  ALLES_GEPROBEERD: "ALL_HYPOTHESES_EXHAUSTED",
+  GEEN_DIAGNOSE: "NOT_EXECUTED",
+  HANDMATIG_GESTOPT: "MANUALLY_STOPPED",
+  MAX_CYCLI: "MAX_CYCLES_REACHED",
+  HERHAALDE_FOUT: "BLOCKER",
+  GEEN_VOORTGANG: "BLOCKER",
+};
+
+/** Extra's die de CLI invult (klok, productiestand, omgevingsvingerafdruk, canonieke kopie); tests laten ze leeg. */
+export type LongRunExtras = Partial<Pick<LongRunDeps, "nu" | "productie" | "omgeving" | "spiegel">>;
 
 export async function runAutonomousDevelopmentRun(
   options: AutonomousDevelopmentRunOptions,
   deps: DevelopmentCycleDependencies = DEFAULT_DEVELOPMENT_CYCLE_DEPENDENCIES,
+  extras: LongRunExtras = {},
 ): Promise<AutonomousDevelopmentRunResult> {
-  if (!Number.isFinite(options.maxMinutes) || options.maxMinutes < 0) {
+  if (Number.isNaN(options.maxMinutes) || options.maxMinutes < 0) {
     throw new Error("runAutonomousDevelopmentRun: maxMinutes moet een niet-negatief getal zijn — geen verborgen default voor een open-eindige lus. (0 is geldig: budget al op, 0 cycli.)");
   }
   const runId = options.runId ?? `DR-AUTODEV-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14)}`;
   const locationCode = options.locationCode ?? defaultLocationCode();
-  const maxAttempts = options.maxAttemptsPerDimensionWithoutPromotion ?? 2;
-  const startedAt = new Date().toISOString();
-  const begin = Date.now();
+  const { profiel, minuten } = profielVoorMinuten(options.maxMinutes);
   const startVersionId = currentVersionId();
+
+  // Hervatting: de volledige cyclusresultaten van eerdere segmenten staan in de vorige samenvatting.
+  const eerder = getDevelopmentRunResult(runId);
+  const cycles: DevelopmentCycleResult[] = eerder ? [...eerder.cycles] : [];
+  const startedAt = eerder?.startedAt ?? new Date().toISOString();
 
   logbook.log(runId, {
     kind: "CHALLENGE_OR_GOAL",
     experimentId: null,
-    message: `Autonome ontwikkelrun gestart (budget ${options.maxMinutes} minuten, actieve versie bij start: ${startVersionId}).`,
-    data: { maxMinutes: options.maxMinutes, startVersionId },
+    message: `${eerder ? "Autonome ontwikkelrun hervat" : "Autonome ontwikkelrun gestart"} als canonieke lange run (profiel ${profiel}${minuten !== null ? `, ${minuten} min` : ""}; actieve versie bij start: ${startVersionId}).`,
+    data: { maxMinutes: options.maxMinutes, profiel, startVersionId },
   });
 
-  const cycles: DevelopmentCycleResult[] = [];
-  const timeline: TimelineEntry[] = [`Run gestart. Actieve versie bij start: ${startVersionId}.`].map((event) => ({ at: startedAt, event }));
-  const attemptsPerDimension = new Map<string, number>();
-  const excludedCandidateIds: string[] = [];
-  let bestCandidateVersionId: string | null = null;
-  let stopReason: AutonomousDevelopmentRunStopReason = "MAX_MINUTES_REACHED";
-
-  // Bouwt de huidige (tussentijdse of definitieve) momentopname en slaat hem
-  // meteen op — zonder dit zou de Development Runs-pagina pas na afloop van
-  // de HELE run (mogelijk uren) ook maar iets kunnen tonen. `writeDevelopmentRunResult()`
-  // overschrijft eerder bestand voor dezelfde `runId` telkens opnieuw (bestandsnaam = runId).
-  function slaLopendeVoortgangOp(): void {
-    writeDevelopmentRunResult({
+  const samenvatting = (c: LongRunCheckpoint): AutonomousDevelopmentRunResult => {
+    const accepted = cycles.filter((x) => x.decision === "PROMOTION_CANDIDATE");
+    const stopReason: AutonomousDevelopmentRunStopReason | null =
+      c.status === "RUNNING"
+        ? null
+        : c.status === "PAUSED"
+          ? "PAUSED"
+          : c.stopReden === "BUDGET_OP" && c.cycli.length === 0
+            ? "MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE"
+            : c.stopReden
+              ? STOP_NAAR_RESULTAAT[c.stopReden]
+              : null;
+    return {
       runId,
       startedAt,
-      finishedAt: new Date().toISOString(),
+      finishedAt: c.bijgewerktOp,
       startVersionId,
       endVersionId: currentVersionId(),
       cycles,
-      acceptedCount: cycles.filter((c) => c.decision === "PROMOTION_CANDIDATE").length,
-      rejectedCount: cycles.filter((c) => c.decision === "REJECTED" || c.decision === "KEEP_TESTING").length,
-      bestCandidateVersionId,
-      stopReason: null,
-      timeline,
-      inProgress: true,
-    });
-  }
+      acceptedCount: accepted.length,
+      rejectedCount: cycles.filter((x) => x.decision === "REJECTED" || x.decision === "KEEP_TESTING").length,
+      bestCandidateVersionId: [...accepted].reverse().find((x) => x.version)?.version?.id ?? null,
+      stopReason,
+      timeline: c.gebeurtenissen.map((g) => ({ at: g.op, event: g.tekst })),
+      inProgress: c.status === "RUNNING",
+      longRun: {
+        profiel: c.profiel,
+        budgetMinuten: c.budgetMinuten,
+        actieveMinuten: Math.round((c.actieveMs / 60000) * 10) / 10,
+        status: c.status,
+        stopReden: c.stopReden,
+        fase: c.fase ?? null,
+        uitgeslotenDimensies: c.uitgeslotenDimensies ?? [],
+        geblokkeerdeParen: c.geblokkeerdeParen ?? [],
+      },
+    };
+  };
 
-  let iteratie = 0;
-  for (;;) {
-    const verstrekenMinuten = (Date.now() - begin) / 60000;
-    if (verstrekenMinuten >= options.maxMinutes) {
-      stopReason = iteratie === 0 ? "MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE" : "MAX_MINUTES_REACHED";
-      logbook.log(runId, { kind: "BUDGET_REACHED", experimentId: null, message: `Wandklokbudget (${options.maxMinutes} min) bereikt vóór cyclus ${iteratie + 1}.` });
-      break;
-    }
-    iteratie += 1;
+  const checkpoint = await draaiLongRun(
+    { runId, profiel, minuten, maxPogingenPerDimensie: options.maxAttemptsPerDimensionWithoutPromotion, maxCycli: options.maxCycles },
+    {
+      nu: extras.nu ?? (() => Date.now()),
+      productie:
+        extras.productie ??
+        (() => {
+          const { actief } = releaseInfo();
+          return { versionId: actief.versionId, generation: actief.generation };
+        }),
+      omgeving: extras.omgeving,
+      // Elk checkpoint: ook de samenvatting voor de pagina's bijwerken (live voortgang).
+      spiegel: (c) => {
+        extras.spiegel?.(c);
+        writeDevelopmentRunResult(samenvatting(c));
+      },
+      cyclus: async ({ runId: id, uitgesloten, runUitsluitingen }) => {
+        const c = await runDevelopmentCycle({ runId: id, locationCode, excludedCandidateIds: uitgesloten, focusDimension: options.focusDimension, runUitsluitingen }, deps);
+        cycles.push(c);
+        return {
+          beslissing: c.decision,
+          kandidaatId: c.candidate?.id ?? null,
+          dimensie: c.weakness.weakestDimension ?? null,
+          versieId: c.version?.id ?? null,
+          verdict: c.judge?.verdict ?? null,
+          stadia: c.stadia ?? [],
+          lesId: c.les?.id ?? null,
+          geleerdVan: c.geleerdVan ?? [],
+          strategie: c.candidate?.hypothesis?.strategie ?? null,
+          familie: c.candidate?.category ?? null,
+          overgeslagen: c.overgeslagen ?? [],
+          model: process.env.NS_LOCAL_LLM_MODEL ?? null,
+        };
+      },
+    },
+  );
 
-    const cycle = await runDevelopmentCycle({ runId, locationCode, excludedCandidateIds, focusDimension: options.focusDimension }, deps);
-    cycles.push(cycle);
-
-    if (cycle.decision === "NOT_EXECUTED") {
-      stopReason = "NOT_EXECUTED";
-      timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: geen echte diagnose mogelijk (LOCAL REQUIRED) — run stopt eerlijk, geen gok.` });
-      slaLopendeVoortgangOp();
-      break;
-    }
-
-    if (cycle.decision === "UITGEPUT") {
-      stopReason = "ALL_HYPOTHESES_EXHAUSTED";
-      timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: elke gemeten zwakte is met alle strategieën geprobeerd of wacht op een mens — run stopt eerlijk.` });
-      slaLopendeVoortgangOp();
-      break;
-    }
-
-    if (cycle.candidate) excludedCandidateIds.push(cycle.candidate.id);
-    const dimensie = cycle.weakness.weakestDimension ?? "onbekend";
-
-    if (cycle.decision === "PROMOTION_CANDIDATE") {
-      attemptsPerDimension.delete(dimensie); // opgelost (voor nu) — teller reset, geen "voortgang"-straf voor een succesvolle dimensie.
-      bestCandidateVersionId = cycle.version?.id ?? bestCandidateVersionId;
-      timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: kandidaat ${cycle.candidate?.id} GEACCEPTEERD als versie ${cycle.version?.id} (dimensie ${dimensie}).` });
-      slaLopendeVoortgangOp();
-      continue;
-    }
-
-    const teller = (attemptsPerDimension.get(dimensie) ?? 0) + 1;
-    attemptsPerDimension.set(dimensie, teller);
-    timeline.push({ at: new Date().toISOString(), event: `Cyclus ${iteratie}: kandidaat ${cycle.candidate?.id} verworpen (${cycle.decision}) — dimensie ${dimensie}, poging ${teller}/${maxAttempts}.` });
-
-    if (teller >= maxAttempts) {
-      stopReason = "NO_PROGRESS_ON_SAME_WEAKNESS";
-      logbook.log(runId, {
-        kind: "INFO",
-        experimentId: null,
-        message: `Geen voortgang: dimensie ${dimensie} is ${teller}x verworpen zonder promotie — run stopt om eindeloos op dezelfde zwakte te blijven proberen (vroege overfitting-bescherming) te voorkomen.`,
-      });
-      slaLopendeVoortgangOp();
-      break;
-    }
-    slaLopendeVoortgangOp();
-  }
-
-  const endVersionId = currentVersionId();
-  const finishedAt = new Date().toISOString();
-  const acceptedCount = cycles.filter((c) => c.decision === "PROMOTION_CANDIDATE").length;
-  const rejectedCount = cycles.filter((c) => c.decision === "REJECTED" || c.decision === "KEEP_TESTING").length;
-
+  const result = samenvatting(checkpoint);
   logbook.log(runId, {
     kind: "INFO",
     experimentId: null,
-    message: `Autonome ontwikkelrun afgerond: ${stopReason}. ${cycles.length} cyclus/cycli, ${acceptedCount} geaccepteerd, ${rejectedCount} verworpen. Actieve versie: ${endVersionId} (ongewijzigd t.o.v. start: ${endVersionId === startVersionId}).`,
-    data: { stopReason, cycleCount: cycles.length, acceptedCount, rejectedCount },
+    message: `Autonome ontwikkelrun ${checkpoint.status === "PAUSED" ? "gepauzeerd" : "afgerond"}: ${checkpoint.stopReden ?? checkpoint.status}. ${result.cycles.length} cyclus/cycli, ${result.acceptedCount} geaccepteerd, ${result.rejectedCount} verworpen. Actieve versie: ${result.endVersionId} (ongewijzigd t.o.v. start: ${result.endVersionId === startVersionId}).`,
+    data: { stopReden: checkpoint.stopReden, status: checkpoint.status, cycleCount: result.cycles.length },
   });
-
-  const result: AutonomousDevelopmentRunResult = {
-    runId,
-    startedAt,
-    finishedAt,
-    startVersionId,
-    endVersionId,
-    cycles,
-    acceptedCount,
-    rejectedCount,
-    bestCandidateVersionId,
-    stopReason,
-    timeline,
-    inProgress: false,
-  };
-  // Zonder dit zou het resultaat alleen in het geheugen van dit proces bestaan
-  // en spoorloos verdwijnen zodra het (via `startCliRun()`) gespawnde CLI-proces
-  // stopt — de Dashboard/Development Runs/Candidates-pagina's kunnen een
-  // afgeronde run dan nooit meer terugvinden. Zelfde patroon als
-  // `autonomy/capabilityTest.ts`'s eigen `writeAutonomyResult(result)`.
   writeDevelopmentRunResult(result);
   return result;
 }

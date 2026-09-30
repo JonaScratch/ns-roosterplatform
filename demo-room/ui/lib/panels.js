@@ -1,3 +1,4 @@
+import { faseTag, LONGRUN_STOP_LABEL } from "./fase.js";
 // Phase P — de nieuwe onderdelen (feedback/concepten, Candidate Factory met
 // rechter, Pareto-archief en arena, hervatbare lange runs, releasegeschiedenis)
 // als panelen BINNEN de bestaande pagina's. Geen nieuwe hoofdtabbladen: de
@@ -89,7 +90,7 @@ export function mountLongRunsPanel(el) {
           const budget = r.budgetMinuten === null ? "∞" : r.budgetMinuten;
           const tag = { RUNNING: "good", PAUSED: "warn", STOPPED: "bad", DONE: "" }[r.status] ?? "";
           const knoppen = r.status === "RUNNING"
-            ? `<button class="ghost" data-pl="pause" data-run="${esc(r.runId)}">Pauzeer</button> <button class="ghost" data-pl="stop" data-run="${esc(r.runId)}">Stop</button>`
+            ? `<button class="ghost" data-pl="pause" data-run="${esc(r.runId)}">Pauzeer</button> <button class="ghost" data-pl="stop" data-run="${esc(r.runId)}">Stop</button> <button class="ghost" data-pl="resume" data-run="${esc(r.runId)}" title="Alleen als het proces is weggevallen (crash); de server weigert als de run nog draait">Hervat na crash</button>`
             : r.status === "PAUSED"
               ? `<button class="ghost" data-pl="resume" data-run="${esc(r.runId)}">Hervat</button> <button class="ghost" data-pl="stop" data-run="${esc(r.runId)}">Stop</button>`
               : "";
@@ -98,7 +99,8 @@ export function mountLongRunsPanel(el) {
           const cyc = [...r.cycli].reverse().find((c) => c.stadia && c.stadia.length > 0);
           const stappen = cyc ? `${cyc.stadia.filter((st) => st.status === "OK").length}/${cyc.stadia.length} stappen` : "";
           const pad = cyc ? `${esc(cyc.dimensie ?? "?")}/${esc(cyc.strategie ?? "-")} → ${esc(cyc.verdict ?? cyc.beslissing)} <span class="sub">${stappen}</span>` : "—";
-          return `<tr><td><code>${esc(r.runId)}</code></td><td>${esc(r.profiel)}</td><td><span class="tag ${tag}">${esc(r.status)}${r.stopReden ? ` · ${esc(r.stopReden)}` : ""}</span></td>
+          const uitgeput = (r.uitgeslotenDimensies ?? []).length > 0 ? `<div class="sub">lokaal uitgeput: ${esc(r.uitgeslotenDimensies.join(", "))}</div>` : "";
+          return `<tr><td><code>${esc(r.runId)}</code><div class="sub">docs/lyra-knowledge/long-runs/${esc(r.runId)}/</div></td><td>${esc(r.profiel)}</td><td><span class="tag ${tag}">${esc(r.status)}${r.stopReden ? ` · ${esc(LONGRUN_STOP_LABEL[r.stopReden] ?? r.stopReden)}` : ""}</span><div>${faseTag(r.fase, esc)}</div>${uitgeput}</td>
             <td>${minuten} / ${budget} min</td><td>${r.cycli.length}${r.segmenten > 1 ? ` <span class="sub">(${r.segmenten} segm.)</span>` : ""}</td><td>${pad}</td><td class="sub">${esc(laatste?.tekst ?? "")}</td><td>${knoppen}</td></tr>`;
         }).join("");
     rows.querySelectorAll("[data-pl]").forEach((b) => b.addEventListener("click", () => actie(`/api/long-runs/${b.dataset.pl}`, b.dataset.run)));

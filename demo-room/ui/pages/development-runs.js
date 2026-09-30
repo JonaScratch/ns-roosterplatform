@@ -3,6 +3,7 @@
 
 import { j, post, veilig, titleIcon, iconChip, ICONS, renderStepper, lineChart, esc } from "../lib/shared.js";
 import { mountLongRunsPanel, metPaneel } from "../lib/panels.js";
+import { FASE_LABEL } from "../lib/fase.js";
 import { confirmAction } from "../app.js";
 
 const DUUR_OPTIES = [
@@ -149,11 +150,15 @@ const EVENT_WEERGAVE = {
 
 const STATUS_LABELS_NL = { STARTING: "wordt gestart…", RUNNING: "loopt", DONE: "afgerond", FAILED: "mislukt", STOPPED: "gestopt" };
 const STOPREDEN_LABEL = {
-  MAX_MINUTES_REACHED: "Wandklokbudget bereikt",
+  MAX_MINUTES_REACHED: "Tijd/budget bereikt (actieve minuten)",
   MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE: "Budget al op vóór start",
-  NO_PROGRESS_ON_SAME_WEAKNESS: "Geen voortgang op dezelfde zwakte",
-  ALL_HYPOTHESES_EXHAUSTED: "Alle hypothesen geprobeerd",
-  NOT_EXECUTED: "Geen lokale diagnose mogelijk",
+  NO_PROGRESS_ON_SAME_WEAKNESS: "Oud: gestopt na 2 verworpen kandidaten (vóór de canonieke lange run)",
+  ALL_HYPOTHESES_EXHAUSTED: "Globaal uitgeput (alle zwaktes × strategieën)",
+  NOT_EXECUTED: "Blocker: geen lokale diagnose mogelijk",
+  MANUALLY_STOPPED: "Handmatig gestopt",
+  PAUSED: "Gepauzeerd (hervatbaar)",
+  MAX_CYCLES_REACHED: "Maximum aantal cycli",
+  BLOCKER: "Echte fout/blocker",
 };
 
 function renderKpis(run, detail) {
@@ -173,6 +178,19 @@ function renderKpis(run, detail) {
   const cards = [
     { icon: "play", color: run?.status === "RUNNING" ? "green" : run?.status === "FAILED" ? "red" : "blue", label: "Runstatus", value: run ? STATUS_LABELS_NL[run.status] || run.status : "Geen actieve run", sub: run?.status === "FAILED" && run.errorMessage ? run.errorMessage : "" },
     { icon: "clock", color: "blue", label: "Verstreken tijd", value: run ? uurMinSec(run.elapsedMs ?? 0) : "—" },
+    // De canonieke lange run achter deze run: wat hij nu doet, hoeveel actieve tijd, welke zwaktes lokaal uitgeput.
+    ...(detail?.longRun
+      ? [
+          {
+            icon: "target",
+            color: detail.longRun.fase === "FOUT_BLOKKADE" ? "red" : detail.longRun.fase === "LOKAAL_UITGEPUT" ? "amber" : "blue",
+            label: "Fase",
+            value: esc((FASE_LABEL[detail.longRun.fase] ?? [detail.longRun.fase ?? "—"])[0]),
+            sub: (detail.longRun.uitgeslotenDimensies ?? []).length > 0 ? `lokaal uitgeput: ${detail.longRun.uitgeslotenDimensies.join(", ")}` : "",
+          },
+          { icon: "clock", color: "blue", label: "Actief / budget", value: `${detail.longRun.actieveMinuten} / ${detail.longRun.budgetMinuten ?? "∞"} min` },
+        ]
+      : []),
     { icon: "flask", color: "purple", label: "Experimenten", value: cyclesCount },
     { icon: "book", color: "blue", label: "Kandidaten bewaard", value: kandidatenBewaard },
     { icon: "up", color: "green", label: "Beste verbetering", value: besteVerbetering > -Infinity ? `+${besteVerbetering.toFixed(1)}pp` : "—" },
@@ -194,7 +212,7 @@ function renderConfig(actief, run, detail) {
     "Verbeter de gemeten zwakste dimensie zonder een veiligheids-/groundingdimensie te laten verslechteren.",
     "Behoud holdout-prestaties (geen betekenisvolle holdoutverslechtering toegestaan).",
     "Sla een aantoonbaar betere kandidaat op als nieuwe, niet-actieve versie — nooit automatisch activeren.",
-    "Stop bij geen voortgang op dezelfde zwakte, in plaats van eindeloos dezelfde aanpak te herhalen.",
+    "Na een verworpen kandidaat: les vastleggen, die strategie blokkeren en een andere strategie of zwakte proberen — stoppen alleen bij globale uitputting, budget, stop of een echte fout.",
   ];
   document.getElementById("dr-doelen").innerHTML = doelen.map((d) => `<li style="margin-bottom:6px;">${d}</li>`).join("");
 }

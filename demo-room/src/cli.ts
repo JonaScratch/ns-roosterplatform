@@ -13,7 +13,7 @@ import { runProofOfValue } from "./proof/proofOfValue";
 import { runAutonomyCapabilityTest } from "./autonomy/capabilityTest";
 import { runAutonomousDevelopmentRun } from "./develop/autonomousDevelopmentRun";
 import { runDevelopmentCycle } from "./develop/developmentCycle";
-import { draaiLongRun, PROFIEL_MINUTEN, vraagControle, type LongRunProfiel } from "./factory/longRun";
+import { leesCheckpoint, PROFIEL_MINUTEN, profielVoorMinuten, vraagControle, type LongRunProfiel } from "./factory/longRun";
 import { currentProductionVersionLabel, publishExperiment, rollbackTo } from "./publish/safePublish";
 import { currentVersionId, getVersion, listVersions, releaseInfo } from "./publish/versions";
 import { demoRoomActor } from "./actor";
@@ -260,52 +260,58 @@ async function cmdAutonomyTest(): Promise<void> {
   });
 }
 
-/** Echte proceskant van de Development Run-pagina (§ UI/UX REBUILD, foto 3): spawnt via `startCliRun()`, net als elk ander runtype hier. */
-async function cmdDevelopmentRun(): Promise<void> {
-  const minutes = Number(arg("minutes", "60"));
-  const focusDimension = arg("focus-dimension") as Parameters<typeof runAutonomousDevelopmentRun>[0]["focusDimension"];
-  const runId = nieuwRunId("DEV");
-  await withRunLogbook(runId, { kind: "development-run", challengeOrGoal: `Autonome ontwikkelrun (max. ${minutes} min)${focusDimension ? `, focus: ${focusDimension}` : ""}: diagnose → kandidaat genereren → benchmark/validator → keep/reject → versie opslaan, herhaald tot budget op is.` }, async () => {
-    console.log(`Development run gestart (max. ${minutes} minuten)${focusDimension ? `, focus: ${focusDimension}` : ""}.`);
-    const result = await runAutonomousDevelopmentRun({ runId, maxMinutes: minutes, focusDimension });
-    console.log(JSON.stringify({ stopReason: result.stopReason, cycles: result.cycles.length, accepted: result.acceptedCount, rejected: result.rejectedCount, bestCandidateVersionId: result.bestCandidateVersionId }, null, 2));
-    console.log(`\nGestopt: ${result.stopReason}. ${result.acceptedCount} kandidaat/kandidaten geaccepteerd van ${result.cycles.length} cyclus/cycli. Actieve versie ongewijzigd: ${result.endVersionId === result.startVersionId}.`);
+/**
+ * De ene canonieke lange run (incident DR-UI-202609301449). Zowel het kaartje
+ * "1/6/24 uur" (`development-run --minutes`) als het paneel "Lange runs"
+ * (`long-run --profiel`) komen hier: hetzelfde run-id als de UI gaf, een
+ * checkpoint in `DATA_DIR/long-runs/<runId>/` met een levende kopie in
+ * `docs/lyra-knowledge/long-runs/<runId>/checkpoint.json`, een
+ * omgevingsvingerafdruk per segment, en hervatten met hetzelfde id.
+ */
+async function draaiCanoniekeRun(runId: string, maxMinutes: number, focusDimension?: Parameters<typeof runAutonomousDevelopmentRun>[0]["focusDimension"]): Promise<void> {
+  const { meetOmgeving } = await import("@/server/agent/meetomgeving");
+  const { schrijfCanoniekeKopie } = await import("./factory/canoniek");
+  const { profiel, minuten } = profielVoorMinuten(maxMinutes);
+  // Een afgeronde run is bewijsmateriaal: een nieuwe start met hetzelfde id is
+  // een fout (hervatten kan alleen een gepauzeerde of gecrashte run).
+  const bestaand = leesCheckpoint(runId);
+  if (bestaand && (bestaand.status === "DONE" || bestaand.status === "STOPPED")) {
+    throw new Error(`Run ${runId} bestaat al en is afgerond (${bestaand.status} · ${bestaand.stopReden ?? "—"}); kies een nieuw run-id.`);
+  }
+  await withRunLogbook(runId, { kind: "long-run", challengeOrGoal: `Canonieke lange ontwikkelrun, profiel ${profiel}${minuten !== null ? ` (${minuten} min)` : ""} (actieve tijd; pauze telt niet)${focusDimension ? `, focus: ${focusDimension}` : ""}.` }, async () => {
+    console.log(`Lange run ${runId}: profiel ${profiel}${minuten !== null ? ` (${minuten} min)` : ""}${focusDimension ? `, focus: ${focusDimension}` : ""}.`);
+    const { leesLessen, verkenningsruimte } = await import("./develop/lessons");
+    const { STRATEGIEEN } = await import("./develop/generateCandidate");
+    const DIMENSIES = ["contextResolution", "multiTurnContext", "machinistTaal", "toolChoice", "falsePremiseCorrection", "grounding", "causalClaims", "unnecessaryClarifications"];
+    const ruimte = () => verkenningsruimte(DIMENSIES, leesLessen(), STRATEGIEEN);
+    const r0 = ruimte();
+    console.log(`Open verkenningsruimte bij start: ${r0.open} van ${r0.totaal} paren zwakte×strategie (het leergeheugen geldt over runs heen).`);
+    logbook.log(runId, { kind: "INFO", experimentId: null, message: `Open verkenningsruimte bij start: ${r0.open} van ${r0.totaal} paren zwakte×strategie.`, data: r0 });
+    const result = await runAutonomousDevelopmentRun({ runId, maxMinutes, focusDimension }, undefined, {
+      omgeving: async () => ({ ...(await meetOmgeving()), verkenningsruimte: ruimte() }),
+      spiegel: (c) => schrijfCanoniekeKopie(c),
+    });
+    console.log(JSON.stringify({ runId, stopReason: result.stopReason, longRun: result.longRun, cycles: result.cycles.length, accepted: result.acceptedCount, rejected: result.rejectedCount }, null, 2));
+    console.log(`\n${result.longRun?.status}: ${result.longRun?.stopReden ?? "—"}. Actieve versie ongewijzigd: ${result.endVersionId === result.startVersionId}. Verifieer met: npx tsx --conditions=react-server scripts/lyra-master/verify-long-run.ts --run ${runId}`);
   });
+}
+
+/** Kaartjes "1 uur / 6 uur / 24 uur" (Dashboard, Development Runs): de canonieke lange run. */
+async function cmdDevelopmentRun(): Promise<void> {
+  const ruw = arg("minutes", "60") ?? "60";
+  const minutes = ruw === "handmatig" || ruw === "Infinity" ? Number.POSITIVE_INFINITY : Number(ruw);
+  const focusDimension = arg("focus-dimension") as Parameters<typeof runAutonomousDevelopmentRun>[0]["focusDimension"];
+  await draaiCanoniekeRun(nieuwRunId("LONG"), minutes, focusDimension);
 }
 
 /**
  * Hervatbare lange run (Phase O). Zelfde `--run-id` opnieuw starten = hervatten.
- * Elke cyclus is een echte `runDevelopmentCycle` (met manifest en rechter).
+ * Zelfde motor als `development-run`.
  */
 async function cmdLongRun(): Promise<void> {
   const profiel = (arg("profiel", "1h") ?? "1h") as LongRunProfiel;
   if (!(profiel in PROFIEL_MINUTEN)) throw new Error(`--profiel moet een van ${Object.keys(PROFIEL_MINUTEN).join(", ")} zijn.`);
-  const runId = nieuwRunId("LONG");
-  await withRunLogbook(runId, { kind: "long-run", challengeOrGoal: `Hervatbare lange ontwikkelrun, profiel ${profiel} (actieve tijd; pauze telt niet).` }, async () => {
-    const r = await draaiLongRun({ runId, profiel }, {
-      nu: () => Date.now(),
-      productie: () => {
-        const { actief } = releaseInfo();
-        return { versionId: actief.versionId, generation: actief.generation };
-      },
-      cyclus: async ({ runId: id, uitgesloten }) => {
-        const c = await runDevelopmentCycle({ runId: id, excludedCandidateIds: uitgesloten });
-        return {
-          beslissing: c.decision,
-          kandidaatId: c.candidate?.id ?? null,
-          dimensie: c.weakness.weakestDimension ?? null,
-          versieId: c.version?.id ?? null,
-          verdict: c.judge?.verdict ?? null,
-          stadia: c.stadia ?? [],
-          lesId: c.les?.id ?? null,
-          geleerdVan: c.geleerdVan ?? [],
-          strategie: c.candidate?.hypothesis?.strategie ?? null,
-          model: process.env.NS_LOCAL_LLM_MODEL ?? null,
-        };
-      },
-    });
-    console.log(JSON.stringify({ runId, status: r.status, stopReden: r.stopReden, cycli: r.cycli.length, actieveMinuten: +(r.actieveMs / 60000).toFixed(1), segmenten: r.segmenten }, null, 2));
-  });
+  await draaiCanoniekeRun(nieuwRunId("LONG"), PROFIEL_MINUTEN[profiel as keyof typeof PROFIEL_MINUTEN]);
 }
 
 async function cmdLongRunControl(): Promise<void> {

@@ -373,11 +373,27 @@ describe("Phase K/L/O — opslag en hervatbare lange runs", () => {
     expect(r.cycli[1].kandidaatId).toBe("h1");
   });
 
-  it("stopt eerlijk bij geen voortgang op dezelfde dimensie en bij geen diagnose", async () => {
-    // Vangnet: met een werkend leergeheugen wordt dit niet gehaald; hier expliciet laag gezet.
-    const g = await longRun.draaiLongRun({ runId: "LR-stuck", profiel: "24h", maxPogingenPerDimensie: 2 }, { nu: klok(60_000), cyclus: verworpen("toolChoice") });
-    expect(g.stopReden).toBe("GEEN_VOORTGANG");
-    expect(g.cycli).toHaveLength(2);
+  it("lokale uitputting stopt de run niet (incident DR-UI-202609301449): de zwakte wordt uitgesloten en de run gaat door", async () => {
+    // Een cyclus die de run-uitsluitingen respecteert, zoals developmentCycle via lessons.ts.
+    const dims = ["toolChoice", "grounding"];
+    let k = 0;
+    const g = await longRun.draaiLongRun({ runId: "LR-stuck", profiel: "24h", maxPogingenPerDimensie: 2 }, {
+      nu: klok(60_000),
+      cyclus: async ({ runUitsluitingen }) => {
+        const open = dims.filter((d) => !runUitsluitingen.dimensies.includes(d));
+        if (open.length === 0) return { beslissing: "UITGEPUT", kandidaatId: null, dimensie: null, versieId: null, verdict: null };
+        k += 1;
+        return { beslissing: "REJECTED", kandidaatId: `s${k}`, dimensie: open[0], versieId: null, verdict: "REJECT" };
+      },
+    });
+    // Twee keer verworpen op toolChoice → lokaal uitgeput, dóór naar grounding, pas daarna globaal uitgeput.
+    expect(g.stopReden).toBe("ALLES_GEPROBEERD");
+    expect(g.cycli).toHaveLength(5);
+    expect(g.uitgeslotenDimensies).toEqual(dims);
+    expect(g.cycli[2].dimensie).toBe("grounding");
+    expect(g.cycli[2].overgangen).toContain("ZWAKTE_GEWISSELD");
+    expect(g.gebeurtenissen.map((e) => e.tekst).join("\n")).toMatch(/Lokaal uitgeput: toolChoice 2x zonder promotie; de run gaat verder/);
+    expect(g.fase).toBe("GLOBAAL_UITGEPUT");
     // Meldt de cyclus zelf dat alles geprobeerd is, dan stopt de run daarop.
     let n = 0;
     const u = await longRun.draaiLongRun({ runId: "LR-uitgeput", profiel: "24h" }, {

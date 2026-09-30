@@ -10,11 +10,10 @@ import type { AgentQualityCategory, DualQualityMeasurement, ProofOfValueResult, 
  *
  * Deze tests vermijden opzettelijk elke afhankelijkheid van de echte
  * wandklok voor hun PASS/FAIL-uitkomst (behalve het ene expliciete
- * budget-edge-case, `maxMinutes: 0`, dat ook `capabilityTest.ts` al zo
- * test): de "geen voortgang op dezelfde zwakte"-grens stopt de lus
- * deterministisch, dus een run met een ruim budget (10 minuten) die na 2-3
- * synthetische cycli al stopt, bewijst dat zonder op de klok te hoeven
- * wachten.
+ * budget-edge-case, `maxMinutes: 0`): sinds de canonieke lange run
+ * (incident DR-UI-202609301449) stopt een run met ruim budget pas bij
+ * globale uitputting — elke zwakte met elke strategie geprobeerd — en dat
+ * gebeurt met synthetische cycli deterministisch en snel.
  *
  * Isolatie: `DEMO_ROOM_STATE_ROOT_OVERRIDE`, zelfde patroon als
  * `developmentCycle.test.ts`/`autonomyCapabilityTest.test.ts`.
@@ -189,12 +188,12 @@ describe("runAutonomousDevelopmentRun", () => {
     expect(result.endVersionId).toBe(result.startVersionId);
   });
 
-  it("GEEN-VOORTGANG-grens: dezelfde gemeten zwakte 2x verworpen zonder promotie → run stopt (deterministisch, niet klok-afhankelijk), ondanks een ruim budget", async () => {
-    const runId = `TEST-AUTODEV-NOPROGRESS-${Date.now()}`;
+  it("twee verworpen kandidaten op dezelfde zwakte beëindigen de run NIET (incident DR-UI-202609301449): elke volgende cyclus een andere strategie, stop pas bij globale uitputting", async () => {
+    const runId = `TEST-AUTODEV-GEENSTOP-${Date.now()}`;
     const startVersionId = versionsMod.currentVersionId();
 
     const result = await autoRunMod.runAutonomousDevelopmentRun(
-      { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
+      { runId, maxMinutes: 360 },
       {
         ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
@@ -207,23 +206,49 @@ describe("runAutonomousDevelopmentRun", () => {
       },
     );
 
-    expect(result.cycles).toHaveLength(2); // stopt precies na de 2e afwijzing van dezelfde dimensie, niet later.
-    expect(result.stopReason).toBe("NO_PROGRESS_ON_SAME_WEAKNESS");
+    // Drie strategieën op de enige gemeten zwakte, elk verworpen; de vierde cyclus meldt globale uitputting.
+    const gemeten = result.cycles.filter((c) => c.candidate);
+    expect(gemeten.length).toBe(generateCandidateMod.STRATEGIEEN.length);
+    expect(new Set(gemeten.map((c) => c.candidate?.hypothesis?.strategie)).size).toBe(gemeten.length);
+    expect(result.cycles.at(-1)?.decision).toBe("UITGEPUT");
+    expect(result.stopReason).toBe("ALL_HYPOTHESES_EXHAUSTED");
+    expect(result.longRun?.fase).toBe("GLOBAAL_UITGEPUT");
     expect(result.acceptedCount).toBe(0);
-    expect(result.rejectedCount).toBe(2);
-    expect(result.bestCandidateVersionId).toBeNull();
-    expect(result.endVersionId).toBe(startVersionId); // budget was ruim (10 min) — de STOP kwam van de voortgangsgrens, niet van de klok.
-    // Twee verschillende, echt gegenereerde kandidaten (nooit dezelfde kandidaat twee keer geprobeerd).
-    expect(result.cycles[0].candidate?.id).not.toBe(result.cycles[1].candidate?.id);
+    expect(result.rejectedCount).toBe(gemeten.length);
+    expect(result.endVersionId).toBe(startVersionId);
   });
 
-  it("ACCEPT reset de tellers: promotie op dimensie X, daarna 2x afwijzing op dimensie X stopt de run alsnog (voortgang op X telt niet mee voor de nieuwe pogingen)", async () => {
-    const runId = `TEST-AUTODEV-ACCEPT-THEN-STOP-${Date.now()}`;
+  it("zwakte-wissel: na de laatste strategie op de zwakste dimensie gaat de run door op de volgende zwakte", async () => {
+    const runId = `TEST-AUTODEV-WISSEL-${Date.now()}`;
+    const result = await autoRunMod.runAutonomousDevelopmentRun(
+      { runId, maxMinutes: 360 },
+      {
+        ...ADVERSARIAL_GELIJK,
+        identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55, scores: { toolChoice: 55, grounding: 70 } }),
+        generateCandidate: generateCandidateMod.generateCandidateFromWeakness,
+        runProofOfValue: async (options) =>
+          fakeProof({ runId, variantId: options.variant!.id, decision: "REJECTED", postAgent: agentCategory({ toolChoice: 60 }), reasoning: "Afgewezen." }),
+        createVersion: () => {
+          throw new Error("mag niet aangeroepen worden");
+        },
+      },
+    );
+    const dims = result.cycles.filter((c) => c.candidate).map((c) => c.weakness.weakestDimension);
+    const n = generateCandidateMod.STRATEGIEEN.length;
+    expect(dims.slice(0, n).every((d) => d === "toolChoice")).toBe(true);
+    expect(dims.slice(n, 2 * n).every((d) => d === "grounding")).toBe(true);
+    expect(result.stopReason).toBe("ALL_HYPOTHESES_EXHAUSTED");
+    const checkpoint = (await import("../../demo-room/src/factory/longRun")).leesCheckpoint(runId)!;
+    expect(checkpoint.cycli[n].overgangen).toContain("ZWAKTE_GEWISSELD");
+  });
+
+  it("een promotie activeert nooit iets, en de run stopt niet op 'geen voortgang'", async () => {
+    const runId = `TEST-AUTODEV-ACCEPT-${Date.now()}`;
     const startVersionId = versionsMod.currentVersionId();
     let call = 0;
 
     const result = await autoRunMod.runAutonomousDevelopmentRun(
-      { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
+      { runId, maxMinutes: 360 },
       {
         ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
@@ -243,16 +268,10 @@ describe("runAutonomousDevelopmentRun", () => {
       },
     );
 
-    // 1 accept + 2 rejects op dezelfde dimensie (de teller werd door de accept gereset, dus de 2 latere rejects tellen opnieuw vanaf 0).
-    expect(result.cycles).toHaveLength(3);
-    expect(result.acceptedCount).toBe(1);
-    expect(result.rejectedCount).toBe(2);
-    expect(result.stopReason).toBe("NO_PROGRESS_ON_SAME_WEAKNESS");
-    expect(result.bestCandidateVersionId).not.toBeNull();
-    expect(versionsMod.getVersion(result.bestCandidateVersionId!)?.status).not.toBe("ACTIVE");
-
-    // De kern-veiligheidsinvariant: ondanks een echte promotie blijft de ACTIEVE productieversie
-    // volstrekt onaangeraakt — activeren is en blijft een aparte, mensgekeurde stap.
+    expect(result.stopReason).not.toBe("NO_PROGRESS_ON_SAME_WEAKNESS");
+    expect(["ALL_HYPOTHESES_EXHAUSTED", "MAX_MINUTES_REACHED"]).toContain(result.stopReason);
+    if (result.bestCandidateVersionId) expect(versionsMod.getVersion(result.bestCandidateVersionId)?.status).not.toBe("ACTIVE");
+    // De kern-veiligheidsinvariant: de ACTIEVE productieversie blijft onaangeraakt.
     expect(result.startVersionId).toBe(startVersionId);
     expect(result.endVersionId).toBe(startVersionId);
     expect(versionsMod.currentVersionId()).toBe(startVersionId);
@@ -261,13 +280,11 @@ describe("runAutonomousDevelopmentRun", () => {
   it("slaat live voortgang op na elke cyclus (§ Development Runs-pagina) — niet pas na afloop van de hele run", async () => {
     const developmentRunsStore = await import("../../demo-room/src/store/developmentRuns");
     const runId = `TEST-AUTODEV-LIVEPROGRESS-${Date.now()}`;
-
-    // Ná de baseline-run bestaat er nog geen snapshot voor dit run-ID.
     expect(developmentRunsStore.getDevelopmentRunResult(runId)).toBeNull();
 
     let call = 0;
     await autoRunMod.runAutonomousDevelopmentRun(
-      { runId, maxMinutes: 10, maxAttemptsPerDimensionWithoutPromotion: 2 },
+      { runId, maxMinutes: 360 },
       {
         ...ADVERSARIAL_GELIJK,
         identifyWeakness: async () => ({ executed: true, notExecutedReason: null, weakestDimension: "toolChoice", weakestScore: 55 }),
@@ -275,14 +292,12 @@ describe("runAutonomousDevelopmentRun", () => {
         runProofOfValue: async (options) => {
           call += 1;
           if (call === 2) {
-            // Middenin cyclus 2: cyclus 1 is al voltooid en gepusht, maar de HELE run
-            // loopt nog — precies het moment waarop de Development Runs-pagina moet
-            // kunnen pollen. De snapshot op schijf moet dit al tonen.
             const tussentijds = developmentRunsStore.getDevelopmentRunResult(runId);
             expect(tussentijds).not.toBeNull();
             expect(tussentijds!.inProgress).toBe(true);
             expect(tussentijds!.cycles).toHaveLength(1);
             expect(tussentijds!.stopReason).toBeNull();
+            expect(tussentijds!.longRun?.status).toBe("RUNNING");
           }
           return fakeProof({ runId, variantId: options.variant!.id, decision: "REJECTED", postAgent: agentCategory({ toolChoice: 60 }), reasoning: "Afgewezen: toolChoice regresseerde." });
         },
@@ -290,10 +305,9 @@ describe("runAutonomousDevelopmentRun", () => {
       },
     );
 
-    // Na afloop staat de DEFINITIEVE snapshot op schijf, niet meer "in progress".
     const definitief = developmentRunsStore.getDevelopmentRunResult(runId);
     expect(definitief).not.toBeNull();
     expect(definitief!.inProgress).toBe(false);
-    expect(definitief!.stopReason).toBe("NO_PROGRESS_ON_SAME_WEAKNESS");
+    expect(definitief!.stopReason).toBe("ALL_HYPOTHESES_EXHAUSTED");
   });
 });

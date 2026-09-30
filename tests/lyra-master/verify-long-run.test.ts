@@ -20,6 +20,11 @@ function goedeRun(): Json {
     stopReden: "BUDGET_OP",
     actieveMs: 60 * 60_000,
     productie: { bijStart: { versionId: "lyra-prod-baseline", generation: 0 }, laatst: { versionId: "lyra-prod-baseline", generation: 0 } },
+    profiel: "1h",
+    budgetMinuten: 60,
+    verkenning: { pogingenPerDimensie: 6, herhalingsTolerantie: 2, maxCycli: 24 },
+    omgevingen: [{ segment: 1, op: "2026-09-30T12:00:00.000Z", omgeving: { commit: "abcdef0123", model: { lokaal: true, model: "qwen3:8b", ollamaVersie: "0.34.4" } } }],
+    uitgeslotenDimensies: [],
     cycli: [
       { nr: 1, beslissing: "REJECTED", dimensie: "toolChoice", strategie: "REGEL", verdict: "REJECT", stadia: stadia(), lesId: "L1", geleerdVan: [] },
       { nr: 2, beslissing: "REJECTED", dimensie: "toolChoice", strategie: "ZELFCONTROLE", verdict: "REJECT", stadia: stadia(), lesId: "L2", geleerdVan: ["L1"] },
@@ -81,5 +86,15 @@ describe("verify-long-run: controleerLangeRun", () => {
     const oud = goedeRun();
     oud.cycli[0].stadia = oud.cycli[0].stadia.map((s: Json) => (s.naam === "RECHTER" ? { ...s, detail: "judge/1: KEEP" } : s));
     expect(fout(controleerLangeRun(oud, echteModelLog))).toEqual(["onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel"]);
+  });
+});
+
+describe("verify-long-run: vingerafdruk van het modeleindpunt", () => {
+  it("een segment zonder lokaal model faalt, en het detail noemt de build van het eindpunt", () => {
+    const run = goedeRun();
+    const zonder = { ...run, omgevingen: [{ segment: 1, op: "t", omgeving: { commit: "x", model: { lokaal: false } } }] };
+    expect(fout(controleerLangeRun(zonder, echteModelLog))).toContain("een echt taalmodel deed de metingen");
+    const detail = controleerLangeRun(run, echteModelLog).controles.find((c) => c.naam === "een echt taalmodel deed de metingen")?.detail;
+    expect(detail).toContain("qwen3:8b @ ollama 0.34.4");
   });
 });

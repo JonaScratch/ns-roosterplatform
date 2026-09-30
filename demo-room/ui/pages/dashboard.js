@@ -8,9 +8,9 @@ import { j, post, iconChip, titleIcon, ICONS, nl1, lineChart, renderStepper, vei
 import { confirmAction } from "../app.js";
 
 const DUUR_OPTIES = [
-  { minutes: 60, label: "1 uur", sub: "Snelle test (kleine varianten)" },
-  { minutes: 360, label: "6 uur", sub: "Standaard run (aanbevolen)" },
-  { minutes: 1440, label: "24 uur", sub: "Uitgebreide run (meer varianten)" },
+  { minutes: 60, label: "1 uur", sub: "Lange run, 60 actieve min — hervatbaar en verifieerbaar" },
+  { minutes: 360, label: "6 uur", sub: "Lange run, 360 actieve min (aanbevolen) — stopt pas bij budget, globale uitputting of stop" },
+  { minutes: 1440, label: "24 uur", sub: "Lange run, 1440 actieve min — hervatbaar en verifieerbaar" },
   { minutes: null, label: "Aangepast", sub: "Zelf instellen duur en opties" },
 ];
 
@@ -229,11 +229,15 @@ async function laadKpis(actief) {
 }
 
 const STOPREDEN_LABEL = {
-  MAX_MINUTES_REACHED: "Wandklokbudget bereikt",
+  MAX_MINUTES_REACHED: "Tijd/budget bereikt (actieve minuten)",
   MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE: "Budget al op vóór start",
-  NO_PROGRESS_ON_SAME_WEAKNESS: "Geen voortgang op dezelfde zwakte",
-  ALL_HYPOTHESES_EXHAUSTED: "Alle hypothesen geprobeerd",
-  NOT_EXECUTED: "Geen lokale diagnose mogelijk",
+  NO_PROGRESS_ON_SAME_WEAKNESS: "Oud: gestopt na 2 verworpen kandidaten (vóór de canonieke lange run)",
+  ALL_HYPOTHESES_EXHAUSTED: "Globaal uitgeput (alle zwaktes × strategieën)",
+  NOT_EXECUTED: "Blocker: geen lokale diagnose mogelijk",
+  MANUALLY_STOPPED: "Handmatig gestopt",
+  PAUSED: "Gepauzeerd (hervatbaar)",
+  MAX_CYCLES_REACHED: "Maximum aantal cycli",
+  BLOCKER: "Echte fout/blocker",
 };
 
 function renderLaatsteRun(run) {

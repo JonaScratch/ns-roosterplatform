@@ -52,6 +52,8 @@ export interface DevelopmentCycleOptions {
   readonly locationCode?: string;
   /** Kandidaat-id's die deze cyclus niet opnieuw mag genereren (bv. al geprobeerd in een vorige cyclus van dezelfde run). */
   readonly excludedCandidateIds?: readonly string[];
+  /** Uitsluitingen van de lange run bovenop het leergeheugen (zie lessons.ts, RunUitsluitingen). */
+  readonly runUitsluitingen?: import("./lessons").RunUitsluitingen;
   /**
    * Overschrijft de automatisch gediagnosticeerde zwakste dimensie met een
    * door de gebruiker gekozen focus (§ Development Runs, "Doel"). De echte
@@ -131,6 +133,8 @@ export interface DevelopmentCycleResult {
   readonly les?: Les | null;
   /** Welke eerdere lessen de keuze van dimensie en strategie bepaalden. */
   readonly geleerdVan?: readonly string[];
+  /** Dimensies die de diagnose oversloeg, en waarom — hieruit leidt de lange run "zwakte gewisseld" en "lokaal uitgeput" af. */
+  readonly overgeslagen?: readonly { readonly dimensie: string; readonly reden: string }[];
 }
 
 export async function runDevelopmentCycle(
@@ -160,7 +164,7 @@ export async function runDevelopmentCycle(
   }
   const lessen = leesLessen();
   const scores = weakness.scores ?? (weakness.weakestDimension ? { [weakness.weakestDimension]: weakness.weakestScore ?? 0 } : {});
-  const doel = kiesDoel(scores, lessen, STRATEGIEEN, options.focusDimension);
+  const doel = kiesDoel(scores, lessen, STRATEGIEEN, options.focusDimension, options.runUitsluitingen);
   if (!doel) {
     stadium("DIAGNOSE", "OK", `gemeten zwakste: ${weakness.weakestDimension}; elke gemeten dimensie is uitgeput of wacht op een mens`, { scores });
     logbook.log(runId, { kind: "INFO", experimentId: null, message: "Geen dimensie meer met een ongeprobeerde strategie — de cyclus stopt eerlijk (UITGEPUT)." });
@@ -179,10 +183,10 @@ export async function runDevelopmentCycle(
   logbook.log(runId, { kind: "HYPOTHESIS", experimentId: null, message: `Diagnose: ${doel.reden} (echte meting: zwakste ${weakness.weakestDimension} ${weakness.weakestScore?.toFixed(1)}%).` });
 
   // 2. HYPOTHESE — welke strategie, gegeven wat al verworpen is.
-  const strategie = kiesStrategie(gekozen, lessen, STRATEGIEEN);
+  const strategie = kiesStrategie(gekozen, lessen, STRATEGIEEN, options.runUitsluitingen);
   if (!strategie) {
     stadium("HYPOTHESE", "MISLUKT", `geen strategie meer voor ${gekozen}`);
-    return { runId, weakness: gerichteZwakte, candidate: null, proof: null, decision: "UITGEPUT", version: null, stadia, les: null, geleerdVan: doel.lesIds };
+    return { runId, weakness: gerichteZwakte, candidate: null, proof: null, decision: "UITGEPUT", version: null, stadia, les: null, geleerdVan: doel.lesIds, overgeslagen: doel.overgeslagen ?? [] };
   }
   const geleerdVan = [...new Set([...doel.lesIds, ...strategie.lesIds])];
   stadium("HYPOTHESE", "OK", strategie.reden, { dimensie: gekozen, strategie: strategie.waarde, meerReplicaten: strategie.meerReplicaten, lesIds: strategie.lesIds });
@@ -233,7 +237,7 @@ export async function runDevelopmentCycle(
     for (const n of ["EXPERIMENT", "BENCHMARK", "HOLDOUT", "ADVERSARIAL", "RECHTER"] as const) stadium(n, "OVERGESLAGEN", "validator wees de kandidaat af");
     stadium("BESLUIT", "OK", "REJECTED (validator)");
     const les = leer("VALIDATOR_REJECT", "REJECTED", validatie.bevindingen, null, null);
-    return { runId, weakness: gerichteZwakte, candidate, proof: null, decision: "REJECTED", version: null, manifest, judge: null, stadia, les, geleerdVan };
+    return { runId, weakness: gerichteZwakte, candidate, proof: null, decision: "REJECTED", version: null, manifest, judge: null, stadia, les, geleerdVan, overgeslagen: doel.overgeslagen ?? [] };
   }
   stadium("VALIDATOR", "OK", "publiceerbaar, begrensd, geen holdoutlek, geen gezagsclaim, geen vastgezet feit");
 
@@ -328,5 +332,5 @@ export async function runDevelopmentCycle(
   const les = judge ? leer(judge.verdict, decision, judge.redenen, deltaDoel, adversarial) : null;
   if (!les) stadium("LEREN", "OVERGESLAGEN", "geen oordeel, dus geen les over deze strategie");
 
-  return { runId, weakness: gerichteZwakte, candidate, proof, decision, version, manifest, judge, stadia, les, geleerdVan };
+  return { runId, weakness: gerichteZwakte, candidate, proof, decision, version, manifest, judge, stadia, les, geleerdVan, overgeslagen: doel.overgeslagen ?? [] };
 }

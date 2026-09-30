@@ -6,7 +6,7 @@ import http from "node:http";
 import path from "node:path";
 import { CHALLENGES } from "./challenges/catalogue";
 import { dashboardPort, HANDOFF_PATH, REPO_ROOT, REPORTS_DIR } from "./config";
-import { currentRun, currentRunWithElapsed, runCliOnceAndCapture, startCliRun, stopCurrentRun } from "./runControl";
+import { currentRun, currentRunWithElapsed, isTerminalStatus, runCliOnceAndCapture, startCliRun, stopCurrentRun } from "./runControl";
 import { readBenchmarkHistory } from "./store/benchmarkHistory";
 import * as logbook from "./store/logbook";
 import { listRunLogs, readRunEvents, readRunText, runJsonlFilePath, runTxtFilePath } from "./store/logbook";
@@ -498,7 +498,10 @@ const server = http.createServer((req, res) => {
 
     if (req.method === "POST" && url.pathname === "/api/runs/start") {
       const body = await readBody(req);
-      const runId = `DR-UI-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
+      // Tot op de seconde plus een willekeurig achtervoegsel: twee starts in
+      // dezelfde minuut kregen eerder hetzelfde id, en de tweede "hervatte" dan
+      // stil een al afgeronde run.
+      const runId = `DR-UI-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14)}-${randomUUID().slice(0, 4)}`;
       try {
         const type = String(body.type ?? "");
         const args =
@@ -523,6 +526,14 @@ const server = http.createServer((req, res) => {
       }
     }
     if (req.method === "POST" && url.pathname === "/api/runs/stop") {
+      // Een lange run (ook gestart via een kaartje) stopt netjes op de
+      // eerstvolgende cyclusgrens, met reden HANDMATIG_GESTOPT in het
+      // checkpoint — niet door het proces af te schieten midden in een meting.
+      const actief = currentRun();
+      if (actief && !isTerminalStatus(actief.status) && leesCheckpoint(actief.runId)) {
+        vraagControle(actief.runId, "STOP", "dashboard");
+        return json(res, 200, { ...actief, stopAangevraagd: true, toelichting: "Stop aangevraagd; de lange run stopt op de eerstvolgende cyclusgrens (HANDMATIG_GESTOPT)." });
+      }
       return json(res, 200, stopCurrentRun());
     }
     if (req.method === "POST" && url.pathname === "/api/publish/execute") {
@@ -562,13 +573,23 @@ const server = http.createServer((req, res) => {
       try {
         if (url.pathname === "/api/long-runs/start" || url.pathname === "/api/long-runs/resume") {
           const hervat = url.pathname.endsWith("resume");
-          const runId = hervat ? String(body.runId ?? "") : `DR-LONG-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 12)}`;
+          const runId = hervat ? String(body.runId ?? "") : `DR-LONG-${new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14)}-${randomUUID().slice(0, 4)}`;
           const bestaand = hervat ? leesCheckpoint(runId) : null;
-          if (hervat && bestaand?.status !== "PAUSED") return json(res, 409, { error: `alleen een gepauzeerde run kan hervat worden (status: ${bestaand?.status ?? "onbekend"})` });
+          // Hervatten kan na een pauze, én na een crash: dan staat het checkpoint
+          // nog op RUNNING maar draait er geen proces meer voor deze run.
+          const actief = currentRun();
+          const draaitNog = actief !== null && actief.runId === runId && !isTerminalStatus(actief.status);
+          const hervatbaar = bestaand?.status === "PAUSED" || (bestaand?.status === "RUNNING" && !draaitNog);
+          if (hervat && !hervatbaar) return json(res, 409, { error: `deze run kan niet hervat worden (status: ${bestaand?.status ?? "onbekend"}${draaitNog ? ", draait nog" : ""})` });
           const profiel = String(bestaand?.profiel ?? body.profiel ?? "1h");
-          if (!(profiel in PROFIEL_MINUTEN)) return json(res, 400, { error: "onbekend profiel" });
+          if (profiel !== "aangepast" && !(profiel in PROFIEL_MINUTEN)) return json(res, 400, { error: "onbekend profiel" });
           meldRunAangevraagd(runId, "long-run", { profiel, hervat });
-          return json(res, 200, startCliRun(runId, "long-run", ["long-run", "--profiel", profiel, "--run-id", runId]));
+          // Eén motor: hetzelfde run-id, dezelfde canonieke lange run (cli.ts, draaiCanoniekeRun).
+          const args =
+            profiel === "aangepast"
+              ? ["development-run", "--minutes", String(bestaand?.budgetMinuten ?? body.minutes ?? 60), "--run-id", runId]
+              : ["long-run", "--profiel", profiel, "--run-id", runId];
+          return json(res, 200, startCliRun(runId, "long-run", args));
         }
         if (url.pathname === "/api/long-runs/pause" || url.pathname === "/api/long-runs/stop") {
           const runId = String(body.runId ?? "");

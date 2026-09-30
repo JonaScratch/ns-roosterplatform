@@ -1,0 +1,276 @@
+{
+ "schema": "ns-lyra-long-run-proof/1",
+ "gemaakt": "2026-09-30T16:29:03.977573Z",
+ "LET_OP": "NEPMODEL — deterministisch OpenAI-compatibel testeindpunt (ollama nep-0.0), geen qwen3:8b. Bewijst de keten UI → API → CLI → canonieke motor → runDevelopmentCycle → checkpoint → verifier, niet de modelkwaliteit. Geen LONG-RUN-VERIFICATION van een echte run.",
+ "keten": "POST /api/runs/start {type:\"development-run\"} (kaartje \"1/6/24 uur\") en /api/long-runs/{pause,resume,stop}, /api/runs/stop; echte runDevelopmentCycle met proof-of-value, holdout, adversarial en judge/2 op een geseede Postgres",
+ "runs": {
+  "multicyclus-20min": {
+   "runId": "DR-UI-202609301616",
+   "profiel": "aangepast",
+   "budgetMinuten": 20,
+   "status": "DONE",
+   "stopReden": "MAX_CYCLI",
+   "fase": "MAX_CYCLI",
+   "segmenten": 1,
+   "verkenning": {
+    "pogingenPerDimensie": 6,
+    "herhalingsTolerantie": 3,
+    "maxCycli": 8
+   },
+   "omgevingSegmenten": 1,
+   "pad": [
+    "1:contextResolution/REGEL:REJECT [NIEUWE_HYPOTHESE]",
+    "2:contextResolution/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "3:contextResolution/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "4:multiTurnContext/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "5:multiTurnContext/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "6:multiTurnContext/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "7:toolChoice/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "8:toolChoice/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]"
+   ],
+   "alleStadiaOK": true,
+   "productie": {
+    "bijStart": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    },
+    "laatst": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    }
+   },
+   "gebeurtenissenLaatste3": [
+    "Cyclus 7: KEEP_TESTING (rechter REJECT), kandidaat experiment-toolChoice-7, toolChoice/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD].",
+    "Cyclus 8: KEEP_TESTING (rechter REJECT), kandidaat experiment-toolChoice-zelfcontrole-8, toolChoice/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD].",
+    "Veiligheidsgrens van 8 cycli bereikt."
+   ],
+   "verifier": {
+    "status": "PASS",
+    "controles": [
+     [
+      "minstens twee gemeten cycli",
+      true,
+      "8 gemeten van 8"
+     ],
+     [
+      "elke gemeten cyclus doorliep alle stappen",
+      true,
+      "8 volledige cycli"
+     ],
+     [
+      "een echt taalmodel deed de metingen",
+      true,
+      "240/240 items door lokaal:qwen3:8b, lokaal:qwen3:8b:variant"
+     ],
+     [
+      "onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel",
+      true,
+      "ja, in 8 cycli"
+     ],
+     [
+      "elke cyclus leerde van de vorige",
+      true,
+      "elke volgende keuze steunde op de vorige les; geen verworpen strategie herhaald"
+     ],
+     [
+      "productie onaangeroerd (geen autonome activatie)",
+      true,
+      "lyra-prod-baseline (generatie 0) → lyra-prod-baseline (generatie 0)"
+     ],
+     [
+      "geldige stopreden",
+      true,
+      "DONE · MAX_CYCLI"
+     ],
+     [
+      "canoniek checkpoint (verkenningsbudget en omgevingsvingerafdruk)",
+      true,
+      "aangepast (20 min), 1 segment(en), commit 86de65eddb"
+     ],
+     [
+      "lokale uitputting beëindigde de run niet",
+      true,
+      "geen zwakte lokaal uitgeput"
+     ]
+    ]
+   }
+  },
+  "pauze-hervat-stop": {
+   "runId": "DR-UI-202609301619",
+   "profiel": "1h",
+   "budgetMinuten": 60,
+   "status": "STOPPED",
+   "stopReden": "HANDMATIG_GESTOPT",
+   "fase": "HANDMATIG_GESTOPT",
+   "segmenten": 2,
+   "verkenning": {
+    "pogingenPerDimensie": 6,
+    "herhalingsTolerantie": 2,
+    "maxCycli": 24
+   },
+   "omgevingSegmenten": 2,
+   "pad": [
+    "1:contextResolution/REGEL:REJECT [NIEUWE_HYPOTHESE]",
+    "2:contextResolution/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "3:contextResolution/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "4:multiTurnContext/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]"
+   ],
+   "alleStadiaOK": true,
+   "productie": {
+    "bijStart": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    },
+    "laatst": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    }
+   },
+   "gebeurtenissenLaatste3": [
+    "Cyclus 3: KEEP_TESTING (rechter REJECT), kandidaat experiment-contextResolution-waarom-1, contextResolution/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD].",
+    "Cyclus 4: KEEP_TESTING (rechter REJECT), kandidaat experiment-multiTurnContext-2, multiTurnContext/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD].",
+    "Gestopt door dashboard."
+   ]
+  },
+  "crash-hervat": {
+   "runId": "DR-UI-202609301620",
+   "profiel": "1h",
+   "budgetMinuten": 60,
+   "status": "STOPPED",
+   "stopReden": "HANDMATIG_GESTOPT",
+   "fase": "HANDMATIG_GESTOPT",
+   "segmenten": 2,
+   "verkenning": {
+    "pogingenPerDimensie": 6,
+    "herhalingsTolerantie": 2,
+    "maxCycli": 24
+   },
+   "omgevingSegmenten": 2,
+   "pad": [
+    "1:contextResolution/REGEL:REJECT [NIEUWE_HYPOTHESE]",
+    "2:contextResolution/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "3:contextResolution/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "4:multiTurnContext/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "5:multiTurnContext/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]"
+   ],
+   "alleStadiaOK": true,
+   "productie": {
+    "bijStart": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    },
+    "laatst": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    }
+   },
+   "gebeurtenissenLaatste3": [
+    "Cyclus 4: KEEP_TESTING (rechter REJECT), kandidaat experiment-multiTurnContext-2, multiTurnContext/REGEL [NIEUWE_HYPOTHESE, ZWAKTE_GEWISSELD].",
+    "Cyclus 5: KEEP_TESTING (rechter REJECT), kandidaat experiment-multiTurnContext-zelfcontrole-3, multiTurnContext/ZELFCONTROLE [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD].",
+    "Gestopt door dashboard."
+   ]
+  },
+  "globaal-uitgeput": {
+   "runId": "DR-UI-20260930162731-e0d8",
+   "profiel": "1h",
+   "budgetMinuten": 60,
+   "status": "DONE",
+   "stopReden": "ALLES_GEPROBEERD",
+   "fase": "GLOBAAL_UITGEPUT",
+   "segmenten": 1,
+   "verkenning": {
+    "pogingenPerDimensie": 6,
+    "herhalingsTolerantie": 2,
+    "maxCycli": 24
+   },
+   "omgevingSegmenten": 1,
+   "pad": [
+    "1:contextResolution/REGEL:REJECT [NIEUWE_HYPOTHESE]",
+    "2:contextResolution/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "3:contextResolution/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "4:multiTurnContext/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "5:multiTurnContext/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "6:multiTurnContext/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "7:toolChoice/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "8:toolChoice/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "9:toolChoice/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "10:falsePremiseCorrection/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "11:falsePremiseCorrection/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "12:falsePremiseCorrection/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "13:grounding/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "14:grounding/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "15:grounding/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "16:causalClaims/REGEL:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "17:causalClaims/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "18:causalClaims/WAAROM:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD]",
+    "19:contextResolution/-:UITGEPUT"
+   ],
+   "alleStadiaOK": true,
+   "productie": {
+    "bijStart": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    },
+    "laatst": {
+     "versionId": "lyra-prod-baseline",
+     "generation": 0
+    }
+   },
+   "gebeurtenissenLaatste3": [
+    "Cyclus 18: KEEP_TESTING (rechter REJECT), kandidaat experiment-causalClaims-waarom-18, causalClaims/WAAROM [NIEUWE_HYPOTHESE, STRATEGIE_GEWISSELD].",
+    "Cyclus 19: UITGEPUT.",
+    "Globaal uitgeput: geen enkele gemeten zwakte heeft nog een ongeprobeerde strategie — run stopt eerlijk."
+   ],
+   "verifier": {
+    "status": "PASS",
+    "controles": [
+     [
+      "minstens twee gemeten cycli",
+      true,
+      "18 gemeten van 19"
+     ],
+     [
+      "elke gemeten cyclus doorliep alle stappen",
+      true,
+      "18 volledige cycli"
+     ],
+     [
+      "een echt taalmodel deed de metingen",
+      true,
+      "546/546 items door lokaal:qwen3:8b, lokaal:qwen3:8b:variant; eindpunt: qwen3:8b @ ollama nep-0.0 (nepdigest)"
+     ],
+     [
+      "onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel",
+      true,
+      "ja, in 18 cycli"
+     ],
+     [
+      "elke cyclus leerde van de vorige",
+      true,
+      "elke volgende keuze steunde op de vorige les; geen verworpen strategie herhaald"
+     ],
+     [
+      "productie onaangeroerd (geen autonome activatie)",
+      true,
+      "lyra-prod-baseline (generatie 0) → lyra-prod-baseline (generatie 0)"
+     ],
+     [
+      "geldige stopreden",
+      true,
+      "DONE · ALLES_GEPROBEERD"
+     ],
+     [
+      "canoniek checkpoint (verkenningsbudget en omgevingsvingerafdruk)",
+      true,
+      "1h (60 min), 1 segment(en), commit 86de65eddb"
+     ],
+     [
+      "lokale uitputting beëindigde de run niet",
+      true,
+      "geen zwakte lokaal uitgeput"
+     ]
+    ]
+   }
+  }
+ }
+}

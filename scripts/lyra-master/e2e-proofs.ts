@@ -346,12 +346,14 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
     };
     const run = await longRun.draaiLongRun({ runId: "E2E-LEERCYCLUS", profiel: "24h" }, {
       nu,
+      // Zelfde canonieke velden als een echte run: vingerafdruk per segment.
+      omgeving: () => ({ bron: "e2e-proof", model: "synthetisch (geen taalmodel)" }),
       productie: () => {
         const a = release.getActiveLyraVersion(releaseMap);
         return { versionId: a.versionId, generation: a.generation };
       },
-      cyclus: async ({ runId, uitgesloten }) => {
-        const c = await cycleMod.runDevelopmentCycle({ runId, excludedCandidateIds: uitgesloten }, deps);
+      cyclus: async ({ runId, uitgesloten, runUitsluitingen }) => {
+        const c = await cycleMod.runDevelopmentCycle({ runId, excludedCandidateIds: uitgesloten, runUitsluitingen }, deps);
         return { beslissing: c.decision, kandidaatId: c.candidate?.id ?? null, dimensie: c.weakness.weakestDimension ?? null, versieId: c.version?.id ?? null, verdict: c.judge?.verdict ?? null, stadia: c.stadia ?? [], lesId: c.les?.id ?? null, geleerdVan: c.geleerdVan ?? [], strategie: c.candidate?.hypothesis?.strategie ?? null };
       },
     });
