@@ -1,0 +1,91 @@
+{
+  "schema": "ns-lyra-master-after-verification/1",
+  "runId": "20260930-021137",
+  "phase": "after",
+  "recordedAt": "2026-09-30T00:46:55.245Z",
+  "status": "PASS",
+  "failReasons": [],
+  "subject": {
+    "headCommit": "37b7ccfaea8ff58cbe93a70e586280d532791165",
+    "branch": "claude/admiring-edison-5y65j7",
+    "trackedClean": true
+  },
+  "model": {
+    "name": "qwen3:8b",
+    "reachable": true
+  },
+  "stubExplicitlyDisabled": true,
+  "replicates": 3,
+  "allReplicatesCompleted": true,
+  "gradingCompleted": true,
+  "rawArtifacts": [
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r1/golden.json",
+      "sha256": "26b13562e061654d7d34cb6153d2be42d35981d8a42c4f3cfb431bdb9255ec5e"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r1/golden-grade.json",
+      "sha256": "b8aeb2316c85f2feaaa1c4a9e9093ebdfb18c6bb236e68831c6dbd6a60b5914a"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r1/golden-extension.json",
+      "sha256": "a0aadea14e5ecdd19809d1938c5f130116063bdb625ffcad72f38d85dce68bcd"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r1/golden-grade-extension.json",
+      "sha256": "09bca2b5b8b5273de9190c6be367b03520ac6dc2ea585f8b617b9621fec6c6f1"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r2/golden.json",
+      "sha256": "614d1228f64e46bdfd215ed7b29f14cf3763af27fcb77fd999f168fc3559bca3"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r2/golden-grade.json",
+      "sha256": "3c2377ece6b673e1fc10576248a7ba584465ee270d1fea3225f254c7fbb94f8b"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r2/golden-extension.json",
+      "sha256": "009e2f59b572051aacce52e1e407bc8dbff76c7beb34d8c537fbf9425a82fb74"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r2/golden-grade-extension.json",
+      "sha256": "468654122ef0188639755fbe3328d626e7e28d8e614e30a01ba4913445f57dd5"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r3/golden.json",
+      "sha256": "69c93fb71fd30e82b63b0105d9ce6278bb8f829663b2d0740807ae20a2999509"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r3/golden-grade.json",
+      "sha256": "06eac2765648e843d6275ebeda3cd9e9213f3fbecc96a8f80d095f244fd35d35"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r3/golden-extension.json",
+      "sha256": "66dce562b7b6ccfcfca2b203b69cccd46cb6eb4719ab9d8d5a8696c4262a4b9d"
+    },
+    {
+      "pad": "../../../../v1.0.6/benchmarks/after-20260930-021137-r3/golden-grade-extension.json",
+      "sha256": "6c396325c19768c96b252a894802f5e5f9c1e585da645129397590030512a1ba"
+    }
+  ],
+  "extension": {
+    "ranOk": true,
+    "note": "Golden-suite-extensie (categorieën L, O) — Fase 9. De BEFORE-run 20260927-205217 mat deze categorieën alleen als EXTENSION / NON-FROZEN (post-baseline code); vergelijken kan met scripts/lyra-master/compare-before-after.ts --suite extension, maar het is geen bevroren BEFORE-vergelijking."
+  },
+  "adversarial": {
+    "ranOk": true,
+    "meting": "adversarial-20260930-021137",
+    "path": "../adversarial/adversarial-20260930-021137/",
+    "note": "Fase 12 — 9 items uit adversarial-holdout-design.json. Item Q draait sinds de AFTER-analyse van 20260929 met een echte, gesimuleerde toolfout (askAgent({ toolFouten }), zichtbaar als toolGesimuleerd in adversarial.json)."
+  },
+  "comparison": {
+    "before": "20260927-205217",
+    "golden": "../../comparisons/before-20260927-205217__after-20260930-021137.json",
+    "extension": "../../comparisons/before-20260927-205217__after-20260930-021137.extension.json",
+    "note": "Streng (/2) is leidend: een antwoord dat een grendel verving, telt niet als GOED. Zie docs/lyra-knowledge/after-analysis-20260929.md §2."
+  },
+  "paths": {
+    "manifest": "manifest.json",
+    "aggregate": "aggregate.json"
+  }
+}

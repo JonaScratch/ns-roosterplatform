@@ -1,0 +1,1440 @@
+{
+  "schema": "ns-lyra-master-before-after-comparison/1",
+  "suite": "extension",
+  "before": "20260927-205217",
+  "after": "20260930-021137",
+  "replicates": 3,
+  "voorMetingen": [
+    "before-20260927-205217-r1",
+    "before-20260927-205217-r2",
+    "before-20260927-205217-r3"
+  ],
+  "naMetingen": [
+    "after-20260930-021137-r1",
+    "after-20260930-021137-r2",
+    "after-20260930-021137-r3"
+  ],
+  "gemaaktOp": "2026-09-30T00:46:55.203Z",
+  "scores": {
+    "voor": {
+      "overall": {
+        "meanPct": 86.36363636363636,
+        "medianPct": 86.36363636363636,
+        "worstPct": 86.36363636363636,
+        "perReplicaat": [
+          86.36363636363636,
+          86.36363636363636,
+          86.36363636363636
+        ]
+      },
+      "dev": {
+        "meanPct": 83.33333333333333,
+        "medianPct": 83.33333333333333,
+        "worstPct": 83.33333333333333,
+        "perReplicaat": [
+          83.33333333333333,
+          83.33333333333333,
+          83.33333333333333
+        ]
+      },
+      "holdout": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "perCategorie": {
+        "L": 93.33333333333333,
+        "O": 71.42857142857143
+      }
+    },
+    "na": {
+      "overall": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "dev": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "holdout": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "perCategorie": {
+        "L": 100,
+        "O": 100
+      }
+    },
+    "voorStreng": {
+      "overall": {
+        "meanPct": 86.36363636363636,
+        "medianPct": 86.36363636363636,
+        "worstPct": 86.36363636363636,
+        "perReplicaat": [
+          86.36363636363636,
+          86.36363636363636,
+          86.36363636363636
+        ]
+      },
+      "dev": {
+        "meanPct": 83.33333333333333,
+        "medianPct": 83.33333333333333,
+        "worstPct": 83.33333333333333,
+        "perReplicaat": [
+          83.33333333333333,
+          83.33333333333333,
+          83.33333333333333
+        ]
+      },
+      "holdout": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "perCategorie": {
+        "L": 93.33333333333333,
+        "O": 71.42857142857143
+      }
+    },
+    "naStreng": {
+      "overall": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "dev": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "holdout": {
+        "meanPct": 100,
+        "medianPct": 100,
+        "worstPct": 100,
+        "perReplicaat": [
+          100,
+          100,
+          100
+        ]
+      },
+      "perCategorie": {
+        "L": 100,
+        "O": 100
+      }
+    }
+  },
+  "samenvattingStreng": {
+    "VERBETERD": [
+      "L-DDR-LN-vs-DDR-V",
+      "O-DDR-BLM-nachtreeks",
+      "O-DDR-LN-nachtreeks"
+    ],
+    "GEREGRESSEERD": [],
+    "INSTABIEL": [],
+    "VERSCHOVEN": [],
+    "STABIEL_FOUT": [],
+    "STABIEL_GOED": 19
+  },
+  "samenvatting": {
+    "VERBETERD": [
+      "L-DDR-LN-vs-DDR-V",
+      "O-DDR-BLM-nachtreeks",
+      "O-DDR-LN-nachtreeks"
+    ],
+    "GEREGRESSEERD": [],
+    "INSTABIEL": [],
+    "VERSCHOVEN": [],
+    "STABIEL_FOUT": [],
+    "STABIEL_GOED": 19,
+    "naVervangenDoorGrendel": []
+  },
+  "items": [
+    {
+      "id": "L-DDR-50MIX-vs-DDR-BLM",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-50MIX-vs-DDR-LN",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-50MIX-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-L",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-LN",
+      "category": "L",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 3)",
+        "verwacht DDR-LN zwaarder (6 vs 3)",
+        "verwacht DDR-LN zwaarder (6 vs 3)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 3)",
+        "verwacht DDR-LN zwaarder (6 vs 3)",
+        "verwacht DDR-LN zwaarder (6 vs 3)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 3)",
+        "verwacht DDR-MIX zwaarder (10 vs 3)",
+        "verwacht DDR-MIX zwaarder (10 vs 3)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 3)",
+        "verwacht DDR-MIX zwaarder (10 vs 3)",
+        "verwacht DDR-MIX zwaarder (10 vs 3)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-BLM-vs-DDR-VL",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)",
+        "verwacht DDR-BLM zwaarder (3 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-L-vs-DDR-LN",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-L-vs-DDR-MIX",
+      "category": "L",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-MIX",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 6)",
+        "verwacht DDR-MIX zwaarder (10 vs 6)",
+        "verwacht DDR-MIX zwaarder (10 vs 6)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 6)",
+        "verwacht DDR-MIX zwaarder (10 vs 6)",
+        "verwacht DDR-MIX zwaarder (10 vs 6)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-LN als zwaarder (6 nachten) t.o.v. DDR-V (0); tekst noemt dat niet duidelijk",
+        "verwacht DDR-LN als zwaarder (6 nachten) t.o.v. DDR-V (0); tekst noemt dat niet duidelijk",
+        "verwacht DDR-LN als zwaarder (6 nachten) t.o.v. DDR-V (0); tekst noemt dat niet duidelijk"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "L-DDR-LN-vs-DDR-VL",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)",
+        "verwacht DDR-LN zwaarder (6 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-MIX-vs-DDR-V",
+      "category": "L",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "L-DDR-MIX-vs-DDR-VL",
+      "category": "L",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "voorDetail": [
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)",
+        "verwacht DDR-MIX zwaarder (10 vs 0)"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "O-DDR-50MIX-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "voorDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "O-DDR-BLM-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "voor": [
+        "ONBEOORDEELD",
+        "ONBEOORDEELD",
+        "ONBEOORDEELD"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "ONBEOORDEELD",
+        "ONBEOORDEELD",
+        "ONBEOORDEELD"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "langste reeks 3, tekst noemt 3",
+        "langste reeks 3, tekst noemt 3",
+        "langste reeks 3, tekst noemt 3"
+      ],
+      "voorDetail": [
+        "geen getal in tekst gevonden om te vergelijken",
+        "geen getal in tekst gevonden om te vergelijken",
+        "geen getal in tekst gevonden om te vergelijken"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "O-DDR-L-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "voorDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "O-DDR-LN-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "voor": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "VERBETERD",
+      "voorStreng": [
+        "FOUT",
+        "FOUT",
+        "FOUT"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "VERBETERD",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "langste reeks 6, tekst noemt 6",
+        "langste reeks 6, tekst noemt 6",
+        "langste reeks 6, tekst noemt 6"
+      ],
+      "voorDetail": [
+        "verwacht langste reeks 3, tekst noemt 6",
+        "verwacht langste reeks 3, tekst noemt 6",
+        "verwacht langste reeks 3, tekst noemt 6"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "O-DDR-MIX-nachtreeks",
+      "category": "O",
+      "holdout": true,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "langste reeks 5, tekst noemt 5",
+        "langste reeks 5, tekst noemt 5",
+        "langste reeks 5, tekst noemt 5"
+      ],
+      "voorDetail": [
+        "langste reeks 5, tekst noemt 5",
+        "langste reeks 5, tekst noemt 5",
+        "langste reeks 5, tekst noemt 5"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "id": "O-DDR-V-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "voorDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 1,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "O-DDR-VL-nachtreeks",
+      "category": "O",
+      "holdout": false,
+      "voor": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "na": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgang": "STABIEL_GOED",
+      "voorStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "naStreng": [
+        "GOED",
+        "GOED",
+        "GOED"
+      ],
+      "overgangStreng": "STABIEL_GOED",
+      "naGrendelPerReplicaat": [
+        null,
+        null,
+        null
+      ],
+      "naDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "voorDetail": [
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat",
+        "geen nachtreeks in dit rooster, agent bevestigt dat"
+      ],
+      "huidigeClaimgrendelOpVoorAntwoorden": [
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ],
+        [
+          {
+            "claims": 0,
+            "tegengehouden": []
+          }
+        ]
+      ]
+    }
+  ]
+}
