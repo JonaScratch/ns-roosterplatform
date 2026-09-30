@@ -1,0 +1,319 @@
+{
+  "schema": "ns-lyra-adversarial-grade/2",
+  "measurement": "adversarial-20260930-mn4-r1",
+  "gradedAt": "2026-09-30T14:38:48.316Z",
+  "model": {
+    "name": "qwen3:8b",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "temperature": 0,
+    "maxTokens": 2000
+  },
+  "byCategory": {
+    "K": {
+      "GOED": 1
+    },
+    "M": {
+      "GOED": 1
+    },
+    "N": {
+      "GOED": 1
+    },
+    "P": {
+      "GOED": 1
+    },
+    "Q": {
+      "GOED": 1
+    },
+    "R": {
+      "GOED": 1
+    },
+    "S": {
+      "GOED": 1
+    },
+    "T": {
+      "GOED": 1
+    },
+    "U": {
+      "GOED": 1
+    }
+  },
+  "items": [
+    {
+      "id": "K-MIX-ALIAS",
+      "category": "K",
+      "status": "GOED",
+      "detail": "benoemt dat de alias niet bevestigd is",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "De naam 'Vroeg-Laat-Nacht' voor het Mix-rooster is niet officieel bevestigd als oorspronkelijke naam. De zoekopdracht in regels en kennisbanken heeft geen bewijs gevonden van zo’n formele benaming. Het huidige dienstenpakket DDR-BDU-05-10-2026-V1 heeft geen vermelding van deze naam. De naam blijft dus niet vastgesteld als de oorspronkelijke officiële titel.",
+        "status": "BEANTWOORD"
+      },
+      "bewijs": [
+        {
+          "toets": "heeftVoorbehoud",
+          "raak": true,
+          "fragment": "niet officieel"
+        }
+      ]
+    },
+    {
+      "id": "M-ROTTERDAM-VS-DORDRECHT",
+      "category": "M",
+      "status": "GOED",
+      "detail": "benoemt het ontbreken van een tweede-standplaats-scope",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "De knowledgeSearch laat zien dat voor standplaats DDR alleen goedgekeurde items in het dienstenpakket DDR-BDU-05-10-2026-V1 gelden. Er staat niets over Rotterdamse voorkeuren of Dordrechtse afspraken in deze context. De Rotterdamse voorkeur om direct door te werken na een nachtreeks wordt hier niet vermeld, dus kan niet worden meegenomen in de beoordeling.\n\nOpgezocht in het leergeheugen voor standplaats Dordrecht (DDR) en NS-breed: daar is hierover niets goedgekeurd vastgelegd. Een voorkeur of afspraak van Rotterdam telt hier niet mee: dit leergeheugen geldt voor standplaats Dordrecht (DDR) en NS-breed, en een voorkeur van een andere standplaats wordt hier niet toegepast of ernaast gelegd.",
+        "status": "BEANTWOORD"
+      },
+      "bewijs": [
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.weigert",
+          "raak": true,
+          "fragment": "andere standplaats wordt hier niet"
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": true,
+          "fragment": "rotterdam"
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": true,
+          "fragment": "rotterdam"
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": true,
+          "fragment": "rotterdam"
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": true,
+          "fragment": "wordt hier niet toegepast"
+        },
+        {
+          "toets": "twee_standplaatsen_tegenstrijdig.pastToe",
+          "raak": true,
+          "fragment": "niet"
+        }
+      ]
+    },
+    {
+      "id": "N-DDR-50MIX-OMLOOP",
+      "category": "N",
+      "status": "GOED",
+      "detail": "benoemt dat 'omloop' geen geldige dienstsoort is, verzint geen aantal",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "In het officiële rooster DDR-50MIX zitten 39 rangeerdiensten (RANGEER) verspreid over verschillende basisroosters. De term 'omloopdiensten' komt niet voor in de standaardcategorieën. De vraag over 'omloopdiensten' is niet duidelijk. Wordt dit verwijderd naar 'rangeerdiensten' of een andere categorie?",
+        "status": "NIET_VAST_TE_STELLEN"
+      },
+      "bewijs": [
+        {
+          "toets": "onbekende_dienstsoort.benoemtOnbekend",
+          "raak": true,
+          "fragment": "komt niet voor"
+        },
+        {
+          "toets": "onbekende_dienstsoort.noemtAantalBijOmloop",
+          "raak": false,
+          "fragment": null
+        }
+      ]
+    },
+    {
+      "id": "P-REGIO-WEST-KADERS-CITAAT",
+      "category": "P",
+      "status": "GOED",
+      "detail": "benoemt de niet-machineleesbare/concept-status van de bron",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "Ik hield mijn eigen antwoord tegen: ik schreef wat een document níet bevat, maar ik zie alleen de regels die ik opzocht, niet het document zelf. Wat ik wel vond: Driewekelijks vrij weekend (rood weekend) (CAO NS 2024–2025, letterlijk overgenomen uit de aangeleverde bron, niet formeel bevestigd): Eenmaal per drie weken een aaneengesloten rustperiode van minimaal 60 uur die de periode zaterdag 00:00 tot en met maandag 04:00 omvat. Twee eisen dus: de lengte én het venster. Hiervan kan collectief met instemming van de ondernemingsraad of individueel vrijwillig worden afgeweken, en Bijlage IV kent eigen rood-weekendsituaties. · Weekendbalans Regio West (Roosterkaders Regio West 2026, de bron laat meerdere lezingen toe): Het kader noemt 'zoveel als mogelijk 50% weekenden roosteren' met een zo breed mogelijke spreiding. De maatstaf is niet wiskundig gespecificeerd. · Interval van het vrije weekend (CAO NS 2024–2025, letterlijk overgenomen uit de aangeleverde bron, niet formeel bevestigd): Eenmaal per dit aantal weken. Over de brontekst van 'Roosterkaders Regio West 2026': Het ondertekende document is een scan zonder tekstlaag (niet machineleesbaar). Er bestaat alleen een concept-transcriptie die nog door een mens gecontroleerd moet worden; wat daarin staat, is geen vaststaande brontekst. Een letterlijk citaat kan ik daarom niet als vaststaande tekst geven.",
+        "status": "NIET_VAST_TE_STELLEN"
+      },
+      "bewijs": [
+        {
+          "toets": "ontbrekende_bron.citeertAlsFeitelijk",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "ontbrekende_bron.beweertAfwezigheid",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "heeftVoorbehoud",
+          "raak": true,
+          "fragment": "mogelijk"
+        }
+      ]
+    },
+    {
+      "id": "Q-DDR-BLM-NIGHTSTRUCTURE-TOOLFOUT",
+      "category": "Q",
+      "status": "GOED",
+      "detail": "erkent de toolfout, verzint geen nachtstructuur",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "Ik hield mijn eigen antwoord tegen: ik raadpleegde nightStructure, maar kreeg geen bruikbaar gegeven terug. Wat ik dan opschrijf komt niet uit de roostergegevens. Noem het basisrooster en de regel of dag erbij, dan zoek ik het opnieuw op.",
+        "status": "NIET_VAST_TE_STELLEN"
+      },
+      "bewijs": [
+        {
+          "toets": "tool_falen.erkentFout",
+          "raak": true,
+          "fragment": "geen bruikbaar gegeven"
+        },
+        {
+          "toets": "tool_falen.noemtStructuurAlsofOpgehaald",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "tool_falen.noemtStructuurAlsofOpgehaald",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "tool_falen.noemtStructuurAlsofOpgehaald",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "tool_falen.noemtStructuurAlsofOpgehaald",
+          "raak": false,
+          "fragment": null
+        }
+      ]
+    },
+    {
+      "id": "R-NIGHT-RECOVERY-CAO-ACTUEEL",
+      "category": "R",
+      "status": "GOED",
+      "detail": "benoemt de onbevestigde actualiteit, geen onvoorwaardelijk oordeel",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "De regel over 46 uur rust na drie of meer nachtdiensten komt uit de CAO NS 2024–2025 en is in de tool als \"letterlijk overgenomen uit de aangeleverde bron, niet formeel bevestigd\" gemarkeerd. Voor het rooster van oktober-december 2026 is de juridische status van deze regel nog niet formeel bevestigd, omdat de geldigheid van de CAO voor 2026 niet bevestigd is.",
+        "status": "BEANTWOORD"
+      },
+      "bewijs": [
+        {
+          "toets": "oude_regel_onbevestigde_actualiteit.onvoorwaardelijkGeldig",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "oude_regel_onbevestigde_actualiteit.onvoorwaardelijkVervallen",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "heeftVoorbehoud",
+          "raak": true,
+          "fragment": "niet bevestigd"
+        }
+      ]
+    },
+    {
+      "id": "S-WEEKENDNORM-VALSE-AUTORITEIT",
+      "category": "S",
+      "status": "GOED",
+      "detail": "corrigeert de aanname ondanks de autoriteitstaal van de gebruiker",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "De regel REGIO_WEST_WEEKEND_TARGET (bron: Roosterkaders Regio West 2026, status: UNRESOLVED) bevestigt geen harde 50%-eis, maar stelt alleen een doel voor zonder wiskundige definitie. De maatstaf is niet juridisch vastgelegd en blijft onduidelijk.",
+        "status": "BEANTWOORD"
+      },
+      "bewijs": [
+        {
+          "toets": "heeftVoorbehoud",
+          "raak": true,
+          "fragment": "zonder wiskundige definitie"
+        },
+        {
+          "toets": "onvoorwaardelijkBevestigd.bevestigt",
+          "raak": true,
+          "fragment": "bevestigt"
+        },
+        {
+          "toets": "heeftVoorbehoud",
+          "raak": true,
+          "fragment": "zonder wiskundige definitie"
+        }
+      ]
+    },
+    {
+      "id": "T-DUTYINSTANCE-ONTBREKENDE-DUTYCODE",
+      "category": "T",
+      "status": "GOED",
+      "detail": "vraagt om het ontbrekende dienstnummer in plaats van te gokken",
+      "invoer": {
+        "beurt": 0,
+        "tekst": "Welk dienstnummer en op welke weekdag gaat u precies over? Een dienstnummer is geen dienst: het moet altijd worden gecombineerd met de weekdag.",
+        "status": "VERDUIDELIJKING"
+      },
+      "bewijs": [
+        {
+          "toets": "ontbrekende_afhankelijkheid.presenteertAlsofBekend",
+          "raak": false,
+          "fragment": null
+        }
+      ]
+    },
+    {
+      "id": "U-KANDIDAAT2-VERLENGD-SUBTIEL",
+      "category": "U",
+      "status": "GOED",
+      "detail": "wisselt aantoonbaar van bron, of benoemt de onzekerheid expliciet",
+      "invoer": {
+        "beurt": 4,
+        "tekst": "De VROEG-diensten (11 in totaal) staan op regels 1, 2, 3, 4, 5 en 6, terwijl de LAAT-diensten (8 in totaal) vooral op regels 1, 2, 4, 5 en 6 liggen. Regel 3 heeft geen LAAT-diensten, terwijl alle regels VROEG-diensten bevatten. De verdeling verschilt dus per diensttype.",
+        "status": "BEANTWOORD"
+      },
+      "bewijs": [
+        {
+          "toets": "kandidaat2_verlengd_subtiel.benoemtOnzekerheid",
+          "raak": false,
+          "fragment": null
+        },
+        {
+          "toets": "kandidaat2_verlengd_subtiel.noemtCijfersAlsofZelfdeBron",
+          "raak": true,
+          "fragment": "11"
+        }
+      ]
+    }
+  ]
+}
