@@ -177,4 +177,55 @@ naar het patroon van de echte run.
 - In beide scenario's zijn alle verifiercontroles OK behalve "echt taalmodel".
   Die faalt hier terecht, want het modellogboek wordt niet vervalst.
 
-**B. Versneld, op de echte keten** — zie hieronder.
+**B. Versneld, op de echte keten** (`proofs/zoekruimte-echte-keten-proof-20261001.json`,
+**NEPMODEL**: deterministisch eindpunt `ollama nep-0.0`, 1,2 s per antwoord,
+geen qwen3:8b). Gemeten op commit `baf43df`. De keten:
+- dashboardserver → `POST /api/runs/start` (kaartje "1 uur") → CLI → motor →
+  echte `runDevelopmentCycle`, met proof-of-value plus gegenereerde tests,
+  holdout, adversarial en judge/2, op een geseede Postgres;
+- leergeheugen bij de start: dezelfde 16 verwerpingen, dus 2 van 18 startparen
+  open.
+
+Verloop van run `DR-UI-20261001002157-c676`:
+- cyclus 3 `UITGEPUT` → golf 2 (POOL_UITGEPUT, aanpak hefboom). Die bevat
+  samenstellingen uit de echte lessen, zoals
+  `toolChoice/ZELFCONTROLE+BESCHERM:falsePremiseCorrection`, en 2 gegenereerde
+  grounding-tests. Die tests zijn daarna echt gemeten (`GEN-G2-…` in het
+  runlogboek, beoordeeld door de bestaande grader);
+- crash met `kill -9` van het CLI-proces midden in cyclus 4, daarna hervat via
+  `/api/long-runs/resume` (segment 2, zelfde id);
+- golven 3–6 na stagnatie, met wisselende aanpak; alle zes zwaktes kregen
+  nieuwe hypothesen;
+- **DONE · BUDGET_OP na 60,2 van 60 actieve minuten**, 19 volledig gemeten
+  cycli, 20 nieuwe hypothesen, 44 voorstellen geweigerd als niet nieuw.
+  Productie onaangeroerd.
+
+Verifier: **PASS, 15/15**. De controle "echt taalmodel" slaagt hier omdat er
+lokaal een eindpunt antwoordde. Het detail noemt de build
+(`ollama nep-0.0 (nepdigest)`), zodat een mens ziet dat dit geen qwen3:8b was.
+De canonieke kopie staat daarom niet onder `long-runs/`.
+
+Onderweg gevonden en opgelost: zonder "verkennen vóór verdiepen" bleef de
+regisseur dezelfde twee zwaktes verdiepen. De omgevingsstoring tijdens de
+eerste poging (Postgres verloor de rechten op zijn datamap in de scratchmap)
+was geen productfout; de proef is daarna opnieuw gedraaid.
+
+## Groen licht voor een nieuwe echte 6-uursrun (qwen3:8b)
+
+Ja, op commit `baf43df` of later. Start lokaal op het kaartje "6 uur" (of
+`npm run demo-room -- development-run --minutes 360`). Na afloop:
+
+    npx tsx --conditions=react-server scripts/lyra-master/verify-long-run.ts --run <runId>
+
+Voltooid is alleen: `DONE · BUDGET_OP` met ≥ 360 actieve minuten (hooguit één
+cyclus overschrijding) en verifier PASS op alle controles. Daar horen bij:
+- het echte eindpunt (`ollama 0.34.4`, qwen3:8b) in het detail;
+- verbreding na uitputting en stagnatie;
+- nieuwe hypothesen, zonder semantische herhaling, op lessen gebouwd;
+- judge/2 en alle 11 stappen;
+- productie onaangeroerd.
+
+Een eerdere stop is een eerlijke runstatus, geen voltooiing: handmatig, crash
+(hervat dan met hetzelfde id), blocker of `CAPACITEIT_BLOKKADE` (escalatie).
+
+`LYRA_DEMO_ROOM_AUTONOMOUS_PROGRAM_COMPLETE` blijft niet gezet tot die run er is.

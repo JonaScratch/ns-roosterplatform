@@ -1,0 +1,202 @@
+{
+  "schema": "ns-lyra-long-run-proof/1",
+  "gemaakt": "2026-10-01T01:23:58.335957Z",
+  "LET_OP": "NEPMODEL — deterministisch OpenAI-compatibel testeindpunt (ollama nep-0.0, 1,2 s per antwoord), geen qwen3:8b. Bewijst de keten en het gedrag bij uitputting/stagnatie/crash, niet de modelkwaliteit. Geen LONG-RUN-VERIFICATION van een echte run; de canonieke kopie staat daarom niet onder long-runs/.",
+  "keten": "POST /api/runs/start {type:'development-run', minutes:60} (kaartje '1 uur') → cli.ts development-run → canonieke motor met regisseur → echte runDevelopmentCycle (proof-of-value met gegenereerde tests, holdout, adversarial, judge/2) op een geseede Postgres; kill -9 van het CLI-proces na golf 2, hervat via POST /api/long-runs/resume",
+  "leergeheugenBijStart": "16 verwerpingen uit DR-UI-20260930165141-d5a8 (zoals de volgende echte run begint): 2 van 18 startparen open",
+  "runId": "DR-UI-20261001002157-c676",
+  "verloop": [
+    "00:21:57 gestart DR-UI-20261001002157-c676",
+    "00:28:58 CRASH: kill -9 7561 (golven 2 RUNNING True)",
+    "00:29:05 hervat: {\"runId\":\"DR-UI-20261001002157-c676\",\"kind\":\"long-run\",\"command\":\"cli.ts long-run --profiel 1h --run-id DR-UI-20261001002157-c676\",\"startedAt\":\"2026-10-01T00:29"
+  ],
+  "stop": {
+    "status": "DONE",
+    "stopReden": "BUDGET_OP",
+    "actieveMinuten": 60.2,
+    "budgetMinuten": 60,
+    "segmenten": 2
+  },
+  "commit": "baf43df395ddf0218f316d9a19c2b0ebb2413e27",
+  "pad": [
+    "1:g1:contextResolution/REGEL:REJECT [NIEUWE_HYPOTHESE]",
+    "2:g1:contextResolution/ZELFCONTROLE:REJECT [NIEUWE_HYPOTHESE,STRATEGIE_GEWISSELD,FAMILIE_GEWISSELD]",
+    "3:g1:contextResolution/-:UITGEPUT []",
+    "4:g2:toolChoice/ZELFCONTROLE+BESCHERM:falsePremiseCorrection:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD,NIEUWE_GOLF]",
+    "5:g2:grounding/BESCHERM:falsePremiseCorrection:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "6:g2:contextResolution/VOORRANG:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "7:g2:multiTurnContext/VOORRANG:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "8:g3:toolChoice/ZELFCONTROLE+AFBAKENING+BESCHERM:falsePremiseCorrection:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD,NIEUWE_GOLF]",
+    "9:g3:grounding/AFBAKENING+BESCHERM:falsePremiseCorrection:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "10:g3:multiTurnContext/STAPPEN:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "11:g3:causalClaims/VOORRANG:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "12:g4:contextResolution/STAPPEN:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD,NIEUWE_GOLF]",
+    "13:g4:toolChoice/VOORRANG:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "14:g4:grounding/VOORRANG:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "15:g4:multiTurnContext/PRINCIPE:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "16:g5:contextResolution/PRINCIPE:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD,NIEUWE_GOLF]",
+    "17:g5:multiTurnContext/VOORRANG+STAPPEN:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "18:g5:toolChoice/STAPPEN:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "19:g5:falsePremiseCorrection/VOORRANG:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD]",
+    "20:g6:toolChoice/PRINCIPE:REJECT [NIEUWE_HYPOTHESE,ZWAKTE_GEWISSELD,NIEUWE_GOLF]"
+  ],
+  "golven": [
+    {
+      "nr": 1,
+      "aanleiding": "START",
+      "naCyclus": 0,
+      "aanpak": "ZWAKSTE_EERST",
+      "aanpakReden": "start: zwakste gemeten dimensie eerst",
+      "hypothesen": [],
+      "tests": [],
+      "geweigerd": 0,
+      "testGaten": []
+    },
+    {
+      "nr": 2,
+      "aanleiding": "POOL_UITGEPUT",
+      "naCyclus": 3,
+      "aanpak": "HEFBOOM",
+      "aanpakReden": "de vorige golf leverde niets op met aanpak zwakste_eerst → wissel naar hefboom",
+      "hypothesen": [
+        "toolChoice/ZELFCONTROLE+BESCHERM:falsePremiseCorrection (COMPOSITIE: ZELFCONTROLE verbeterde toolChoice met +50pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij)",
+        "grounding/BESCHERM:falsePremiseCorrection (COMPOSITIE: REGEL verbeterde grounding met +50pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij)",
+        "contextResolution/VOORRANG (GERICHT: 3× geen effect → voorrang (prioritering) grijpt daarop aan)",
+        "multiTurnContext/VOORRANG (GERICHT: 3× geen effect → voorrang (prioritering) grijpt daarop aan)"
+      ],
+      "tests": [
+        "GEN-G2-grounding-1",
+        "GEN-G2-grounding-2"
+      ],
+      "geweigerd": 0,
+      "testGaten": [
+        "toolChoice"
+      ]
+    },
+    {
+      "nr": 3,
+      "aanleiding": "STAGNATIE",
+      "naCyclus": 7,
+      "aanpak": "BIJWERKING_EERST",
+      "aanpakReden": "4 cycli op rij zonder resultaat met aanpak hefboom → wissel naar bijwerking_eerst",
+      "hypothesen": [
+        "toolChoice/ZELFCONTROLE+AFBAKENING+BESCHERM:falsePremiseCorrection (COMPOSITIE: ZELFCONTROLE verbeterde toolChoice maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt)",
+        "grounding/AFBAKENING+BESCHERM:falsePremiseCorrection (COMPOSITIE: REGEL verbeterde grounding maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt)",
+        "multiTurnContext/STAPPEN (GERICHT: 4× geen effect → stappen (procedure) grijpt daarop aan)",
+        "causalClaims/VOORRANG (GERICHT: 3× geen effect → voorrang (prioritering) grijpt daarop aan)"
+      ],
+      "tests": [
+        "GEN-G3-grounding-1",
+        "GEN-G3-grounding-2"
+      ],
+      "geweigerd": 3,
+      "testGaten": [
+        "toolChoice"
+      ]
+    },
+    {
+      "nr": 4,
+      "aanleiding": "STAGNATIE",
+      "naCyclus": 11,
+      "aanpak": "ROBUUSTHEID",
+      "aanpakReden": "4 cycli op rij zonder resultaat met aanpak bijwerking_eerst → wissel naar robuustheid",
+      "hypothesen": [
+        "contextResolution/STAPPEN (GERICHT: 4× geen effect → stappen (procedure) grijpt daarop aan)",
+        "toolChoice/VOORRANG (GERICHT: 4× geen effect → voorrang (prioritering) grijpt daarop aan)",
+        "grounding/VOORRANG (GERICHT: 4× geen effect → voorrang (prioritering) grijpt daarop aan)",
+        "multiTurnContext/PRINCIPE (GERICHT: 5× geen effect → principe (generalisatie) grijpt daarop aan)"
+      ],
+      "tests": [],
+      "geweigerd": 9,
+      "testGaten": []
+    },
+    {
+      "nr": 5,
+      "aanleiding": "STAGNATIE",
+      "naCyclus": 15,
+      "aanpak": "ZWAKSTE_EERST",
+      "aanpakReden": "4 cycli op rij zonder resultaat met aanpak robuustheid → wissel naar zwakste_eerst",
+      "hypothesen": [
+        "contextResolution/PRINCIPE (GERICHT: 5× geen effect → principe (generalisatie) grijpt daarop aan)",
+        "multiTurnContext/VOORRANG+STAPPEN (GERICHT: 6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen)",
+        "toolChoice/STAPPEN (GERICHT: 5× geen effect → stappen (procedure) grijpt daarop aan)",
+        "falsePremiseCorrection/VOORRANG (GERICHT: 3× geen effect → voorrang (prioritering) grijpt daarop aan)"
+      ],
+      "tests": [],
+      "geweigerd": 12,
+      "testGaten": []
+    },
+    {
+      "nr": 6,
+      "aanleiding": "STAGNATIE",
+      "naCyclus": 19,
+      "aanpak": "HEFBOOM",
+      "aanpakReden": "4 cycli op rij zonder resultaat met aanpak zwakste_eerst → wissel naar hefboom",
+      "hypothesen": [
+        "toolChoice/PRINCIPE (GERICHT: 6× geen effect → principe (generalisatie) grijpt daarop aan)",
+        "grounding/STAPPEN (GERICHT: 5× geen effect → stappen (procedure) grijpt daarop aan)",
+        "contextResolution/VOORRANG+STAPPEN (GERICHT: 6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen)",
+        "multiTurnContext/VOORRANG+ZELFCONTROLE (GERICHT: 7× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole)"
+      ],
+      "tests": [],
+      "geweigerd": 20,
+      "testGaten": []
+    }
+  ],
+  "gegenereerdeTests": [
+    {
+      "id": "GEN-G2-grounding-1",
+      "prompt": "Wat heeft de roosterplanner vorige week in de kantine gezegd over de nieuwe roosterronde?",
+      "gedrag": "cannot_determine",
+      "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+    },
+    {
+      "id": "GEN-G2-grounding-2",
+      "prompt": "Wat vindt de roosterplanner persoonlijk van het reserverooster?",
+      "gedrag": "cannot_determine",
+      "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+    },
+    {
+      "id": "GEN-G3-grounding-1",
+      "prompt": "Wat vindt het regioteam persoonlijk van de weekendverdeling?",
+      "gedrag": "cannot_determine",
+      "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+    },
+    {
+      "id": "GEN-G3-grounding-2",
+      "prompt": "Wat vindt de teamleider persoonlijk van de verdeling van vroege diensten?",
+      "gedrag": "cannot_determine",
+      "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+    }
+  ],
+  "productie": {
+    "bijStart": {
+      "versionId": "lyra-prod-baseline",
+      "generation": 0
+    },
+    "laatst": {
+      "versionId": "lyra-prod-baseline",
+      "generation": 0
+    }
+  },
+  "verifier": {
+    "status": "PASS",
+    "controles": [
+      "OK   minstens twee gemeten cycli — 19 gemeten van 20",
+      "OK   elke gemeten cyclus doorliep alle stappen — 19 volledige cycli",
+      "OK   een echt taalmodel deed de metingen — 767/767 items door lokaal:qwen3:8b, lokaal:qwen3:8b:variant; eindpunt: qwen3:8b @ ollama nep-0.0 (nepdigest)",
+      "OK   onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel — ja, in 19 cycli",
+      "OK   elke cyclus leerde van de vorige — elke volgende keuze steunde op de vorige les; geen verworpen strategie herhaald",
+      "OK   productie onaangeroerd (geen autonome activatie) — lyra-prod-baseline (generatie 0) → lyra-prod-baseline (generatie 0)",
+      "OK   geldige stopreden — DONE · BUDGET_OP",
+      "OK   canoniek checkpoint (verkenningsbudget en omgevingsvingerafdruk) — 1h (60 min), 2 segment(en), commit baf43df395",
+      "OK   lokale uitputting beëindigde de run niet — geen zwakte lokaal uitgeput",
+      "OK   actief budget benut (voltooiing) — 60.2 van 60 actieve min; DONE · BUDGET_OP; overschrijding 0.2 min (≤ langste cyclus 3.5 min: cyclusgrens)",
+      "OK   betekenisvolle cycli gedurende het budget — 19 volledige cycli, samen 99% van de actieve tijd",
+      "OK   uitputting en stagnatie leidden tot verbreding, niet tot het einde — 5 verbreding(en): 1 na uitputting, 4 na stagnatie; 4 aanpak(ken)",
+      "OK   nieuwe hypothesen zijn aantoonbaar nieuw (herkomst, les, geen semantisch duplicaat) — 20 nieuwe hypothese(n) in 5 golf/golven; 44 voorstel(len) als niet nieuw geweigerd",
+      "OK   geen verworpen aanpak semantisch herhaald — 19 gemeten cycli, 19 verworpen aanpakken nooit opnieuw",
+      "OK   lessen van golf N sturen golf N+1 — 5 golf/golven op de lessen van de vorige gebouwd; in 5 daarvan ook gemeten"
+    ]
+  }
+}
