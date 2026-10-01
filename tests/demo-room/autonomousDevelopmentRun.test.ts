@@ -44,6 +44,12 @@ beforeEach(() => {
 /** Adversarial meting gelijk voor basis en kandidaat: geen veiligheidsdaling, wel volledig beoordeeld. */
 const ADVERSARIAL_GELIJK = { runAdversarial: async () => ({ basis: 80, kandidaat: 80 }) };
 
+/** Versnelde klok: elke cyclus `stapMin` actieve minuten, zodat een budget echt opgaat. */
+function klok(stapMin: number) {
+  let t = Date.parse("2026-10-01T08:00:00.000Z");
+  return { nu: () => (t += stapMin * 60_000) };
+}
+
 afterAll(() => {
   delete process.env.DEMO_ROOM_STATE_ROOT_OVERRIDE;
   rmSync(tmpRoot, { recursive: true, force: true });
@@ -188,7 +194,7 @@ describe("runAutonomousDevelopmentRun", () => {
     expect(result.endVersionId).toBe(result.startVersionId);
   });
 
-  it("twee verworpen kandidaten op dezelfde zwakte beëindigen de run NIET (incident DR-UI-202609301449): elke volgende cyclus een andere strategie, stop pas bij globale uitputting", async () => {
+  it("twee verworpen kandidaten op dezelfde zwakte beëindigen de run NIET (incident DR-UI-202609301449); ook de opgebruikte startruimte niet: nieuwe golven tot het budget op is", async () => {
     const runId = `TEST-AUTODEV-GEENSTOP-${Date.now()}`;
     const startVersionId = versionsMod.currentVersionId();
 
@@ -204,15 +210,19 @@ describe("runAutonomousDevelopmentRun", () => {
           throw new Error("mag niet aangeroepen worden — geen enkele cyclus promoveert in deze test");
         },
       },
+      klok(30),
     );
 
-    // Drie strategieën op de enige gemeten zwakte, elk verworpen; de vierde cyclus meldt globale uitputting.
+    // Eerst de drie startstrategieën op de enige gemeten zwakte, elk verworpen;
+    // daarna samenstellingen van de regisseur — elke cyclus een andere aanpak.
     const gemeten = result.cycles.filter((c) => c.candidate);
-    expect(gemeten.length).toBe(generateCandidateMod.STRATEGIEEN.length);
+    const n = generateCandidateMod.STRATEGIEEN.length;
+    expect(gemeten.slice(0, n).map((c) => c.candidate?.hypothesis?.strategie)).toEqual([...generateCandidateMod.STRATEGIEEN]);
+    expect(gemeten.length).toBeGreaterThan(n);
     expect(new Set(gemeten.map((c) => c.candidate?.hypothesis?.strategie)).size).toBe(gemeten.length);
-    expect(result.cycles.at(-1)?.decision).toBe("UITGEPUT");
-    expect(result.stopReason).toBe("ALL_HYPOTHESES_EXHAUSTED");
-    expect(result.longRun?.fase).toBe("GLOBAAL_UITGEPUT");
+    expect(result.stopReason).toBe("MAX_MINUTES_REACHED");
+    expect(result.longRun?.actieveMinuten).toBeGreaterThanOrEqual(360);
+    expect(result.longRun?.golven).toBeGreaterThan(1);
     expect(result.acceptedCount).toBe(0);
     expect(result.rejectedCount).toBe(gemeten.length);
     expect(result.endVersionId).toBe(startVersionId);
@@ -232,12 +242,13 @@ describe("runAutonomousDevelopmentRun", () => {
           throw new Error("mag niet aangeroepen worden");
         },
       },
+      klok(30),
     );
     const dims = result.cycles.filter((c) => c.candidate).map((c) => c.weakness.weakestDimension);
     const n = generateCandidateMod.STRATEGIEEN.length;
     expect(dims.slice(0, n).every((d) => d === "toolChoice")).toBe(true);
     expect(dims.slice(n, 2 * n).every((d) => d === "grounding")).toBe(true);
-    expect(result.stopReason).toBe("ALL_HYPOTHESES_EXHAUSTED");
+    expect(result.stopReason).toBe("MAX_MINUTES_REACHED");
     const checkpoint = (await import("../../demo-room/src/factory/longRun")).leesCheckpoint(runId)!;
     expect(checkpoint.cycli[n].overgangen).toContain("ZWAKTE_GEWISSELD");
   });
@@ -266,10 +277,12 @@ describe("runAutonomousDevelopmentRun", () => {
         },
         createVersion: versionsMod.createVersion,
       },
+      klok(30),
     );
 
     expect(result.stopReason).not.toBe("NO_PROGRESS_ON_SAME_WEAKNESS");
-    expect(["ALL_HYPOTHESES_EXHAUSTED", "MAX_MINUTES_REACHED"]).toContain(result.stopReason);
+    // Geen "alles geprobeerd" meer: de run vult zijn budget.
+    expect(result.stopReason).toBe("MAX_MINUTES_REACHED");
     if (result.bestCandidateVersionId) expect(versionsMod.getVersion(result.bestCandidateVersionId)?.status).not.toBe("ACTIVE");
     // De kern-veiligheidsinvariant: de ACTIEVE productieversie blijft onaangeraakt.
     expect(result.startVersionId).toBe(startVersionId);
@@ -303,11 +316,12 @@ describe("runAutonomousDevelopmentRun", () => {
         },
         createVersion: versionsMod.createVersion,
       },
+      klok(30),
     );
 
     const definitief = developmentRunsStore.getDevelopmentRunResult(runId);
     expect(definitief).not.toBeNull();
     expect(definitief!.inProgress).toBe(false);
-    expect(definitief!.stopReason).toBe("ALL_HYPOTHESES_EXHAUSTED");
+    expect(definitief!.stopReason).toBe("MAX_MINUTES_REACHED");
   });
 });

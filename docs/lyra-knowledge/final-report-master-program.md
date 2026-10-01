@@ -284,6 +284,9 @@ Nieuwe bouwstenen:
     geldt na twee keer onbeslist als geprobeerd;
   - een uitgeputte dimensie wordt overgeslagen;
   - staat alles vast, dan stopt de run eerlijk met `ALLES_GEPROBEERD`.
+    **Vervangen op 20261001** (`zoekruimte-20261001.md`): uitputting van de
+    vaste ruimte beëindigt een lange run niet meer; de regisseur verbreedt de
+    zoekruimte uit de lessen, en alleen een benut budget is voltooiing.
 - **Drie strategieën per zwakte** (REGEL, ZELFCONTROLE, WAAROM). Ze voegen
   allemaal alleen tekst toe, zoals publicatie dat ook doet.
 - **Validator vóór de meting** (`develop/validator.ts`). Hij controleert:

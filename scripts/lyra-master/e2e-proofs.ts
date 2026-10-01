@@ -344,7 +344,9 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
       createVersion: versions.createVersion,
       runAdversarial: async () => ({ basis: 78, kandidaat: 78 }),
     };
-    const run = await longRun.draaiLongRun({ runId: "E2E-LEERCYCLUS", profiel: "24h" }, {
+    // Aangepast profiel van 120 actieve minuten (synthetische klok, 7 min per cyclus): de
+    // vaste startruimte raakt ruim vóór het budget op, en de run moet dan verbreden.
+    const run = await longRun.draaiLongRun({ runId: "E2E-LEERCYCLUS", profiel: "aangepast", minuten: 120 }, {
       nu,
       // Zelfde canonieke velden als een echte run: vingerafdruk per segment.
       omgeving: () => ({ bron: "e2e-proof", model: "synthetisch (geen taalmodel)" }),
@@ -352,13 +354,15 @@ export async function draaiBewijzen(): Promise<readonly Bewijs[]> {
         const a = release.getActiveLyraVersion(releaseMap);
         return { versionId: a.versionId, generation: a.generation };
       },
-      cyclus: async ({ runId, uitgesloten, runUitsluitingen }) => {
-        const c = await cycleMod.runDevelopmentCycle({ runId, excludedCandidateIds: uitgesloten, runUitsluitingen }, deps);
-        return { beslissing: c.decision, kandidaatId: c.candidate?.id ?? null, dimensie: c.weakness.weakestDimension ?? null, versieId: c.version?.id ?? null, verdict: c.judge?.verdict ?? null, stadia: c.stadia ?? [], lesId: c.les?.id ?? null, geleerdVan: c.geleerdVan ?? [], strategie: c.candidate?.hypothesis?.strategie ?? null };
+      cyclus: async ({ runId, uitgesloten, runUitsluitingen, zoekruimte }) => {
+        const c = await cycleMod.runDevelopmentCycle({ runId, excludedCandidateIds: uitgesloten, runUitsluitingen, zoekruimte }, deps);
+        return { beslissing: c.decision, kandidaatId: c.candidate?.id ?? null, dimensie: c.weakness.weakestDimension ?? null, versieId: c.version?.id ?? null, verdict: c.judge?.verdict ?? null, stadia: c.stadia ?? [], lesId: c.les?.id ?? null, geleerdVan: c.geleerdVan ?? [], strategie: c.candidate?.hypothesis?.strategie ?? null, scores: c.weakness.scores ?? null };
       },
     });
     const pad = run.cycli.map((c) => `${c.dimensie}/${c.strategie ?? "-"}→${c.verdict ?? c.beslissing}`);
-    eis(run.stopReden === "ALLES_GEPROBEERD", `zelfstandig gestopt: ${run.stopReden} na ${run.cycli.length} cycli (${pad.join(", ")})`, w);
+    eis(run.stopReden === "BUDGET_OP" && run.actieveMs / 60000 >= 120, `budget benut: ${run.stopReden} na ${(run.actieveMs / 60000).toFixed(0)} actieve min, ${run.cycli.length} cycli (${pad.join(", ")})`, w);
+    const verbreed = (run.zoekruimte?.golven ?? []).filter((g) => g.nr > 1);
+    eis(verbreed.length > 0 && run.cycli.some((c) => (c.golf ?? 1) > 1 && c.kandidaatId), `de opgebruikte startruimte beëindigde de run niet: ${verbreed.length} verbreding(en) (${verbreed.map((g) => g.aanleiding).join(", ")}), daarna nieuwe hypothesen gemeten`, w);
     eis(pad.slice(0, 3).join() === "toolChoice/REGEL→REJECT,toolChoice/ZELFCONTROLE→REJECT,toolChoice/WAAROM→REJECT", "op toolChoice na elke verwerping een andere strategie, nooit dezelfde tekst opnieuw", w);
     eis(pad[3] === "grounding/REGEL→KEEP", "toolChoice uitgeput → de diagnose koos zelf de volgende zwakte (grounding), waar het wel werkte", w);
     const v = controleerLangeRun(run as unknown as Record<string, unknown>, []);

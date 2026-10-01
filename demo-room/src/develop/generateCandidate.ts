@@ -1,6 +1,7 @@
 import type { AgentQualityCategory } from "../types";
 import type { PromptVariant } from "../variants/promptVariants";
 import type { WeaknessProbe } from "../autonomy/capabilityTest";
+import { klasseVan, leesSleutel, tekstVoorSamenstelling } from "./interventies";
 
 /**
  * De kandidaatgenerator van de Development Sandbox (§ SCOPE CORRECTION —
@@ -101,31 +102,39 @@ const GENERIEK_SJABLOON: Sjabloon = {
 };
 
 /**
- * Strategieën: drie manieren om dezelfde gemeten zwakte aan te pakken. Het is
- * een echte hypothese over HOE je een model instrueert, niet alleen WAT:
+ * De eerste golf strategieën: drie manieren om dezelfde gemeten zwakte aan te
+ * pakken. Het is een echte hypothese over HOE je een model instrueert, niet
+ * alleen WAT:
  *
  * - REGEL: de eis als directe regel (het oorspronkelijke sjabloon);
  * - ZELFCONTROLE: dezelfde eis als controle vlak vóór het antwoord;
  * - WAAROM: de eis mét de reden erachter, zodat het model de bedoeling kan
  *   toepassen op gevallen die de regel niet letterlijk noemt.
  *
- * Alle drie voegen tekst toe aan het eind van de basisinstructie, precies
- * zoals publicatie dat doet (`NS_PRODUCTION_PROMPT_FILE`): wat getest is,
- * kan woord voor woord live. Welke strategie per dimensie al verworpen is,
- * weet `lessons.ts`; de generator zelf onthoudt niets.
+ * Dit is het BEGIN van de zoekruimte, niet de hele: raakt deze golf op, dan
+ * stelt de regisseur (zoekruimte.ts) uit de lessen nieuwe samenstellingen van
+ * interventies samen (interventies.ts). Elke strategie is een sleutel die
+ * `leesSleutel` begrijpt; de tekst volgt uit de sleutel. Alle varianten voegen
+ * tekst toe aan het eind van de basisinstructie, precies zoals publicatie dat
+ * doet (`NS_PRODUCTION_PROMPT_FILE`): wat getest is, kan woord voor woord live.
+ * Welke strategie per dimensie al verworpen is, weet `lessons.ts`; de
+ * generator zelf onthoudt niets.
  */
 export const STRATEGIEEN = ["REGEL", "ZELFCONTROLE", "WAAROM"] as const;
-export type Strategie = (typeof STRATEGIEEN)[number];
+/** Een strategiesleutel: een van de drie hierboven, of een samenstelling (interventies.ts). */
+export type Strategie = string;
 
-function tekstVoor(sjabloon: Sjabloon, strategie: Strategie): string {
-  switch (strategie) {
-    case "REGEL":
-      return sjabloon.productionText;
-    case "ZELFCONTROLE":
-      return `Controleer vlak voordat je antwoordt of je antwoord hieraan voldoet, en pas het aan als dat niet zo is: ${sjabloon.productionText}`;
-    case "WAAROM":
-      return `${sjabloon.productionText} Waarom dit ertoe doet: een machinist of planner handelt op wat je zegt; een onjuiste of ongefundeerde uitspraak kan tot een verkeerde dienst of een onterechte klacht leiden.`;
-  }
+/** De eis van een dimensie, of `null` als er geen dimensiespecifiek sjabloon is. */
+export function eisVoorDimensie(dimensie: string): string | null {
+  return SJABLONEN[dimensie as keyof AgentQualityCategory]?.productionText ?? null;
+}
+
+/** De kandidaattekst voor een dimensie en strategiesleutel — zuiver, ook voor de regisseur (lengtecontrole). */
+export function tekstVoorStrategie(dimensie: string | null, strategie: Strategie): string {
+  const sjabloon = (dimensie && SJABLONEN[dimensie as keyof AgentQualityCategory]) || GENERIEK_SJABLOON;
+  const samenstelling = leesSleutel(strategie);
+  if (!samenstelling) throw new Error(`onbekende strategiesleutel: ${strategie}`);
+  return tekstVoorSamenstelling(sjabloon.productionText, samenstelling, eisVoorDimensie);
 }
 
 let volgnummer = 0;
@@ -133,12 +142,13 @@ let volgnummer = 0;
 export function generateCandidateFromWeakness(weakness: WeaknessProbe, uitgeslotenIds: readonly string[] = [], strategie: Strategie = "REGEL"): PromptVariant {
   const dimensie = weakness.weakestDimension;
   const sjabloon = (dimensie && SJABLONEN[dimensie]) ?? GENERIEK_SJABLOON;
-  const productionText = tekstVoor(sjabloon, strategie);
+  const productionText = tekstVoorStrategie(dimensie ?? null, strategie);
+  const familie = klasseVan(strategie);
 
   let id: string;
   do {
     volgnummer += 1;
-    id = strategie === "REGEL" ? `experiment-${dimensie ?? "algemeen"}-${volgnummer}` : `experiment-${dimensie ?? "algemeen"}-${strategie.toLowerCase()}-${volgnummer}`;
+    id = strategie === "REGEL" ? `experiment-${dimensie ?? "algemeen"}-${volgnummer}` : `experiment-${dimensie ?? "algemeen"}-${strategie.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${volgnummer}`;
   } while (uitgeslotenIds.includes(id));
 
   const zwakteBeschrijving = dimensie ? `${dimensie} (${weakness.weakestScore?.toFixed(1) ?? "onbekend"}%)` : "onbekende dimensie";
@@ -146,10 +156,10 @@ export function generateCandidateFromWeakness(weakness: WeaknessProbe, uitgeslot
   return {
     id,
     label: `Gegenereerde kandidaat — ${dimensie ?? "algemeen"} (${strategie})`,
-    description: `Autonoom gegenereerd op basis van gemeten zwakte ${zwakteBeschrijving}, strategie ${strategie}. ${sjabloon.description}`,
+    description: `Autonoom gegenereerd op basis van gemeten zwakte ${zwakteBeschrijving}, strategie ${strategie} (interventieklasse ${familie}). ${sjabloon.description}`,
     category: sjabloon.category,
     productionText,
     transform: (basis) => `${basis}\n\n${productionText}`,
-    hypothesis: { dimensie: dimensie ?? "algemeen", strategie },
+    hypothesis: { dimensie: dimensie ?? "algemeen", strategie, familie },
   };
 }

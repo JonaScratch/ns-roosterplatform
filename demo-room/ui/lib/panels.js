@@ -1,4 +1,4 @@
-import { faseTag, LONGRUN_STOP_LABEL } from "./fase.js";
+import { faseTag, LONGRUN_STOP_LABEL, voltooiingTekst } from "./fase.js";
 // Phase P — de nieuwe onderdelen (feedback/concepten, Candidate Factory met
 // rechter, Pareto-archief en arena, hervatbare lange runs, releasegeschiedenis)
 // als panelen BINNEN de bestaande pagina's. Geen nieuwe hoofdtabbladen: de
@@ -100,7 +100,12 @@ export function mountLongRunsPanel(el) {
           const stappen = cyc ? `${cyc.stadia.filter((st) => st.status === "OK").length}/${cyc.stadia.length} stappen` : "";
           const pad = cyc ? `${esc(cyc.dimensie ?? "?")}/${esc(cyc.strategie ?? "-")} → ${esc(cyc.verdict ?? cyc.beslissing)} <span class="sub">${stappen}</span>` : "—";
           const uitgeput = (r.uitgeslotenDimensies ?? []).length > 0 ? `<div class="sub">lokaal uitgeput: ${esc(r.uitgeslotenDimensies.join(", "))}</div>` : "";
-          return `<tr><td><code>${esc(r.runId)}</code><div class="sub">docs/lyra-knowledge/long-runs/${esc(r.runId)}/</div></td><td>${esc(r.profiel)}</td><td><span class="tag ${tag}">${esc(r.status)}${r.stopReden ? ` · ${esc(LONGRUN_STOP_LABEL[r.stopReden] ?? r.stopReden)}` : ""}</span><div>${faseTag(r.fase, esc)}</div>${uitgeput}</td>
+          // De regisseur: hoeveel golven, hypothesen en gegenereerde tests, en de huidige aanpak.
+          const zr = r.zoekruimte;
+          const golf = zr?.golven?.at(-1);
+          const zoek = zr ? `<div class="sub">golf ${golf?.nr ?? 1} · aanpak ${esc((golf?.aanpak ?? "").toLowerCase().replace(/_/g, " "))} · ${zr.hypothesen.length} hypothesen · ${zr.tests.length} gegenereerde tests</div>` : "";
+          const voltooid = r.stopReden ? `<div class="sub">${esc(voltooiingTekst(r.stopReden, minuten, r.budgetMinuten))}</div>` : "";
+          return `<tr><td><code>${esc(r.runId)}</code><div class="sub">docs/lyra-knowledge/long-runs/${esc(r.runId)}/</div></td><td>${esc(r.profiel)}</td><td><span class="tag ${tag}">${esc(r.status)}${r.stopReden ? ` · ${esc(LONGRUN_STOP_LABEL[r.stopReden] ?? r.stopReden)}` : ""}</span><div>${faseTag(r.fase, esc)}</div>${uitgeput}${zoek}${voltooid}</td>
             <td>${minuten} / ${budget} min</td><td>${r.cycli.length}${r.segmenten > 1 ? ` <span class="sub">(${r.segmenten} segm.)</span>` : ""}</td><td>${pad}</td><td class="sub">${esc(laatste?.tekst ?? "")}</td><td>${knoppen}</td></tr>`;
         }).join("");
     rows.querySelectorAll("[data-pl]").forEach((b) => b.addEventListener("click", () => actie(`/api/long-runs/${b.dataset.pl}`, b.dataset.run)));

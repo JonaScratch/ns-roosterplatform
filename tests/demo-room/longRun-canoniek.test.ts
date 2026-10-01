@@ -78,8 +78,14 @@ describe("lokaal mislukken ≠ run stoppen", () => {
     expect(gezien[1].paren).toEqual([{ dimensie: "contextResolution", strategie: "REGEL" }]);
     expect(r.cycli.slice(0, 3).map((c) => c.strategie)).toEqual(strategieen);
     expect(r.cycli[1].overgangen).toContain("STRATEGIE_GEWISSELD");
-    // Twee rejects op dezelfde zwakte beëindigden de 6h-run niet; globaal uitgeput pas na de derde.
-    expect(r.stopReden).toBe("ALLES_GEPROBEERD");
+    // Twee rejects op dezelfde zwakte beëindigden de 6h-run niet. Na de derde is
+    // de startruimte op; deze nepcyclus schrijft geen lessen, dus de regisseur
+    // heeft geen bewijs om iets nieuws op te bouwen: een eerlijke capaciteitsgrens
+    // met escalatie — geen succes, geen "alles geprobeerd".
+    expect(r.stopReden).toBe("CAPACITEIT_BLOKKADE");
+    expect(r.status).toBe("STOPPED");
+    expect(r.fase).toBe("CAPACITEIT_BLOKKADE");
+    expect(r.gebeurtenissen.at(-1)?.tekst).toMatch(/escaleer naar Claude\/mens/);
   });
 
   it("komt een al verworpen paar toch terug (les genegeerd), dan telt dat als herhaling; boven de tolerantie een echte blocker", async () => {
@@ -207,7 +213,8 @@ describe("een UI-run is dezelfde canonieke run, en direct te verifiëren", () =>
           throw new Error("geen promotie in deze test");
         },
       },
-      { omgeving: () => ({ commit: "test", model: { lokaal: true, model: "qwen3:8b", ollamaVersie: "0.34.4" } }), spiegel: (c) => canoniek.schrijfCanoniekeKopie(c, kopieMap) },
+      // Versnelde klok: elke cyclus 10 actieve minuten, zodat het 360-minutenbudget echt opgaat.
+      { nu: klok(10 * 60_000), omgeving: () => ({ commit: "test", model: { lokaal: true, model: "qwen3:8b", ollamaVersie: "0.34.4" } }), spiegel: (c) => canoniek.schrijfCanoniekeKopie(c, kopieMap) },
     );
     expect(tijdensRun).not.toBeNull();
     expect(tijdensRun!.status).toBe("RUNNING");
@@ -221,6 +228,11 @@ describe("een UI-run is dezelfde canonieke run, en direct te verifiëren", () =>
     // Meer dan twee rejects op contextResolution, dan de wissel naar grounding.
     expect(werk.cycli.filter((c) => c.dimensie === "contextResolution" && c.kandidaatId).length).toBeGreaterThan(2);
     expect(werk.cycli.some((c) => c.overgangen?.includes("ZWAKTE_GEWISSELD"))).toBe(true);
+    // De startruimte (3 strategieën × 2 zwaktes) was ruim vóór het budget op; de run ging door met nieuwe golven.
+    expect(werk.stopReden).toBe("BUDGET_OP");
+    expect(werk.actieveMs / 60000).toBeGreaterThanOrEqual(360);
+    expect(werk.zoekruimte!.golven.length).toBeGreaterThan(1);
+    expect(werk.cycli.filter((c) => c.kandidaatId).length).toBeGreaterThan(6);
 
     const logboek = werk.cycli.filter((c) => c.kandidaatId).map(() => ({ kind: "AGENT_EXECUTION_START", message: "Item x: model=lokaal:qwen3:8b (taalmodel: ja), 1 beurt(en) uitgevoerd." }));
     const v = controleerLangeRun(werk as never, logboek);

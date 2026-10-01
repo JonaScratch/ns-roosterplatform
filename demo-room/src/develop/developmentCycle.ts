@@ -61,6 +61,20 @@ export interface DevelopmentCycleOptions {
    * welke dimensie de kandidaatgenerator target, wordt hiermee bepaald.
    */
   readonly focusDimension?: keyof AgentQualityCategory;
+  /**
+   * De zoekruimte van de lange run (develop/zoekruimte.ts): per dimensie de
+   * strategieën van alle golven tot nu toe (nieuwste golf eerst), de volgorde
+   * van de huidige aanpak, de lessen waarop de golf rust, en de gegenereerde
+   * diagnostische tests. Ontbreekt: de vaste startruimte (STRATEGIEEN).
+   */
+  readonly zoekruimte?: {
+    readonly golf: number;
+    readonly aanpak: string;
+    readonly pool: Readonly<Record<string, readonly string[]>>;
+    readonly volgorde: readonly string[];
+    readonly lesIds: readonly string[];
+    readonly tests: readonly Record<string, unknown>[];
+  };
 }
 
 /** Injecteerbaar voor tests — zelfde patroon als `AutonomyTestDependencies`/`PublishSteps`. */
@@ -164,11 +178,14 @@ export async function runDevelopmentCycle(
   }
   const lessen = leesLessen();
   const scores = weakness.scores ?? (weakness.weakestDimension ? { [weakness.weakestDimension]: weakness.weakestScore ?? 0 } : {});
-  const doel = kiesDoel(scores, lessen, STRATEGIEEN, options.focusDimension, options.runUitsluitingen);
+  const zr = options.zoekruimte;
+  const bron = zr ? (d: string) => zr.pool[d] ?? [] : STRATEGIEEN;
+  const uitsluitingen = { ...(options.runUitsluitingen ?? {}), ...(zr && zr.volgorde.length > 0 ? { volgorde: zr.volgorde } : {}) };
+  const doel = kiesDoel(scores, lessen, bron, options.focusDimension, uitsluitingen);
   if (!doel) {
-    stadium("DIAGNOSE", "OK", `gemeten zwakste: ${weakness.weakestDimension}; elke gemeten dimensie is uitgeput of wacht op een mens`, { scores });
-    logbook.log(runId, { kind: "INFO", experimentId: null, message: "Geen dimensie meer met een ongeprobeerde strategie — de cyclus stopt eerlijk (UITGEPUT)." });
-    return { runId, weakness, candidate: null, proof: null, decision: "UITGEPUT", version: null, stadia, les: null, geleerdVan: lessen.map((l) => l.id) };
+    stadium("DIAGNOSE", "OK", `gemeten zwakste: ${weakness.weakestDimension}; elke gemeten dimensie is ${zr ? `in golf ${zr.golf} ` : ""}uitgeput of wacht op een mens`, { scores });
+    logbook.log(runId, { kind: "INFO", experimentId: null, message: `Geen dimensie meer met een ongeprobeerde strategie${zr ? ` in de zoekruimte van golf ${zr.golf}` : ""} — de cyclus meldt UITGEPUT${zr ? "; de regisseur verbreedt de zoekruimte" : ""}.` });
+    return { runId, weakness, candidate: null, proof: null, decision: "UITGEPUT", version: null, stadia, les: null, geleerdVan: lessen.map((l) => l.id), overgeslagen: [] };
   }
   const gekozen = doel.waarde as keyof AgentQualityCategory;
   const gerichteZwakte: WeaknessProbe = { ...weakness, weakestDimension: gekozen, weakestScore: gekozen === weakness.weakestDimension ? weakness.weakestScore : (scores[gekozen] ?? null) };
@@ -183,13 +200,14 @@ export async function runDevelopmentCycle(
   logbook.log(runId, { kind: "HYPOTHESIS", experimentId: null, message: `Diagnose: ${doel.reden} (echte meting: zwakste ${weakness.weakestDimension} ${weakness.weakestScore?.toFixed(1)}%).` });
 
   // 2. HYPOTHESE — welke strategie, gegeven wat al verworpen is.
-  const strategie = kiesStrategie(gekozen, lessen, STRATEGIEEN, options.runUitsluitingen);
+  const strategie = kiesStrategie(gekozen, lessen, bron, uitsluitingen);
   if (!strategie) {
     stadium("HYPOTHESE", "MISLUKT", `geen strategie meer voor ${gekozen}`);
     return { runId, weakness: gerichteZwakte, candidate: null, proof: null, decision: "UITGEPUT", version: null, stadia, les: null, geleerdVan: doel.lesIds, overgeslagen: doel.overgeslagen ?? [] };
   }
-  const geleerdVan = [...new Set([...doel.lesIds, ...strategie.lesIds])];
-  stadium("HYPOTHESE", "OK", strategie.reden, { dimensie: gekozen, strategie: strategie.waarde, meerReplicaten: strategie.meerReplicaten, lesIds: strategie.lesIds });
+  // De zoekruimte zelf rust ook op lessen (de golf van de regisseur): die horen bij wat deze keuze bepaalde.
+  const geleerdVan = [...new Set([...doel.lesIds, ...strategie.lesIds, ...(zr?.lesIds ?? [])])];
+  stadium("HYPOTHESE", "OK", `${strategie.reden}${zr ? ` (golf ${zr.golf}, aanpak ${zr.aanpak.toLowerCase()})` : ""}`, { dimensie: gekozen, strategie: strategie.waarde, meerReplicaten: strategie.meerReplicaten, lesIds: strategie.lesIds, golf: zr?.golf ?? 1 });
 
   // 3. KANDIDAAT
   const candidate = deps.generateCandidate(gerichteZwakte, options.excludedCandidateIds ?? [], strategie.waarde as Strategie);
@@ -222,8 +240,8 @@ export async function runDevelopmentCycle(
       return m;
     })();
 
-  const leer = (verdict: Les["verdict"], beslissing: string, redenen: readonly string[], deltaDoel: number | null, adversarial: Les["adversarial"]): Les => {
-    const les = voegLesToe({ runId, dimensie: gekozen, strategie: strategie.waarde, kandidaatId: candidate.id, verdict, beslissing, redenen, deltaDoel, adversarial });
+  const leer = (verdict: Les["verdict"], beslissing: string, redenen: readonly string[], deltaDoel: number | null, adversarial: Les["adversarial"], extra: Pick<Les, "deltas" | "holdout"> = {}): Les => {
+    const les = voegLesToe({ runId, dimensie: gekozen, strategie: strategie.waarde, kandidaatId: candidate.id, verdict, beslissing, redenen, deltaDoel, adversarial, ...extra });
     stadium("LEREN", "OK", `les vastgelegd: ${gekozen}/${strategie.waarde} → ${verdict}`, { lesId: les.id, verdict });
     logbook.log(runId, { kind: "INFO", experimentId: null, message: `Geleerd: ${gekozen} met strategie ${strategie.waarde} → ${verdict}. De volgende cyclus weegt dit mee.`, data: { lesId: les.id } });
     return les;
@@ -243,7 +261,7 @@ export async function runDevelopmentCycle(
 
   // 5–7. EXPERIMENT: benchmark (PRE vs POST×n) en holdout.
   const postRuns = strategie.meerReplicaten ? 3 : 2;
-  const proof = await deps.runProofOfValue({ runId, variant: candidate, postRuns, locationCode });
+  const proof = await deps.runProofOfValue({ runId, variant: candidate, postRuns, locationCode, ...(zr && zr.tests.length > 0 ? { extraItems: zr.tests } : {}) });
   stadium(proof.executed ? "EXPERIMENT" : "EXPERIMENT", proof.executed ? "OK" : "MISLUKT", proof.executed ? `proof-of-value ${proof.id}: PRE + ${proof.postRuns.length}× POST + holdout` : (proof.notExecutedReason ?? "niet uitgevoerd"), {
     proofId: proof.id,
     postRuns: proof.postRuns.length,
@@ -329,7 +347,12 @@ export async function runDevelopmentCycle(
 
   // 11. LEREN — de les voor de volgende cyclus. Zonder meting geen les: dan
   // is er niets geleerd over de strategie, alleen over de omgeving.
-  const les = judge ? leer(judge.verdict, decision, judge.redenen, deltaDoel, adversarial) : null;
+  const les = judge
+    ? leer(judge.verdict, decision, judge.redenen, deltaDoel, adversarial, {
+        deltas: Object.fromEntries(Object.entries(judge.deltas).filter(([, v]) => Number.isFinite(v))),
+        holdout: bewijsZonderAdv?.holdout ?? null,
+      })
+    : null;
   if (!les) stadium("LEREN", "OVERGESLAGEN", "geen oordeel, dus geen les over deze strategie");
 
   return { runId, weakness: gerichteZwakte, candidate, proof, decision, version, manifest, judge, stadia, les, geleerdVan, overgeslagen: doel.overgeslagen ?? [] };

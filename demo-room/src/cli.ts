@@ -285,8 +285,8 @@ async function draaiCanoniekeRun(runId: string, maxMinutes: number, focusDimensi
     const DIMENSIES = ["contextResolution", "multiTurnContext", "machinistTaal", "toolChoice", "falsePremiseCorrection", "grounding", "causalClaims", "unnecessaryClarifications"];
     const ruimte = () => verkenningsruimte(DIMENSIES, leesLessen(), STRATEGIEEN);
     const r0 = ruimte();
-    console.log(`Open verkenningsruimte bij start: ${r0.open} van ${r0.totaal} paren zwakte×strategie (het leergeheugen geldt over runs heen).`);
-    logbook.log(runId, { kind: "INFO", experimentId: null, message: `Open verkenningsruimte bij start: ${r0.open} van ${r0.totaal} paren zwakte×strategie.`, data: r0 });
+    console.log(`Open startruimte: ${r0.open} van ${r0.totaal} paren zwakte×strategie (het leergeheugen geldt over runs heen). Raakt die op of stagneert de run, dan maakt de regisseur uit de lessen nieuwe golven (develop/zoekruimte.ts) — uitputting beëindigt de run niet.`);
+    logbook.log(runId, { kind: "INFO", experimentId: null, message: `Open startruimte: ${r0.open} van ${r0.totaal} paren zwakte×strategie; bij uitputting of stagnatie verbreedt de regisseur de zoekruimte.`, data: r0 });
     const result = await runAutonomousDevelopmentRun({ runId, maxMinutes, focusDimension }, undefined, {
       omgeving: async () => ({ ...(await meetOmgeving()), verkenningsruimte: ruimte() }),
       spiegel: (c) => schrijfCanoniekeKopie(c),

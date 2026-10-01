@@ -153,12 +153,13 @@ const STOPREDEN_LABEL = {
   MAX_MINUTES_REACHED: "Tijd/budget bereikt (actieve minuten)",
   MAX_MINUTES_REACHED_BEFORE_FIRST_CYCLE: "Budget al op vóór start",
   NO_PROGRESS_ON_SAME_WEAKNESS: "Oud: gestopt na 2 verworpen kandidaten (vóór de canonieke lange run)",
-  ALL_HYPOTHESES_EXHAUSTED: "Globaal uitgeput (alle zwaktes × strategieën)",
+  ALL_HYPOTHESES_EXHAUSTED: "Oud: vaste ruimte op (vóór de regisseur) — niet voltooid",
   NOT_EXECUTED: "Blocker: geen lokale diagnose mogelijk",
   MANUALLY_STOPPED: "Handmatig gestopt",
   PAUSED: "Gepauzeerd (hervatbaar)",
   MAX_CYCLES_REACHED: "Maximum aantal cycli",
   BLOCKER: "Echte fout/blocker",
+  CAPABILITY_BLOCKER: "Capaciteitsgrens: regisseur kan niets nieuws meer — escalatie",
 };
 
 function renderKpis(run, detail) {
@@ -183,19 +184,20 @@ function renderKpis(run, detail) {
       ? [
           {
             icon: "target",
-            color: detail.longRun.fase === "FOUT_BLOKKADE" ? "red" : detail.longRun.fase === "LOKAAL_UITGEPUT" ? "amber" : "blue",
+            color: detail.longRun.fase === "FOUT_BLOKKADE" || detail.longRun.fase === "CAPACITEIT_BLOKKADE" ? "red" : detail.longRun.fase === "LOKAAL_UITGEPUT" ? "amber" : "blue",
             label: "Fase",
             value: esc((FASE_LABEL[detail.longRun.fase] ?? [detail.longRun.fase ?? "—"])[0]),
             sub: (detail.longRun.uitgeslotenDimensies ?? []).length > 0 ? `lokaal uitgeput: ${detail.longRun.uitgeslotenDimensies.join(", ")}` : "",
           },
-          { icon: "clock", color: "blue", label: "Actief / budget", value: `${detail.longRun.actieveMinuten} / ${detail.longRun.budgetMinuten ?? "∞"} min` },
+          { icon: "clock", color: "blue", label: "Actief / budget", value: `${detail.longRun.actieveMinuten} / ${detail.longRun.budgetMinuten ?? "∞"} min`, sub: detail.longRun.stopReden && detail.longRun.stopReden !== "BUDGET_OP" ? "niet voltooid: gestopt vóór het budget" : "" },
+          { icon: "flask", color: "purple", label: "Zoekruimte", value: `golf ${detail.longRun.golven ?? 1}`, sub2: `${detail.longRun.hypothesen ?? 0} hypothesen · ${detail.longRun.gegenereerdeTests ?? 0} tests${detail.longRun.aanpak ? ` · ${String(detail.longRun.aanpak).toLowerCase().replace(/_/g, " ")}` : ""}` },
         ]
       : []),
     { icon: "flask", color: "purple", label: "Experimenten", value: cyclesCount },
     { icon: "book", color: "blue", label: "Kandidaten bewaard", value: kandidatenBewaard },
     { icon: "up", color: "green", label: "Beste verbetering", value: besteVerbetering > -Infinity ? `+${besteVerbetering.toFixed(1)}pp` : "—" },
   ];
-  document.getElementById("dr-kpis").innerHTML = cards.map((c) => `<div class="stat with-icon">${iconChip(c.icon, c.color)}<div style="min-width:0;"><div class="label">${c.label}</div><div class="value">${c.value}</div>${c.sub ? `<div class="sub bad" style="font-weight:500;">${esc(c.sub)}</div>` : ""}</div></div>`).join("");
+  document.getElementById("dr-kpis").innerHTML = cards.map((c) => `<div class="stat with-icon">${iconChip(c.icon, c.color)}<div style="min-width:0;"><div class="label">${c.label}</div><div class="value">${c.value}</div>${c.sub ? `<div class="sub bad" style="font-weight:500;">${esc(c.sub)}</div>` : ""}${c.sub2 ? `<div class="sub">${esc(c.sub2)}</div>` : ""}</div></div>`).join("");
 }
 
 function renderConfig(actief, run, detail) {
@@ -212,7 +214,7 @@ function renderConfig(actief, run, detail) {
     "Verbeter de gemeten zwakste dimensie zonder een veiligheids-/groundingdimensie te laten verslechteren.",
     "Behoud holdout-prestaties (geen betekenisvolle holdoutverslechtering toegestaan).",
     "Sla een aantoonbaar betere kandidaat op als nieuwe, niet-actieve versie — nooit automatisch activeren.",
-    "Na een verworpen kandidaat: les vastleggen, die strategie blokkeren en een andere strategie of zwakte proberen — stoppen alleen bij globale uitputting, budget, stop of een echte fout.",
+    "Na een verworpen kandidaat: les vastleggen, die aanpak blokkeren en een andere strategie of zwakte proberen; is de zoekruimte op of stagneert hij, dan maakt de regisseur uit de lessen een nieuwe golf hypothesen en tests — stoppen alleen bij budget, stop, een echte fout of een capaciteitsgrens (escalatie).",
   ];
   document.getElementById("dr-doelen").innerHTML = doelen.map((d) => `<li style="margin-bottom:6px;">${d}</li>`).join("");
 }

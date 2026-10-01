@@ -100,7 +100,7 @@ describe("strategieën en validator", () => {
     const teksten = S.map((st) => generateCandidateFromWeakness(zwakte, [], st));
     expect(new Set(teksten.map((k) => k.productionText)).size).toBe(S.length);
     for (const k of teksten) {
-      expect(k.hypothesis).toEqual({ dimensie: "grounding", strategie: expect.any(String) });
+      expect(k.hypothesis).toEqual({ dimensie: "grounding", strategie: expect.any(String), familie: expect.any(String) });
       expect(valideerKandidaat(k, []), k.id).toEqual({ ok: true, bevindingen: [] });
     }
   });

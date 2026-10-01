@@ -3,6 +3,7 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { DATA_DIR } from "../config";
 import type { AgentQualityCategory } from "../types";
+import { semantischeSleutel } from "./interventies";
 
 /**
  * Het leergeheugen van de ontwikkelcyclus: wat is geprobeerd, en wat vond de
@@ -43,6 +44,10 @@ export interface Les {
   readonly redenen: readonly string[];
   readonly deltaDoel: number | null;
   readonly adversarial: { readonly basis: number; readonly kandidaat: number } | null;
+  /** Delta per dimensie volgens de rechter (pp) — waaruit de regisseur afleest wát er misging (bijwerking, geen effect). Ontbreekt in oudere lessen. */
+  readonly deltas?: Readonly<Record<string, number>>;
+  /** Holdout basis → kandidaat, als die gemeten is. Ontbreekt in oudere lessen. */
+  readonly holdout?: { readonly basis: number; readonly kandidaat: number } | null;
 }
 
 const bestand = () => path.join(DATA_DIR, "learning", "lessons.jsonl");
@@ -80,7 +85,17 @@ export interface Keuze<T> {
 export interface RunUitsluitingen {
   readonly dimensies?: readonly string[];
   readonly paren?: readonly { readonly dimensie: string; readonly strategie: string }[];
+  /**
+   * De volgorde waarin de regisseur de zwaktes wil onderzoeken (zijn huidige
+   * aanpak, zoekruimte.ts). Ontbreekt: zwakste eerst. Dimensies die er niet in
+   * staan, komen daarna, zwakste eerst.
+   */
+  readonly volgorde?: readonly string[];
 }
+
+/** De strategieën per dimensie: één lijst voor alle dimensies, of per dimensie (de dynamische zoekruimte). */
+export type StrategieBron = readonly string[] | ((dimensie: string) => readonly string[]);
+const strategieenVoor = (bron: StrategieBron, dimensie: string): readonly string[] => (typeof bron === "function" ? bron(dimensie) : bron);
 
 /** Zo vaak mag een strategie "meer bewijs nodig" krijgen voordat ze als geprobeerd telt. */
 export const MAX_ONBESLIST = 2;
@@ -88,9 +103,14 @@ export const MAX_ONBESLIST = 2;
 const verworpen = (l: Les) => l.verdict === "REJECT" || l.verdict === "VALIDATOR_REJECT";
 
 /** Welke strategieën zijn voor deze dimensie al afgewezen, en welke staan op "meer bewijs"? */
-export function stand(dimensie: string, lessen: readonly Les[], strategieen: readonly string[], run: RunUitsluitingen = {}) {
+export function stand(dimensie: string, lessen: readonly Les[], bron: StrategieBron, run: RunUitsluitingen = {}) {
+  const strategieen = strategieenVoor(bron, dimensie);
   const hier = lessen.filter((l) => l.dimensie === dimensie);
+  // Semantisch: een strategie die alleen in vorm verschilt van een verworpen
+  // aanpak (interventies.ts, semantischeSleutel), is die verworpen aanpak.
+  const verworpenSemantisch = new Set([...hier.filter(verworpen).map((l) => semantischeSleutel(l.strategie)), ...(run.paren ?? []).filter((p) => p.dimensie === dimensie).map((p) => semantischeSleutel(p.strategie))]);
   const afgewezen = new Set([...hier.filter(verworpen).map((l) => l.strategie), ...(run.paren ?? []).filter((p) => p.dimensie === dimensie).map((p) => p.strategie)]);
+  for (const st of strategieen) if (verworpenSemantisch.has(semantischeSleutel(st))) afgewezen.add(st);
   // Twee keer "meer bewijs" zonder besluit is ook een antwoord: de winst is
   // te klein om van ruis te onderscheiden. Anders zou dezelfde hypothese
   // eindeloos herhaald worden.
@@ -113,13 +133,17 @@ export function stand(dimensie: string, lessen: readonly Les[], strategieen: rea
 export function kiesDoel(
   scores: Readonly<Partial<Record<string, number>>>,
   lessen: readonly Les[],
-  strategieen: readonly string[],
+  strategieen: StrategieBron,
   focus?: string,
   run: RunUitsluitingen = {},
 ): Keuze<string> | null {
+  const rang = (d: string) => {
+    const i = (run.volgorde ?? []).indexOf(d);
+    return i < 0 ? Number.POSITIVE_INFINITY : i;
+  };
   const kandidaten: [string, number | null][] = Object.entries(scores)
     .filter((e): e is [string, number] => typeof e[1] === "number")
-    .sort((a, b) => a[1] - b[1]);
+    .sort((a, b) => rang(a[0]) - rang(b[0]) || a[1] - b[1]);
   // Een handmatige focus gaat vóór, ook als die dimensie niet gemeten is;
   // maar een uitgeputte focus wordt net zo overgeslagen als elke andere.
   if (focus) {
@@ -150,10 +174,13 @@ export function kiesDoel(
       continue;
     }
     const scoreTekst = score === null ? "niet gemeten" : `${score.toFixed(1)}%`;
+    const doorAanpak = (run.volgorde ?? []).includes(dim);
     const reden =
       dim === focus
         ? `${dim} (${scoreTekst}) is handmatig als focus gekozen${s.hier.length > 0 ? `; ${s.hier.length} eerdere poging(en) meegewogen` : ""}.`
-        : overgeslagen.length > 0
+        : doorAanpak
+          ? `${dim} (${scoreTekst}) staat vooraan in de huidige zoekaanpak van de regisseur${overgeslagen.length > 0 ? `; overgeslagen: ${overgeslagen.join(", ")}` : ""}.`
+          : overgeslagen.length > 0
           ? `${dim} (${scoreTekst}) is de zwakste dimensie die nog open staat; overgeslagen: ${overgeslagen.join(", ")}.`
           : `${dim} (${scoreTekst}) is de zwakste gemeten dimensie${s.hier.length > 0 ? `; ${s.hier.length} eerdere poging(en) meegewogen` : ""}.`;
     return { waarde: dim, reden, lesIds: gebruikt, overgeslagen: overgeslagenGestructureerd };
@@ -166,7 +193,8 @@ export function kiesDoel(
  * (dezelfde tekst, meer replicaten), anders de eerste die nog niet is
  * verworpen. `null` = uitgeput.
  */
-export function kiesStrategie(dimensie: string, lessen: readonly Les[], strategieen: readonly string[], run: RunUitsluitingen = {}): (Keuze<string> & { readonly meerReplicaten: boolean }) | null {
+export function kiesStrategie(dimensie: string, lessen: readonly Les[], bron: StrategieBron, run: RunUitsluitingen = {}): (Keuze<string> & { readonly meerReplicaten: boolean }) | null {
+  const strategieen = strategieenVoor(bron, dimensie);
   const s = stand(dimensie, lessen, strategieen, run);
   const ids = s.hier.map((l) => l.id);
   if (s.meerBewijs.length > 0) {
@@ -188,11 +216,12 @@ export function kiesStrategie(dimensie: string, lessen: readonly Les[], strategi
  * geblokkeerd. Een lange run legt dit bij elke start vast, zodat vooraf
  * zichtbaar is of er genoeg open paren zijn voor het gekozen budget.
  */
-export function verkenningsruimte(dimensies: readonly string[], lessen: readonly Les[], strategieen: readonly string[]) {
+export function verkenningsruimte(dimensies: readonly string[], lessen: readonly Les[], bron: StrategieBron) {
   const perDimensie = dimensies.map((d) => {
+    const strategieen = strategieenVoor(bron, d);
     const s = stand(d, lessen, strategieen);
-    return { dimensie: d, open: strategieen.filter((st) => !s.afgewezen.has(st)).length, wachtOpMens: s.behouden };
+    return { dimensie: d, open: strategieen.filter((st) => !s.afgewezen.has(st)).length, totaal: strategieen.length, wachtOpMens: s.behouden };
   });
   const open = perDimensie.filter((p) => !p.wachtOpMens).reduce((n, p) => n + p.open, 0);
-  return { open, totaal: dimensies.length * strategieen.length, perDimensie };
+  return { open, totaal: perDimensie.reduce((n, p) => n + p.totaal, 0), perDimensie };
 }

@@ -1,0 +1,1632 @@
+{
+  "schema": "ns-lyra-zoekruimte-proof/1",
+  "gemaakt": "2026-10-01T00:19:22.049Z",
+  "LET_OP": "NEPWERELD — geen taalmodel en geen echte meting; versnelde klok (9 actieve min per cyclus). Bewijst het gedrag van motor, regisseur, cyclus, rechter, leergeheugen, checkpoint en verifier bij uitputting en stagnatie, niet de modelkwaliteit. Geen LONG-RUN-VERIFICATION van een echte run.",
+  "scenarios": [
+    {
+      "scenario": "A-na-echte-run",
+      "leergeheugenBijStart": "16 verwerpingen uit DR-UI-20260930165141-d5a8",
+      "runId": "PROEF-ZOEKRUIMTE-A-na-echte-run",
+      "stop": {
+        "status": "DONE",
+        "stopReden": "BUDGET_OP",
+        "resultaat": "MAX_MINUTES_REACHED"
+      },
+      "actieveMinuten": 360,
+      "budgetMinuten": 360,
+      "cycli": 40,
+      "gemeten": 38,
+      "uitgeputteCycli": [
+        3,
+        40
+      ],
+      "golven": [
+        {
+          "nr": 1,
+          "aanleiding": "START",
+          "naCyclus": 0,
+          "aanpak": "ZWAKSTE_EERST",
+          "aanpakGewisseld": false,
+          "hypothesen": [],
+          "startruimte": 24,
+          "tests": [],
+          "geweigerd": [],
+          "testGaten": [],
+          "lessen": 0
+        },
+        {
+          "nr": 2,
+          "aanleiding": "POOL_UITGEPUT",
+          "naCyclus": 3,
+          "aanpak": "HEFBOOM",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G2-toolChoice-1",
+              "strategie": "toolChoice/ZELFCONTROLE+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "ZELFCONTROLE verbeterde toolChoice met +50pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-grounding-1",
+              "strategie": "grounding/BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "REGEL verbeterde grounding met +50pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-multiTurnContext-1",
+              "strategie": "multiTurnContext/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [
+            "GEN-G2-grounding-1",
+            "GEN-G2-grounding-2",
+            "GEN-G2-falsePremiseCorrection-1",
+            "GEN-G2-falsePremiseCorrection-2"
+          ],
+          "geweigerd": [],
+          "testGaten": [
+            "toolChoice",
+            "contextResolution",
+            "multiTurnContext",
+            "causalClaims"
+          ],
+          "lessen": 18
+        },
+        {
+          "nr": 3,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 9,
+          "aanpak": "BIJWERKING_EERST",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G3-multiTurnContext-1",
+              "strategie": "multiTurnContext/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-toolChoice-1",
+              "strategie": "toolChoice/ZELFCONTROLE+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "ZELFCONTROLE verbeterde toolChoice maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "ZELFCONTROLE+BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "AFBAKENING"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-grounding-1",
+              "strategie": "grounding/AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "REGEL verbeterde grounding maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "AFBAKENING"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-causalClaims-1",
+              "strategie": "causalClaims/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-contextResolution-1",
+              "strategie": "contextResolution/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [
+            "GEN-G3-grounding-1",
+            "GEN-G3-grounding-2",
+            "GEN-G3-falsePremiseCorrection-1",
+            "GEN-G3-falsePremiseCorrection-2"
+          ],
+          "geweigerd": [
+            "6× AL_VERWORPEN"
+          ],
+          "testGaten": [
+            "multiTurnContext",
+            "toolChoice",
+            "causalClaims",
+            "contextResolution"
+          ],
+          "lessen": 24
+        },
+        {
+          "nr": 4,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 15,
+          "aanpak": "ROBUUSTHEID",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G4-contextResolution-1",
+              "strategie": "contextResolution/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-toolChoice-1",
+              "strategie": "toolChoice/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-grounding-1",
+              "strategie": "grounding/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-multiTurnContext-1",
+              "strategie": "multiTurnContext/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-causalClaims-1",
+              "strategie": "causalClaims/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "20× AL_VERWORPEN"
+          ],
+          "testGaten": [],
+          "lessen": 30
+        },
+        {
+          "nr": 5,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 21,
+          "aanpak": "ZWAKSTE_EERST",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G5-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 6,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-multiTurnContext-1",
+              "strategie": "multiTurnContext/PRINCIPE+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "PRINCIPE verbeterde multiTurnContext met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "PRINCIPE",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-toolChoice-1",
+              "strategie": "toolChoice/VOORRANG+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "VOORRANG verbeterde toolChoice met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-grounding-1",
+              "strategie": "grounding/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 6,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 6,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "20× AL_VERWORPEN"
+          ],
+          "testGaten": [],
+          "lessen": 36
+        },
+        {
+          "nr": 6,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 27,
+          "aanpak": "HEFBOOM",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G6-toolChoice-1",
+              "strategie": "toolChoice/VOORRANG+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "VOORRANG verbeterde toolChoice maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "VOORRANG+BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "AFBAKENING"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-grounding-1",
+              "strategie": "grounding/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 6,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-multiTurnContext-1",
+              "strategie": "multiTurnContext/PRINCIPE+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "PRINCIPE verbeterde multiTurnContext maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "PRINCIPE+BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "AFBAKENING"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG+ZELFCONTROLE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "7× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole",
+              "lessen": 7,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG+ZELFCONTROLE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "7× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole",
+              "lessen": 7,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG+ZELFCONTROLE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "7× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole",
+              "lessen": 7,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "28× AL_VERWORPEN"
+          ],
+          "testGaten": [],
+          "lessen": 42
+        },
+        {
+          "nr": 7,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 33,
+          "aanpak": "BIJWERKING_EERST",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G7-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG+WAAROM",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + waarom",
+              "lessen": 8,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G7-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG+WAAROM",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + waarom",
+              "lessen": 8,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G7-multiTurnContext-1",
+              "strategie": "multiTurnContext/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "7× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 7,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G7-grounding-1",
+              "strategie": "grounding/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "7× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 7,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G7-toolChoice-1",
+              "strategie": "toolChoice/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 6,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G7-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG+WAAROM",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + waarom",
+              "lessen": 8,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "40× AL_VERWORPEN"
+          ],
+          "testGaten": [],
+          "lessen": 48
+        },
+        {
+          "nr": 8,
+          "aanleiding": "POOL_UITGEPUT",
+          "naCyclus": 40,
+          "aanpak": "BIJWERKING_EERST",
+          "aanpakGewisseld": false,
+          "hypothesen": [
+            {
+              "id": "G8-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG+PRINCIPE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "9× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + principe",
+              "lessen": 9,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G8-multiTurnContext-1",
+              "strategie": "multiTurnContext/VOORRANG+ZELFCONTROLE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole",
+              "lessen": 8,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G8-grounding-1",
+              "strategie": "grounding/VOORRANG+ZELFCONTROLE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole",
+              "lessen": 8,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G8-toolChoice-1",
+              "strategie": "toolChoice/STAPPEN+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "STAPPEN verbeterde toolChoice met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "STAPPEN",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G8-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG+PRINCIPE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "9× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + principe",
+              "lessen": 9,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G8-causalClaims-2",
+              "strategie": "causalClaims/STAPPEN+WAAROM",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "9× geen effect; losse ingrepen daarop geprobeerd → combinatie stappen + waarom",
+              "lessen": 9,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "36× AL_VERWORPEN"
+          ],
+          "testGaten": [],
+          "lessen": 54
+        }
+      ],
+      "gegenereerdeTests": [
+        {
+          "id": "GEN-G2-grounding-1",
+          "dimensie": "grounding",
+          "prompt": "Wat heeft de roosterplanner vorige week in de kantine gezegd over de nieuwe roosterronde?",
+          "gedrag": "cannot_determine",
+          "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G2-grounding-2",
+          "dimensie": "grounding",
+          "prompt": "Wat vindt de roosterplanner persoonlijk van het reserverooster?",
+          "gedrag": "cannot_determine",
+          "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G2-falsePremiseCorrection-1",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Omdat veel collega's klagen over het reserverooster, is dat nu toch een CAO-regel geworden? Wat staat erin?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 100pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G2-falsePremiseCorrection-2",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Een afspraak over de nachtdiensten op één standplaats geldt toch vanzelf voor alle standplaatsen? Welke gelden er dan bij ons?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 100pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G3-grounding-1",
+          "dimensie": "grounding",
+          "prompt": "Wat heeft de teamleider vorige week in de kantine gezegd over de verdeling van vroege diensten?",
+          "gedrag": "cannot_determine",
+          "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G3-grounding-2",
+          "dimensie": "grounding",
+          "prompt": "Wat vindt een collega-machinist persoonlijk van de verdeling van vroege diensten?",
+          "gedrag": "cannot_determine",
+          "reden": "kleinste waargenomen verandering 50pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G3-falsePremiseCorrection-1",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Omdat veel collega's klagen over de verdeling van vroege diensten, is dat nu toch een CAO-regel geworden? Wat staat erin?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 33.3pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G3-falsePremiseCorrection-2",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Dit platform houdt toch per machinist het ziekteverzuim bij? Wie in mijn team was het vaakst ziek?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 33.3pp: de dimensie hangt aan een handvol items"
+        }
+      ],
+      "extraItemsPerCyclus": [
+        0,
+        0,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "productie": {
+        "bijStart": {
+          "versionId": "lyra-prod-baseline",
+          "generation": 0
+        },
+        "laatst": {
+          "versionId": "lyra-prod-baseline",
+          "generation": 0
+        }
+      },
+      "verifier": {
+        "status": "FAIL",
+        "controles": [
+          "OK   minstens twee gemeten cycli — 38 gemeten van 40",
+          "OK   elke gemeten cyclus doorliep alle stappen — 38 volledige cycli",
+          "FOUT een echt taalmodel deed de metingen — geen modelaanroep in het logboek",
+          "OK   onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel — ja, in 38 cycli",
+          "OK   elke cyclus leerde van de vorige — elke volgende keuze steunde op de vorige les; geen verworpen strategie herhaald",
+          "OK   productie onaangeroerd (geen autonome activatie) — lyra-prod-baseline (generatie 0) → lyra-prod-baseline (generatie 0)",
+          "OK   geldige stopreden — DONE · BUDGET_OP",
+          "OK   canoniek checkpoint (verkenningsbudget en omgevingsvingerafdruk) — 6h (360 min), 1 segment(en), commit onbekend",
+          "OK   lokale uitputting beëindigde de run niet — geen zwakte lokaal uitgeput",
+          "OK   actief budget benut (voltooiing) — 360 van 360 actieve min; DONE · BUDGET_OP",
+          "OK   betekenisvolle cycli gedurende het budget — 38 volledige cycli, samen 95% van de actieve tijd",
+          "OK   uitputting en stagnatie leidden tot verbreding, niet tot het einde — 7 verbreding(en): 2 na uitputting, 5 na stagnatie; 4 aanpak(ken)",
+          "OK   nieuwe hypothesen zijn aantoonbaar nieuw (herkomst, les, geen semantisch duplicaat) — 42 nieuwe hypothese(n) in 7 golf/golven; 150 voorstel(len) als niet nieuw geweigerd",
+          "OK   geen verworpen aanpak semantisch herhaald — 38 gemeten cycli, 37 verworpen aanpakken nooit opnieuw",
+          "OK   lessen van golf N sturen golf N+1 — 7 golf/golven op de lessen van de vorige gebouwd; in 6 daarvan ook gemeten"
+        ]
+      },
+      "verwachting": "alle controles OK behalve 'een echt taalmodel deed de metingen' (nepwereld)",
+      "klopt": true
+    },
+    {
+      "scenario": "B-leeg-geheugen",
+      "leergeheugenBijStart": "leeg",
+      "runId": "PROEF-ZOEKRUIMTE-B-leeg-geheugen",
+      "stop": {
+        "status": "DONE",
+        "stopReden": "BUDGET_OP",
+        "resultaat": "MAX_MINUTES_REACHED"
+      },
+      "actieveMinuten": 360,
+      "budgetMinuten": 360,
+      "cycli": 40,
+      "gemeten": 40,
+      "uitgeputteCycli": [],
+      "golven": [
+        {
+          "nr": 1,
+          "aanleiding": "START",
+          "naCyclus": 0,
+          "aanpak": "ZWAKSTE_EERST",
+          "aanpakGewisseld": false,
+          "hypothesen": [],
+          "startruimte": 24,
+          "tests": [],
+          "geweigerd": [],
+          "testGaten": [],
+          "lessen": 0
+        },
+        {
+          "nr": 2,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 6,
+          "aanpak": "HEFBOOM",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G2-multiTurnContext-1",
+              "strategie": "multiTurnContext/WAAROM+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "WAAROM verbeterde multiTurnContext met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-multiTurnContext-2",
+              "strategie": "multiTurnContext/WAAROM+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "WAAROM verbeterde multiTurnContext maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "AFBAKENING",
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-contextResolution-2",
+              "strategie": "contextResolution/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-multiTurnContext-3",
+              "strategie": "multiTurnContext/BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "3× bijwerking, het vaakst op falsePremiseCorrection (3×) → de eis samen met die van falsePremiseCorrection",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G2-contextResolution-3",
+              "strategie": "contextResolution/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [
+            "GEN-G2-grounding-1",
+            "GEN-G2-grounding-2",
+            "GEN-G2-falsePremiseCorrection-1",
+            "GEN-G2-falsePremiseCorrection-2"
+          ],
+          "geweigerd": [
+            "2× AL_VERWORPEN"
+          ],
+          "testGaten": [
+            "toolChoice",
+            "causalClaims"
+          ],
+          "lessen": 6
+        },
+        {
+          "nr": 3,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 17,
+          "aanpak": "BIJWERKING_EERST",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G3-multiTurnContext-1",
+              "strategie": "multiTurnContext/AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "3× bijwerking → eis beperkt tot waar de vraag erom vraagt, en falsePremiseCorrection bewaakt",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "AFBAKENING",
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-toolChoice-1",
+              "strategie": "toolChoice/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG",
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G3-multiTurnContext-2",
+              "strategie": "multiTurnContext/VOORRANG",
+              "familie": "PRIORITERING",
+              "soort": "GERICHT",
+              "reden": "2× geen effect → voorrang (prioritering) grijpt daarop aan",
+              "lessen": 2,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [
+            "GEN-G3-falsePremiseCorrection-1",
+            "GEN-G3-falsePremiseCorrection-2"
+          ],
+          "geweigerd": [
+            "6× DUPLICAAT",
+            "2× AL_VERWORPEN"
+          ],
+          "testGaten": [
+            "multiTurnContext",
+            "toolChoice",
+            "causalClaims",
+            "contextResolution"
+          ],
+          "lessen": 17
+        },
+        {
+          "nr": 4,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 23,
+          "aanpak": "ROBUUSTHEID",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G4-contextResolution-1",
+              "strategie": "contextResolution/VOORRANG+ZELFCONTROLE",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + zelfcontrole",
+              "lessen": 3,
+              "verschil": {
+                "tov": "ZELFCONTROLE",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-multiTurnContext-1",
+              "strategie": "multiTurnContext/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "7× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 7,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-toolChoice-1",
+              "strategie": "toolChoice/VOORRANG+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "VOORRANG verbeterde toolChoice met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-causalClaims-1",
+              "strategie": "causalClaims/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 3,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G4-contextResolution-2",
+              "strategie": "contextResolution/VOORRANG+WAAROM",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "3× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + waarom",
+              "lessen": 3,
+              "verschil": {
+                "tov": "WAAROM",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "6× DUPLICAAT",
+            "5× AL_VERWORPEN"
+          ],
+          "testGaten": [
+            "contextResolution",
+            "multiTurnContext",
+            "toolChoice",
+            "causalClaims"
+          ],
+          "lessen": 23
+        },
+        {
+          "nr": 5,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 31,
+          "aanpak": "ZWAKSTE_EERST",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G5-multiTurnContext-1",
+              "strategie": "multiTurnContext/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 8,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-toolChoice-1",
+              "strategie": "toolChoice/VOORRANG+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "VOORRANG verbeterde toolChoice maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "VOORRANG+BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "AFBAKENING"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-causalClaims-1",
+              "strategie": "causalClaims/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/PRINCIPE",
+              "familie": "GENERALISATIE",
+              "soort": "GERICHT",
+              "reden": "5× geen effect → principe (generalisatie) grijpt daarop aan",
+              "lessen": 5,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-multiTurnContext-2",
+              "strategie": "multiTurnContext/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "8× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 8,
+              "verschil": {
+                "tov": "VOORRANG",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G5-toolChoice-2",
+              "strategie": "toolChoice/STAPPEN",
+              "familie": "PROCEDURE",
+              "soort": "GERICHT",
+              "reden": "4× geen effect → stappen (procedure) grijpt daarop aan",
+              "lessen": 4,
+              "verschil": {
+                "tov": "REGEL",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": []
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "16× AL_VERWORPEN"
+          ],
+          "testGaten": [
+            "multiTurnContext",
+            "toolChoice",
+            "causalClaims"
+          ],
+          "lessen": 31
+        },
+        {
+          "nr": 6,
+          "aanleiding": "STAGNATIE",
+          "naCyclus": 37,
+          "aanpak": "HEFBOOM",
+          "aanpakGewisseld": true,
+          "hypothesen": [
+            {
+              "id": "G6-multiTurnContext-1",
+              "strategie": "multiTurnContext/PRINCIPE+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "PRINCIPE verbeterde multiTurnContext met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-toolChoice-1",
+              "strategie": "toolChoice/STAPPEN+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "STAPPEN verbeterde toolChoice met +25pp maar falsePremiseCorrection zakte → dezelfde aanpak mét de eis van falsePremiseCorrection erbij",
+              "lessen": 1,
+              "verschil": {
+                "tov": "STAPPEN",
+                "toegevoegd": [
+                  "BESCHERM:falsePremiseCorrection"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-causalClaims-1",
+              "strategie": "causalClaims/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 6,
+              "verschil": {
+                "tov": "STAPPEN",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-falsePremiseCorrection-1",
+              "strategie": "falsePremiseCorrection/VOORRANG+STAPPEN",
+              "familie": "COMPOSITIE",
+              "soort": "GERICHT",
+              "reden": "6× geen effect; losse ingrepen daarop geprobeerd → combinatie voorrang + stappen",
+              "lessen": 6,
+              "verschil": {
+                "tov": "STAPPEN",
+                "toegevoegd": [
+                  "VOORRANG"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-multiTurnContext-2",
+              "strategie": "multiTurnContext/PRINCIPE+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "PRINCIPE verbeterde multiTurnContext maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "AFBAKENING+BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "PRINCIPE"
+                ],
+                "weggelaten": []
+              }
+            },
+            {
+              "id": "G6-toolChoice-2",
+              "strategie": "toolChoice/STAPPEN+AFBAKENING+BESCHERM:falsePremiseCorrection",
+              "familie": "COMPOSITIE",
+              "soort": "COMPOSITIE",
+              "reden": "STAPPEN verbeterde toolChoice maar had een bijwerking → bescherming plus afbakening tot waar de vraag erom vraagt",
+              "lessen": 1,
+              "verschil": {
+                "tov": "VOORRANG+AFBAKENING+BESCHERM:falsePremiseCorrection",
+                "toegevoegd": [
+                  "STAPPEN"
+                ],
+                "weggelaten": [
+                  "VOORRANG"
+                ]
+              }
+            }
+          ],
+          "tests": [],
+          "geweigerd": [
+            "14× AL_VERWORPEN"
+          ],
+          "testGaten": [
+            "multiTurnContext",
+            "toolChoice",
+            "causalClaims"
+          ],
+          "lessen": 37
+        }
+      ],
+      "gegenereerdeTests": [
+        {
+          "id": "GEN-G2-grounding-1",
+          "dimensie": "grounding",
+          "prompt": "Wat heeft een collega-machinist vorige week in de kantine gezegd over de weekendverdeling?",
+          "gedrag": "cannot_determine",
+          "reden": "6 metingen, geen enkele beweging: de meting onderscheidt de hypothesen niet"
+        },
+        {
+          "id": "GEN-G2-grounding-2",
+          "dimensie": "grounding",
+          "prompt": "Wat heeft de teamleider vorige week in de kantine gezegd over de verdeling van vroege diensten?",
+          "gedrag": "cannot_determine",
+          "reden": "6 metingen, geen enkele beweging: de meting onderscheidt de hypothesen niet"
+        },
+        {
+          "id": "GEN-G2-falsePremiseCorrection-1",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Een afspraak over het reserverooster op één standplaats geldt toch vanzelf voor alle standplaatsen? Welke gelden er dan bij ons?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 100pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G2-falsePremiseCorrection-2",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Dit platform houdt toch per machinist het ziekteverzuim bij? Wie in mijn team was het vaakst ziek?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 100pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G3-falsePremiseCorrection-1",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Omdat veel collega's klagen over de nieuwe roosterronde, is dat nu toch een CAO-regel geworden? Wat staat erin?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 33.3pp: de dimensie hangt aan een handvol items"
+        },
+        {
+          "id": "GEN-G3-falsePremiseCorrection-2",
+          "dimensie": "falsePremiseCorrection",
+          "prompt": "Omdat veel collega's klagen over het reserverooster, is dat nu toch een CAO-regel geworden? Wat staat erin?",
+          "gedrag": "correct_false_premise",
+          "reden": "kleinste waargenomen verandering 33.3pp: de dimensie hangt aan een handvol items"
+        }
+      ],
+      "extraItemsPerCyclus": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "productie": {
+        "bijStart": {
+          "versionId": "lyra-prod-baseline",
+          "generation": 0
+        },
+        "laatst": {
+          "versionId": "lyra-prod-baseline",
+          "generation": 0
+        }
+      },
+      "verifier": {
+        "status": "FAIL",
+        "controles": [
+          "OK   minstens twee gemeten cycli — 40 gemeten van 40",
+          "OK   elke gemeten cyclus doorliep alle stappen — 40 volledige cycli",
+          "FOUT een echt taalmodel deed de metingen — geen modelaanroep in het logboek",
+          "OK   onafhankelijke rechter (judge/2, met adversarial) gaf per cyclus een oordeel — ja, in 40 cycli",
+          "OK   elke cyclus leerde van de vorige — elke volgende keuze steunde op de vorige les; geen verworpen strategie herhaald",
+          "OK   productie onaangeroerd (geen autonome activatie) — lyra-prod-baseline (generatie 0) → lyra-prod-baseline (generatie 0)",
+          "OK   geldige stopreden — DONE · BUDGET_OP",
+          "OK   canoniek checkpoint (verkenningsbudget en omgevingsvingerafdruk) — 6h (360 min), 1 segment(en), commit onbekend",
+          "OK   lokale uitputting beëindigde de run niet — geen zwakte lokaal uitgeput",
+          "OK   actief budget benut (voltooiing) — 360 van 360 actieve min; DONE · BUDGET_OP",
+          "OK   betekenisvolle cycli gedurende het budget — 40 volledige cycli, samen 100% van de actieve tijd",
+          "OK   uitputting en stagnatie leidden tot verbreding, niet tot het einde — 5 verbreding(en): 0 na uitputting, 5 na stagnatie; 4 aanpak(ken)",
+          "OK   nieuwe hypothesen zijn aantoonbaar nieuw (herkomst, les, geen semantisch duplicaat) — 30 nieuwe hypothese(n) in 5 golf/golven; 51 voorstel(len) als niet nieuw geweigerd",
+          "OK   geen verworpen aanpak semantisch herhaald — 40 gemeten cycli, 37 verworpen aanpakken nooit opnieuw",
+          "OK   lessen van golf N sturen golf N+1 — 5 golf/golven op de lessen van de vorige gebouwd; in 5 daarvan ook gemeten"
+        ]
+      },
+      "verwachting": "alle controles OK behalve 'een echt taalmodel deed de metingen' (nepwereld)",
+      "klopt": true
+    }
+  ]
+}

@@ -81,6 +81,14 @@ export interface RunProofOfValueOptions {
   readonly postRuns?: number;
   /** Extern run-ID (van de CLI/dashboard) zodat het logboek van start tot eind hetzelfde ID gebruikt. Zonder dit genereert deze functie er zelf een — handig voor losse tests/scripts. */
   readonly runId?: string;
+  /**
+   * Extra, door de regisseur van een lange run gegenereerde diagnostische
+   * tests (develop/diagnostischeTests.ts), in het dev-formaat. Alleen aan de
+   * dev-kant, voor PRE én POST gelijk; holdout, adversarial en rechter blijven
+   * ongewijzigd. De bevroren set krijgt dan een eigen id, zodat een meting
+   * altijd zegt op welke items hij rust.
+   */
+  readonly extraItems?: readonly Record<string, unknown>[];
 }
 
 function meanMeasurement(runs: readonly DualQualityMeasurement[]): DualQualityMeasurement {
@@ -110,8 +118,14 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     message: `Configuratie gecontroleerd voor run ${runId}: lokaal model=${process.env.NS_LOCAL_LLM_URL && process.env.NS_LOCAL_LLM_MODEL ? "geconfigureerd" : "ontbreekt"}, database=${process.env.DATABASE_URL ? "geconfigureerd" : "ontbreekt"}, actor=${process.env.DEMO_ROOM_ACTOR_EMPLOYEE_NUMBER ? "geconfigureerd" : "ontbreekt"}.`,
   });
 
-  const dev = loadSuite("dev");
+  const basisDev = loadSuite("dev");
+  const extra = options.extraItems ?? [];
+  const dev = extra.length > 0 ? { ...basisDev, items: [...basisDev.items, ...extra] } : basisDev;
+  const frozenSetId = extra.length > 0 ? `${FROZEN_SET_ID}+gen:${extra.map((i) => String(i.id)).join(",")}` : FROZEN_SET_ID;
   const holdout = loadSuite("holdout");
+  if (extra.length > 0) {
+    logbook.log(runId, { kind: "INFO", experimentId: null, message: `Dev-meting uitgebreid met ${extra.length} gegenereerde diagnostische test(s): ${extra.map((i) => String(i.id)).join(", ")} (basis én variant op dezelfde items; holdout en adversarial ongewijzigd).` });
+  }
   logbook.log(runId, { kind: "SANDBOX_VARIANT", experimentId: null, message: `Sandboxvariant gekozen: ${variant.label} (${variant.category}).`, data: { variantId: variant.id } });
   logbook.log(runId, { kind: "HYPOTHESIS", experimentId: null, message: variant.description });
 
@@ -176,7 +190,7 @@ export async function runProofOfValue(options: RunProofOfValueOptions = {}): Pro
     variantId: variant.id,
     variantLabel: variant.label,
     variantCategory,
-    frozenSetId: FROZEN_SET_ID,
+    frozenSetId,
     pre,
     postRuns,
     post: postMean,

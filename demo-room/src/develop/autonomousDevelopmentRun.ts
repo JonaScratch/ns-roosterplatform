@@ -4,6 +4,8 @@ import * as logbook from "../store/logbook";
 import { currentVersionId, releaseInfo } from "../publish/versions";
 import { getDevelopmentRunResult, writeDevelopmentRunResult } from "../store/developmentRuns";
 import { draaiLongRun, profielVoorMinuten, type LongRunCheckpoint, type LongRunDeps, type LongRunFase, type LongRunProfiel, type LongRunStopReden } from "../factory/longRun";
+import { holdoutTeksten } from "../factory/store";
+import { detecteerLekkage } from "../factory/manifest";
 import { DEFAULT_DEVELOPMENT_CYCLE_DEPENDENCIES, runDevelopmentCycle, type DevelopmentCycleDependencies, type DevelopmentCycleResult } from "./developmentCycle";
 
 /**
@@ -44,6 +46,8 @@ export interface AutonomousDevelopmentRunOptions {
   readonly focusDimension?: keyof import("../types").AgentQualityCategory;
   /** Veiligheidsgrens op het aantal cycli (standaard het verkenningsbudget van het profiel). */
   readonly maxCycles?: number;
+  /** Grenzen van de dynamische zoekruimte (standaard die van het profiel). */
+  readonly zoek?: Partial<import("../develop/zoekruimte").Zoekgrenzen>;
 }
 
 export type AutonomousDevelopmentRunStopReason =
@@ -58,7 +62,9 @@ export type AutonomousDevelopmentRunStopReason =
   | "PAUSED"
   | "MAX_CYCLES_REACHED"
   /** Echte fout: een cyclus faalde herhaaldelijk, of een al verworpen strategie bleef terugkomen. */
-  | "BLOCKER";
+  | "BLOCKER"
+  /** De regisseur kon niets nieuws meer bedenken of de zoekgrens is bereikt: escalatie nodig. Geen succes. */
+  | "CAPABILITY_BLOCKER";
 
 export interface TimelineEntry {
   readonly at: string;
@@ -90,6 +96,11 @@ export interface AutonomousDevelopmentRunResult {
     readonly fase: LongRunFase | null;
     readonly uitgeslotenDimensies: readonly string[];
     readonly geblokkeerdeParen: readonly { readonly dimensie: string; readonly strategie: string }[];
+    /** De dynamische zoekruimte: hoeveel golven, hypothesen en gegenereerde tests. */
+    readonly golven: number;
+    readonly hypothesen: number;
+    readonly gegenereerdeTests: number;
+    readonly aanpak: string | null;
   };
 }
 
@@ -101,10 +112,11 @@ const STOP_NAAR_RESULTAAT: Readonly<Record<LongRunStopReden, AutonomousDevelopme
   MAX_CYCLI: "MAX_CYCLES_REACHED",
   HERHAALDE_FOUT: "BLOCKER",
   GEEN_VOORTGANG: "BLOCKER",
+  CAPACITEIT_BLOKKADE: "CAPABILITY_BLOCKER",
 };
 
 /** Extra's die de CLI invult (klok, productiestand, omgevingsvingerafdruk, canonieke kopie); tests laten ze leeg. */
-export type LongRunExtras = Partial<Pick<LongRunDeps, "nu" | "productie" | "omgeving" | "spiegel">>;
+export type LongRunExtras = Partial<Pick<LongRunDeps, "nu" | "productie" | "omgeving" | "spiegel" | "testToegestaan">>;
 
 export async function runAutonomousDevelopmentRun(
   options: AutonomousDevelopmentRunOptions,
@@ -165,12 +177,16 @@ export async function runAutonomousDevelopmentRun(
         fase: c.fase ?? null,
         uitgeslotenDimensies: c.uitgeslotenDimensies ?? [],
         geblokkeerdeParen: c.geblokkeerdeParen ?? [],
+        golven: c.zoekruimte?.golven.length ?? 0,
+        hypothesen: c.zoekruimte?.hypothesen.length ?? 0,
+        gegenereerdeTests: c.zoekruimte?.tests.length ?? 0,
+        aanpak: c.zoekruimte?.golven[c.zoekruimte.golven.length - 1]?.aanpak ?? null,
       },
     };
   };
 
   const checkpoint = await draaiLongRun(
-    { runId, profiel, minuten, maxPogingenPerDimensie: options.maxAttemptsPerDimensionWithoutPromotion, maxCycli: options.maxCycles },
+    { runId, profiel, minuten, maxPogingenPerDimensie: options.maxAttemptsPerDimensionWithoutPromotion, maxCycli: options.maxCycles, zoek: options.zoek },
     {
       nu: extras.nu ?? (() => Date.now()),
       productie:
@@ -180,13 +196,23 @@ export async function runAutonomousDevelopmentRun(
           return { versionId: actief.versionId, generation: actief.generation };
         }),
       omgeving: extras.omgeving,
+      // Een gegenereerde test die op de holdout lijkt, wordt aan de meetkant geweigerd (zelfde lekdetectie als de rechter).
+      testToegestaan:
+        extras.testToegestaan ??
+        (() => {
+          let holdout: readonly string[] | null = null;
+          return (prompt: string) => {
+            holdout ??= holdoutTeksten();
+            return detecteerLekkage(prompt, holdout).length === 0;
+          };
+        })(),
       // Elk checkpoint: ook de samenvatting voor de pagina's bijwerken (live voortgang).
       spiegel: (c) => {
         extras.spiegel?.(c);
         writeDevelopmentRunResult(samenvatting(c));
       },
-      cyclus: async ({ runId: id, uitgesloten, runUitsluitingen }) => {
-        const c = await runDevelopmentCycle({ runId: id, locationCode, excludedCandidateIds: uitgesloten, focusDimension: options.focusDimension, runUitsluitingen }, deps);
+      cyclus: async ({ runId: id, uitgesloten, runUitsluitingen, zoekruimte }) => {
+        const c = await runDevelopmentCycle({ runId: id, locationCode, excludedCandidateIds: uitgesloten, focusDimension: options.focusDimension, runUitsluitingen, zoekruimte }, deps);
         cycles.push(c);
         return {
           beslissing: c.decision,
@@ -198,9 +224,10 @@ export async function runAutonomousDevelopmentRun(
           lesId: c.les?.id ?? null,
           geleerdVan: c.geleerdVan ?? [],
           strategie: c.candidate?.hypothesis?.strategie ?? null,
-          familie: c.candidate?.category ?? null,
+          familie: c.candidate?.hypothesis?.familie ?? c.candidate?.category ?? null,
           overgeslagen: c.overgeslagen ?? [],
           model: process.env.NS_LOCAL_LLM_MODEL ?? null,
+          scores: c.weakness.scores ?? null,
         };
       },
     },

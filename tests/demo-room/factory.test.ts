@@ -377,7 +377,7 @@ describe("Phase K/L/O — opslag en hervatbare lange runs", () => {
     // Een cyclus die de run-uitsluitingen respecteert, zoals developmentCycle via lessons.ts.
     const dims = ["toolChoice", "grounding"];
     let k = 0;
-    const g = await longRun.draaiLongRun({ runId: "LR-stuck", profiel: "24h", maxPogingenPerDimensie: 2 }, {
+    const g = await longRun.draaiLongRun({ runId: "LR-stuck", profiel: "24h", maxPogingenPerDimensie: 2, maxCycli: 8 }, {
       nu: klok(60_000),
       cyclus: async ({ runUitsluitingen }) => {
         const open = dims.filter((d) => !runUitsluitingen.dimensies.includes(d));
@@ -386,15 +386,19 @@ describe("Phase K/L/O — opslag en hervatbare lange runs", () => {
         return { beslissing: "REJECTED", kandidaatId: `s${k}`, dimensie: open[0], versieId: null, verdict: "REJECT" };
       },
     });
-    // Twee keer verworpen op toolChoice → lokaal uitgeput, dóór naar grounding, pas daarna globaal uitgeput.
-    expect(g.stopReden).toBe("ALLES_GEPROBEERD");
-    expect(g.cycli).toHaveLength(5);
-    expect(g.uitgeslotenDimensies).toEqual(dims);
+    // Twee keer verworpen op toolChoice → lokaal uitgeput, dóór naar grounding.
+    // Daarna meldt de cyclus uitputting, maar beide zwaktes hebben in de
+    // zoekruimte nog open hypothesen: heropend, en de run gaat door.
+    expect(g.stopReden).toBe("MAX_CYCLI");
+    expect(g.cycli).toHaveLength(8);
     expect(g.cycli[2].dimensie).toBe("grounding");
     expect(g.cycli[2].overgangen).toContain("ZWAKTE_GEWISSELD");
-    expect(g.gebeurtenissen.map((e) => e.tekst).join("\n")).toMatch(/Lokaal uitgeput: toolChoice 2x zonder promotie; de run gaat verder/);
-    expect(g.fase).toBe("GLOBAAL_UITGEPUT");
-    // Meldt de cyclus zelf dat alles geprobeerd is, dan stopt de run daarop.
+    const tekst = g.gebeurtenissen.map((e) => e.tekst).join("\n");
+    expect(tekst).toMatch(/Lokaal uitgeput: toolChoice 2x zonder promotie; de run gaat verder/);
+    expect(tekst).toMatch(/Heropend: toolChoice, grounding/);
+    expect(g.cycli[5].dimensie).toBe("toolChoice");
+    // Meldt de cyclus uitputting en kan de regisseur niets nieuws maken (geen
+    // lessen = geen bewijs), dan is dat een capaciteitsgrens, geen voltooiing.
     let n = 0;
     const u = await longRun.draaiLongRun({ runId: "LR-uitgeput", profiel: "24h" }, {
       nu: klok(60_000),
@@ -405,7 +409,8 @@ describe("Phase K/L/O — opslag en hervatbare lange runs", () => {
           : { beslissing: "UITGEPUT", kandidaatId: null, dimensie: null, versieId: null, verdict: null };
       },
     });
-    expect(u.stopReden).toBe("ALLES_GEPROBEERD");
+    expect(u.stopReden).toBe("CAPACITEIT_BLOKKADE");
+    expect(u.status).toBe("STOPPED");
     expect(u.cycli).toHaveLength(3);
     const d = await longRun.draaiLongRun({ runId: "LR-nodiag", profiel: "1h" }, { nu: klok(60_000), cyclus: async () => ({ beslissing: "NOT_EXECUTED", kandidaatId: null, dimensie: null, versieId: null, verdict: null }) });
     expect(d.stopReden).toBe("GEEN_DIAGNOSE");
